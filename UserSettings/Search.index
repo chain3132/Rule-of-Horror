@@ -13,7 +13,7 @@
         "disabled": false,
         "types": true,
         "properties": true,
-        "extended": false,
+        "extended": true,
         "dependencies": true
     },
     "baseScore": 999
