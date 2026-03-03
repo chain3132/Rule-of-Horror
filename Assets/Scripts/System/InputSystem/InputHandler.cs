@@ -62,7 +62,7 @@ namespace InputSystem
         private void HandlePhonePerformed(InputAction.CallbackContext ctx)
         {
             OnPhoneTap?.Invoke();
-            GameManager._instance.ChangePlayerState(PlayerState.PlayerStates.OnTapInteraction);
+            //GameManager._instance.ChangePlayerState(PlayerState.PlayerStates.OnTapInteraction);
         }
 
         #endregion
