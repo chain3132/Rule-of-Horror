@@ -17,8 +17,10 @@ namespace InputSystem
         #endregion
         
         #region Fields
-        public event Action OnPhoneTap;
         private InputAction _moveAction,_lookAction,_phoneAction;
+        public event Action OnPhoneToggle;
+        public event Action<int> OnAppKeyPressed;
+        public event Action OnBackPressed;
         
 
         #endregion
@@ -61,7 +63,7 @@ namespace InputSystem
 
         private void HandlePhonePerformed(InputAction.CallbackContext ctx)
         {
-            OnPhoneTap?.Invoke();
+            OnPhoneToggle?.Invoke();
             //GameManager._instance.ChangePlayerState(PlayerState.PlayerStates.OnTapInteraction);
         }
 
