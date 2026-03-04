@@ -118,6 +118,15 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Chatting"",
+                    ""type"": ""Button"",
+                    ""id"": ""dfd552a6-7ace-40dd-ba7b-466e001c01c6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -241,6 +250,17 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""action"": ""Phone"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f6e984c5-ebac-4e16-80fb-7f0ea8be2e84"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Chatting"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -252,6 +272,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Phone = m_Player.FindAction("Phone", throwIfNotFound: true);
+        m_Player_Chatting = m_Player.FindAction("Chatting", throwIfNotFound: true);
     }
 
     ~@PlayerAction()
@@ -335,6 +356,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Movement;
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Phone;
+    private readonly InputAction m_Player_Chatting;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -358,6 +380,10 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Phone".
         /// </summary>
         public InputAction @Phone => m_Wrapper.m_Player_Phone;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Chatting".
+        /// </summary>
+        public InputAction @Chatting => m_Wrapper.m_Player_Chatting;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -393,6 +419,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @Phone.started += instance.OnPhone;
             @Phone.performed += instance.OnPhone;
             @Phone.canceled += instance.OnPhone;
+            @Chatting.started += instance.OnChatting;
+            @Chatting.performed += instance.OnChatting;
+            @Chatting.canceled += instance.OnChatting;
         }
 
         /// <summary>
@@ -413,6 +442,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @Phone.started -= instance.OnPhone;
             @Phone.performed -= instance.OnPhone;
             @Phone.canceled -= instance.OnPhone;
+            @Chatting.started -= instance.OnChatting;
+            @Chatting.performed -= instance.OnChatting;
+            @Chatting.canceled -= instance.OnChatting;
         }
 
         /// <summary>
@@ -474,5 +506,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPhone(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Chatting" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnChatting(InputAction.CallbackContext context);
     }
 }

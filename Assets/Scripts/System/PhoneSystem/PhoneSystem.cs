@@ -2,6 +2,7 @@ using Enum;
 using InputSystem;
 using Manager;
 using Player;
+using ScriptableObject;
 using UnityEngine;
 
 namespace PhoneSystem
@@ -15,6 +16,8 @@ namespace PhoneSystem
         [SerializeField] private PhoneAppController appController;
         [SerializeField] private PhoneUIController uiController;
         [SerializeField] private InputHandler input;
+        [SerializeField] private ConversationRunner runner;
+
         
         private void OnEnable()
         {
@@ -40,6 +43,10 @@ namespace PhoneSystem
                 RaisePhone();
             else
                 LowerPhone();
+        }
+        public void OpenChat()
+        {
+            ChangeState(PhoneState.ChatView);
         }
         public void Back()
         {

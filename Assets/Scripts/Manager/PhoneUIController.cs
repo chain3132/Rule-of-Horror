@@ -33,12 +33,12 @@ namespace Manager
                 panel.SetActive(true);
             }
         }
+        
 
         private void HideAll()
         {
-            homePanel.SetActive(false);
-            //friendListPanel.SetActive(false);
-            //chatPanel.SetActive(false);
+            friendListPanel.SetActive(false);
+            chatPanel.SetActive(false);
         }
     }
 }

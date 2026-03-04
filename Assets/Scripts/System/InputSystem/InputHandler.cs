@@ -17,8 +17,9 @@ namespace InputSystem
         #endregion
         
         #region Fields
-        private InputAction _moveAction,_lookAction,_phoneAction;
+        private InputAction _moveAction,_lookAction,_phoneAction,_chatAction;
         public event Action OnPhoneToggle;
+        public event Action OnChatToggle;
         public event Action<int> OnAppKeyPressed;
         public event Action OnBackPressed;
         
@@ -34,15 +35,19 @@ namespace InputSystem
             _moveAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Movement");
             _lookAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Look");
             _phoneAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Phone");
+            _chatAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Chatting");
         }
         private void OnEnable()
         {
             _phoneAction.performed += HandlePhonePerformed;
+            _chatAction.performed += ChattingPerformed;
+            
         }
 
         private void OnDisable()
         {
             _phoneAction.performed -= HandlePhonePerformed;
+            _chatAction.performed -= ChattingPerformed;
         }
 
 
@@ -64,7 +69,10 @@ namespace InputSystem
         private void HandlePhonePerformed(InputAction.CallbackContext ctx)
         {
             OnPhoneToggle?.Invoke();
-            //GameManager._instance.ChangePlayerState(PlayerState.PlayerStates.OnTapInteraction);
+        }
+        private void ChattingPerformed(InputAction.CallbackContext ctx)
+        {
+            OnAppKeyPressed?.Invoke(0);
         }
 
         #endregion
