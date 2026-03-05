@@ -28,5 +28,25 @@ MonoBehaviour:
     nextNode: 1
   - message: Hi I'm player
     isPlayer: 1
+    replies:
+    - replyText: are you coming tonight?
+      nextNode: 2
+    - replyText: Nice see you there
+      nextNode: 3
+    nextNode: 0
+  - message: Yeah sure !
+    isPlayer: 0
+    replies: []
+    nextNode: 4
+  - message: Alright message me later
+    isPlayer: 0
+    replies: []
+    nextNode: 5
+  - message: Okay
+    isPlayer: 1
+    replies: []
+    nextNode: 0
+  - message: Hahaha
+    isPlayer: 1
     replies: []
     nextNode: 0
