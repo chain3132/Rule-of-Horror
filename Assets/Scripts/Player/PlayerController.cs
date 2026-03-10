@@ -25,7 +25,9 @@ namespace Player
         [Header("Gravity Settings")]
         [SerializeField] private float gravity = -9.81f;
         [SerializeField] private float groundCheckDistance = 0.2f;
-
+        
+        [Header("Animation Settings")]
+        [SerializeField] private Animator animator;
         private float _verticalVelocity;
         private bool _isGrounded;
         #endregion
@@ -66,8 +68,9 @@ namespace Player
 
             Vector3 move = transform.forward * moveInput.y + transform.right * moveInput.x;
             move *= moveSpeed;
-
+            
             _characterController.Move(move * Time.deltaTime);
+            animator.SetBool("walk", moveInput.magnitude > 0.1f);
         }
         public void Look(Vector2 lookInput)
         {
