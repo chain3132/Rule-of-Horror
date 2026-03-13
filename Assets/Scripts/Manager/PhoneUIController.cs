@@ -11,6 +11,8 @@ namespace Manager
         [SerializeField] private GameObject homePanel;
         [SerializeField] private GameObject friendListPanel;
         [SerializeField] private GameObject chatPanel;
+        
+        [SerializeField] private GameObject messagePanel;
 
         private Dictionary<PhoneState, GameObject> _stateMap;
 
@@ -32,8 +34,25 @@ namespace Manager
             {
                 panel.SetActive(true);
             }
+
+            ChangeHomePanel(state);
         }
-        
+        private void ChangeHomePanel(PhoneState state)
+        {
+            switch (state)
+            {
+                case PhoneState.AppSelection:
+                    homePanel.SetActive(true);
+                    messagePanel.SetActive(false);
+                    break;
+                case PhoneState.FriendList:
+                case PhoneState.ChatView:
+                    homePanel.SetActive(false);
+                    messagePanel.SetActive(true);
+                    break;
+                    
+            }
+        }
 
         private void HideAll()
         {
