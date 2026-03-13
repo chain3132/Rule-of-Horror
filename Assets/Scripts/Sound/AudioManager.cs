@@ -8,6 +8,8 @@ public class AudioManager : MonoBehaviour
 
     [Header("- - - Audio Clip - - -")]
     public AudioClip backgroundMusic;
+    private FMOD.Studio.EventInstance music;
+
 
 
     private void Awake()
