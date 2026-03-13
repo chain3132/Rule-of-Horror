@@ -49,7 +49,7 @@ namespace Player
         private void Awake()
         {
             _characterController = GetComponent<CharacterController>();
-            Cursor.visible = false;
+            //Cursor.visible = false;
         }
         
         private void Update()
