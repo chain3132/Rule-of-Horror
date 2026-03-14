@@ -11,6 +11,10 @@ namespace Manager
         [SerializeField] private GameObject homePanel;
         [SerializeField] private GameObject friendListPanel;
         [SerializeField] private GameObject chatPanel;
+        [SerializeField] private GameObject flashLightPanel;
+        [SerializeField] private GameObject flashLightObj;
+        [SerializeField] private GameObject clockPanel;
+
         
         [SerializeField] private GameObject messagePanel;
 
@@ -22,7 +26,9 @@ namespace Manager
             {
                 { PhoneState.AppSelection, homePanel },
                 { PhoneState.FriendList, friendListPanel },
-                { PhoneState.ChatView, chatPanel }
+                { PhoneState.ChatView, chatPanel },
+                { PhoneState.FlashLight, flashLightObj },
+                { PhoneState.Clock , null} 
             };
         }
 
@@ -32,7 +38,11 @@ namespace Manager
 
             if (_stateMap.TryGetValue(state, out var panel))
             {
-                panel.SetActive(true);
+                if (panel != null)
+                {
+                    panel.SetActive(true);
+                }
+                
             }
 
             ChangeHomePanel(state);
@@ -44,13 +54,29 @@ namespace Manager
                 case PhoneState.AppSelection:
                     homePanel.SetActive(true);
                     messagePanel.SetActive(false);
+                    flashLightPanel.SetActive(false);
+                    clockPanel.SetActive(false);
+
                     break;
                 case PhoneState.FriendList:
                 case PhoneState.ChatView:
                     homePanel.SetActive(false);
+                    flashLightPanel.SetActive(false);
+                    clockPanel.SetActive(false);
                     messagePanel.SetActive(true);
                     break;
-                    
+                case PhoneState.FlashLight:
+                    homePanel.SetActive(false);
+                    messagePanel.SetActive(false);
+                    clockPanel.SetActive(false);
+                    flashLightPanel.SetActive(true);
+                    break;
+                case PhoneState.Clock:
+                    homePanel.SetActive(false);
+                    messagePanel.SetActive(false);
+                    flashLightPanel.SetActive(false);
+                    clockPanel.SetActive(true);
+                    break;
             }
         }
 
@@ -58,6 +84,7 @@ namespace Manager
         {
             friendListPanel.SetActive(false);
             chatPanel.SetActive(false);
+            flashLightObj.SetActive(false);
         }
     }
 }

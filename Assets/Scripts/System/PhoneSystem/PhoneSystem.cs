@@ -59,6 +59,12 @@ namespace PhoneSystem
                 case PhoneState.FriendList:
                     ChangeState(PhoneState.AppSelection);
                     break;
+                case PhoneState.FlashLight:
+                    ChangeState(PhoneState.AppSelection);
+                    break;
+                case PhoneState.Clock:
+                    ChangeState(PhoneState.AppSelection);
+                    break;
 
                 case PhoneState.AppSelection:
                     LowerPhone();

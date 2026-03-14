@@ -127,6 +127,24 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""FlashLight"",
+                    ""type"": ""Button"",
+                    ""id"": ""48d67bcc-4c86-4167-9cfb-cf2a8614cce6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Clock"",
+                    ""type"": ""Button"",
+                    ""id"": ""4bab8d4e-b432-43b1-846d-213780615065"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -261,6 +279,28 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""action"": ""Chatting"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9199ee99-c3b7-4f25-82aa-f402886d34c7"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FlashLight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1bf7619b-18fc-46e9-9f39-b12c196c7687"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Clock"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -273,6 +313,8 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Phone = m_Player.FindAction("Phone", throwIfNotFound: true);
         m_Player_Chatting = m_Player.FindAction("Chatting", throwIfNotFound: true);
+        m_Player_FlashLight = m_Player.FindAction("FlashLight", throwIfNotFound: true);
+        m_Player_Clock = m_Player.FindAction("Clock", throwIfNotFound: true);
     }
 
     ~@PlayerAction()
@@ -357,6 +399,8 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Phone;
     private readonly InputAction m_Player_Chatting;
+    private readonly InputAction m_Player_FlashLight;
+    private readonly InputAction m_Player_Clock;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -384,6 +428,14 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Chatting".
         /// </summary>
         public InputAction @Chatting => m_Wrapper.m_Player_Chatting;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/FlashLight".
+        /// </summary>
+        public InputAction @FlashLight => m_Wrapper.m_Player_FlashLight;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Clock".
+        /// </summary>
+        public InputAction @Clock => m_Wrapper.m_Player_Clock;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -422,6 +474,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @Chatting.started += instance.OnChatting;
             @Chatting.performed += instance.OnChatting;
             @Chatting.canceled += instance.OnChatting;
+            @FlashLight.started += instance.OnFlashLight;
+            @FlashLight.performed += instance.OnFlashLight;
+            @FlashLight.canceled += instance.OnFlashLight;
+            @Clock.started += instance.OnClock;
+            @Clock.performed += instance.OnClock;
+            @Clock.canceled += instance.OnClock;
         }
 
         /// <summary>
@@ -445,6 +503,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @Chatting.started -= instance.OnChatting;
             @Chatting.performed -= instance.OnChatting;
             @Chatting.canceled -= instance.OnChatting;
+            @FlashLight.started -= instance.OnFlashLight;
+            @FlashLight.performed -= instance.OnFlashLight;
+            @FlashLight.canceled -= instance.OnFlashLight;
+            @Clock.started -= instance.OnClock;
+            @Clock.performed -= instance.OnClock;
+            @Clock.canceled -= instance.OnClock;
         }
 
         /// <summary>
@@ -513,5 +577,19 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnChatting(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "FlashLight" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnFlashLight(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Clock" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnClock(InputAction.CallbackContext context);
     }
 }

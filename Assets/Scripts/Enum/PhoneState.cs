@@ -6,6 +6,8 @@ namespace Enum
         PhoneRaised,        
         AppSelection,       
         FriendList,        
-        ChatView            
+        ChatView,
+        FlashLight,
+        Clock
     }
 }

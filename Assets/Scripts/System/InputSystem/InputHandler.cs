@@ -17,7 +17,7 @@ namespace InputSystem
         #endregion
         
         #region Fields
-        private InputAction _moveAction,_lookAction,_phoneAction,_chatAction;
+        private InputAction _moveAction,_lookAction,_phoneAction,_chatAction,_flashLightAction,_clockAction;
         public event Action OnPhoneToggle;
         public event Action OnChatToggle;
         public event Action<int> OnAppKeyPressed;
@@ -36,11 +36,15 @@ namespace InputSystem
             _lookAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Look");
             _phoneAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Phone");
             _chatAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Chatting");
+            _flashLightAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("FlashLight");
+            _clockAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Clock");
         }
         private void OnEnable()
         {
             _phoneAction.performed += HandlePhonePerformed;
             _chatAction.performed += ChattingPerformed;
+            _flashLightAction.performed += FlashLightPerformed;
+            _clockAction.performed += ClockPerformed;
             
         }
 
@@ -48,6 +52,8 @@ namespace InputSystem
         {
             _phoneAction.performed -= HandlePhonePerformed;
             _chatAction.performed -= ChattingPerformed;
+            _flashLightAction.performed -= FlashLightPerformed;
+            _clockAction.performed -= ClockPerformed;
         }
 
 
@@ -73,6 +79,14 @@ namespace InputSystem
         private void ChattingPerformed(InputAction.CallbackContext ctx)
         {
             OnAppKeyPressed?.Invoke(0);
+        }
+        private void FlashLightPerformed(InputAction.CallbackContext ctx)
+        {
+            OnAppKeyPressed?.Invoke(1);
+        }
+        private void ClockPerformed(InputAction.CallbackContext ctx)
+        {
+            OnAppKeyPressed?.Invoke(2);
         }
 
         #endregion

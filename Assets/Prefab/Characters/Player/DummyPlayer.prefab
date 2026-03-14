@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 7329108241725599810}
   - component: {fileID: 3201678887424235855}
   - component: {fileID: 8493985411986517860}
+  - component: {fileID: 4488795244492158586}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -170,6 +171,20 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &4488795244492158586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4926371760513364874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c6556701af9e04380698b89f691b6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioListener
+  nonRigidbodyVelocity: 0
+  attenuationObject: {fileID: 0}
 --- !u!1001 &6198682407237470964
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -382,6 +397,7 @@ MonoBehaviour:
   sittingLookLimit: 50
   gravity: -9.81
   groundCheckDistance: 0.2
+  animator: {fileID: 0}
 --- !u!1001 &8408850339547095421
 PrefabInstance:
   m_ObjectHideFlags: 0
