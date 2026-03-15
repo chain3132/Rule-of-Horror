@@ -24,6 +24,7 @@ namespace PhoneSystem
             input.OnPhoneToggle += TogglePhone;
             input.OnAppKeyPressed += OpenAppByIndex;
             input.OnBackPressed += Back;
+            input.OnSetTime += appController.SetTimeApp;
         }
 
         private void OnDisable()
@@ -31,6 +32,7 @@ namespace PhoneSystem
             input.OnPhoneToggle -= TogglePhone;
             input.OnAppKeyPressed -= OpenAppByIndex;
             input.OnBackPressed -= Back;
+            input.OnSetTime -= appController.SetTimeApp;
         }
         public void ChangeState(PhoneState newState)
         {
@@ -84,7 +86,16 @@ namespace PhoneSystem
         public void OpenAppByIndex(int index)
         {
             if (CurrentState != PhoneState.AppSelection) return;
-            LockPlayer();
+            PhoneState state = appController.GetStateByIndex(index);
+
+            if (state != PhoneState.FlashLight)
+            {
+                LockPlayer();
+            }
+            else
+            {
+                UnlockPlayer();
+            }
             appController.OpenAppByIndex(index);
         }
 

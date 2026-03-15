@@ -5,14 +5,29 @@ namespace Manager
 {
     public class TimeManager : MonoBehaviour
     {
-        public float realSecondsPerGameMinute = 5f;
+        public float realSecondsPerGameMinute = 6f;
 
         public int currentHour = 19;
         public int currentMinute = 0;
+        public int CurrentTotalMinutes => currentHour * 60 + currentMinute;
 
         private float timer;
 
         public static event Action<int,int> OnTimeChanged;
+        public static TimeManager instance;
+        
+        private void Awake()
+        {
+            if (instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
         void OnEnable()
         {
             TimeManager.OnTimeChanged += CheckTime;

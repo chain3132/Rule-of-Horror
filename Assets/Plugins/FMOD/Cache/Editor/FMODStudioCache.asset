@@ -15,7 +15,7 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639090293413905479
+  lastModified: 639091770820250468
   FileSizes:
   - Name: Desktop
     Value: 1074
@@ -35,10 +35,10 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/AmbienceBank.bank
   Name: AmbienceBank
   StudioPath: bank:/AmbienceBank
-  lastModified: 639090304624510109
+  lastModified: 639091770820215205
   FileSizes:
   - Name: Desktop
-    Value: 208032
+    Value: 218464
   Exists: 1
 --- !u!114 &-4564469147803579842
 MonoBehaviour:
@@ -64,6 +64,30 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-720689364606467603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/HeartBeat/HeartLevel
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: HeartLevel
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 3946729374
+    data2: 3196497706
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,16 +106,47 @@ MonoBehaviour:
   - {fileID: -8687965200994253978}
   EditorEvents:
   - {fileID: 7011388528615965413}
+  - {fileID: 3299800955492051082}
   EditorParameters: []
   MasterBanks:
   - {fileID: -8687965200994253978}
   StringsBanks:
   - {fileID: 8656562136812460686}
   cacheVersion: 131858
-  cacheTime: 639090304624510109
+  cacheTime: 639091770820260530
   SerializableEventsDict:
   - key: event:/New Event
     index: 0
+  - key: event:/HeartBeat
+    index: 1
+--- !u!114 &3299800955492051082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/HeartBeat
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/HeartBeat
+  Guid:
+    Data1: -2039505619
+    Data2: 1241402282
+    Data3: 1044083373
+    Data4: -1829444863
+  Banks:
+  - {fileID: -7414909333957512450}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -720689364606467603}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 792
 --- !u!114 &7011388528615965413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,8 +190,8 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639090293413915543
+  lastModified: 639091770820260530
   FileSizes:
   - Name: Desktop
-    Value: 882
+    Value: 986
   Exists: 1

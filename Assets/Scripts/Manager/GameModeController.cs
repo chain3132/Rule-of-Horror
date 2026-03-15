@@ -1,7 +1,13 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+public enum GameMode
+{
+    Relax,
+    Tension
+}
 
 public class GameModeController : MonoBehaviour
 {
@@ -19,25 +25,31 @@ public class GameModeController : MonoBehaviour
     public float blinkSize = 500f;  
     public float speed = 5f;
     
+    [SerializeField] private MeshFilter saraMeshFilter;
+    [SerializeField] private MeshCollider saraMeshCollider;
+    [SerializeField] private MeshRenderer saraMeshRenderer;
+    
+    [SerializeField] private SerializedDictionary<GameMode,SaraModel> seraModels;
+    [SerializeField] private List<CandleLight> candles;
+    
     
 
     public void SetRelaxMode()
     {
-        globalVolume.profile = relaxProfile;
-        bloodOverlay.SetActive(false);
+        BlinkToMode(GameMode.Relax);
     }
 
     public void SetTensionMode()
     {
-        globalVolume.profile = tensionProfile;
-        bloodOverlay.SetActive(true);
+        BlinkToMode(GameMode.Tension);
+
     }
-    public void Blink()
+    public void BlinkToMode(GameMode targetMode = GameMode.Relax)
     {
-        StartCoroutine(BlinkRoutine());
+        StartCoroutine(BlinkRoutine(targetMode));
     }
 
-    IEnumerator BlinkRoutine()
+    IEnumerator BlinkRoutine(GameMode targetMode)
     {
         float t = 0;
         float widthTop = topLid.sizeDelta.x;
@@ -52,7 +64,8 @@ public class GameModeController : MonoBehaviour
 
             yield return null;
         }
-
+        
+        ApplyMode(targetMode);
         yield return new WaitForSeconds(1f);
 
         // เปิดตา
@@ -68,6 +81,52 @@ public class GameModeController : MonoBehaviour
             bottomLid.sizeDelta = new Vector2(widthBottom, size);   
 
             yield return null;
+        }
+    }
+
+    void SetSaraModel(GameMode mode)
+    {
+        if(seraModels.TryGetValue(mode,out SaraModel model))
+        {
+            saraMeshFilter.mesh = model.saraMeshFilter;
+            saraMeshCollider.sharedMesh = model.saraMeshFilter;
+            Material[] mats = new Material[saraMeshRenderer.materials.Length];
+
+            for (int i = 0; i < mats.Length; i++)
+            {
+                mats[i] = model.saraMeshRenderer;
+            }
+
+            saraMeshRenderer.materials = mats;
+        }
+    }
+    void ApplyMode(GameMode mode)
+    {
+        if (mode == GameMode.Relax)
+        {
+            globalVolume.profile = relaxProfile;
+            bloodOverlay.SetActive(false);
+            AudioManager.instance.FadeOutMusic();
+            SetSaraModel(mode);
+            LightRandomCandle(); 
+        }
+        else
+        {
+            globalVolume.profile = tensionProfile;
+            bloodOverlay.SetActive(true);
+            AudioManager.instance.FadeInMusic();
+            SetSaraModel(mode);
+        }
+    }
+    public void LightRandomCandle()
+    {
+        foreach(var candle in candles)
+        {
+            if(!candle.IsLit())
+            {
+                candle.LightCandle();
+                break;
+            }
         }
     }
 }

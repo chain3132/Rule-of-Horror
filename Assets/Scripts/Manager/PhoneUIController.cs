@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using Enum;
 using ScriptableObject;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Manager
 {
@@ -15,7 +17,7 @@ namespace Manager
         [SerializeField] private GameObject flashLightObj;
         [SerializeField] private GameObject clockPanel;
 
-        
+        [SerializeField] private TMP_Text timeText;
         [SerializeField] private GameObject messagePanel;
 
         private Dictionary<PhoneState, GameObject> _stateMap;
@@ -85,6 +87,11 @@ namespace Manager
             friendListPanel.SetActive(false);
             chatPanel.SetActive(false);
             flashLightObj.SetActive(false);
+        }
+
+        public void SetTimeText(string text)
+        {
+            timeText.text = text;
         }
     }
 }

@@ -6,15 +6,12 @@ using FMOD.Studio;
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager instance;
-    [Header("- - - Audio Source - - -")]
-    [SerializeField] private AudioSource musicSource;
+    
+    private EventInstance music;
+    private EventInstance heartbeat;
 
-    [Header("- - - Audio Clip - - -")]
-    public AudioClip backgroundMusic;
-    private FMOD.Studio.EventInstance music;
-
-
-
+    float currentHeart;
+    float targetHeart;
     private void Awake()
     {
         if (instance == null)
@@ -34,19 +31,50 @@ public class AudioManager : MonoBehaviour
         music.set3DAttributes(
             FMODUnity.RuntimeUtils.To3DAttributes(transform));
         music.start();
-
-        StartCoroutine(FadeIn());
+        music.setParameterByName("MusicIntensity", 0); 
+        
+        heartbeat = RuntimeManager.CreateInstance("event:/HeartBeat");
+        heartbeat.start();
+        heartbeat.setParameterByName("HeartLevel", 0);
+    }
+    public void SetHeartbeat(float value)
+    {
+        targetHeart = value;
+    }
+    public void UpdateHeartbeat()
+    {
+        currentHeart = Mathf.Lerp(currentHeart, targetHeart, Time.deltaTime * 2f);
+        heartbeat.setParameterByName("HeartLevel", currentHeart);
     }
     
-    IEnumerator FadeIn()
+    public void FadeInMusic()
     {
+        StopAllCoroutines();
+        StartCoroutine(FadeMusic(1f, 2f));
+    }
+
+    public void FadeOutMusic()
+    {
+        StopAllCoroutines();
+        StartCoroutine(FadeMusic(0f, 2f));
+    }
+
+    IEnumerator FadeMusic(float target, float duration)
+    {
+        music.getParameterByName("MusicIntensity", out float current);
+
         float t = 0;
 
-        while (t < 1)
+        while (t < duration)
         {
-            t += Time.deltaTime / 3f; // 3 วิ
-            music.setParameterByName("MusicIntensity", t);
+            t += Time.deltaTime;
+
+            float value = Mathf.Lerp(current, target, t / duration);
+            music.setParameterByName("MusicIntensity", value);
+
             yield return null;
         }
+
+        music.setParameterByName("MusicIntensity", target);
     }
 }
