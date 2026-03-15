@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Manager;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -32,7 +34,9 @@ public class GameModeController : MonoBehaviour
     [SerializeField] private SerializedDictionary<GameMode,SaraModel> seraModels;
     [SerializeField] private List<CandleLight> candles;
     
-    
+    [SerializeField] private PhoneUIController phoneUI;
+
+   
 
     public void SetRelaxMode()
     {
@@ -116,6 +120,14 @@ public class GameModeController : MonoBehaviour
             bloodOverlay.SetActive(true);
             AudioManager.instance.FadeInMusic();
             SetSaraModel(mode);
+        }
+        if (mode == GameMode.Relax)
+        {
+            phoneUI.SetSignalJam(false);
+        }
+        else
+        {
+            phoneUI.SetSignalJam(true);
         }
     }
     public void LightRandomCandle()

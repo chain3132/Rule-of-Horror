@@ -31,8 +31,12 @@ namespace Manager
         void OnEnable()
         {
             TimeManager.OnTimeChanged += CheckTime;
+            
         }
-
+        void OnDisable()
+        {
+            TimeManager.OnTimeChanged -= CheckTime;
+        }
         void CheckTime(int hour,int minute)
         {
             if(hour == 19 && minute == 0)
