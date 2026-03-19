@@ -41,7 +41,7 @@ namespace Manager
         {
             if(hour == 19 && minute == 0)
             {
-                //StartRule();
+                
             }
         }
         void Update()

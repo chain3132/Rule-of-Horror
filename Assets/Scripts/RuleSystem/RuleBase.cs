@@ -22,6 +22,13 @@ namespace RuleSystem
             ruleActive = false;
         }
 
-        public virtual void UpdateRule() { }
+        protected virtual void Update()
+        {
+            if (!ruleActive) return;
+
+            UpdateRule();
+        }
+
+        protected virtual void UpdateRule() { }
     }
 }

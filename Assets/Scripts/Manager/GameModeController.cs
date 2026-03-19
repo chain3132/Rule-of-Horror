@@ -35,8 +35,21 @@ public class GameModeController : MonoBehaviour
     [SerializeField] private List<CandleLight> candles;
     
     [SerializeField] private PhoneUIController phoneUI;
+    
+    public static GameModeController instance;
 
-   
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     public void SetRelaxMode()
     {
@@ -106,6 +119,7 @@ public class GameModeController : MonoBehaviour
     }
     void ApplyMode(GameMode mode)
     {
+        Debug.Log($"Applying {mode} mode");
         if (mode == GameMode.Relax)
         {
             globalVolume.profile = relaxProfile;
@@ -113,6 +127,8 @@ public class GameModeController : MonoBehaviour
             AudioManager.instance.FadeOutMusic();
             SetSaraModel(mode);
             LightRandomCandle(); 
+            phoneUI.SetSignalJam(false);
+
         }
         else
         {
@@ -120,15 +136,10 @@ public class GameModeController : MonoBehaviour
             bloodOverlay.SetActive(true);
             AudioManager.instance.FadeInMusic();
             SetSaraModel(mode);
-        }
-        if (mode == GameMode.Relax)
-        {
-            phoneUI.SetSignalJam(false);
-        }
-        else
-        {
             phoneUI.SetSignalJam(true);
+
         }
+        
     }
     public void LightRandomCandle()
     {

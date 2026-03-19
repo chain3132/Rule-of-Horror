@@ -41,6 +41,7 @@ namespace Player
         private float _sittingYaw;
         private bool _canMove = true;
         private bool _canLook = true;
+        private Vector2 _externalLookForce;
 
         #endregion
 
@@ -75,8 +76,10 @@ namespace Player
         public void Look(Vector2 lookInput)
         {
             if (!_canLook) return;
-            float mouseX = lookInput.x * mouseSensitivity;
-            float mouseY = lookInput.y * mouseSensitivity;
+            
+            Vector2 finalInput = lookInput + _externalLookForce;
+            float mouseX = finalInput.x * mouseSensitivity;
+            float mouseY = finalInput.y * mouseSensitivity;
 
             _xRotation -= mouseY;
             _xRotation = Mathf.Clamp(_xRotation, -lookClamp, lookClamp);
@@ -91,6 +94,10 @@ namespace Player
             {
                 transform.Rotate(Vector3.up * mouseX);
             }
+        }
+        public void SetExternalLookForce(Vector2 force)
+        {
+            _externalLookForce = force;
         }
         private void ApplyGravity()
         {

@@ -23,28 +23,22 @@ public class RuleManager : MonoBehaviour
 
         foreach (var rule in rules)
         {
-            CheckRule(rule, currentTime);
-        }
-    }
-    
-    void CheckRule(RuleBase rule, int currentTime)
-    {
-        int startTime = rule.startHour * 60 + rule.startMinute;
-        int endTime = rule.endHour * 60 + rule.endMinute;
+            int startTime = rule.startHour * 60 + rule.startMinute;
+            int endTime = rule.endHour * 60 + rule.endMinute;
 
-        if (!rule.ruleActive && currentTime >= startTime && currentTime < endTime)
-        {
-            rule.StartRule();
-        }
+            // เริ่มกฎ
+            if (!rule.ruleActive && currentTime >= startTime && currentTime < endTime)
+            {
+                GameModeController.instance.BlinkToMode(GameMode.Tension);
+                rule.StartRule();
+            }
 
-        if (rule.ruleActive)
-        {
-            rule.UpdateRule();
-        }
-
-        if (rule.ruleActive && currentTime >= endTime)
-        {
-            rule.EndRule();
+            // จบกฎ
+            if (rule.ruleActive && currentTime >= endTime)
+            {
+                GameModeController.instance.BlinkToMode(GameMode.Relax);
+                rule.EndRule();
+            }
         }
     }
 }

@@ -46,7 +46,7 @@ namespace InputSystem
             _chatAction.performed += ChattingPerformed;
             _flashLightAction.performed += FlashLightPerformed;
             _clockAction.performed += ClockPerformed;
-            _setTimeAction.performed += SetTime;
+            //_setTimeAction.performed += SetTime;
         }
 
         private void OnDisable()
@@ -55,7 +55,7 @@ namespace InputSystem
             _chatAction.performed -= ChattingPerformed;
             _flashLightAction.performed -= FlashLightPerformed;
             _clockAction.performed -= ClockPerformed;
-            _setTimeAction.performed -= SetTime;
+           // _setTimeAction.performed -= SetTime;
         }
 
 
