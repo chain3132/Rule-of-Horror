@@ -14,7 +14,7 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 1
+  m_Fog: 0
   m_FogColor: {r: 0.0636022, g: 0.05927375, b: 0.11320752, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.03
@@ -877,7 +877,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 1
-  m_Color: {r: 0.8349056, g: 0.87468743, b: 1, a: 1}
+  m_Color: {r: 0.54187435, g: 0.6353999, b: 0.9339623, a: 1}
   m_Intensity: 0.6
   m_Range: 10
   m_SpotAngle: 30
@@ -2851,7 +2851,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LookDistortionSystem
   cameraPivot: {fileID: 1568439027}
-  forceMultiplier: 5
+  forceMultiplier: 15
   player: {fileID: 1187062162}
 --- !u!1 &592391727
 GameObject:

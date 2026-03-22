@@ -50,7 +50,7 @@ public class LookDistortionSystem : MonoBehaviour
         float deltaYaw = Mathf.DeltaAngle(currentYaw, targetYaw);
 
         // เพิ่มแรงเรื่อย ๆ (Tension)
-        currentForce += Time.deltaTime * 0.5f;
+        currentForce += Time.deltaTime * 3f;
 
         float forceX = deltaYaw * 0.01f * currentForce * forceMultiplier;
 

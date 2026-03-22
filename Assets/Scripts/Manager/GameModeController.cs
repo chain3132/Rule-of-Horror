@@ -37,7 +37,10 @@ public class GameModeController : MonoBehaviour
     [SerializeField] private PhoneUIController phoneUI;
     
     public static GameModeController instance;
-
+    LensDistortion lens;
+    ChromaticAberration chroma;
+    DepthOfField dof;
+    
     private void Awake()
     {
         if (instance == null)
@@ -50,7 +53,12 @@ public class GameModeController : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
+    void Start()
+    {
+        globalVolume.profile.TryGet(out lens);
+        globalVolume.profile.TryGet(out chroma);
+        globalVolume.profile.TryGet(out dof);
+    }
     public void SetRelaxMode()
     {
         BlinkToMode(GameMode.Relax);
@@ -63,7 +71,101 @@ public class GameModeController : MonoBehaviour
     }
     public void BlinkToMode(GameMode targetMode = GameMode.Relax)
     {
-        StartCoroutine(BlinkRoutine(targetMode));
+        StartCoroutine(FaintThenBlinkRoutine(targetMode));
+    }
+    IEnumerator FaintThenBlinkRoutine(GameMode targetMode)
+    {
+        float duration = 3.5f;
+        float t = 0;
+
+        // : เวียนหัว
+        while (t < duration)
+        {   
+            t += Time.deltaTime;
+
+            float normalized = t / duration;
+            float curve = Mathf.Pow(normalized, 2.5f);
+            Time.timeScale = Mathf.Lerp(1f, 0.6f, curve);
+            float shakeX = Mathf.Sin(Time.time * 12f) * curve * 2f;
+            float shakeY = Mathf.Cos(Time.time * 9f) * curve * 2f;
+            float roll = Mathf.Sin(Time.time * 6f) * curve * 8f;
+
+            Camera.main.transform.localRotation = Quaternion.Euler(shakeX, shakeY, roll);
+            
+            if (normalized < 0.65f)
+            {
+                // phase 1: เริ่มมึน (เบา)
+                SetFaintEffect(curve * 0.5f);
+            }
+            else
+            {
+                // phase 2: พัง 
+                SetFaintEffect(curve);
+
+               
+                if (UnityEngine.Random.value < 0.1f * curve)
+                {
+                    Camera.main.transform.localRotation *= Quaternion.Euler(
+                        UnityEngine.Random.Range(-3f, 3f),
+                        UnityEngine.Random.Range(-3f, 3f),
+                        UnityEngine.Random.Range(-10f, 10f)
+                    );
+                }
+            }
+            yield return new WaitForSecondsRealtime(0.01f + (curve * 0.04f));
+        }
+        Time.timeScale = 1f;
+
+        Camera.main.transform.localRotation = Quaternion.identity;
+
+        yield return new WaitForSeconds(0.5f);
+        // เข้าสู่ blink จริง
+        yield return StartCoroutine(BlinkRoutine(targetMode));
+    }
+
+    void SetFaintEffect(float t)
+    {
+        // มืดลง
+        if (globalVolume.profile.TryGet(out ColorAdjustments color))
+        {
+            color.postExposure.value = Mathf.Lerp(0f, -2f, t);
+            color.contrast.value = Mathf.Lerp(0f, -30f, t);
+        }
+
+        // ขอบมืด
+        if (globalVolume.profile.TryGet(out Vignette vignette))
+        {
+            vignette.intensity.value = Mathf.Lerp(0.2f, 0.6f, t);
+        }
+
+        //  ภาพบิด
+        if (lens != null)
+        {
+            float baseDistort = Mathf.Lerp(0f, -0.6f, t);
+
+            // noise เพิ่มความแรงตาม t
+            float noise = Mathf.Sin(Time.time * 20f) * 0.2f * t;
+
+            lens.intensity.value = baseDistort + noise;
+        }
+
+
+        if (chroma != null)
+        {
+            chroma.intensity.value = Mathf.Lerp(0f, 1f, t);
+        }
+
+        if (dof != null)
+        {
+            dof.focusDistance.value = Mathf.Lerp(10f, 0.3f, t);
+            dof.aperture.value = Mathf.Lerp(5.6f, 0.8f, t);
+        }
+
+        if (globalVolume.profile.TryGet(out ColorAdjustments saturationColor))
+        {
+            saturationColor.saturation.value = Mathf.Lerp(0f, -100f, t);
+        }
+    
     }
 
     IEnumerator BlinkRoutine(GameMode targetMode)
@@ -75,7 +177,8 @@ public class GameModeController : MonoBehaviour
         while(t < 1)
         {
             t += Time.deltaTime * speed;
-            float size = Mathf.Lerp(0, blinkSize, t);
+            float curve = Mathf.Pow(t, 2); // ปิดเร็วช่วงท้าย
+            float size = Mathf.Lerp(0, blinkSize, curve);
             topLid.sizeDelta = new Vector2(widthTop, size);
             bottomLid.sizeDelta = new Vector2(widthBottom, size);
 
