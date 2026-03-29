@@ -54,42 +54,7 @@ namespace Manager
                 timeInPhoneText.text = $"{hour:00}:{minute:00}";
             }
         }
-        public void SetSignalJam(bool jam)
-        {
-            isSignalJammed = jam;
-
-            if (jam)
-            {
-                glitchRoutine = StartCoroutine(GlitchTime());
-            }
-            else
-            {
-                if (glitchRoutine != null)
-                    StopCoroutine(glitchRoutine);
-
-                int h = TimeManager.instance.currentHour;
-                int m = TimeManager.instance.currentMinute;
-
-                timeInPhoneText.text = $"{h:00}:{m:00}";
-            }
-
-    
-        }
-        string GetGlitchTime()
-        {
-            int h = Random.Range(0, 24);
-            int m = Random.Range(0, 60);
-
-            return $"{h:00}:{m:00}";
-        }
-        IEnumerator GlitchTime()
-        {
-            while (isSignalJammed)
-            {
-                timeInPhoneText.text = GetGlitchTime();
-                yield return new WaitForSeconds(UnityEngine.Random.Range(0.05f, 0.15f));
-            }
-        }
+        
         public void UpdateState(PhoneState state)
         {
             HideAll();

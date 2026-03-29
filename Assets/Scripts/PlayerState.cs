@@ -5,6 +5,7 @@ public class PlayerState
     public enum PlayerStates
     {
         Idle,
+        Sitting,
         Walking,
         Jumping,
         Interacting,

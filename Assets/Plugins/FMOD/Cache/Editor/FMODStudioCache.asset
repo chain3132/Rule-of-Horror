@@ -15,7 +15,7 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639091770820250468
+  lastModified: 639103812299801073
   FileSizes:
   - Name: Desktop
     Value: 1074
@@ -35,10 +35,30 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/AmbienceBank.bank
   Name: AmbienceBank
   StudioPath: bank:/AmbienceBank
-  lastModified: 639091770820215205
+  lastModified: 639104221724360224
   FileSizes:
   - Name: Desktop
-    Value: 218464
+    Value: 1195744
+  Exists: 1
+--- !u!114 &-5803895795705513871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Radio.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Radio.bank
+  Name: Radio
+  StudioPath: bank:/Radio
+  lastModified: 639103812299991905
+  FileSizes:
+  - Name: Desktop
+    Value: 1529440
   Exists: 1
 --- !u!114 &-4564469147803579842
 MonoBehaviour:
@@ -64,6 +84,33 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-1082020412420637551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/RadioSound
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/RadioSound
+  Guid:
+    Data1: -1206020835
+    Data2: 1211875516
+    Data3: 1405782459
+    Data4: -449151876
+  Banks:
+  - {fileID: -5803895795705513871}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 141505
 --- !u!114 &-720689364606467603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,21 +151,58 @@ MonoBehaviour:
   - {fileID: 8656562136812460686}
   - {fileID: -7414909333957512450}
   - {fileID: -8687965200994253978}
+  - {fileID: -5803895795705513871}
   EditorEvents:
   - {fileID: 7011388528615965413}
   - {fileID: 3299800955492051082}
+  - {fileID: 388632287678487498}
+  - {fileID: -1082020412420637551}
+  - {fileID: 7701002489354684094}
   EditorParameters: []
   MasterBanks:
   - {fileID: -8687965200994253978}
   StringsBanks:
   - {fileID: 8656562136812460686}
   cacheVersion: 131858
-  cacheTime: 639091770820260530
+  cacheTime: 639104221724360224
   SerializableEventsDict:
   - key: event:/New Event
     index: 0
   - key: event:/HeartBeat
     index: 1
+  - key: event:/RadioOpen
+    index: 2
+  - key: event:/RadioSound
+    index: 3
+  - key: event:/RadioNoise
+    index: 4
+--- !u!114 &388632287678487498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/RadioOpen
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/RadioOpen
+  Guid:
+    Data1: 1212656388
+    Data2: 1324280321
+    Data3: -1065967447
+    Data4: -374815401
+  Banks:
+  - {fileID: -5803895795705513871}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &3299800955492051082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,7 +258,34 @@ MonoBehaviour:
   - {fileID: -4564469147803579842}
   MinDistance: 1
   MaxDistance: 20
-  Length: 20904
+  Length: 129936
+--- !u!114 &7701002489354684094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/RadioNoise
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/RadioNoise
+  Guid:
+    Data1: 208074040
+    Data2: 1272054259
+    Data3: 694470331
+    Data4: -2079511736
+  Banks:
+  - {fileID: -5803895795705513871}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 3864
 --- !u!114 &8656562136812460686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,8 +301,8 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639091770820260530
+  lastModified: 639103812299811113
   FileSizes:
   - Name: Desktop
-    Value: 986
+    Value: 1146
   Exists: 1

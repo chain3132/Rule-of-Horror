@@ -9,5 +9,6 @@ AssetOrigin:
   productId: 987
   packageName: EasyRoads3D Free v3
   packageVersion: v3.2.4f3
-  assetPath: Assets/EasyRoads3D/Resources/Materials/roundabouts/roundabout 2 lane.mat
+  assetPath: Assets/Plugins/EasyRoads3D/Resources/Materials/roundabouts/roundabout
+    2 lane.mat
   uploadId: 701396

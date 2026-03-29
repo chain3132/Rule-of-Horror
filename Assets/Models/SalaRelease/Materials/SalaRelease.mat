@@ -25,6 +25,7 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _METALLICSPECGLOSSMAP
   - _NORMALMAP
   - _OCCLUSIONMAP
   - _PARALLAXMAP
@@ -43,11 +44,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 94b3ed93107627d469bb05f007faa6d5, type: 3}
+        m_Texture: {fileID: 2800000, guid: 196bb0bc8f6483943a249cf8bc707cae, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 07f0c723f3a2d8f4182146d9f0b28564, type: 3}
+        m_Texture: {fileID: 2800000, guid: e710e372f1adf0340b6c315654c0eb88, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -67,7 +68,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 94b3ed93107627d469bb05f007faa6d5, type: 3}
+        m_Texture: {fileID: 2800000, guid: 196bb0bc8f6483943a249cf8bc707cae, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -79,11 +80,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
-        m_Texture: {fileID: 2800000, guid: 74ae623aaaae6664c9ef0ab2d09edf84, type: 3}
+        m_Texture: {fileID: 2800000, guid: ff3938f2635e80d4cb0153878aafda81, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 3e843462c736a7f4e8021f7e38d9c2e9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -120,10 +121,10 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _Parallax: 0.005
+    - _Parallax: 0.08
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0.25
+    - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1

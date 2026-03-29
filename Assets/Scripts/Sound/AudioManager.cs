@@ -9,6 +9,12 @@ public class AudioManager : MonoBehaviour
     
     private EventInstance music;
     private EventInstance heartbeat;
+    private EventInstance radioOpen;
+    private EventInstance radioSound;
+    private EventInstance radioNoise;
+    Coroutine radioCoroutine;
+
+    [SerializeField] private Transform radioTransform;
 
     float currentHeart;
     float targetHeart;
@@ -36,6 +42,21 @@ public class AudioManager : MonoBehaviour
         heartbeat = RuntimeManager.CreateInstance("event:/HeartBeat");
         heartbeat.start();
         heartbeat.setParameterByName("HeartLevel", 0);
+        
+        radioOpen = RuntimeManager.CreateInstance("event:/RadioOpen");
+        radioOpen.set3DAttributes(RuntimeUtils.To3DAttributes(radioTransform));
+        
+        radioSound = RuntimeManager.CreateInstance("event:/RadioSound");
+        radioSound.set3DAttributes(RuntimeUtils.To3DAttributes(radioTransform));
+        
+        radioNoise = RuntimeManager.CreateInstance("event:/RadioNoise");
+        radioNoise.set3DAttributes(RuntimeUtils.To3DAttributes(radioTransform));
+        
+        radioNoise.setVolume(0f);
+        radioNoise.start();
+
+        radioSound.setVolume(0f);
+        radioSound.start();
     }
     public void SetHeartbeat(float value)
     {
@@ -46,7 +67,97 @@ public class AudioManager : MonoBehaviour
         currentHeart = Mathf.Lerp(currentHeart, targetHeart, Time.deltaTime * 2f);
         heartbeat.setParameterByName("HeartLevel", currentHeart);
     }
+    public void PlayRadio()
+    {
+        if (radioCoroutine != null)
+            StopCoroutine(radioCoroutine);
+        StartCoroutine(PlayRadioRoutine());
+    }
+
+    IEnumerator PlayRadioRoutine()
+    {
+        radioOpen.start();
+        radioOpen.release(); 
+        
+        yield return new WaitForSeconds(0.5f);
+        
+        yield return StartCoroutine(FadeInNoise(1f));
+        
+    }
+    IEnumerator FadeInNoise(float duration)
+    {
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float normalized = t / duration;
+
+            radioSound.setVolume(normalized);
+            yield return null;
+        }
+
+        radioSound.setVolume(1f);
+    }
+    public void GoToMusic()
+    {
+        if (radioCoroutine != null)
+            StopCoroutine(radioCoroutine);
+
+        radioCoroutine = StartCoroutine(SwitchToMusic(2f));
+    }
+    public void GoToNoise()
+    {
+        if (radioCoroutine != null)
+            StopCoroutine(radioCoroutine);
+
+        radioCoroutine = StartCoroutine(SwitchToNoise(2f));
+    }
     
+    IEnumerator SwitchToMusic(float duration)
+    {
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+
+            float normalized = t / duration;
+
+            // fade out noise
+            radioNoise.setVolume(1f - normalized);
+
+            // fade in music
+            radioSound.setVolume(normalized);
+
+            yield return null;
+        }
+
+        radioNoise.setVolume(0f);
+        radioSound.setVolume(1f);
+    }
+    IEnumerator SwitchToNoise(float duration)
+    {
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+
+            float normalized = t / duration;
+
+            // fade out music
+            radioSound.setVolume(1f - normalized);
+
+            // fade in noise
+            radioNoise.setVolume(normalized);
+
+            yield return null;
+        }
+
+        radioSound.setVolume(0f);
+        radioNoise.setVolume(1f);
+    }
     public void FadeInMusic()
     {
         StopAllCoroutines();

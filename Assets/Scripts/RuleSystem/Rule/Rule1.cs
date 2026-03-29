@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class Rule1 : RuleBase
 {
-    void Update()
+    protected override void UpdateRule()
     {
-        if (!ruleActive) return;
-
         // heartbeat logic
         AudioManager.instance.UpdateHeartbeat();
         // distance logic
         HeartbeatSystem.instance.CheckPlayerInsideZone();
+        
     }
 }

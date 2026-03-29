@@ -41,4 +41,9 @@ public class RuleManager : MonoBehaviour
             }
         }
     }
+    // public bool CheckTime(int hour, int minute)
+    // {
+    //     
+    //     
+    // }
 }

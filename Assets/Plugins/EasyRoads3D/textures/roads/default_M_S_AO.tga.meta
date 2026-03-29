@@ -94,5 +94,5 @@ AssetOrigin:
   productId: 987
   packageName: EasyRoads3D Free v3
   packageVersion: v3.2.4f3
-  assetPath: Assets/EasyRoads3D/textures/roads/default_M_S_AO.tga
+  assetPath: Assets/Plugins/EasyRoads3D/textures/roads/default_M_S_AO.tga
   uploadId: 701396

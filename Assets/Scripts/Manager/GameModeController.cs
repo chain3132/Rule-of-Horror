@@ -35,6 +35,7 @@ public class GameModeController : MonoBehaviour
     [SerializeField] private List<CandleLight> candles;
     
     [SerializeField] private PhoneUIController phoneUI;
+    [SerializeField] private WindZone[] windZones;
     
     public static GameModeController instance;
     LensDistortion lens;
@@ -62,8 +63,25 @@ public class GameModeController : MonoBehaviour
     public void SetRelaxMode()
     {
         BlinkToMode(GameMode.Relax);
+        SetWindZone(GameMode.Relax);
     }
-
+    public void SetWindZone(GameMode tenstion)
+    {
+        foreach(var zone in windZones)
+        {
+            switch (tenstion)
+            {
+                
+                case GameMode.Relax:
+                    zone.windMain = 0.2f;
+                    break;
+                case GameMode.Tension:
+                    zone.windMain = 0.4f;
+                    break;
+            };
+            Debug.Log("Set wind zone to " + zone.windMain);
+        }
+    }
     public void SetTensionMode()
     {
         BlinkToMode(GameMode.Tension);
@@ -72,11 +90,13 @@ public class GameModeController : MonoBehaviour
     public void BlinkToMode(GameMode targetMode = GameMode.Relax)
     {
         StartCoroutine(FaintThenBlinkRoutine(targetMode));
+        
     }
     IEnumerator FaintThenBlinkRoutine(GameMode targetMode)
     {
-        float duration = 3.5f;
+        float duration = 2.5f;
         float t = 0;
+        TimeManager.instance.IsPauseTime(true);
 
         // : เวียนหัว
         while (t < duration)
@@ -202,6 +222,8 @@ public class GameModeController : MonoBehaviour
 
             yield return null;
         }
+        TimeManager.instance.IsPauseTime(false);
+
     }
 
     void SetSaraModel(GameMode mode)
@@ -230,7 +252,8 @@ public class GameModeController : MonoBehaviour
             AudioManager.instance.FadeOutMusic();
             SetSaraModel(mode);
             LightRandomCandle(); 
-            phoneUI.SetSignalJam(false);
+            SetWindZone(GameMode.Relax);
+
 
         }
         else
@@ -239,7 +262,8 @@ public class GameModeController : MonoBehaviour
             bloodOverlay.SetActive(true);
             AudioManager.instance.FadeInMusic();
             SetSaraModel(mode);
-            phoneUI.SetSignalJam(true);
+            SetWindZone(GameMode.Tension);
+
 
         }
         

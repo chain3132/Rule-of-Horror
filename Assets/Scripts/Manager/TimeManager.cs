@@ -10,6 +10,7 @@ namespace Manager
         public int currentHour = 19;
         public int currentMinute = 0;
         public int CurrentTotalMinutes => currentHour * 60 + currentMinute;
+        private bool isRuleBlockingTime;
 
         private float timer;
 
@@ -28,24 +29,23 @@ namespace Manager
                 Destroy(gameObject);
             }
         }
-        void OnEnable()
+        public void IsPauseTime(bool pause)
         {
-            TimeManager.OnTimeChanged += CheckTime;
-            
+            isRuleBlockingTime = pause;
         }
-        void OnDisable()
+        
+        public bool CheckTime(int hour,int minute)
         {
-            TimeManager.OnTimeChanged -= CheckTime;
-        }
-        void CheckTime(int hour,int minute)
-        {
-            if(hour == 19 && minute == 0)
+            if(currentHour == hour && currentMinute == minute)
             {
-                
+                return true;
             }
+            return false;
         }
         void Update()
         {
+            if (isRuleBlockingTime) return;
+
             timer += Time.deltaTime;
 
             if (timer >= realSecondsPerGameMinute)

@@ -17,11 +17,11 @@ namespace InputSystem
         #endregion
         
         #region Fields
-        private InputAction _moveAction,_lookAction,_phoneAction,_chatAction,_flashLightAction,_clockAction,_setTimeAction;
+        private InputAction _moveAction,_lookAction,_phoneAction,_chatAction,_flashLightAction,_clockAction,_interactAction;
         public event Action OnPhoneToggle;
         public event Action OnSetTime;
         public event Action<int> OnAppKeyPressed;
-        public event Action OnBackPressed;
+        public event Action OnBackPressed, OnInteractPressed;
         
 
         #endregion
@@ -38,7 +38,7 @@ namespace InputSystem
             _chatAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Chatting");
             _flashLightAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("FlashLight");
             _clockAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Clock");
-            _setTimeAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("SetTime");
+            _interactAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Interact");
         }
         private void OnEnable()
         {
@@ -46,6 +46,7 @@ namespace InputSystem
             _chatAction.performed += ChattingPerformed;
             _flashLightAction.performed += FlashLightPerformed;
             _clockAction.performed += ClockPerformed;
+            _interactAction.performed += InteractPerformed;
             //_setTimeAction.performed += SetTime;
         }
 
@@ -55,6 +56,7 @@ namespace InputSystem
             _chatAction.performed -= ChattingPerformed;
             _flashLightAction.performed -= FlashLightPerformed;
             _clockAction.performed -= ClockPerformed;
+            _interactAction.performed -= InteractPerformed;
            // _setTimeAction.performed -= SetTime;
         }
 
@@ -93,6 +95,10 @@ namespace InputSystem
         private void SetTime(InputAction.CallbackContext ctx)
         {
             OnSetTime?.Invoke();
+        }
+        private void InteractPerformed(InputAction.CallbackContext ctx)
+        {
+            OnInteractPressed?.Invoke();
         }
 
         #endregion

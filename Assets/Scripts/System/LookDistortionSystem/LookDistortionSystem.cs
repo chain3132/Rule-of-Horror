@@ -8,6 +8,11 @@ public class LookDistortionSystem : MonoBehaviour
     [SerializeField] private Transform cameraPivot;
     [SerializeField] private float forceMultiplier = 2f;
     [SerializeField] private PlayerController player;
+    
+    [SerializeField] private Camera cam;
+    [SerializeField] private float normalFOV = 60f;
+    [SerializeField] private float zoomFOV = 40f;
+    [SerializeField] private float zoomSpeed = 5f;
     private bool isActive;
     private Transform target;
     private float currentForce;
@@ -39,6 +44,8 @@ public class LookDistortionSystem : MonoBehaviour
         if (!isActive || target == null)
         {
             player.SetExternalLookForce(Vector2.zero);
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, normalFOV, Time.deltaTime * zoomSpeed);
+
             return;
         }
 
@@ -49,12 +56,21 @@ public class LookDistortionSystem : MonoBehaviour
 
         float deltaYaw = Mathf.DeltaAngle(currentYaw, targetYaw);
 
-        // เพิ่มแรงเรื่อย ๆ (Tension)
+        // เพิ่มแรง 
         currentForce += Time.deltaTime * 3f;
 
         float forceX = deltaYaw * 0.01f * currentForce * forceMultiplier;
 
         externalForce = new Vector2(forceX, 0);
         player.SetExternalLookForce(externalForce);
+        
+        float t = Mathf.Clamp01(currentForce / 2f);
+        t = t * t;
+
+        float targetFOV = Mathf.Lerp(normalFOV, zoomFOV, t);
+        cam.fieldOfView = Mathf.MoveTowards(
+            cam.fieldOfView,
+            targetFOV,
+            zoomSpeed  * Time.deltaTime);
     }
 }
