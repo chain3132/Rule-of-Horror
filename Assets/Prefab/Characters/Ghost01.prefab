@@ -124,6 +124,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GhostAI
   point1: {fileID: 0}
   point2: {fileID: 0}
-  stopDistance: 1.5
+  stopDistance: 0.5
   turnSpeed: 2
   saraLight: {fileID: 0}

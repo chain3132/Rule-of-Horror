@@ -170,6 +170,11 @@ public class AudioManager : MonoBehaviour
         StartCoroutine(FadeMusic(0f, 2f));
     }
 
+    public void StopNoise()
+    {
+        radioNoise.setVolume(0f);
+    }
+
     IEnumerator FadeMusic(float target, float duration)
     {
         music.getParameterByName("MusicIntensity", out float current);

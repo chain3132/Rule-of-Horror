@@ -28,6 +28,7 @@ public class GhostAI : MonoBehaviour
     private GhostState currentState;
 
     private bool isTurning;
+    private RuleSystem.Rule.Rule2 currentRule;
 
     void Awake()
     {
@@ -36,10 +37,10 @@ public class GhostAI : MonoBehaviour
 
     }
 
-    public void Init(Transform playerTarget)
+    public void Init(Transform playerTarget,RuleSystem.Rule.Rule2 rule2)
     {
         player = playerTarget;
-
+        currentRule = rule2;
         currentState = GhostState.MovingToPoint1;
         agent.SetDestination(point1.position);
     }
@@ -132,7 +133,7 @@ public class GhostAI : MonoBehaviour
     void UpdateMoveToPoint2()
     {
         float dist = Vector3.Distance(transform.position, point2.position);
-
+        agent.speed = 1.5f;
         if (dist <= stopDistance)
         {
             agent.isStopped = true;
@@ -183,6 +184,10 @@ public class GhostAI : MonoBehaviour
     {
         // 👉 moment หลอน
         // - หัวหัก
+        saraLight.enabled = true;
+       AudioManager.instance.StopNoise();
+       currentRule.RadioStopped();
+       Destroy(gameObject,0.5f);
         // - เสียง
         // - จ้องผู้เล่น
     }

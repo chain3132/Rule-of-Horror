@@ -65,6 +65,7 @@ namespace RuleSystem.Rule
         private bool lightTurnedOn;
 
         private bool ghostTriggered;
+        private bool _isRadioStopped;
 
         #region Lifecycle
 
@@ -352,7 +353,7 @@ namespace RuleSystem.Rule
                 ai.point2 = ghostPointInside;
                 ai.saraLight = saraLight;
 
-                ai.Init(playerController.transform);
+                ai.Init(playerController.transform,this);
             }
 
             // TODO: เสียงหัวเราะ / ไฟกระพริบ
@@ -364,12 +365,16 @@ namespace RuleSystem.Rule
             {
                 //HeartbeatSystem.instance.AddStress(30f * Time.deltaTime);
             }
-
-
-            if (RadioStopped())
+            
+            if (_isRadioStopped)
             {
                 ChangeState(Rule2State.Completed);
             }
+        }
+
+        public void RadioStopped()
+        {
+            _isRadioStopped = true;
         }
 
         #endregion
@@ -378,22 +383,13 @@ namespace RuleSystem.Rule
 
         void ResetAll()
         {
-            currentState = Rule2State.None;
-
-            if (currentGhost != null)
-            {
-                Destroy(currentGhost);
-            }
-
-            // reset light / audio / mood
+           
         }
 
         #endregion
 
         #region Mock (คุณต้องไปผูกจริง)
 
-        bool PlayerTriedLight() => false;
-        bool RadioStopped() => false;
 
         #endregion
     }
