@@ -171,7 +171,9 @@ namespace RuleSystem.Rule
                 case Rule2State.FixPanel:
                     StartPanelFixed();
                     break;
-
+                case Rule2State.ReturnToSeat:
+                    StartReturnToSeat();
+                    break;
                 case Rule2State.RadioWaiting:
                     StartRadioPhase();
                     break;
@@ -202,6 +204,7 @@ namespace RuleSystem.Rule
             radioControl.UnlockRadio(true);
             TimeManager.instance.IsPauseTime(true);
             radioControl.UnlockRadio(true);
+            HorrorTextUI.instance.ShowText("Turn on the lights and the radio, then go back to your seat.");
         }
 
         void UpdateFirstBlackout()
@@ -229,10 +232,10 @@ namespace RuleSystem.Rule
         {
             if (playerController.IsSitting() && radioPlaying)
             {
+                HorrorTextUI.instance.HideText();
                 radioControl.UnlockRadio(false);
                 ChangeState(Rule2State.SecondBlackout);
                 TimeManager.instance.IsPauseTime(false);
-                Debug.Log("Go to second blackout");
             }
         }
 
@@ -275,6 +278,8 @@ namespace RuleSystem.Rule
                 panel.SetActiveLight(true);
                 panel.UnlockPanel(true);
             }
+            HorrorTextUI.instance.ShowText("Repair the control panel.");
+
         }
 
         void UpdateFixPanel()
@@ -289,6 +294,7 @@ namespace RuleSystem.Rule
             fixedPanels++;
             if (fixedPanels >= 2)
             {
+                HorrorTextUI.instance.HideText();
                 switchLight.UnlockSwitch(true);
                 ChangeState(Rule2State.ReturnToSeat);
             }
@@ -297,12 +303,17 @@ namespace RuleSystem.Rule
         #endregion
 
         #region Phase 5
+        void StartReturnToSeat()
+        {
+            HorrorTextUI.instance.ShowText("turn the lights back on then Go back to your seat.");
+        }
 
         void UpdateReturnToSeat()
         {
             if (playerController.IsSitting() && switchLight.IsLightOn())
             {
                 ChangeState(Rule2State.RadioWaiting);
+                HorrorTextUI.instance.HideText();
             }
         }
 

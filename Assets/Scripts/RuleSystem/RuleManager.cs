@@ -5,6 +5,7 @@ using UnityEngine;
 public class RuleManager : MonoBehaviour
 {
     public RuleBase[] rules;
+    [SerializeField] private HorrorTextUI horrorTextUI;
 
 
     private void OnEnable()

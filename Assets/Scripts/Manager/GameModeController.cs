@@ -253,7 +253,7 @@ public class GameModeController : MonoBehaviour
             SetSaraModel(mode);
             LightRandomCandle(); 
             SetWindZone(GameMode.Relax);
-
+            AudioManager.instance.SwitchWindAmbience(0);
 
         }
         else
@@ -263,6 +263,7 @@ public class GameModeController : MonoBehaviour
             AudioManager.instance.FadeInMusic();
             SetSaraModel(mode);
             SetWindZone(GameMode.Tension);
+            AudioManager.instance.SwitchWindAmbience(1);
 
 
         }

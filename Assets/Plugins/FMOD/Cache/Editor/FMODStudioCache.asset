@@ -15,10 +15,30 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639103812299801073
+  lastModified: 639104736072322471
   FileSizes:
   - Name: Desktop
     Value: 1074
+  Exists: 1
+--- !u!114 &-8092087314510133167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Action.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Action.bank
+  Name: Action
+  StudioPath: bank:/Action
+  lastModified: 639104736072600687
+  FileSizes:
+  - Name: Desktop
+    Value: 3648
   Exists: 1
 --- !u!114 &-7414909333957512450
 MonoBehaviour:
@@ -35,10 +55,10 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/AmbienceBank.bank
   Name: AmbienceBank
   StudioPath: bank:/AmbienceBank
-  lastModified: 639104221724360224
+  lastModified: 639104729674764266
   FileSizes:
   - Name: Desktop
-    Value: 1195744
+    Value: 1369088
   Exists: 1
 --- !u!114 &-5803895795705513871
 MonoBehaviour:
@@ -84,6 +104,58 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-3509003930898606732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/WindAmbience/Tension
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: Tension
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 2159993937
+    data2: 1315400063
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-2123895077631788983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/WindAmbience
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/WindAmbience
+  Guid:
+    Data1: 1130266012
+    Data2: 1249521845
+    Data3: 872034966
+    Data4: 1390504258
+  Banks:
+  - {fileID: -7414909333957512450}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -3509003930898606732}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 7584
 --- !u!114 &-1082020412420637551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,19 +224,22 @@ MonoBehaviour:
   - {fileID: -7414909333957512450}
   - {fileID: -8687965200994253978}
   - {fileID: -5803895795705513871}
+  - {fileID: -8092087314510133167}
   EditorEvents:
   - {fileID: 7011388528615965413}
   - {fileID: 3299800955492051082}
   - {fileID: 388632287678487498}
   - {fileID: -1082020412420637551}
   - {fileID: 7701002489354684094}
+  - {fileID: -2123895077631788983}
+  - {fileID: 8661769540991862282}
   EditorParameters: []
   MasterBanks:
   - {fileID: -8687965200994253978}
   StringsBanks:
   - {fileID: 8656562136812460686}
   cacheVersion: 131858
-  cacheTime: 639104221724360224
+  cacheTime: 639104736072600687
   SerializableEventsDict:
   - key: event:/New Event
     index: 0
@@ -176,6 +251,10 @@ MonoBehaviour:
     index: 3
   - key: event:/RadioNoise
     index: 4
+  - key: event:/WindAmbience
+    index: 5
+  - key: event:/SwitchLight
+    index: 6
 --- !u!114 &388632287678487498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -301,8 +380,35 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639103812299811113
+  lastModified: 639104736072342595
   FileSizes:
   - Name: Desktop
-    Value: 1146
+    Value: 1318
   Exists: 1
+--- !u!114 &8661769540991862282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/SwitchLight
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/SwitchLight
+  Guid:
+    Data1: 1130190252
+    Data2: 1131012957
+    Data3: -1255586892
+    Data4: 153454210
+  Banks:
+  - {fileID: -8092087314510133167}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0

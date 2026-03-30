@@ -59,8 +59,7 @@ namespace Rule2
         public void SetActiveLight(bool state)
         {
             panelLight.enabled = state;
-            Debug.Log("SetActiveLight: " + panelLight.enabled);
-            panelLightObject.SetActive(state);
+            
         }
         public void Interact()
         {
@@ -69,7 +68,7 @@ namespace Rule2
                 return;
             }
             isFixed = true;
-            SetActiveLight(false);
+            panelLight.color = Color.green;
             rule.OnPanelFixed();
         }
     }

@@ -34,11 +34,11 @@ public class RadioControl : MonoBehaviour
         
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player") && _isSubscribed)
+        if (other.CompareTag("Player") )
         {
             interactionText.gameObject.SetActive(false);
             
-            if (inputHandler != null)
+            if (inputHandler != null && _isSubscribed)
             {
                 inputHandler.OnInteractPressed -= Interact;
                 _isSubscribed = false; 

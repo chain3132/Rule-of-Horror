@@ -12,6 +12,8 @@ public class AudioManager : MonoBehaviour
     private EventInstance radioOpen;
     private EventInstance radioSound;
     private EventInstance radioNoise;
+    private EventInstance windAmbience;
+    private EventInstance switchLight;
     Coroutine radioCoroutine;
 
     [SerializeField] private Transform radioTransform;
@@ -57,10 +59,21 @@ public class AudioManager : MonoBehaviour
 
         radioSound.setVolume(0f);
         radioSound.start();
+        
+        windAmbience = RuntimeManager.CreateInstance("event:/WindAmbience");
+        windAmbience.start();
+        windAmbience.setParameterByName("Tension", 0);
+        windAmbience.set3DAttributes(
+            RuntimeUtils.To3DAttributes(Camera.main.transform));
+        
     }
     public void SetHeartbeat(float value)
     {
         targetHeart = value;
+    }
+    public void SwitchWindAmbience(float tension)
+    {
+        windAmbience.setParameterByName("Tension", tension);
     }
     public void UpdateHeartbeat()
     {
@@ -73,6 +86,7 @@ public class AudioManager : MonoBehaviour
             StopCoroutine(radioCoroutine);
         StartCoroutine(PlayRadioRoutine());
     }
+    
 
     IEnumerator PlayRadioRoutine()
     {

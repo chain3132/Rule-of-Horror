@@ -11,7 +11,9 @@ namespace RuleSystem
         public int endMinute;
 
         public bool ruleActive;
+        private HorrorTextUI _horrorTextUI;
 
+        
         public virtual void StartRule()
         {
             ruleActive = true;

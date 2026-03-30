@@ -1,3 +1,4 @@
+using FMODUnity;
 using InputSystem;
 using RuleSystem.Rule;
 using TMPro;
@@ -8,13 +9,17 @@ namespace System
     public class SwitchLight : MonoBehaviour
     {
         public RuleSystem.Rule.Rule2 rule2;
-
+        [Header("Audio")]
+        [SerializeField] private EventReference switchSound;
         public bool isOn = false;
         [SerializeField] private Light saraLight;
         [SerializeField] private InputHandler inputHandler;
         [SerializeField] private TMP_Text interactionText;
+        [SerializeField] private GameObject onSwitchObject;
+        [SerializeField] private GameObject offSwitchObject;
         private bool _isSubscribed = false;
         private bool _isUnlocked = false;
+        private bool _lastLightStatus;
 
         private void OnTriggerEnter(Collider other)
         {
@@ -30,30 +35,47 @@ namespace System
             }
         }
 
-        
+        private void Update()
+        {
+            if (saraLight.enabled != _lastLightStatus)
+            {
+                _lastLightStatus = saraLight.enabled;
+                UpdateVisuals(); 
+            }
+        }
+
         private void OnTriggerExit(Collider other)
         {
-            if (other.CompareTag("Player") && _isSubscribed)
+            if (other.CompareTag("Player") )
             {
                 interactionText.gameObject.SetActive(false);
             
-                if (inputHandler != null )
+                if (inputHandler != null && _isSubscribed)
                 {
                     inputHandler.OnInteractPressed -= Interact;
                     _isSubscribed = false; // 
                 }
             }
         }
+        private void PlaySwitchSound()
+        {
+            // ✅ one-shot 3D
+            RuntimeManager.PlayOneShot(switchSound, transform.position);
+        }
         public void UnlockSwitch(bool value)
         {
             _isUnlocked = value;
         }
-        
+        private void UpdateVisuals()
+        {
+            onSwitchObject.SetActive(_lastLightStatus);
+            offSwitchObject.SetActive(!_lastLightStatus);
+        }
         public void Interact()
         {
             _isUnlocked = false;
-
             TurnOnLight();
+            PlaySwitchSound();
             // ส่ง event ไป Rule
             rule2.OnLightTurnedOn();
         }
