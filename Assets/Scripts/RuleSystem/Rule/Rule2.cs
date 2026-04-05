@@ -264,6 +264,7 @@ namespace RuleSystem.Rule
 
         void UpdateSecondBlackout()
         {
+            TimeManager.instance.IsPauseTime(true);
             ChangeState(Rule2State.FixPanel);
         }
 
@@ -296,6 +297,7 @@ namespace RuleSystem.Rule
             {
                 HorrorTextUI.instance.HideText();
                 switchLight.UnlockSwitch(true);
+
                 ChangeState(Rule2State.ReturnToSeat);
             }
         }
@@ -312,6 +314,7 @@ namespace RuleSystem.Rule
         {
             if (playerController.IsSitting() && switchLight.IsLightOn())
             {
+                TimeManager.instance.IsPauseTime(false);
                 ChangeState(Rule2State.RadioWaiting);
                 HorrorTextUI.instance.HideText();
             }
@@ -324,9 +327,9 @@ namespace RuleSystem.Rule
         void StartRadioPhase()
         {
             radioPlaying = true;
-            radioTimer = 12f;
+            radioTimer = Random.Range(40,90);
             AudioManager.instance.GoToNoise();
-            // TODO: เปิดวิทยุ
+                                          // TODO: เปิดวิทยุ
         }
 
         void UpdateRadioWaiting()
@@ -341,7 +344,7 @@ namespace RuleSystem.Rule
             radioTimer -= Time.deltaTime;
 
             // 👻 trigger ghost ครั้งเดียว
-            if (!ghostTriggered && radioTimer <= 10f)
+            if (!ghostTriggered && radioTimer <= 1f)
             {
                 ghostTriggered = true;
                 ChangeState(Rule2State.GhostEvent);

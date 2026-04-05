@@ -17,11 +17,11 @@ namespace InputSystem
         #endregion
         
         #region Fields
-        private InputAction _moveAction,_lookAction,_phoneAction,_chatAction,_flashLightAction,_clockAction,_interactAction;
+        private InputAction _moveAction,_lookAction,_phoneAction,_chatAction,_flashLightAction,_clockAction,_interactAction,_rightClickAction;
         public event Action OnPhoneToggle;
         public event Action OnSetTime;
         public event Action<int> OnAppKeyPressed;
-        public event Action OnBackPressed, OnInteractPressed;
+        public event Action OnBackPressed, OnInteractPressed, OnRightClickPressed;
         
 
         #endregion
@@ -39,6 +39,7 @@ namespace InputSystem
             _flashLightAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("FlashLight");
             _clockAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Clock");
             _interactAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Interact");
+            _rightClickAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("RightClick");
         }
         private void OnEnable()
         {
@@ -47,6 +48,7 @@ namespace InputSystem
             _flashLightAction.performed += FlashLightPerformed;
             _clockAction.performed += ClockPerformed;
             _interactAction.performed += InteractPerformed;
+            _rightClickAction.performed += RightClickPerformed;
             //_setTimeAction.performed += SetTime;
         }
 
@@ -57,6 +59,7 @@ namespace InputSystem
             _flashLightAction.performed -= FlashLightPerformed;
             _clockAction.performed -= ClockPerformed;
             _interactAction.performed -= InteractPerformed;
+            _rightClickAction.performed -= RightClickPerformed;
            // _setTimeAction.performed -= SetTime;
         }
 
@@ -99,6 +102,10 @@ namespace InputSystem
         private void InteractPerformed(InputAction.CallbackContext ctx)
         {
             OnInteractPressed?.Invoke();
+        }
+        private void RightClickPerformed(InputAction.CallbackContext ctx)
+        {
+            OnRightClickPressed?.Invoke();
         }
 
         #endregion

@@ -13,6 +13,9 @@ public class LookDistortionSystem : MonoBehaviour
     [SerializeField] private float normalFOV = 60f;
     [SerializeField] private float zoomFOV = 40f;
     [SerializeField] private float zoomSpeed = 5f;
+    
+    private bool isFocusMode;
+    private Transform focusTarget;
     private bool isActive;
     private Transform target;
     private float currentForce;
@@ -41,14 +44,31 @@ public class LookDistortionSystem : MonoBehaviour
 
     void Update()
     {
-        if (!isActive || target == null)
+        //  Focus Mode (priority สูงสุด)
+        if (isFocusMode && focusTarget != null)
         {
-            player.SetExternalLookForce(Vector2.zero);
-            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, normalFOV, Time.deltaTime * zoomSpeed);
-
+            HandleFocusMode();
             return;
         }
 
+        // 🔁 Pull Mode
+        if (isActive && target != null)
+        {
+            HandlePullMode();
+            return;
+        }
+
+        // 💤 Idle
+        player.SetExternalLookForce(Vector2.zero);
+
+        cam.fieldOfView = Mathf.Lerp(
+            cam.fieldOfView,
+            normalFOV,
+            Time.deltaTime * zoomSpeed
+        );
+    }
+    void HandlePullMode()
+    {
         Vector3 dir = (target.position - cameraPivot.position).normalized;
 
         float targetYaw = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
@@ -56,21 +76,66 @@ public class LookDistortionSystem : MonoBehaviour
 
         float deltaYaw = Mathf.DeltaAngle(currentYaw, targetYaw);
 
-        // เพิ่มแรง 
         currentForce += Time.deltaTime * 3f;
 
         float forceX = deltaYaw * 0.01f * currentForce * forceMultiplier;
 
         externalForce = new Vector2(forceX, 0);
         player.SetExternalLookForce(externalForce);
-        
+
         float t = Mathf.Clamp01(currentForce / 2f);
         t = t * t;
 
         float targetFOV = Mathf.Lerp(normalFOV, zoomFOV, t);
+
         cam.fieldOfView = Mathf.MoveTowards(
             cam.fieldOfView,
             targetFOV,
-            zoomSpeed  * Time.deltaTime);
+            zoomSpeed * Time.deltaTime
+        );
+    }
+    void HandleFocusMode()
+    {
+        // 👉 หมุนกล้องไปหากระดาษแบบ smooth
+        Vector3 dir = (focusTarget.position - cameraPivot.position).normalized;
+
+        Quaternion targetRot = Quaternion.LookRotation(dir);
+        cameraPivot.rotation = Quaternion.Slerp(
+            cameraPivot.rotation,
+            targetRot,
+            Time.deltaTime * 3f
+        );
+
+        // 👉 ซูมเข้า
+        cam.fieldOfView = Mathf.MoveTowards(
+            cam.fieldOfView,
+            zoomFOV,
+            10 * Time.deltaTime
+        );
+    }
+    public void StartFocus(Transform targetTransform)
+    {
+        // ❗ ปิด pull mode ก่อน
+        isActive = false;
+        target = null;
+        externalForce = Vector2.zero;
+
+        focusTarget = targetTransform;
+        isFocusMode = true;
+
+        player.SetExternalLookForce(Vector2.zero);
+        player.SetLook(false);
+    }
+
+    public void StopFocus()
+    {
+        isFocusMode = false;
+        focusTarget = null;
+
+        // reset
+        externalForce = Vector2.zero;
+        player.SetExternalLookForce(Vector2.zero);
+
+        player.SetLook(true); 
     }
 }

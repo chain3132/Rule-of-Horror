@@ -14,12 +14,13 @@ public enum GameMode
 public class GameModeController : MonoBehaviour
 {
     public Volume globalVolume;
-
+    
     public VolumeProfile relaxProfile;
     public VolumeProfile tensionProfile;
 
     public GameObject bloodOverlay;
-
+    public Light directionLight;
+    
     
     public RectTransform topLid;
     public RectTransform bottomLid;
@@ -36,6 +37,11 @@ public class GameModeController : MonoBehaviour
     
     [SerializeField] private PhoneUIController phoneUI;
     [SerializeField] private WindZone[] windZones;
+    
+    [SerializeField] private Color relaxLightColor = new Color(1f, 0.95f, 0.8f);
+    [SerializeField] private Color tensionLightColor = new Color(0.8f, 0.9f, 1f);
+    [SerializeField] private Color relaxSkyBoxColor = new Color(1f, 0.95f, 0.8f);
+    [SerializeField] private Color tensionSkyBoxColor = new Color(0.8f, 0.9f, 1f);
     
     public static GameModeController instance;
     LensDistortion lens;
@@ -94,7 +100,7 @@ public class GameModeController : MonoBehaviour
     }
     IEnumerator FaintThenBlinkRoutine(GameMode targetMode)
     {
-        float duration = 2.5f;
+        float duration = 1f;
         float t = 0;
         TimeManager.instance.IsPauseTime(true);
 
@@ -206,7 +212,7 @@ public class GameModeController : MonoBehaviour
         }
         
         ApplyMode(targetMode);
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.8f);
 
         // เปิดตา
         t = 1;
@@ -253,6 +259,8 @@ public class GameModeController : MonoBehaviour
             SetSaraModel(mode);
             LightRandomCandle(); 
             SetWindZone(GameMode.Relax);
+            directionLight.color = relaxLightColor;
+            RenderSettings.skybox.SetColor("_Tint", relaxSkyBoxColor);
             AudioManager.instance.SwitchWindAmbience(0);
 
         }
@@ -260,7 +268,10 @@ public class GameModeController : MonoBehaviour
         {
             globalVolume.profile = tensionProfile;
             bloodOverlay.SetActive(true);
+            directionLight.color = tensionLightColor;
             AudioManager.instance.FadeInMusic();
+            RenderSettings.skybox.SetColor("_Tint", tensionSkyBoxColor);
+
             SetSaraModel(mode);
             SetWindZone(GameMode.Tension);
             AudioManager.instance.SwitchWindAmbience(1);

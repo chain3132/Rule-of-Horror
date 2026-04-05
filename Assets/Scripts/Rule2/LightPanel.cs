@@ -8,8 +8,6 @@ namespace Rule2
     public class LightPanel : MonoBehaviour
     {
         [SerializeField] private Light panelLight;
-        [SerializeField] private GameObject panelLightObject;
-
         
         [SerializeField] private TMP_Text interactionText;
         private InputHandler inputHandler;

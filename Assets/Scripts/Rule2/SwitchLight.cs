@@ -23,11 +23,11 @@ namespace System
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Player") && !_isSubscribed)
+            if (other.CompareTag("Player") && !_isSubscribed )
             {
-                interactionText.gameObject.SetActive(true);
+                interactionText.gameObject.SetActive(true) ;
             
-                if (inputHandler != null && _isUnlocked)
+                if (inputHandler != null && _isUnlocked )
                 {
                     inputHandler.OnInteractPressed += Interact;
                     _isSubscribed = true; 
