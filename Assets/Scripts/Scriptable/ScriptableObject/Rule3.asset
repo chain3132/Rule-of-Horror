@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41317668c27ad3e4eb2364064ad2ed14, type: 3}
+  m_Name: Rule3
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableObject.ConversationData
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  nodes:
+  - message: Next rule, rule number 3
+    isPlayer: 0
+    replies: []
+    nextNode: 1
+  - message: You have to find four pieces of paper with numbers on them
+    isPlayer: 0
+    replies: []
+    nextNode: 2
+  - message: ' You have to stare at them until the numbers disappear, in ascending
+      order'
+    isPlayer: 0
+    replies: []
+    nextNode: 3
+  - message: Ahmm...
+    isPlayer: 1
+    replies:
+    - replyText: I curse every one of you who created this!
+      nextNode: 5
+    - replyText: ' I don''t want to play anymore. I can''t take it anymore. I can''t
+        bear this anymore.'
+      nextNode: 6
+    nextNode: 0
+  - message: Whatever you choose, in the end, it's your own choice.
+    isPlayer: 0
+    replies: []
+    nextNode: 0
+  - message: Calm down.
+    isPlayer: 0
+    replies: []
+    nextNode: 7
+  - message: You just have to find the pieces of paper with numbers on them
+    isPlayer: 0
+    replies: []
+    nextNode: 8
+  - message: and look at them in ascending order, all four of them.
+    isPlayer: 0
+    replies: []
+    nextNode: 9
+  - message: But be careful, don't look at anything you shouldn't
+    isPlayer: 0
+    replies: []
+    nextNode: 10
+  - message: and don't get the order wrong. 9:00 PM - 9:40 PM. This night is really
+      long."
+    isPlayer: 0
+    replies: []
+    nextNode: 11

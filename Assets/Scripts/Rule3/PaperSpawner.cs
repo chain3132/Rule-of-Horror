@@ -1,36 +1,45 @@
 using System.Collections.Generic;
 using System.Linq;
 using InputSystem;
+using TMPro;
 using UnityEngine;
 
 public class PaperSpawner : MonoBehaviour
 {
     public Transform[] spawnPoints; // 8 จุด
-    public GameObject paperPrefab;
+    public GameObject[] paperPrefabs;
     public InputHandler inputHandler;
+    [SerializeField] GameObject paperText;
 
     public List<Paper> SpawnPapers()
     {
-        List<Transform> selected = spawnPoints
+        List<Transform> selectedPoints = spawnPoints
+            .OrderBy(x => Random.value)
+            .Take(4)
+            .ToList();
+        
+        List<GameObject> selectedPrefabs = paperPrefabs
             .OrderBy(x => Random.value)
             .Take(4)
             .ToList();
 
-        List<int> numbers = new List<int> {1,2,3,4}
-            .OrderBy(x => Random.value)
-            .ToList();
-
-        List<Paper> papers = new List<Paper>();
+        List<Paper> activePapers = new List<Paper>();
 
         for (int i = 0; i < 4; i++)
         {
-            GameObject obj = Instantiate(paperPrefab, selected[i].position, Quaternion.identity);
+            Transform point = selectedPoints[i];
+
+            GameObject obj = Instantiate(selectedPrefabs[i], point);
+
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localRotation = Quaternion.identity;
+
             Paper paper = obj.GetComponent<Paper>();
-            paper.SetNumber(numbers[i]);
             paper.SetInputHandler(inputHandler);
-            papers.Add(paper);
+            paper.GetInteractionText(paperText);
+            activePapers.Add(paper);
         }
 
-        return papers;
+        return activePapers;
     }
 }

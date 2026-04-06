@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.HeartbeatSystem;
+using System.Linq;
 using RuleSystem;
+using TMPro;
 using UnityEngine;
 
 public class Rule3 : RuleBase
@@ -11,26 +13,38 @@ public class Rule3 : RuleBase
     [SerializeField] private float enterAngle = 20f;
     [SerializeField] private float exitAngle = 25f;
     [SerializeField] PaperSpawner paperSpawner;
+    
     private bool isLooking = false;
     
     private int currentIndex = 0;
     
-    private List<int> correctOrder = new List<int> {1,2,3,4};
-
+    [SerializeField]private List<int> correctOrder = new List<int>();
     private Transform playerCamera;
+    
+    private int wrongCount = 0;
+    [SerializeField] private int maxWrong = 3;
 
     private void Awake()
     {
         Instance = this;
     }
-
+    
     public override void StartRule()
     {
         base.StartRule();
-        paperSpawner.SpawnPapers();
+        List<Paper> papers = paperSpawner.SpawnPapers();
+        correctOrder = papers
+            .Select(p => p.number)
+            .OrderBy(n => n)
+            .ToList();
         playerCamera = Camera.main.transform;
     }
-    
+    public bool CheckAnswer(int number)
+    {
+        if (currentIndex >= correctOrder.Count) return false;
+
+        return number == correctOrder[currentIndex];
+    }
     protected override void UpdateRule()
     {
         // heartbeat logic
@@ -41,22 +55,16 @@ public class Rule3 : RuleBase
     }
     public void OnPaperSelected(int number)
     {
-        if (number == correctOrder[currentIndex])
-        {
-            currentIndex++;
+        if (currentIndex >= correctOrder.Count) return;
+        currentIndex++;
 
-            if (currentIndex >= 4)
-            {
-                Debug.Log("SUCCESS");
-            }
-        }
-        else
+        if (currentIndex >= correctOrder.Count)
         {
-            OnWrong();
+            Debug.Log("SUCCESS");
         }
     }
 
-    void OnWrong()
+    public void OnWrong()
     {
         //AudioManager.instance.IncreaseHeartbeatLevel();
     }
