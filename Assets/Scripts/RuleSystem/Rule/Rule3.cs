@@ -50,7 +50,7 @@ public class Rule3 : RuleBase
         // heartbeat logic
         AudioManager.instance.UpdateHeartbeat();
         // distance logic
-        HeartbeatSystem.instance.CheckPlayerInsideZone();
+        //HeartbeatSystem.instance.CheckPlayerInsideZone();
         CheckLookAtForbidden();
     }
     public void OnPaperSelected(int number)
@@ -66,7 +66,9 @@ public class Rule3 : RuleBase
 
     public void OnWrong()
     {
-        //AudioManager.instance.IncreaseHeartbeatLevel();
+        wrongCount++;
+        Debug.Log($"Wrong! Count: {wrongCount}");
+        AudioManager.instance.IncreaseHeartbeatLevel();
     }
 
     void CheckLookAtForbidden()
@@ -89,7 +91,7 @@ public class Rule3 : RuleBase
     public override void EndRule()
     {
         base.EndRule();
-
+        AudioManager.instance.StopHeartbeat();
         LookDistortionSystem.Instance.StopPull();
     }
 }

@@ -12,6 +12,7 @@ public class Paper : MonoBehaviour
     private InputHandler inputHandler;
     private bool isSubscribed = false;
     private bool isUsed = false;
+    private float lookEnterTime;
     private GameObject interactionText;
     [SerializeField] private Renderer paperRenderer;
     private Material mat;
@@ -34,8 +35,6 @@ public class Paper : MonoBehaviour
     private void Update()
     {
         CheckLook();
-        
-        
     }
 
     void CheckLook()
@@ -46,9 +45,11 @@ public class Paper : MonoBehaviour
         isPlayerLooking = angle < 10f;
         if (isPlayerLooking && !isSubscribed)
         {
+            isSubscribed = true;
+            lookEnterTime = Time.time;
             inputHandler.OnRightClickPressed += OnInteract;
             interactionText.SetActive(true);
-            isSubscribed = true;
+            
 
         }
         else if (!isPlayerLooking && isSubscribed)
@@ -61,10 +62,13 @@ public class Paper : MonoBehaviour
 
     void OnInteract()
     {
+        if (Time.time - lookEnterTime < 0.1f) return;
+        Debug.Log("Interact with paper: " + number);
         if (isUsed) return;
 
         bool isCorrect = Rule3.Instance.CheckAnswer(number);
 
+        Debug.Log("IsCorrect: " + isCorrect);
         if (isCorrect)
         {
             isUsed = true;
@@ -74,6 +78,8 @@ public class Paper : MonoBehaviour
         }
         else
         {
+            Debug.Log($"Wrong");
+
             Rule3.Instance.OnWrong();
         }
     }

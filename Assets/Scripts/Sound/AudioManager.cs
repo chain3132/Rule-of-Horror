@@ -15,9 +15,11 @@ public class AudioManager : MonoBehaviour
     private EventInstance windAmbience;
     private EventInstance switchLight;
     Coroutine radioCoroutine;
+    
+    
 
     [SerializeField] private Transform radioTransform;
-
+    private int heartLevel = 0; // 0,1,2
     float currentHeart;
     float targetHeart;
     private void Awake()
@@ -44,6 +46,7 @@ public class AudioManager : MonoBehaviour
         heartbeat = RuntimeManager.CreateInstance("event:/HeartBeat");
         heartbeat.start();
         heartbeat.setParameterByName("HeartLevel", 0);
+
         
         radioOpen = RuntimeManager.CreateInstance("event:/RadioOpen");
         radioOpen.set3DAttributes(RuntimeUtils.To3DAttributes(radioTransform));
@@ -74,6 +77,21 @@ public class AudioManager : MonoBehaviour
     public void SwitchWindAmbience(float tension)
     {
         windAmbience.setParameterByName("Tension", tension);
+    }
+    public void IncreaseHeartbeatLevel()
+    {
+        if (heartLevel >= 3) return; //  กันเกิน
+
+        heartLevel++;
+        targetHeart = heartLevel;
+        Debug.Log("Increase heartbeat to level " + targetHeart);
+        
+    }
+    public void StopHeartbeat()
+    {
+        heartbeat.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+        targetHeart = 0f;
+        currentHeart = 0f;
     }
     public void UpdateHeartbeat()
     {

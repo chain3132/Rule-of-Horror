@@ -42,6 +42,10 @@ public class GameModeController : MonoBehaviour
     [SerializeField] private Color tensionLightColor = new Color(0.8f, 0.9f, 1f);
     [SerializeField] private Color relaxSkyBoxColor = new Color(1f, 0.95f, 0.8f);
     [SerializeField] private Color tensionSkyBoxColor = new Color(0.8f, 0.9f, 1f);
+    [SerializeField] private ParticleSystem[] relaxParticle;
+    [Header("Skybox Settings")]
+    public Material relaxSkyboxMat;
+    public Material tensionSkyboxMat;
     
     public static GameModeController instance;
     LensDistortion lens;
@@ -255,13 +259,17 @@ public class GameModeController : MonoBehaviour
         {
             globalVolume.profile = relaxProfile;
             bloodOverlay.SetActive(false);
-            AudioManager.instance.FadeOutMusic();
             SetSaraModel(mode);
             LightRandomCandle(); 
             SetWindZone(GameMode.Relax);
             directionLight.color = relaxLightColor;
-            RenderSettings.skybox.SetColor("_Tint", relaxSkyBoxColor);
+            RenderSettings.skybox = relaxSkyboxMat;
+            //RenderSettings.skybox.SetColor("_Tint", relaxSkyBoxColor);
             AudioManager.instance.SwitchWindAmbience(0);
+            foreach (var particle in relaxParticle)
+            {
+                particle.Play();
+            }
 
         }
         else
@@ -269,12 +277,15 @@ public class GameModeController : MonoBehaviour
             globalVolume.profile = tensionProfile;
             bloodOverlay.SetActive(true);
             directionLight.color = tensionLightColor;
-            AudioManager.instance.FadeInMusic();
+            RenderSettings.skybox = tensionSkyboxMat;
             RenderSettings.skybox.SetColor("_Tint", tensionSkyBoxColor);
-
             SetSaraModel(mode);
             SetWindZone(GameMode.Tension);
             AudioManager.instance.SwitchWindAmbience(1);
+            foreach (var particle in relaxParticle)
+            {
+                particle.Stop();
+            }
 
 
         }
