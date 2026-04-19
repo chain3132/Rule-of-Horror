@@ -4,8 +4,7 @@ using UnityEngine;
 [System.Serializable]
 public class ChatHistory
 {
-    public string conversationID; // ID ของบทสนทนา
-    public int lastNodeIndex;     // คุยค้างไว้ที่ Node ไหน
-    public List<ChatNode> historyMessages = new List<ChatNode>(); // ข้อความที่คุยไปแล้ว
-    public bool isFinished;       // คุยจบหรือยัง
+    public List<int> shownNodeIndices = new(); // เก็บ index แทน node (ปลอดภัยกว่า)
+    public int lastNodeIndex = 0;
+    public bool isFinished = false;       // คุยจบหรือยัง
 }

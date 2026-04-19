@@ -5541,6 +5541,7 @@ MonoBehaviour:
   phoneSystem: {fileID: 269643657}
   replyRoot: {fileID: 1382242529}
   replyButtonPrefab: {fileID: 8667301332863714093, guid: c8fa5dc1d6f2c3e42873b9bef5c178ec, type: 3}
+  convoManager: {fileID: 849049214}
 --- !u!4 &46010141
 Transform:
   m_ObjectHideFlags: 0
@@ -19565,6 +19566,57 @@ MonoBehaviour:
   - {fileID: 6724197233407788146, guid: 36e0eb08bad90f64f84938290f7008ff, type: 3}
   inputHandler: {fileID: 1279262527}
   paperText: {fileID: 1998330125}
+--- !u!1 &849049213
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 849049215}
+  - component: {fileID: 849049214}
+  m_Layer: 0
+  m_Name: ConversationManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &849049214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 849049213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d40f11506d142df4880255b71b7fa2e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ConversationManager
+  conversations:
+  - data: {fileID: 11400000, guid: 22149b4817a91e344ada2a9bb984e42e, type: 2}
+    startHour: 21
+    startMinute: 40
+    endHour: 0
+    endMinute: 0
+    isUnlocked: 0
+--- !u!4 &849049215
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 849049213}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -277.74826, y: 0, z: 478.5338}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &850798364
 GameObject:
   m_ObjectHideFlags: 0
@@ -31683,8 +31735,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimeManager
   realSecondsPerGameMinute: 6
-  currentHour: 20
-  currentMinute: 59
+  currentHour: 21
+  currentMinute: 39
 --- !u!4 &1568684707
 Transform:
   m_ObjectHideFlags: 0
@@ -51380,12 +51432,13 @@ SceneRoots:
   - {fileID: 2021459724}
   - {fileID: 297145925}
   - {fileID: 1279262528}
+  - {fileID: 433668184}
   - {fileID: 46010141}
+  - {fileID: 849049215}
   - {fileID: 62246499}
   - {fileID: 269643658}
-  - {fileID: 433668184}
-  - {fileID: 1568684707}
   - {fileID: 591596786}
+  - {fileID: 1568684707}
   - {fileID: 924809921}
   - {fileID: 1656752502}
   - {fileID: 1844991511}

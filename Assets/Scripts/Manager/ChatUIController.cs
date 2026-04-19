@@ -20,7 +20,16 @@ namespace Manager
         [SerializeField] private PhoneSystem.PhoneSystem phoneSystem;
         [SerializeField] private Transform replyRoot;
         [SerializeField] private GameObject replyButtonPrefab;
-        private ChatHistory currentHistory = new ChatHistory();
+        private ChatHistory currentHistory;
+        private Dictionary<ConversationData, ChatHistory> histories;
+        private List<(ConversationData data, int nodeIndex)> timeline
+            = new List<(ConversationData, int)>();
+
+        private HashSet<ConversationData> playedConversations
+            = new HashSet<ConversationData>();
+        [SerializeField] private ConversationManager convoManager;
+        private ConversationData currentRunningData;
+
         private void OnEnable()
         {
             runner.OnNodeDisplayed += AddMessage;
@@ -36,37 +45,60 @@ namespace Manager
         public void OpenConversation()
         {
             phoneSystem.ChangeState(PhoneState.ChatView);
-            
+
             ClearChatDisplay();
 
-            // 2. ถ้ามีประวัติเก่า ให้ "วาด" ของเก่าขึ้นมาก่อน (แบบเงียบๆ ไม่ผ่าน Runner)
-            if (currentHistory.historyMessages.Count > 0)
+            // 🔥 render ทั้ง timeline
+            foreach (var entry in timeline)
             {
-                foreach (var node in currentHistory.historyMessages)
+                var node = entry.data.nodes[entry.nodeIndex];
+                InstantiateBubble(node);
+            }
+
+            // 🔥 หา conversation ล่าสุดที่ยังไม่จบ
+            var unlocked = convoManager.UnlockedData;
+
+            foreach (var data in unlocked)
+            {
+                if (!playedConversations.Contains(data))
                 {
-                    InstantiateBubble(node);
+                    currentRunningData = data;
+                    playedConversations.Add(data);
+
+                    runner.StartConversation(data);
+                    return;
                 }
-        
-                // 3. พอวาดเสร็จ ค่อยให้ Runner เริ่มทำงานต่อจากจุดล่าสุด
+            }
+
+            Debug.Log("All conversations played");
+        }
+        private void OpenConversationInternal(ConversationData data)
+        {
+            if (!histories.ContainsKey(data))
+                histories[data] = new ChatHistory();
+
+            currentHistory = histories[data];
+
+            ClearChatDisplay();
+
+            if (currentHistory.shownNodeIndices.Count > 0)
+            {
+                foreach (var index in currentHistory.shownNodeIndices)
+                {
+                    InstantiateBubble(data.nodes[index]);
+                }
+
                 if (!currentHistory.isFinished)
                 {
-                    // ตรงนี้ต้องระวัง: ResumeConversation ต้องไม่ไปสั่ง AddMessage ซ้ำของเดิม
-                    runner.ResumeConversation(testConversation, currentHistory.lastNodeIndex);
+                    runner.ResumeConversation(data, currentHistory.lastNodeIndex);
                 }
             }
-            else 
+            else
             {
-                // ถ้าไม่มีประวัติเลย ถึงค่อยเริ่มใหม่ตั้งแต่ต้น
-                runner.StartConversation(testConversation);
+                runner.StartConversation(data);
             }
         }
-        private void ReloadHistory()
-        {
-            foreach (var node in currentHistory.historyMessages)
-            {
-                RenderMessage(node); // แยก Logic การ Instantiate ออกมาเป็น Method กลาง
-            }
-        }
+        
         private void InstantiateBubble(ChatNode node)
         {
             var prefab = node.isPlayer ? rightBubblePrefab : leftBubblePrefab;
@@ -79,15 +111,17 @@ namespace Manager
         }
         public void AddMessage(ChatNode node)
         {
-            // บันทึกลงประวัติ (ป้องกันการซ้อนต้องเช็คก่อนว่ามีในประวัติหรือยัง)
-            if (!currentHistory.historyMessages.Contains(node))
+            int index = runner.CurrentIndex;
+            var currentData = currentRunningData; // ต้องเก็บตัวนี้ตอน Start/Resume
+
+            var entry = (currentData, index);
+
+            if (!timeline.Contains(entry))
             {
-                currentHistory.historyMessages.Add(node);
+                timeline.Add(entry);
             }
-    
-            currentHistory.lastNodeIndex = runner.CurrentIndex;
-    
-            InstantiateBubble(node); // แสดงผลบนจอ
+
+            InstantiateBubble(node);
         }
         private void RenderMessage(ChatNode node)
         {
