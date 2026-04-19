@@ -94,7 +94,7 @@ public class Paper : MonoBehaviour
         // 🔥 เผา
         Burn();
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1f);
 
         LookDistortionSystem.Instance.StopFocus();
     }
