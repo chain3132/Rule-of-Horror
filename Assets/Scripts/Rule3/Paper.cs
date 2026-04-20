@@ -84,8 +84,8 @@ public class Paper : MonoBehaviour
         }
         else{
             isUsed = false;
-            yield return new WaitForSeconds(1f);
         }
+        yield return new WaitForSeconds(1f);
         LookDistortionSystem.Instance.StopFocus();
     }
 

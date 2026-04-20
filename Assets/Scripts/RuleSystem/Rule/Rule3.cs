@@ -69,6 +69,7 @@ public class Rule3 : RuleBase
             .ToList();
         playerCamera = Camera.main.transform;
         Object ghostObj = Instantiate(ghost, spawnPoints[0].position, Quaternion.Euler(0,90,0));
+        LightFlickerSystem.Instance.StartAmbientFlicker();
     }
     public bool CheckAnswer(int number)
     {
@@ -88,7 +89,7 @@ public class Rule3 : RuleBase
     {
         if (currentIndex >= correctOrder.Count) return;
         currentIndex++;
-
+        LightFlickerSystem.Instance.PlayImpactFlicker();
         if (currentIndex >= correctOrder.Count)
         {
             Debug.Log("SUCCESS");

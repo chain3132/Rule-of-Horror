@@ -19516,6 +19516,7 @@ GameObject:
   - component: {fileID: 842431699}
   - component: {fileID: 842431700}
   - component: {fileID: 842431701}
+  - component: {fileID: 842431702}
   m_Layer: 0
   m_Name: Rule3
   m_TagString: Untagged
@@ -19602,6 +19603,20 @@ MonoBehaviour:
   - {fileID: 6724197233407788146, guid: 36e0eb08bad90f64f84938290f7008ff, type: 3}
   inputHandler: {fileID: 1279262527}
   paperText: {fileID: 1998330125}
+--- !u!114 &842431702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 842431698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96ff756641e0b4342b461e36fa786ccf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightFlickerSystem
+  lights:
+  - {fileID: 1854477808}
 --- !u!1 &849049213
 GameObject:
   m_ObjectHideFlags: 0
