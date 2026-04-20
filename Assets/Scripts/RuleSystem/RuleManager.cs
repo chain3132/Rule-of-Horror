@@ -30,14 +30,13 @@ public class RuleManager : MonoBehaviour
             // เริ่มกฎ
             if (!rule.ruleActive && currentTime >= startTime && currentTime < endTime)
             {
-                GameModeController.instance.BlinkToMode(GameMode.Tension);
+                
                 rule.StartRule();
             }
 
             // จบกฎ
             if (rule.ruleActive && currentTime >= endTime)
             {
-                GameModeController.instance.BlinkToMode(GameMode.Relax);
                 rule.EndRule();
             }
         }

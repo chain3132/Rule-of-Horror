@@ -47,7 +47,9 @@ public class GameModeController : MonoBehaviour
     public Material relaxSkyboxMat;
     public Material tensionSkyboxMat;
     
+    
     public static GameModeController instance;
+    public bool IsEyesOpen { get; private set; } = false;
     LensDistortion lens;
     ChromaticAberration chroma;
     DepthOfField dof;
@@ -203,6 +205,7 @@ public class GameModeController : MonoBehaviour
         float t = 0;
         float widthTop = topLid.sizeDelta.x;
         float widthBottom = bottomLid.sizeDelta.x;
+        IsEyesOpen = false;
         // ปิดตา
         while(t < 1)
         {
@@ -232,6 +235,7 @@ public class GameModeController : MonoBehaviour
 
             yield return null;
         }
+        IsEyesOpen = true;
         TimeManager.instance.IsPauseTime(false);
 
     }

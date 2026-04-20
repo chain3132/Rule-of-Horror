@@ -6,6 +6,8 @@ namespace Player
 {
     public class PlayerController : MonoBehaviour
     {
+        public static PlayerController Instance { get; private set; }
+        public bool isBlockStanding = false; 
         #region SerializeFields
         [Header("Camera Height Settings")]
         [SerializeField] private float standingCameraHeight = 2.55f; 
@@ -59,6 +61,15 @@ namespace Player
 
         private void Awake()
         {
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
             _characterController = GetComponent<CharacterController>();
             Cursor.visible = false;
         }
@@ -135,6 +146,7 @@ namespace Player
         public void StartStandingSequence()
         {
             if (!_isSitting || _isTransitioning) return;
+            if (isBlockStanding) return;
             StartCoroutine(StandUpRoutine());
         }
 

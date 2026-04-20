@@ -66,22 +66,9 @@ public class Paper : MonoBehaviour
         Debug.Log("Interact with paper: " + number);
         if (isUsed) return;
 
-        bool isCorrect = Rule3.Instance.CheckAnswer(number);
-
-        Debug.Log("IsCorrect: " + isCorrect);
-        if (isCorrect)
-        {
-            isUsed = true;
-            StartCoroutine(InteractRoutine());
-            interactionText.SetActive(false);
-
-        }
-        else
-        {
-            Debug.Log($"Wrong");
-
-            Rule3.Instance.OnWrong();
-        }
+        isUsed = true;
+        StartCoroutine(InteractRoutine());
+        interactionText.SetActive(false);
     }
 
     IEnumerator InteractRoutine()
@@ -90,12 +77,15 @@ public class Paper : MonoBehaviour
 
         // รอซูมเข้า
         yield return new WaitForSeconds(1f);
-
-        // 🔥 เผา
-        Burn();
-
-        yield return new WaitForSeconds(1f);
-
+        bool isCorrect = Rule3.Instance.CheckAnswer(number);
+        if (isCorrect)
+        {
+            Burn();
+        }
+        else{
+            isUsed = false;
+            yield return new WaitForSeconds(1f);
+        }
         LookDistortionSystem.Instance.StopFocus();
     }
 

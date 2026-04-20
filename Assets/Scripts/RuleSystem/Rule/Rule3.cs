@@ -1,10 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.HeartbeatSystem;
 using System.Linq;
+using Manager;
+using Player;
 using RuleSystem;
 using TMPro;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class Rule3 : RuleBase
 {
@@ -13,6 +17,8 @@ public class Rule3 : RuleBase
     [SerializeField] private float enterAngle = 20f;
     [SerializeField] private float exitAngle = 25f;
     [SerializeField] PaperSpawner paperSpawner;
+    [SerializeField] Transform[] spawnPoints;
+    [SerializeField] private GameObject ghost;
     
     private bool isLooking = false;
     
@@ -32,12 +38,37 @@ public class Rule3 : RuleBase
     public override void StartRule()
     {
         base.StartRule();
+        StartCoroutine(RuleFlow());
+    }
+    bool PlayerIsSitting()
+    {
+        return PlayerController.Instance.IsSitting();
+    }
+    bool PlayerEyesOpened()
+    {
+        return GameModeController.instance.IsEyesOpen;
+    }
+    IEnumerator RuleFlow()
+    {
+        TimeManager.instance.IsPauseTime(true);
+        // 🪑 1. รอให้ผู้เล่น "นั่งก่อน"
+        yield return new WaitUntil(() => PlayerIsSitting());
+        GameModeController.instance.BlinkToMode(GameMode.Tension);
+        PlayerController.Instance.isBlockStanding = true;
+        yield return new WaitUntil(() => PlayerEyesOpened());
+        // 3. เริ่มกฎจริง
+        StartGameplay();
+    }
+    void StartGameplay()
+    {
+        
         List<Paper> papers = paperSpawner.SpawnPapers();
         correctOrder = papers
             .Select(p => p.number)
             .OrderBy(n => n)
             .ToList();
         playerCamera = Camera.main.transform;
+        Object ghostObj = Instantiate(ghost, spawnPoints[0].position, Quaternion.Euler(0,90,0));
     }
     public bool CheckAnswer(int number)
     {
@@ -51,7 +82,7 @@ public class Rule3 : RuleBase
         AudioManager.instance.UpdateHeartbeat();
         // distance logic
         //HeartbeatSystem.instance.CheckPlayerInsideZone();
-        CheckLookAtForbidden();
+        //CheckLookAtForbidden();
     }
     public void OnPaperSelected(int number)
     {
@@ -91,6 +122,8 @@ public class Rule3 : RuleBase
     public override void EndRule()
     {
         base.EndRule();
+        GameModeController.instance.BlinkToMode(GameMode.Relax);
+        PlayerController.Instance.isBlockStanding = false;
         AudioManager.instance.StopHeartbeat();
         LookDistortionSystem.Instance.StopPull();
     }
