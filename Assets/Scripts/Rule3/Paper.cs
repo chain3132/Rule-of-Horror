@@ -6,7 +6,7 @@ using UnityEngine;
 public class Paper : MonoBehaviour
 {
     public int number;
-
+    public bool isFake;
     private bool isPlayerLooking;
     private Camera playerCam;
     private InputHandler inputHandler;
@@ -67,10 +67,30 @@ public class Paper : MonoBehaviour
         if (isUsed) return;
 
         isUsed = true;
-        StartCoroutine(InteractRoutine());
+        if (isFake)
+        {
+            StartCoroutine(FakeRoutine());
+        }
+        else
+        {
+            StartCoroutine(InteractRoutine());
+        }
+        
         interactionText.SetActive(false);
     }
+    IEnumerator FakeRoutine()
+    {
+        LookDistortionSystem.Instance.StartFocus(transform);
 
+        yield return new WaitForSeconds(1f);
+
+        //  ไม่มี burn
+        //  ไม่มี check
+
+        yield return new WaitForSeconds(0.5f);
+
+        LookDistortionSystem.Instance.StopFocus();
+    }
     IEnumerator InteractRoutine()
     {
         LookDistortionSystem.Instance.StartFocus(transform);
@@ -112,7 +132,7 @@ public class Paper : MonoBehaviour
         mat.SetFloat("_Dissolve", 1f); // กันไม่สุด
 
         // แจ้งว่าเลือกเสร็จ
-        Rule3.Instance.OnPaperSelected(number);
+        Rule3.Instance.OnPaperSelected(this);
 
         gameObject.SetActive(false);
     }

@@ -87,6 +87,19 @@ public class AudioManager : MonoBehaviour
         Debug.Log("Increase heartbeat to level " + targetHeart);
         
     }
+    public void SetHeartbeatLevel(int level)
+    {
+        heartLevel = Mathf.Clamp(level, 0, 3);
+        targetHeart = heartLevel;
+    }
+
+    public void DecreaseHeartbeatLevel()
+    {
+        if (heartLevel <= 1) return; // ไม่ต่ำกว่า 1
+        heartLevel--;
+        targetHeart = heartLevel;
+        Debug.Log("Decrease heartbeat to level " + heartLevel);
+    }
     public void StopHeartbeat()
     {
         heartbeat.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);

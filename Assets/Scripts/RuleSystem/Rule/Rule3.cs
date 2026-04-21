@@ -9,6 +9,7 @@ using RuleSystem;
 using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 public class Rule3 : RuleBase
 {
@@ -17,18 +18,25 @@ public class Rule3 : RuleBase
     [SerializeField] private float enterAngle = 20f;
     [SerializeField] private float exitAngle = 25f;
     [SerializeField] PaperSpawner paperSpawner;
-    [SerializeField] Transform[] spawnPoints;
+    [SerializeField] Transform[] ghostSpawnPoints;
     [SerializeField] private GameObject ghost;
     
     private bool isLooking = false;
-    
     private int currentIndex = 0;
+    private int ghostIndex = 0;
     
     [SerializeField]private List<int> correctOrder = new List<int>();
     private Transform playerCamera;
     
     private int wrongCount = 0;
+    private List<Paper> realPapers;
+    private List<Paper> fakePapers;
     [SerializeField] private int maxWrong = 3;
+    
+    private GameObject ghostInstance;
+    private Animator ghostAnimator;
+
+    private Coroutine heartbeatEscalationCoroutine;
 
     private void Awake()
     {
@@ -62,15 +70,34 @@ public class Rule3 : RuleBase
     void StartGameplay()
     {
         
-        List<Paper> papers = paperSpawner.SpawnPapers();
-        correctOrder = papers
+        var result = paperSpawner.SpawnPapers();
+
+        realPapers = result.realPapers;
+        fakePapers = result.fakePapers;
+
+        correctOrder = realPapers
             .Select(p => p.number)
             .OrderBy(n => n)
             .ToList();
         playerCamera = Camera.main.transform;
-        Object ghostObj = Instantiate(ghost, spawnPoints[0].position, Quaternion.Euler(0,90,0));
+        ghostIndex = 0;
+        ghostInstance = Instantiate(ghost, ghostSpawnPoints[0].position, Quaternion.Euler(0,90,0));
+        ghostAnimator = ghostInstance.GetComponent<Animator>();
+
         LightFlickerSystem.Instance.StartAmbientFlicker();
+        AudioManager.instance.SetHeartbeatLevel(1);
+        heartbeatEscalationCoroutine = StartCoroutine(HeartbeatEscalationRoutine());
+
     }
+    IEnumerator HeartbeatEscalationRoutine()
+    {
+        yield return new WaitForSeconds(10f);
+        AudioManager.instance.IncreaseHeartbeatLevel(); // → level 2
+
+        yield return new WaitForSeconds(30f);
+        AudioManager.instance.IncreaseHeartbeatLevel(); // → level 3
+    }
+    
     public bool CheckAnswer(int number)
     {
         if (currentIndex >= correctOrder.Count) return false;
@@ -85,17 +112,61 @@ public class Rule3 : RuleBase
         //HeartbeatSystem.instance.CheckPlayerInsideZone();
         //CheckLookAtForbidden();
     }
-    public void OnPaperSelected(int number)
+    
+    
+    public void OnPaperSelected(Paper selectedPaper)
     {
         if (currentIndex >= correctOrder.Count) return;
         currentIndex++;
+        realPapers.Remove(selectedPaper);
+        AudioManager.instance.DecreaseHeartbeatLevel();
+
         LightFlickerSystem.Instance.PlayImpactFlicker();
-        if (currentIndex >= correctOrder.Count)
+        
+        bool isLast = currentIndex >= correctOrder.Count;
+        StartCoroutine(OnCorrectRoutine(isLast));
+    }
+    IEnumerator OnCorrectRoutine(bool isLast)
+    {
+        yield return new WaitForSeconds(0.3f); // รอช่วงไฟดับ
+
+        // ย้ายผีไปตำแหน่งถัดไปแล้ว trigger Sit
+        ghostIndex++;
+        if (ghostInstance != null && ghostIndex < ghostSpawnPoints.Length)
         {
-            Debug.Log("SUCCESS");
+            ghostInstance.transform.position = ghostSpawnPoints[ghostIndex].position;
+            ghostInstance.transform.rotation = ghostSpawnPoints[ghostIndex].rotation;
+        }
+
+        if (ghostAnimator != null)
+            Debug.Log("Trigger ghost Sit animation");
+            ghostAnimator.SetTrigger("Sit");
+
+        if (isLast)
+        {
+            // รอหลังไฟดับครั้งสุดท้ายสักแป๊บ
+            yield return new WaitForSeconds(1.5f);
+            CleanupAndEnd();
+        }
+        else
+        {
+            // Shuffle กระดาษใหม่
+            StartCoroutine(paperSpawner.ShuffleRoutine(realPapers, fakePapers));
         }
     }
+    void CleanupAndEnd()
+    {
+        // ✅ Destroy ผี
+        if (ghostInstance != null) Destroy(ghostInstance);
 
+        // ✅ Destroy กระดาษทั้งหมด
+        foreach (var p in realPapers) if (p != null) Destroy(p.gameObject);
+        foreach (var p in fakePapers) if (p != null) Destroy(p.gameObject);
+        realPapers.Clear();
+        fakePapers.Clear();
+
+        EndRule();
+    }
     public void OnWrong()
     {
         wrongCount++;
@@ -123,6 +194,10 @@ public class Rule3 : RuleBase
     public override void EndRule()
     {
         base.EndRule();
+        // หยุด escalation coroutine
+        if (heartbeatEscalationCoroutine != null)
+            StopCoroutine(heartbeatEscalationCoroutine);
+        
         GameModeController.instance.BlinkToMode(GameMode.Relax);
         PlayerController.Instance.isBlockStanding = false;
         AudioManager.instance.StopHeartbeat();
