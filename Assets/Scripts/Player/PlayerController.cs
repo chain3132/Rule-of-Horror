@@ -154,8 +154,7 @@ namespace Player
         {
             _isTransitioning = true;
             SetLook(false); // ล็อกหน้าจอชั่วคราวตอนกำลังยืดตัวขึ้น
-            SetSittingPhysics(false);
-    
+
             // 1. เล่น Animation ลุกขึ้น
             if (animator != null)
             {
@@ -192,6 +191,8 @@ namespace Player
 
             _isSitting = false;
             _sittingYaw = 0f;
+            _verticalVelocity = 0f; // reset ก่อน gravity เริ่มทำงาน ป้องกันทะลุพื้น
+            SetSittingPhysics(false); // เปลี่ยน layer หลัง transition จบ ป้องกัน CC ชนพื้นผิดจุด
             SetMovement(true); // ปลดล็อกให้เดินได้
             SetLook(true);     // ปลดล็อกให้หันหน้าได้ปกติ
             _isTransitioning = false;
