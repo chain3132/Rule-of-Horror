@@ -52,6 +52,8 @@ namespace Player
         private bool _canMove = true;
         private bool _canLook = true;
         private Vector2 _externalLookForce;
+        private Vector3 _beforeSitPosition;
+        private Quaternion _beforeSitRotation;
         public bool IsSitting() => _isSitting;
 
 
@@ -91,6 +93,8 @@ namespace Player
         public void StartSittingSequence(Transform target)
         {
             if (_isSitting || _isTransitioning) return;
+            _beforeSitPosition = transform.position;
+            _beforeSitRotation = transform.rotation;
             StartCoroutine(SitRoutine(target));
         }
 
@@ -153,8 +157,10 @@ namespace Player
         private IEnumerator StandUpRoutine()
         {
             _isTransitioning = true;
-            SetLook(false); // ล็อกหน้าจอชั่วคราวตอนกำลังยืดตัวขึ้น
             SetSittingPhysics(false);
+            _verticalVelocity = 0f;
+            SetLook(false); // ล็อกหน้าจอชั่วคราวตอนกำลังยืดตัวขึ้น
+            
     
             // 1. เล่น Animation ลุกขึ้น
             if (animator != null)
@@ -192,9 +198,45 @@ namespace Player
 
             _isSitting = false;
             _sittingYaw = 0f;
+            SnapToGround(); 
             SetMovement(true); // ปลดล็อกให้เดินได้
             SetLook(true);     // ปลดล็อกให้หันหน้าได้ปกติ
             _isTransitioning = false;
+            
+            _characterController.enabled = false;
+
+            transform.position = _beforeSitPosition;
+            transform.rotation = _beforeSitRotation;
+            _characterController.enabled = true;
+            _verticalVelocity = -2f;
+        }
+        public void ForceGroundSnap()
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, 5f))
+            {
+                float skin = _characterController.skinWidth;
+                float bottomOffset = _characterController.height / 2f;
+
+                Vector3 pos = transform.position;
+                pos.y = hit.point.y + bottomOffset + skin;
+
+                transform.position = pos;
+            }
+        }
+        public void SnapToGround()
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, 5f))
+            {
+                float skin = _characterController.skinWidth;
+                float bottomOffset = _characterController.height / 2f;
+
+                Vector3 pos = transform.position;
+                pos.y = hit.point.y + bottomOffset + skin;
+
+                transform.position = pos;
+            }
         }
 
         public void Move(Vector2 moveInput)

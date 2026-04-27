@@ -14,11 +14,18 @@ public class AudioManager : MonoBehaviour
     private EventInstance radioNoise;
     private EventInstance windAmbience;
     private EventInstance switchLight;
+    private EventInstance radioPray;
+    private EventInstance WomanScream;
+    private EventInstance jumpScare;
+
     Coroutine radioCoroutine;
     
-    
-
     [SerializeField] private Transform radioTransform;
+    [SerializeField] private Transform[] womanScreamTransform;
+    [SerializeField] public Transform player;
+    public  bool isPlaying = false;
+
+    private float angle;
     private int heartLevel = 0; // 0,1,2
     float currentHeart;
     float targetHeart;
@@ -46,8 +53,13 @@ public class AudioManager : MonoBehaviour
         heartbeat = RuntimeManager.CreateInstance("event:/HeartBeat");
         heartbeat.start();
         heartbeat.setParameterByName("HeartLevel", 0);
-
         
+        WomanScream = RuntimeManager.CreateInstance("event:/WomanScream");
+        WomanScream.set3DAttributes(RuntimeUtils.To3DAttributes(womanScreamTransform[0]));
+        
+        jumpScare = RuntimeManager.CreateInstance("event:/JumpScareSound");
+        
+
         radioOpen = RuntimeManager.CreateInstance("event:/RadioOpen");
         radioOpen.set3DAttributes(RuntimeUtils.To3DAttributes(radioTransform));
         
@@ -56,6 +68,9 @@ public class AudioManager : MonoBehaviour
         
         radioNoise = RuntimeManager.CreateInstance("event:/RadioNoise");
         radioNoise.set3DAttributes(RuntimeUtils.To3DAttributes(radioTransform));
+        
+        radioPray = RuntimeManager.CreateInstance("event:/RadioPrayer");
+        radioPray.set3DAttributes(RuntimeUtils.To3DAttributes(radioTransform));
         
         radioNoise.setVolume(0f);
         radioNoise.start();
@@ -77,6 +92,21 @@ public class AudioManager : MonoBehaviour
     public void SwitchWindAmbience(float tension)
     {
         windAmbience.setParameterByName("Tension", tension);
+    }
+    public void PlayJumpScare()
+    {
+        jumpScare.start();
+    }
+    public void StartWomanScream()
+    {
+        WomanScream.start();
+    }
+
+    
+   
+    public void StopWomanScream()
+    {
+        WomanScream.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
     }
     public void IncreaseHeartbeatLevel()
     {
@@ -117,17 +147,34 @@ public class AudioManager : MonoBehaviour
             StopCoroutine(radioCoroutine);
         StartCoroutine(PlayRadioRoutine());
     }
-    
+    public void PlayRadioPrayer(int prayIndex)  
+    {
+        radioPray.start();
+        radioPray.setParameterByName("RadioPray", prayIndex);
+        radioPray.setVolume(1f);
+    }
+    public void StopPlayRadioPrayer()
+    {
+        radioPray.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+    }
 
     IEnumerator PlayRadioRoutine()
     {
+        radioNoise.start();
+        radioNoise.release();
         radioOpen.start();
-        radioOpen.release(); 
-        
         yield return new WaitForSeconds(0.5f);
         
         yield return StartCoroutine(FadeInNoise(1f));
         
+    }
+    public void StopRadio()
+    {
+        if (radioCoroutine != null)
+            StopCoroutine(radioCoroutine);
+        radioOpen.start();
+        radioNoise.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+        radioSound.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
     }
     IEnumerator FadeInNoise(float duration)
     {
@@ -138,11 +185,11 @@ public class AudioManager : MonoBehaviour
             t += Time.deltaTime;
             float normalized = t / duration;
 
-            radioSound.setVolume(normalized);
+            radioNoise.setVolume(normalized);
             yield return null;
         }
 
-        radioSound.setVolume(1f);
+        radioNoise.setVolume(0.7f);
     }
     public void GoToMusic()
     {

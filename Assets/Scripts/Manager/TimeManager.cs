@@ -29,6 +29,12 @@ namespace Manager
                 Destroy(gameObject);
             }
         }
+        public void SetTime(int hour, int minute)
+        {
+            currentHour = hour;
+            currentMinute = minute;
+            OnTimeChanged?.Invoke(currentHour,currentMinute);
+        }
         public void IsPauseTime(bool pause)
         {
             isRuleBlockingTime = pause;

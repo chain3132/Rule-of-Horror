@@ -1,4 +1,6 @@
 using System.Collections;
+using FMOD.Studio;
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,6 +18,7 @@ public class GhostAI : MonoBehaviour
     private NavMeshAgent agent;
     private Transform player;
     private Animator animator;
+    private RuleSystem.Rule.Rule2 rule2;
 
     [Header("Points")]
     public Transform point1; // หน้าศาลา
@@ -29,6 +32,11 @@ public class GhostAI : MonoBehaviour
 
     private bool isTurning;
     private RuleSystem.Rule.Rule2 currentRule;
+    
+    private EventInstance ghostWalk;
+    private EventInstance brokenBone;
+
+
 
     void Awake()
     {
@@ -36,6 +44,16 @@ public class GhostAI : MonoBehaviour
         animator = GetComponent<Animator>();
 
     }
+
+    void Start()
+    {
+        ghostWalk = RuntimeManager.CreateInstance("event:/GhostWalk");
+        brokenBone = RuntimeManager.CreateInstance("event:/BoneBroken");
+
+        ghostWalk.start();
+
+    }
+    
 
     public void Init(Transform playerTarget,RuleSystem.Rule.Rule2 rule2)
     {
@@ -47,6 +65,8 @@ public class GhostAI : MonoBehaviour
 
     void Update()
     {
+        ghostWalk.set3DAttributes(
+            FMODUnity.RuntimeUtils.To3DAttributes(transform));
         switch (currentState)
         {
             case GhostState.MovingToPoint1:
@@ -65,20 +85,23 @@ public class GhostAI : MonoBehaviour
                 break;
         }
     }
-
+    public void PlayBrokenBoneSound()
+    {
+        brokenBone.start();
+    }
     #region Phase 1
 
     void UpdateMoveToPoint1()
     {
         float dist = Vector3.Distance(transform.position, point1.position);
-        animator.SetBool("isWalking", true);
+        animator.SetBool("isWalk", true);
 
 
         if (dist <= stopDistance)
         {
             agent.isStopped = true;
-            animator.SetBool("isWalking", false);
-
+            animator.SetBool("isWalk", false);
+            ghostWalk.setVolume(0);
             ChangeState(GhostState.IdleAtPoint1);
 
             StartCoroutine(IdleThenTurn());
@@ -137,11 +160,27 @@ public class GhostAI : MonoBehaviour
         if (dist <= stopDistance)
         {
             agent.isStopped = true;
+            agent.enabled = false;
+            agent.updatePosition = false;
+            agent.updateRotation = false;
             ChangeState(GhostState.ReachedFinal);
-
             StopFlicker();
             OnReachedFinal();
+            
         }
+    }
+    IEnumerator OnReachedFinalRoutine()
+    {
+        ghostWalk.setVolume(0);
+        animator.SetBool("isWalk", false);
+        yield return new WaitForSeconds(2f);
+        animator.applyRootMotion = true;
+        agent.enabled = false;
+        animator.SetTrigger("Vecna");
+        yield return new WaitForSeconds(13f);
+        currentRule.SpawnJumpScareGhost();
+        Destroy(gameObject,0.5f);
+        
     }
 
     #endregion
@@ -185,9 +224,10 @@ public class GhostAI : MonoBehaviour
         // 👉 moment หลอน
         // - หัวหัก
         saraLight.enabled = true;
-       AudioManager.instance.StopNoise();
-       currentRule.RadioStopped();
-       Destroy(gameObject,0.5f);
+       //AudioManager.instance.StopNoise();
+       StartCoroutine(OnReachedFinalRoutine());
+       //currentRule.RadioStopped();
+       //
         // - เสียง
         // - จ้องผู้เล่น
     }
@@ -202,11 +242,12 @@ public class GhostAI : MonoBehaviour
         {
             case GhostState.MovingToPoint1:
             case GhostState.MovingToPoint2:
-                animator.SetBool("isWalking", true);
+                ghostWalk.setVolume(1);
+                animator.SetBool("isWalk", true);
                 break;
 
             case GhostState.IdleAtPoint1:
-                animator.SetBool("isWalking", false);
+                animator.SetBool("isWalk", false);
                 break;
         }
     }

@@ -15,10 +15,30 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639104736072322471
+  lastModified: 639129023157922289
   FileSizes:
   - Name: Desktop
-    Value: 1074
+    Value: 39392
+  Exists: 1
+--- !u!114 &-8109406064915979547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/WomanSound.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/WomanSound.bank
+  Name: WomanSound
+  StudioPath: bank:/WomanSound
+  lastModified: 639129023158110278
+  FileSizes:
+  - Name: Desktop
+    Value: 56096
   Exists: 1
 --- !u!114 &-8092087314510133167
 MonoBehaviour:
@@ -35,10 +55,10 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Action.bank
   Name: Action
   StudioPath: bank:/Action
-  lastModified: 639104736072600687
+  lastModified: 639128366689164485
   FileSizes:
   - Name: Desktop
-    Value: 3648
+    Value: 34464
   Exists: 1
 --- !u!114 &-7414909333957512450
 MonoBehaviour:
@@ -75,11 +95,38 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Radio.bank
   Name: Radio
   StudioPath: bank:/Radio
-  lastModified: 639103812299991905
+  lastModified: 639128369738727028
   FileSizes:
   - Name: Desktop
-    Value: 1529440
+    Value: 5685728
   Exists: 1
+--- !u!114 &-5740833927528052479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/RunningGhost
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/RunningGhost
+  Guid:
+    Data1: 221943811
+    Data2: 1298299329
+    Data3: 1903448967
+    Data4: -1287241419
+  Banks:
+  - {fileID: 5037105710454743551}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 7368
 --- !u!114 &-4564469147803579842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,6 +147,30 @@ MonoBehaviour:
   ID:
     data1: 3982086312
     data2: 1875776742
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &-3621099473116264512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/RadioPrayer/RadioPray
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: RadioPray
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 1722985137
+    data2: 451790285
   Type: 0
   IsGlobal: 0
   Labels: []
@@ -127,6 +198,26 @@ MonoBehaviour:
   Type: 0
   IsGlobal: 0
   Labels: []
+  Exists: 1
+--- !u!114 &-2276144933527849509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/BoneBroken.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/BoneBroken.bank
+  Name: BoneBroken
+  StudioPath: bank:/New Folder/BoneBroken
+  lastModified: 639129023158361842
+  FileSizes:
+  - Name: Desktop
+    Value: 7520
   Exists: 1
 --- !u!114 &-2123895077631788983
 MonoBehaviour:
@@ -207,6 +298,34 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-192232370895206281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/WomanScream
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/WomanScream
+  Guid:
+    Data1: 1368322162
+    Data2: 1326859899
+    Data3: -493498185
+    Data4: 2133030281
+  Banks:
+  - {fileID: -8687965200994253978}
+  - {fileID: -8109406064915979547}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 7500
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,6 +344,9 @@ MonoBehaviour:
   - {fileID: -8687965200994253978}
   - {fileID: -5803895795705513871}
   - {fileID: -8092087314510133167}
+  - {fileID: -8109406064915979547}
+  - {fileID: 5037105710454743551}
+  - {fileID: -2276144933527849509}
   EditorEvents:
   - {fileID: 7011388528615965413}
   - {fileID: 3299800955492051082}
@@ -233,13 +355,19 @@ MonoBehaviour:
   - {fileID: 7701002489354684094}
   - {fileID: -2123895077631788983}
   - {fileID: 8661769540991862282}
+  - {fileID: 1154855329720997763}
+  - {fileID: -192232370895206281}
+  - {fileID: 7855662284783296693}
+  - {fileID: -5740833927528052479}
+  - {fileID: 550898920918200830}
+  - {fileID: 3576093895535673261}
   EditorParameters: []
   MasterBanks:
   - {fileID: -8687965200994253978}
   StringsBanks:
   - {fileID: 8656562136812460686}
   cacheVersion: 131858
-  cacheTime: 639123780537654852
+  cacheTime: 639129023158361842
   SerializableEventsDict:
   - key: event:/New Event
     index: 0
@@ -255,6 +383,18 @@ MonoBehaviour:
     index: 5
   - key: event:/SwitchLight
     index: 6
+  - key: event:/RadioPrayer
+    index: 7
+  - key: event:/WomanScream
+    index: 8
+  - key: event:/JumpScareSound
+    index: 9
+  - key: event:/RunningGhost
+    index: 10
+  - key: event:/GhostWalk
+    index: 11
+  - key: event:/BoneBroken
+    index: 12
 --- !u!114 &388632287678487498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -282,6 +422,61 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
+--- !u!114 &550898920918200830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/GhostWalk
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/GhostWalk
+  Guid:
+    Data1: -1256904585
+    Data2: 1147545840
+    Data3: 218227859
+    Data4: 1361611524
+  Banks:
+  - {fileID: -8109406064915979547}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 100
+  Length: 1272
+--- !u!114 &1154855329720997763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/RadioPrayer
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/RadioPrayer
+  Guid:
+    Data1: -1167723351
+    Data2: 1320141492
+    Data3: -342298958
+    Data4: 1666040673
+  Banks:
+  - {fileID: -5803895795705513871}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -3621099473116264512}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 287167
 --- !u!114 &3299800955492051082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -310,6 +505,53 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1166
+--- !u!114 &3576093895535673261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/BoneBroken
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/BoneBroken
+  Guid:
+    Data1: -882242326
+    Data2: 1193768690
+    Data3: -941833311
+    Data4: -185340053
+  Banks:
+  - {fileID: -2276144933527849509}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 504
+--- !u!114 &5037105710454743551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/RunningGhost.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/RunningGhost.bank
+  Name: RunningGhost
+  StudioPath: bank:/RunningGhost
+  lastModified: 639128394324306552
+  FileSizes:
+  - Name: Desktop
+    Value: 84704
+  Exists: 1
 --- !u!114 &7011388528615965413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -365,6 +607,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 3864
+--- !u!114 &7855662284783296693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/JumpScareSound
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/JumpScareSound
+  Guid:
+    Data1: -533441294
+    Data2: 1339568963
+    Data3: 1654523791
+    Data4: 432393832
+  Banks:
+  - {fileID: -8092087314510133167}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2000
 --- !u!114 &8656562136812460686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -380,10 +649,10 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639104736072342595
+  lastModified: 639129023157932327
   FileSizes:
   - Name: Desktop
-    Value: 1318
+    Value: 1774
   Exists: 1
 --- !u!114 &8661769540991862282
 MonoBehaviour:
