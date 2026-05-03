@@ -55,14 +55,19 @@ public class Rule3 : RuleBase
     // ─────────────── Vignette ───────────────
     [Header("Vignette")]
     [SerializeField] private float vignetteStartIntensity      = 0.587f; // matches Tension profile default
-    [SerializeField] private float vignetteBaseIncreaseRate    = 0.008f; // intensity / second
-    [SerializeField] private float vignetteRateIncreaseOnWrong = 0.004f; // added to rate on wrong answer
+    [SerializeField] private float vignetteBaseIncreaseRate    = 0.003f; // intensity / second  (lower = more time)
+    [SerializeField] private float vignetteRateIncreaseOnWrong = 0.002f; // added to rate on wrong answer
     [SerializeField] private float vignetteReliefOnCorrect     = 0.08f;  // subtracted on correct answer
-    [SerializeField] private float vignetteGameOverThreshold   = 0.95f;
+    [SerializeField] private float vignetteGameOverThreshold   = 0.92f;
 
-    private float    _vignetteIntensity;
-    private float    _vignetteCurrentRate;
-    private Vignette _vignette;
+    // When vignette passes this point, also dim screen exposure so the centre goes fully black
+    [SerializeField] private float vignetteBlackoutStart   = 0.78f;  // intensity where darkening begins
+    [SerializeField] private float maxExposureDarkening    = -6f;    // EV at full blackout
+
+    private float            _vignetteIntensity;
+    private float            _vignetteCurrentRate;
+    private Vignette         _vignette;
+    private ColorAdjustments _colorAdjustments;
 
     // ─────────────── Breathing ───────────────
     private int _currentBreathingLevel = 0;
@@ -99,8 +104,10 @@ public class Rule3 : RuleBase
         AudioManager.instance.StopBreathing();
         AudioManager.instance.StopHeartbeat();
 
-        // Restore tension-profile vignette to its default value
+        // Restore vignette and exposure to tension-profile defaults
         SetVignetteValue(vignetteStartIntensity);
+        if (_colorAdjustments != null)
+            _colorAdjustments.postExposure.value = 0f;
 
         TimeManager.instance.SetTime(21, 40);
         TimeManager.instance.IsPauseTime(false);
@@ -180,14 +187,33 @@ public class Rule3 : RuleBase
 
     void CacheVignetteReference()
     {
-        GameModeController.instance.globalVolume.profile.TryGet(out _vignette);
+        var profile = GameModeController.instance.globalVolume.profile;
+        profile.TryGet(out _vignette);
+        profile.TryGet(out _colorAdjustments);
     }
 
     void SetVignetteValue(float intensity)
     {
         if (_vignette == null) CacheVignetteReference();
+
+        // ── Vignette (darkens edges) ──
         if (_vignette != null)
             _vignette.intensity.value = Mathf.Clamp01(intensity);
+
+        // ── Exposure (darkens the centre so the whole screen goes black) ──
+        // Only kicks in after vignetteBlackoutStart to avoid interfering early on
+        if (_colorAdjustments != null)
+        {
+            if (intensity >= vignetteBlackoutStart)
+            {
+                float t = Mathf.InverseLerp(vignetteBlackoutStart, vignetteGameOverThreshold, intensity);
+                _colorAdjustments.postExposure.value = Mathf.Lerp(0f, maxExposureDarkening, t);
+            }
+            else
+            {
+                _colorAdjustments.postExposure.value = 0f;
+            }
+        }
     }
 
     IEnumerator VignetteIncreaseRoutine()
