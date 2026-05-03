@@ -21,6 +21,14 @@ public class AudioManager : MonoBehaviour
     private EventInstance breathing;    // looping breathing sfx  – set FMOD event path below
     private EventInstance ghostWarning; // one-shot neck/bone crack warning
 
+    // ── Rule 3 exclusive sounds ──
+    private EventInstance rule3HeartbeatIntro; // looping heartbeat during mode-transition (separate from the game heartbeat)
+    private EventInstance rule3BuildUpTension; // build-up tension music that plays together with the intro heartbeat
+    private EventInstance rule3Ambient;        // Rule3-specific ambient background (looping, plays after transition)
+    private EventInstance rule3LightBulb;      // one-shot light-bulb click for each flicker burst
+    private EventInstance rule3BurnPaper;      // one-shot paper burn sound
+    private EventInstance rule3Death;          // one-shot death sting played when the player dies in Rule 3
+
     Coroutine radioCoroutine;
     
     [SerializeField] private Transform radioTransform;
@@ -61,10 +69,24 @@ public class AudioManager : MonoBehaviour
 
         // ── Rule 3 sounds ──
         // TODO: create "event:/Breathing" in FMOD with a "BreathingLevel" parameter (1 / 2 / 3)
-        //breathing = RuntimeManager.CreateInstance("event:/Breathing");
+        breathing = RuntimeManager.CreateInstance("event:/Breathing");
+        breathing.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(Camera.main.transform));
 
         // TODO: create "event:/GhostWarning" in FMOD (bone / neck crack one-shot)
         ghostWarning = RuntimeManager.CreateInstance("event:/GhostWarning");
+
+        // ── Rule 3 exclusive sounds ──
+        // TODO: create these events in FMOD Studio:
+        //   event:/Rule3HeartbeatIntro  – looping heartbeat (different timbre from event:/HeartBeat)
+        //   event:/Rule3BuildUpTension  – looping build-up music for the blink transition
+        //   event:/Rule3Ambient         – looping ambient background unique to Rule 3
+        //   event:/Rule3LightBulb       – short one-shot light-bulb buzz/click
+        rule3HeartbeatIntro = RuntimeManager.CreateInstance("event:/Rule3HeartbeatIntro");
+        rule3BuildUpTension = RuntimeManager.CreateInstance("event:/Rule3BuildUpTension");
+        rule3Ambient        = RuntimeManager.CreateInstance("event:/Rule3Ambient");
+        rule3LightBulb      = RuntimeManager.CreateInstance("event:/Rule3LightBulb");
+        rule3BurnPaper      = RuntimeManager.CreateInstance("event:/BurnPaper");
+        rule3Death          = RuntimeManager.CreateInstance("event:/Rule3Death");
         
         WomanScream = RuntimeManager.CreateInstance("event:/WomanScream");
         WomanScream.set3DAttributes(RuntimeUtils.To3DAttributes(womanScreamTransform[0]));
@@ -189,6 +211,76 @@ public class AudioManager : MonoBehaviour
         ghostWarning.stop(FMOD.Studio.STOP_MODE.IMMEDIATE); // restart if already playing
         ghostWarning.start();
     }
+
+    // ─────────── Rule 3 Intro (mode-transition) ───────────
+
+    /// <summary>Start the looping heartbeat + build-up tension that play during the Tension blink transition.</summary>
+    public void StartRule3Intro()
+    {
+        rule3HeartbeatIntro.start();
+        rule3BuildUpTension.start();
+    }
+
+    /// <summary>Stop the intro heartbeat and build-up tension after the transition is done.</summary>
+    public void StopRule3Intro()
+    {
+        rule3HeartbeatIntro.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+        rule3BuildUpTension.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+    }
+
+    // ─────────── Rule 3 Ambient ───────────
+
+    /// <summary>Start the Rule3-specific ambient background loop.</summary>
+    public void StartRule3Ambient()
+    {
+        rule3Ambient.start();
+    }
+
+    /// <summary>Stop the Rule3 ambient with a fade-out.</summary>
+    public void StopRule3Ambient()
+    {
+        rule3Ambient.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+    }
+
+    // ─────────── Rule 3 Light Bulb ───────────
+
+    /// <summary>Play the one-shot light-bulb buzz/click sound on each flicker burst.</summary>
+    public void PlayLightBulb()
+    {
+        rule3LightBulb.stop(FMOD.Studio.STOP_MODE.IMMEDIATE); // cut previous if still playing
+        rule3LightBulb.start();
+    }
+
+    // ─────────── Rule 3 Burn Paper ───────────
+
+    /// <summary>Start the paper burn sound (plays for the duration of the dissolve animation).</summary>
+    public void PlayBurnPaper()
+    {
+        rule3BurnPaper.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        rule3BurnPaper.start();
+    }
+
+    /// <summary>Stop the paper burn sound early if needed.</summary>
+    public void StopBurnPaper()
+    {
+        rule3BurnPaper.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+    }
+
+    // ─────────── Rule 3 Death ───────────
+
+    /// <summary>Play the one-shot death sting when the player dies in Rule 3.</summary>
+    public void PlayRule3Death()
+    {
+        rule3Death.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        rule3Death.start();
+    }
+
+    /// <summary>Stop the death sound early if needed (e.g. hard cut on blink).</summary>
+    public void StopRule3Death()
+    {
+        rule3Death.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+    }
+
     public void UpdateHeartbeat()
     {
         currentHeart = Mathf.Lerp(currentHeart, targetHeart, Time.deltaTime * 2f);

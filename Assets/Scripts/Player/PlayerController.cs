@@ -329,8 +329,53 @@ namespace Player
         {
             _canLook = value;
         }
+
+        // ─────────────── Rule 3 Death ───────────────
+
+        /// <summary>
+        /// Rule 3 death animation: camera tilts sideways as if the player is falling over.
+        /// Disables look + movement for the duration. Call with StartCoroutine / yield return.
+        /// </summary>
+        public IEnumerator PlayDeathFallRoutine()
+        {
+            SetLook(false);
+            SetMovement(false);
+
+            float duration   = 1.2f;
+            float t          = 0f;
+            float targetRoll = -85f; // negative = fall to the left; flip sign for right
+
+            while (t < duration)
+            {
+                t += Time.deltaTime;
+                float normalized = t / duration;
+                float curve      = Mathf.Pow(normalized, 1.5f); // starts slow, ends fast
+
+                // Keep pitch/yaw from current sit position; only add death roll
+                cameraPivot.localRotation = Quaternion.Euler(
+                    _xRotation,
+                    _sittingYaw,
+                    Mathf.Lerp(0f, targetRoll, curve)
+                );
+                yield return null;
+            }
+        }
+
+        /// <summary>
+        /// Snap camera back to neutral sitting orientation after the death-blink sequence.
+        /// Re-enables look so the player can interact with papers again.
+        /// </summary>
+        public void ResetCameraAfterDeath()
+        {
+            _xRotation  = 0f;
+            _sittingYaw = 0f;
+            cameraPivot.localRotation = Quaternion.identity;
+            SetLook(true);
+            // Movement stays disabled while sitting — StandUpRoutine will re-enable it
+        }
+
         #endregion
-        
-        
+
+
     }
 }

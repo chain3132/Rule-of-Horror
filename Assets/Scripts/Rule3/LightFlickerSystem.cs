@@ -1,11 +1,16 @@
+using System;
 using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class LightFlickerSystem : MonoBehaviour
 {
     public static LightFlickerSystem Instance;
 
     [SerializeField] private Light[] lights;
+
+    /// <summary>Fired once at the start of every flicker burst (ambient or impact).</summary>
+    public event Action OnFlickerBurst;
 
     private void Awake()
     {
@@ -52,6 +57,7 @@ public class LightFlickerSystem : MonoBehaviour
             while (t < flickerDuration)
             {
                 t += Time.deltaTime;
+                OnFlickerBurst?.Invoke(); // notify subscribers (e.g. Rule3 → LightBulb sound)
 
                 foreach (var l in lights)
                 {
@@ -79,8 +85,9 @@ public class LightFlickerSystem : MonoBehaviour
         for (int i = 0; i < 6; i++)
         {
             SetAllLights(false);
+            OnFlickerBurst?.Invoke(); // notify subscribers for impact flicker too
             yield return new WaitForSeconds(0.05f);
-
+    
             SetAllLights(true);
             yield return new WaitForSeconds(0.05f);
         }

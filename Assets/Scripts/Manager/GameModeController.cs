@@ -102,13 +102,27 @@ public class GameModeController : MonoBehaviour
     public void BlinkToMode(GameMode targetMode = GameMode.Relax)
     {
         StartCoroutine(FaintThenBlinkRoutine(targetMode));
-        
+    }
+
+    /// <summary>
+    /// Blink to mode WITHOUT the faint/dizziness pre-animation.
+    /// Use this after Rule 3 death where the screen is already dark —
+    /// avoids the faint effect accidentally brightening the screen mid-transition.
+    /// Eyelids close → ApplyMode → eyelids open. No post-processing manipulation.
+    /// </summary>
+    public void DirectBlinkToMode(GameMode targetMode = GameMode.Relax)
+    {
+        StartCoroutine(BlinkRoutine(targetMode));
     }
     IEnumerator FaintThenBlinkRoutine(GameMode targetMode)
     {
         float duration = 1f;
         float t = 0;
         TimeManager.instance.IsPauseTime(true);
+
+        // เล่นเสียง heartbeat + build-up tension ตอน transition เข้า Tension mode เท่านั้น
+        if (targetMode == GameMode.Tension)
+            AudioManager.instance.StartRule3Intro();
 
         // : เวียนหัว
         while (t < duration)
@@ -238,6 +252,9 @@ public class GameModeController : MonoBehaviour
         IsEyesOpen = true;
         TimeManager.instance.IsPauseTime(false);
 
+        // หยุดเสียง transition เมื่อตาเปิดแล้ว (mode change เสร็จ)
+        if (targetMode == GameMode.Tension)
+            AudioManager.instance.StopRule3Intro();
     }
 
     void SetSaraModel(GameMode mode)
