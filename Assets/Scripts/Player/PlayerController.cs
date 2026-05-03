@@ -235,6 +235,22 @@ namespace Player
             }
         }
 
+        /// <summary>
+        /// ยิง Raycast จากด้านบนลงมาหาพื้น แล้ว snap ตัวละครขึ้นไปยืนบนพื้นนั้น
+        /// ป้องกันตัวอยู่ใต้ MeshCollider ตอนลุกจากการนั่ง
+        /// </summary>
+        private void SnapToGround()
+        {
+            // ยิงจาก 2m เหนือตำแหน่งปัจจุบัน ลงมา 5m เพื่อหาพื้นจริง
+            Vector3 rayStart = transform.position + Vector3.up * 2f;
+            if (Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, 5f))
+            {
+                _characterController.enabled = false;
+                transform.position = hit.point;   // วางเท้าบนพื้น
+                _characterController.enabled = true;
+            }
+        }
+
         public void Move(Vector2 moveInput)
         {
             if (!_canMove) return;
