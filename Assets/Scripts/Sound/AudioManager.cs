@@ -64,7 +64,7 @@ public class AudioManager : MonoBehaviour
         //breathing = RuntimeManager.CreateInstance("event:/Breathing");
 
         // TODO: create "event:/GhostWarning" in FMOD (bone / neck crack one-shot)
-        //ghostWarning = RuntimeManager.CreateInstance("event:/GhostWarning");
+        ghostWarning = RuntimeManager.CreateInstance("event:/GhostWarning");
         
         WomanScream = RuntimeManager.CreateInstance("event:/WomanScream");
         WomanScream.set3DAttributes(RuntimeUtils.To3DAttributes(womanScreamTransform[0]));
