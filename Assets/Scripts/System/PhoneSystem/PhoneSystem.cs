@@ -116,7 +116,8 @@ namespace PhoneSystem
 
         private void UnlockPlayer()
         {
-            playerController.SetMovement(true);
+            if (!playerController.IsSitting())
+                playerController.SetMovement(true); 
             playerController.SetLook(true);
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
