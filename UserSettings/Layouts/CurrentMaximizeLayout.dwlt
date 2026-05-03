@@ -835,9 +835,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -17.509794, y: 14.778673, z: -10.006007}
+    m_Target: {x: 6.568482, y: 9.637424, z: -13.967856}
     speed: 2
-    m_Value: {x: -17.509794, y: 14.778673, z: -10.006007}
+    m_Value: {x: 6.568482, y: 9.637424, z: -13.967856}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -883,13 +883,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.008067524, y: -0.9634949, z: 0.029211165, w: -0.26602557}
+    m_Target: {x: -0.0671049, y: -0.7654608, z: 0.080908336, w: -0.63484794}
     speed: 2
-    m_Value: {x: -0.008067482, y: -0.96348983, z: 0.029211013, w: -0.26602417}
+    m_Value: {x: -0.067104526, y: -0.7654565, z: 0.08090788, w: -0.63484436}
   m_Size:
-    m_Target: 1.28783
+    m_Target: 10
     speed: 2
-    m_Value: 1.28783
+    m_Value: 10
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1064,7 +1064,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 112}
   m_MaxSize: {x: 8096, y: 16192}
   vertical: 1
-  controlID: 26998
+  controlID: 34070
   draggingID: 0
 --- !u!114 &9
 MonoBehaviour:
@@ -1166,8 +1166,8 @@ MonoBehaviour:
       - m_Data: 89600
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: GhostSitting
-        m_OriginalName: GhostSitting
+        m_Name: 
+        m_OriginalName: 
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
@@ -1175,10 +1175,10 @@ MonoBehaviour:
           width: 0
           height: 0
         m_UserData:
-          m_Data: -187492
+          m_Data: 0
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 0
+        m_OriginalEventType: 11
         m_IsRenamingFilename: 0
         m_TrimLeadingAndTrailingWhitespace: 0
         m_ClientGUIView: {fileID: 9}
@@ -1208,8 +1208,8 @@ MonoBehaviour:
     y: 648
     width: 269
     height: 324
-  m_MinSize: {x: 50, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 52, y: 76}
+  m_MaxSize: {x: 4002, y: 4026}
   m_ActualView: {fileID: 12}
   m_Panes:
   - {fileID: 12}
@@ -1497,7 +1497,7 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_AssetTreeState:
-    scrollPos: {x: 0, y: 120}
+    scrollPos: {x: 0, y: 240}
     m_SelectedIDs:
     - m_Data: 53028
     m_LastClickedID:

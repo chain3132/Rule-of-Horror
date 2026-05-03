@@ -194,7 +194,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.ColorAdjustments
   active: 1
   postExposure:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   contrast:
     m_OverrideState: 0
@@ -229,10 +229,10 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.92001295
+    m_Value: 0.78
   smoothness:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.2
   rounded:
     m_OverrideState: 0
     m_Value: 0
