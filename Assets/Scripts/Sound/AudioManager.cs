@@ -57,14 +57,14 @@ public class AudioManager : MonoBehaviour
         heartbeat.start();
         heartbeat.setParameterByName("HeartLevel", 0);
         
-        ghostScream = RuntimeManager.CreateInstance("event:/GhostScream");
+        //ghostScream = RuntimeManager.CreateInstance("event:/GhostScream");
 
         // ── Rule 3 sounds ──
         // TODO: create "event:/Breathing" in FMOD with a "BreathingLevel" parameter (1 / 2 / 3)
-        breathing = RuntimeManager.CreateInstance("event:/Breathing");
+        //breathing = RuntimeManager.CreateInstance("event:/Breathing");
 
         // TODO: create "event:/GhostWarning" in FMOD (bone / neck crack one-shot)
-        ghostWarning = RuntimeManager.CreateInstance("event:/GhostWarning");
+        //ghostWarning = RuntimeManager.CreateInstance("event:/GhostWarning");
         
         WomanScream = RuntimeManager.CreateInstance("event:/WomanScream");
         WomanScream.set3DAttributes(RuntimeUtils.To3DAttributes(womanScreamTransform[0]));
