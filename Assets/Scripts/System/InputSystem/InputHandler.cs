@@ -108,6 +108,9 @@ namespace InputSystem
             OnRightClickPressed?.Invoke();
         }
 
+        /// <summary>Returns the raw look (mouse delta) value from the New Input System.</summary>
+        public Vector2 GetLookInput() => _lookAction.ReadValue<Vector2>();
+
         #endregion
         
         
