@@ -191,11 +191,28 @@ namespace Player
 
             _isSitting = false;
             _sittingYaw = 0f;
-            _verticalVelocity = 0f; // reset ก่อน gravity เริ่มทำงาน ป้องกันทะลุพื้น
-            SetSittingPhysics(false); // เปลี่ยน layer หลัง transition จบ ป้องกัน CC ชนพื้นผิดจุด
+            SetSittingPhysics(false); // เปลี่ยน layer หลัง transition จบ
+            SnapToGround();           // snap ไปยืนบนพื้นจริงก่อน gravity เริ่ม
+            _verticalVelocity = 0f;   // reset velocity หลัง snap
             SetMovement(true); // ปลดล็อกให้เดินได้
             SetLook(true);     // ปลดล็อกให้หันหน้าได้ปกติ
             _isTransitioning = false;
+        }
+
+        /// <summary>
+        /// ยิง Raycast จากด้านบนลงมาหาพื้น แล้ว snap ตัวละครขึ้นไปยืนบนพื้นนั้น
+        /// ป้องกันตัวอยู่ใต้ MeshCollider ตอนลุกจากการนั่ง
+        /// </summary>
+        private void SnapToGround()
+        {
+            // ยิงจาก 2m เหนือตำแหน่งปัจจุบัน ลงมา 5m เพื่อหาพื้นจริง
+            Vector3 rayStart = transform.position + Vector3.up * 2f;
+            if (Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, 5f))
+            {
+                _characterController.enabled = false;
+                transform.position = hit.point;   // วางเท้าบนพื้น
+                _characterController.enabled = true;
+            }
         }
 
         public void Move(Vector2 moveInput)
