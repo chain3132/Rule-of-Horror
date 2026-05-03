@@ -197,8 +197,9 @@ namespace Player
 
             _isSitting = false;
             _sittingYaw = 0f;
-            _verticalVelocity = 0f; // reset ก่อน gravity เริ่มทำงาน ป้องกันทะลุพื้น
-            SetSittingPhysics(false); // เปลี่ยน layer หลัง transition จบ ป้องกัน CC ชนพื้นผิดจุด
+            SetSittingPhysics(false); // เปลี่ยน layer หลัง transition จบ
+            SnapToGround();           // snap ไปยืนบนพื้นจริงก่อน gravity เริ่ม
+            _verticalVelocity = 0f;   // reset velocity หลัง snap
             SetMovement(true); // ปลดล็อกให้เดินได้
             SetLook(true);     // ปลดล็อกให้หันหน้าได้ปกติ
             _isTransitioning = false;
@@ -225,16 +226,12 @@ namespace Player
         }
         public void SnapToGround()
         {
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, Vector3.down, out hit, 5f))
+            Vector3 rayStart = transform.position + Vector3.up * 2f;
+            if (Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, 5f))
             {
-                float skin = _characterController.skinWidth;
-                float bottomOffset = _characterController.height / 2f;
-
-                Vector3 pos = transform.position;
-                pos.y = hit.point.y + bottomOffset + skin;
-
-                transform.position = pos;
+                _characterController.enabled = false;
+                transform.position = hit.point;   // วางเท้าบนพื้น
+                _characterController.enabled = true;
             }
         }
 
