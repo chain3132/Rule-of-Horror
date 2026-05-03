@@ -206,7 +206,6 @@ namespace Player
             _characterController.enabled = false;
 
             transform.position = _beforeSitPosition;
-            transform.rotation = _beforeSitRotation;
             _characterController.enabled = true;
             _verticalVelocity = -2f;
         }

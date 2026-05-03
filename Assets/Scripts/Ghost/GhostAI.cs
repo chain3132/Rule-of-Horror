@@ -35,6 +35,8 @@ public class GhostAI : MonoBehaviour
     
     private EventInstance ghostWalk;
     private EventInstance brokenBone;
+    private EventInstance ghostFallDown;
+    private EventInstance buildUpFeel;
 
 
 
@@ -49,6 +51,8 @@ public class GhostAI : MonoBehaviour
     {
         ghostWalk = RuntimeManager.CreateInstance("event:/GhostWalk");
         brokenBone = RuntimeManager.CreateInstance("event:/BoneBroken");
+        ghostFallDown = RuntimeManager.CreateInstance("event:/GhostFalldown");
+        buildUpFeel = RuntimeManager.CreateInstance("event:/BuilUpFeel");
 
         ghostWalk.start();
 
@@ -88,6 +92,14 @@ public class GhostAI : MonoBehaviour
     public void PlayBrokenBoneSound()
     {
         brokenBone.start();
+    }
+    public void PlayGhostFallDownSound()
+    {
+        ghostFallDown.start();
+    }
+    public void PlayBuildUpFeelSound()
+    {
+        buildUpFeel.start();
     }
     #region Phase 1
 

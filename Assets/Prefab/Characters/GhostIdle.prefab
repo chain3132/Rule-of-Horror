@@ -399,7 +399,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LookDestroyer
   requiredLookTime: 0.05
-  lookAngle: 8
+  lookAngle: 15
 --- !u!65 &2084340525474328229
 BoxCollider:
   m_ObjectHideFlags: 0

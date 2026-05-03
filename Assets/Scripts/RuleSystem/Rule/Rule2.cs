@@ -149,8 +149,12 @@ namespace RuleSystem.Rule
 
         public override void EndRule()
         {
+            TimeManager.instance.SetTime(20,39);
+            TimeManager.instance.IsPauseTime(false);
+            GameModeController.instance.BlinkToMode(GameMode.Relax);
+            PlayerController.Instance.isBlockStanding = false;
             base.EndRule();
-            ResetAll();
+            //ResetAll();
         }
 
         #endregion
@@ -456,7 +460,29 @@ namespace RuleSystem.Rule
 
         public void SpawnJumpScareGhost()
         {
-            Instantiate(ghostJumpScarePrefab,jumpScarePoint.position, jumpScarePoint.rotation,jumpScarePoint);
+            StartCoroutine(JumpScareRoutine());
+        }
+
+        IEnumerator JumpScareRoutine()
+        {
+            yield return new WaitForSeconds(4f);
+
+            GameObject ghost = Instantiate(
+                ghostJumpScarePrefab,
+                jumpScarePoint.position,
+                jumpScarePoint.rotation,
+                jumpScarePoint
+            );
+            AudioManager.instance.PlayJumpScareGhost();
+
+            // รอ 2 วิ
+            yield return new WaitForSeconds(2f);
+
+            if (ghost != null)
+            {
+                Destroy(ghost);
+            }
+            EndRule();
         }
 
         #endregion

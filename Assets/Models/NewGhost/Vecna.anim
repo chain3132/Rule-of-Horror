@@ -87915,6 +87915,13 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
+  - time: 0.6333333
+    functionName: PlayBuildUpFeelSound
+    data: 
+    objectReferenceParameter: {fileID: 2392037125261183107, guid: 0a8e416084f230844a257961df8997a8, type: 3}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
   - time: 6.5333333
     functionName: PlayBrokenBoneSound
     data: 
@@ -87924,6 +87931,13 @@ AnimationClip:
     messageOptions: 0
   - time: 6.9333334
     functionName: PlayBrokenBoneSound
+    data: 
+    objectReferenceParameter: {fileID: 2392037125261183107, guid: 0a8e416084f230844a257961df8997a8, type: 3}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 8.2
+    functionName: PlayGhostFallDownSound
     data: 
     objectReferenceParameter: {fileID: 2392037125261183107, guid: 0a8e416084f230844a257961df8997a8, type: 3}
     floatParameter: 0

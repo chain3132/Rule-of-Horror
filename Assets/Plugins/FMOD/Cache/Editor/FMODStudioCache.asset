@@ -15,7 +15,7 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639129023157922289
+  lastModified: 639129100831390282
   FileSizes:
   - Name: Desktop
     Value: 39392
@@ -55,10 +55,10 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Action.bank
   Name: Action
   StudioPath: bank:/Action
-  lastModified: 639128366689164485
+  lastModified: 639129100831222169
   FileSizes:
   - Name: Desktop
-    Value: 34464
+    Value: 64512
   Exists: 1
 --- !u!114 &-7414909333957512450
 MonoBehaviour:
@@ -75,10 +75,10 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/AmbienceBank.bank
   Name: AmbienceBank
   StudioPath: bank:/AmbienceBank
-  lastModified: 639123780537654852
+  lastModified: 639129096457641935
   FileSizes:
   - Name: Desktop
-    Value: 1381952
+    Value: 1474912
   Exists: 1
 --- !u!114 &-5803895795705513871
 MonoBehaviour:
@@ -151,6 +151,34 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-4159646074767631618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/GhostFalldown
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/GhostFalldown
+  Guid:
+    Data1: 275028295
+    Data2: 1304772138
+    Data3: -1597859393
+    Data4: 1385186284
+  Banks:
+  - {fileID: -7414909333957512450}
+  - {fileID: -8092087314510133167}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 624
 --- !u!114 &-3621099473116264512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -317,8 +345,8 @@ MonoBehaviour:
     Data3: -493498185
     Data4: 2133030281
   Banks:
-  - {fileID: -8687965200994253978}
   - {fileID: -8109406064915979547}
+  - {fileID: -8687965200994253978}
   IsStream: 0
   Is3D: 1
   IsOneShot: 0
@@ -361,13 +389,16 @@ MonoBehaviour:
   - {fileID: -5740833927528052479}
   - {fileID: 550898920918200830}
   - {fileID: 3576093895535673261}
+  - {fileID: -4159646074767631618}
+  - {fileID: 6900739947293751346}
+  - {fileID: 3881946057307468283}
   EditorParameters: []
   MasterBanks:
   - {fileID: -8687965200994253978}
   StringsBanks:
   - {fileID: 8656562136812460686}
   cacheVersion: 131858
-  cacheTime: 639129023158361842
+  cacheTime: 639129100831401162
   SerializableEventsDict:
   - key: event:/New Event
     index: 0
@@ -395,6 +426,12 @@ MonoBehaviour:
     index: 11
   - key: event:/BoneBroken
     index: 12
+  - key: event:/GhostFalldown
+    index: 13
+  - key: event:/BuilUpFeel
+    index: 14
+  - key: event:/GhostScream
+    index: 15
 --- !u!114 &388632287678487498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -532,6 +569,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 504
+--- !u!114 &3881946057307468283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/GhostScream
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/GhostScream
+  Guid:
+    Data1: -2132946389
+    Data2: 1126265147
+    Data3: -288405572
+    Data4: 1982860782
+  Banks:
+  - {fileID: -8092087314510133167}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2136
 --- !u!114 &5037105710454743551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -552,6 +616,33 @@ MonoBehaviour:
   - Name: Desktop
     Value: 84704
   Exists: 1
+--- !u!114 &6900739947293751346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/BuilUpFeel
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/BuilUpFeel
+  Guid:
+    Data1: -358057850
+    Data2: 1292614528
+    Data3: -1901181265
+    Data4: -1470435910
+  Banks:
+  - {fileID: -7414909333957512450}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 6888
 --- !u!114 &7011388528615965413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -649,10 +740,10 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639129023157932327
+  lastModified: 639129100831401162
   FileSizes:
   - Name: Desktop
-    Value: 1774
+    Value: 1914
   Exists: 1
 --- !u!114 &8661769540991862282
 MonoBehaviour:

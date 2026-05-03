@@ -17,6 +17,7 @@ public class AudioManager : MonoBehaviour
     private EventInstance radioPray;
     private EventInstance WomanScream;
     private EventInstance jumpScare;
+    private EventInstance ghostScream;
 
     Coroutine radioCoroutine;
     
@@ -53,6 +54,8 @@ public class AudioManager : MonoBehaviour
         heartbeat = RuntimeManager.CreateInstance("event:/HeartBeat");
         heartbeat.start();
         heartbeat.setParameterByName("HeartLevel", 0);
+        
+        ghostScream = RuntimeManager.CreateInstance("event:/GhostScream");
         
         WomanScream = RuntimeManager.CreateInstance("event:/WomanScream");
         WomanScream.set3DAttributes(RuntimeUtils.To3DAttributes(womanScreamTransform[0]));
@@ -96,6 +99,10 @@ public class AudioManager : MonoBehaviour
     public void PlayJumpScare()
     {
         jumpScare.start();
+    }
+    public void PlayJumpScareGhost()
+    {
+        ghostScream.start();
     }
     public void StartWomanScream()
     {
