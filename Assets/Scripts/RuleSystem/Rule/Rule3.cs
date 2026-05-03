@@ -198,6 +198,9 @@ public class Rule3 : RuleBase
         if (heartbeatEscalationCoroutine != null)
             StopCoroutine(heartbeatEscalationCoroutine);
         
+        TimeManager.instance.SetTime(21,40);
+        TimeManager.instance.IsPauseTime(false);
+        LightFlickerSystem.Instance.StopAmbientFlicker();
         GameModeController.instance.BlinkToMode(GameMode.Relax);
         PlayerController.Instance.isBlockStanding = false;
         AudioManager.instance.StopHeartbeat();

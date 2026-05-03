@@ -491,7 +491,10 @@ MonoBehaviour:
   Banks:
   - Action
   - AmbienceBank
+  - BoneBroken
   - Radio
+  - RunningGhost
+  - WomanSound
   BanksToLoad: []
   LiveUpdatePort: 9264
   EnableMemoryTracking: 0

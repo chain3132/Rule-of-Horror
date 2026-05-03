@@ -22,7 +22,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: HairCards
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_Parent: {fileID: 2100000, guid: 8a1b3ad748b586b42a834827ca11e3b0, type: 2}
+  m_Parent: {fileID: 2100000, guid: e8c5da34af4c9794e85f1407a13a2dea, type: 2}
   m_ModifiedSerializedProperties: 24
   m_ValidKeywords:
   - _ALPHAPREMULTIPLY_ON

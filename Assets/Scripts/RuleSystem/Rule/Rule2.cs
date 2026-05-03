@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.HeartbeatSystem;
 using InputSystem;
+using JetBrains.Annotations;
 using Manager;
 using Player;
 using Rule2;
@@ -37,18 +38,23 @@ namespace RuleSystem.Rule
         
         [SerializeField] private LightPanel panelPrefab;
         [SerializeField] private Transform[] panelSpawnPoints;
+        [SerializeField] private List<Transform> activePanelPoints;
 
+        [SerializeField] private GameObject runningGhost;
         private List<LightPanel> activePanels = new List<LightPanel>();
 
         [Header("Ghost")]
         public GameObject ghostPrefab;
+        [SerializeField] private GameObject ghostJumpScarePrefab;
+        [SerializeField] private GameObject ghostTestPrefab;
         private GameObject currentGhost;
         [SerializeField] private Transform ghostSpawnPoint;
         [SerializeField] private Transform ghostPointOutside;
         [SerializeField] private Transform ghostPointInside;
+        [SerializeField] private Transform jumpScarePoint;
+
         
         [Header("Panel Setup")]
-        
         
         [SerializeField] Light saraLight;
         [SerializeField] private InputHandler inputHandler;
@@ -72,10 +78,36 @@ namespace RuleSystem.Rule
         public override void StartRule()
         {
             base.StartRule();
+            StartCoroutine(RuleFlow());
+            
+            //ChangeState(Rule2State.FirstBlackout);
+        }
 
+        void StartGameplay()
+        {
             ResetState();
             SpawnRandomPanels();
-            //ChangeState(Rule2State.FirstBlackout);
+            TimeManager.instance.IsPauseTime(false);
+
+        }
+        bool PlayerIsSitting()
+        {
+            return PlayerController.Instance.IsSitting();
+        }
+        bool PlayerEyesOpened()
+        {
+            return GameModeController.instance.IsEyesOpen;
+        }
+        IEnumerator RuleFlow()
+        {
+            TimeManager.instance.IsPauseTime(true);
+            //  1. รอให้ผู้เล่น "นั่งก่อน"
+            yield return new WaitUntil(() => PlayerIsSitting());
+            PlayerController.Instance.isBlockStanding = true;
+            GameModeController.instance.BlinkToMode(GameMode.Tension);
+            yield return new WaitUntil(() => PlayerEyesOpened());
+            // 3. เริ่มกฎจริง
+            StartGameplay();
         }
         
 
@@ -117,8 +149,12 @@ namespace RuleSystem.Rule
 
         public override void EndRule()
         {
+            TimeManager.instance.SetTime(20,39);
+            TimeManager.instance.IsPauseTime(false);
+            GameModeController.instance.BlinkToMode(GameMode.Relax);
+            PlayerController.Instance.isBlockStanding = false;
             base.EndRule();
-            ResetAll();
+            //ResetAll();
         }
 
         #endregion
@@ -140,15 +176,16 @@ namespace RuleSystem.Rule
             for (int i = 0; i < shuffled.Count; i++)
             {
                 Transform temp = shuffled[i];
-                int rand = UnityEngine.Random.Range(i, shuffled.Count);
+                int rand = Random.Range(i, shuffled.Count);
                 shuffled[i] = shuffled[rand];
+                activePanelPoints.Add(shuffled[i]);
                 shuffled[rand] = temp;
             }
 
             // เลือก 2 อันแรก
             for (int i = 0; i < 2; i++)
             {
-                LightPanel panel = Instantiate(panelPrefab, shuffled[i].position, shuffled[i].rotation);
+                LightPanel panel = Instantiate(panelPrefab, shuffled[i].position, Quaternion.identity);
                 panel.SetActiveLight(false); 
                 panel.SetRule(this,inputHandler); // ผูก callback
                 activePanels.Add(panel);
@@ -202,9 +239,16 @@ namespace RuleSystem.Rule
             saraLight.enabled = false;
             switchLight.UnlockSwitch(true);
             radioControl.UnlockRadio(true);
+            PlayerController.Instance.isBlockStanding = true;
             TimeManager.instance.IsPauseTime(true);
             radioControl.UnlockRadio(true);
-            HorrorTextUI.instance.ShowText("Turn on the lights and the radio, then go back to your seat.");
+            StartCoroutine(AllowStandAfterSetup());
+        }
+        IEnumerator AllowStandAfterSetup()
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            PlayerController.Instance.isBlockStanding = false;
         }
 
         void UpdateFirstBlackout()
@@ -232,10 +276,10 @@ namespace RuleSystem.Rule
         {
             if (playerController.IsSitting() && radioPlaying)
             {
-                HorrorTextUI.instance.HideText();
                 radioControl.UnlockRadio(false);
                 ChangeState(Rule2State.SecondBlackout);
                 TimeManager.instance.IsPauseTime(false);
+                PlayerController.Instance.isBlockStanding = true;
             }
         }
 
@@ -249,37 +293,47 @@ namespace RuleSystem.Rule
             StartCoroutine(SecondBlackoutCoroutine());
             
         }  
+        
         private IEnumerator SecondBlackoutCoroutine()
         {
             yield return new WaitForSeconds(12f); // 2 minutes in game time 
             for (int i = 0; i < 9; i++)
             {
-                saraLight.enabled = !saraLight.enabled;
                 
+                saraLight.enabled = !saraLight.enabled;
                 yield return new WaitForSeconds(Random.Range(0.05f, 0.1f));
+                
             }
-            
             UpdateSecondBlackout();
         }
 
         void UpdateSecondBlackout()
         {
             TimeManager.instance.IsPauseTime(true);
+            PlayerController.Instance.isBlockStanding = true;
             ChangeState(Rule2State.FixPanel);
+            StartCoroutine(AllowStandAfterSetup());
         }
 
         #endregion
 
         #region Phase 4
 
+        void CreateGhost()
+        {
+            Instantiate(ghostTestPrefab, activePanels[0].gameObject.transform.position + Vector3.right * 1.2f, Quaternion.identity);
+        }
         void StartPanelFixed()
         {
+            AudioManager.instance.StopRadio();
+            StartCoroutine(RadioWaitingCoroutine());
+
             foreach (var panel in activePanels)
             {
                 panel.SetActiveLight(true);
                 panel.UnlockPanel(true);
             }
-            HorrorTextUI.instance.ShowText("Repair the control panel.");
+            CreateGhost();
 
         }
 
@@ -287,17 +341,30 @@ namespace RuleSystem.Rule
         {
             // รอ event จาก panel (OnPanelFixed)
         }
+        IEnumerator RadioWaitingCoroutine()
+        {
+            yield return new WaitForSeconds(6f);
+            AudioManager.instance.StartWomanScream();
+            AudioManager.instance.PlayRadioPrayer(1);
+            yield return new WaitForSeconds(12f);
+            AudioManager.instance.PlayRadioPrayer(0);
 
+
+        }
         public void OnPanelFixed()
         {
 
             //fixedPanelSet.Add(panel);
             fixedPanels++;
+            if (fixedPanels == 1)
+            {
+                AudioManager.instance.StopWomanScream();
+            }
             if (fixedPanels >= 2)
             {
                 HorrorTextUI.instance.HideText();
                 switchLight.UnlockSwitch(true);
-
+                runningGhost.SetActive(true);
                 ChangeState(Rule2State.ReturnToSeat);
             }
         }
@@ -307,13 +374,14 @@ namespace RuleSystem.Rule
         #region Phase 5
         void StartReturnToSeat()
         {
-            HorrorTextUI.instance.ShowText("turn the lights back on then Go back to your seat.");
         }
 
         void UpdateReturnToSeat()
         {
             if (playerController.IsSitting() && switchLight.IsLightOn())
             {
+                runningGhost.SetActive(false);
+                PlayerController.Instance.isBlockStanding = true;
                 TimeManager.instance.IsPauseTime(false);
                 ChangeState(Rule2State.RadioWaiting);
                 HorrorTextUI.instance.HideText();
@@ -327,11 +395,18 @@ namespace RuleSystem.Rule
         void StartRadioPhase()
         {
             radioPlaying = true;
-            radioTimer = Random.Range(40,90);
-            AudioManager.instance.GoToNoise();
-                                          // TODO: เปิดวิทยุ
+            StartCoroutine(WaitBeforeGhost());
+            //radioTimer = Random.Range(40,90);
+            //AudioManager.instance.GoToNoise();
         }
-
+        IEnumerator WaitBeforeGhost()
+        {
+            yield return new WaitForSeconds(6f);
+            AudioManager.instance.StopPlayRadioPrayer();
+            //AudioManager.instance.PlayRadioPrayer(2);
+            ghostTriggered = true;
+            ChangeState(Rule2State.GhostEvent);
+        }
         void UpdateRadioWaiting()
         {
             //  ถ้าลุก → หยุดเวลา + เพิ่มความเครียด
@@ -340,15 +415,7 @@ namespace RuleSystem.Rule
             //     //HeartbeatSystem.instance.AddStress(20f * Time.deltaTime);
             //     return;
             // }
-
-            radioTimer -= Time.deltaTime;
-
-            // 👻 trigger ghost ครั้งเดียว
-            if (!ghostTriggered && radioTimer <= 1f)
-            {
-                ghostTriggered = true;
-                ChangeState(Rule2State.GhostEvent);
-            }
+            
         }
 
         #endregion
@@ -366,7 +433,6 @@ namespace RuleSystem.Rule
                 ai.point1 = ghostPointOutside;
                 ai.point2 = ghostPointInside;
                 ai.saraLight = saraLight;
-
                 ai.Init(playerController.transform,this);
             }
 
@@ -382,6 +448,7 @@ namespace RuleSystem.Rule
             
             if (_isRadioStopped)
             {
+                PlayerController.Instance.isBlockStanding = false;
                 ChangeState(Rule2State.Completed);
             }
         }
@@ -389,6 +456,33 @@ namespace RuleSystem.Rule
         public void RadioStopped()
         {
             _isRadioStopped = true;
+        }
+
+        public void SpawnJumpScareGhost()
+        {
+            StartCoroutine(JumpScareRoutine());
+        }
+
+        IEnumerator JumpScareRoutine()
+        {
+            yield return new WaitForSeconds(4f);
+
+            GameObject ghost = Instantiate(
+                ghostJumpScarePrefab,
+                jumpScarePoint.position,
+                jumpScarePoint.rotation,
+                jumpScarePoint
+            );
+            AudioManager.instance.PlayJumpScareGhost();
+
+            // รอ 2 วิ
+            yield return new WaitForSeconds(2f);
+
+            if (ghost != null)
+            {
+                Destroy(ghost);
+            }
+            EndRule();
         }
 
         #endregion
