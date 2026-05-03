@@ -59,14 +59,14 @@ public class Rule3 : RuleBase
     [SerializeField] private float vignetteReliefOnCorrect     = 0.08f;  // subtracted on correct answer
     [SerializeField] private float vignetteGameOverThreshold   = 0.92f;
 
-    // When vignette passes this point, also dim screen exposure so the centre goes fully black
-    [SerializeField] private float vignetteBlackoutStart   = 0.78f;  // intensity where darkening begins
-    [SerializeField] private float maxExposureDarkening    = -6f;    // EV at full blackout
+    // When vignette passes this point, smoothness starts ramping to 1
+    // so the vignette covers the entire screen (full blackout)
+    [SerializeField] private float vignetteBlackoutStart    = 0.78f; // intensity where smoothness begins ramping
+    [SerializeField] private float vignetteDefaultSmoothness = 0.2f; // should match Tension Profile default
 
-    private float            _vignetteIntensity;
-    private float            _vignetteCurrentRate;
-    private Vignette         _vignette;
-    private ColorAdjustments _colorAdjustments;
+    private float    _vignetteIntensity;
+    private float    _vignetteCurrentRate;
+    private Vignette _vignette;
 
     // ─────────────── Breathing ───────────────
     private int _currentBreathingLevel = 0;
@@ -103,10 +103,8 @@ public class Rule3 : RuleBase
         AudioManager.instance.StopBreathing();
         AudioManager.instance.StopHeartbeat();
 
-        // Restore vignette and exposure to tension-profile defaults
+        // Restore vignette to tension-profile defaults
         SetVignetteValue(vignetteStartIntensity);
-        if (_colorAdjustments != null)
-            _colorAdjustments.postExposure.value = 0f;
 
         TimeManager.instance.SetTime(21, 40);
         TimeManager.instance.IsPauseTime(false);
@@ -186,32 +184,27 @@ public class Rule3 : RuleBase
 
     void CacheVignetteReference()
     {
-        var profile = GameModeController.instance.globalVolume.profile;
-        profile.TryGet(out _vignette);
-        profile.TryGet(out _colorAdjustments);
+        GameModeController.instance.globalVolume.profile.TryGet(out _vignette);
     }
 
     void SetVignetteValue(float intensity)
     {
         if (_vignette == null) CacheVignetteReference();
+        if (_vignette == null) return;
 
-        // ── Vignette (darkens edges) ──
-        if (_vignette != null)
-            _vignette.intensity.value = Mathf.Clamp01(intensity);
+        // ── Intensity: darkens the edges ──
+        _vignette.intensity.value = Mathf.Clamp01(intensity);
 
-        // ── Exposure (darkens the centre so the whole screen goes black) ──
-        // Only kicks in after vignetteBlackoutStart to avoid interfering early on
-        if (_colorAdjustments != null)
+        // ── Smoothness: ramps from default (0.2) → 1.0 as intensity approaches game-over
+        //    At smoothness = 1 the vignette covers the entire screen, giving a full blackout ──
+        if (intensity >= vignetteBlackoutStart)
         {
-            if (intensity >= vignetteBlackoutStart)
-            {
-                float t = Mathf.InverseLerp(vignetteBlackoutStart, vignetteGameOverThreshold, intensity);
-                _colorAdjustments.postExposure.value = Mathf.Lerp(0f, maxExposureDarkening, t);
-            }
-            else
-            {
-                _colorAdjustments.postExposure.value = 0f;
-            }
+            float t = Mathf.InverseLerp(vignetteBlackoutStart, vignetteGameOverThreshold, intensity);
+            _vignette.smoothness.value = Mathf.Lerp(vignetteDefaultSmoothness, 1f, t);
+        }
+        else
+        {
+            _vignette.smoothness.value = vignetteDefaultSmoothness;
         }
     }
 
