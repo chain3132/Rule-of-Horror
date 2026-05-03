@@ -157,7 +157,7 @@ public class Rule3 : RuleBase
 
         // ── Ghost (single spawn point, no movement) ──
         ghostInstance = Instantiate(ghostPrefab, ghostSpawnPoint.position, ghostSpawnPoint.rotation);
-        ghostAnimator = ghostInstance.GetComponent<Animator>();
+        ghostAnimator = ghostInstance.GetComponentInChildren<Animator>();
 
         // ── Vignette: start from the profile's current value ──
         _vignetteCurrentRate = vignetteBaseIncreaseRate;

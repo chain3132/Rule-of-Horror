@@ -12689,7 +12689,7 @@ Transform:
   m_GameObject: {fileID: 340405331}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.97, y: 10.852, z: -11.933}
+  m_LocalPosition: {x: -8.97, y: 10.27, z: -11.933}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -19750,9 +19750,9 @@ MonoBehaviour:
   endHour: 21
   endMinute: 40
   ruleActive: 0
-  inputHandler: {fileID: 0}
+  inputHandler: {fileID: 1279262527}
   paperSpawner: {fileID: 842431701}
-  ghostPrefab: {fileID: 0}
+  ghostPrefab: {fileID: 1415033371245421925, guid: cee7660466f251740bdd17ee47a0dfe5, type: 3}
   ghostSpawnPoint: {fileID: 340405332}
   ghostLookIntervalMin: 8
   ghostLookIntervalMax: 20
@@ -19762,12 +19762,12 @@ MonoBehaviour:
   warningDurationDecrement: 0.25
   warningMinDuration: 0.5
   vignetteStartIntensity: 0.587
-  vignetteBaseIncreaseRate: 0.008
-  vignetteRateIncreaseOnWrong: 0.004
+  vignetteBaseIncreaseRate: 0.003
+  vignetteRateIncreaseOnWrong: 0.002
   vignetteReliefOnCorrect: 0.08
-  vignetteGameOverThreshold: 0.95
+  vignetteGameOverThreshold: 0.92
   vignetteBlackoutStart: 0.78
-  maxExposureDarkening: -6
+  vignetteDefaultSmoothness: 0.2
 --- !u!114 &842431701
 MonoBehaviour:
   m_ObjectHideFlags: 0
