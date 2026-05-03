@@ -70,6 +70,12 @@ public class Rule3 : RuleBase
     private Vignette         _vignette;
     private ColorAdjustments _colorAdjustments;
 
+    // Original profile values – cached on first use, restored on disable / end rule
+    private float _origVignetteIntensity;
+    private float _origVignetteSmoothness;
+    private float _origPostExposure;
+    private bool  _profileCached = false;
+
     // ─────────────── Breathing ───────────────
     private int _currentBreathingLevel = 0;
 
@@ -83,6 +89,13 @@ public class Rule3 : RuleBase
     private void Awake()
     {
         Instance = this;
+    }
+
+    // Runs whenever the object is disabled OR Play Mode ends in the Editor
+    // Guarantees the VolumeProfile asset values are always restored
+    private void OnDisable()
+    {
+        RestoreProfileDefaults();
     }
 
     public override void StartRule()
@@ -105,10 +118,8 @@ public class Rule3 : RuleBase
         AudioManager.instance.StopBreathing();
         AudioManager.instance.StopHeartbeat();
 
-        // Restore vignette + exposure to tension-profile defaults
-        SetVignetteValue(vignetteStartIntensity);
-        if (_colorAdjustments != null)
-            _colorAdjustments.postExposure.value = 0f;
+        // Restore vignette + exposure to their original asset values
+        RestoreProfileDefaults();
 
         TimeManager.instance.SetTime(21, 40);
         TimeManager.instance.IsPauseTime(false);
@@ -191,6 +202,28 @@ public class Rule3 : RuleBase
         var profile = GameModeController.instance.globalVolume.profile;
         profile.TryGet(out _vignette);
         profile.TryGet(out _colorAdjustments); // requires ColorAdjustments override in Tension Profile
+
+        // Save original values the first time so we can always restore them
+        if (!_profileCached)
+        {
+            _origVignetteIntensity = _vignette  != null ? _vignette.intensity.value  : 0.587f;
+            _origVignetteSmoothness= _vignette  != null ? _vignette.smoothness.value : 0.2f;
+            _origPostExposure      = _colorAdjustments != null ? _colorAdjustments.postExposure.value : 0f;
+            _profileCached = true;
+        }
+    }
+
+    void RestoreProfileDefaults()
+    {
+        if (!_profileCached) return;
+        if (_vignette != null)
+        {
+            _vignette.intensity.value  = _origVignetteIntensity;
+            _vignette.smoothness.value = _origVignetteSmoothness;
+        }
+        if (_colorAdjustments != null)
+            _colorAdjustments.postExposure.value = _origPostExposure;
+        _profileCached = false; // allow re-cache next play session
     }
 
     void SetVignetteValue(float intensity)
