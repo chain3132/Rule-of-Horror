@@ -18,6 +18,8 @@ public class AudioManager : MonoBehaviour
     private EventInstance WomanScream;
     private EventInstance jumpScare;
     private EventInstance ghostScream;
+    private EventInstance breathing;    // looping breathing sfx  – set FMOD event path below
+    private EventInstance ghostWarning; // one-shot neck/bone crack warning
 
     Coroutine radioCoroutine;
     
@@ -56,6 +58,13 @@ public class AudioManager : MonoBehaviour
         heartbeat.setParameterByName("HeartLevel", 0);
         
         ghostScream = RuntimeManager.CreateInstance("event:/GhostScream");
+
+        // ── Rule 3 sounds ──
+        // TODO: create "event:/Breathing" in FMOD with a "BreathingLevel" parameter (1 / 2 / 3)
+        breathing = RuntimeManager.CreateInstance("event:/Breathing");
+
+        // TODO: create "event:/GhostWarning" in FMOD (bone / neck crack one-shot)
+        ghostWarning = RuntimeManager.CreateInstance("event:/GhostWarning");
         
         WomanScream = RuntimeManager.CreateInstance("event:/WomanScream");
         WomanScream.set3DAttributes(RuntimeUtils.To3DAttributes(womanScreamTransform[0]));
@@ -142,6 +151,43 @@ public class AudioManager : MonoBehaviour
         heartbeat.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
         targetHeart = 0f;
         currentHeart = 0f;
+    }
+
+    /// <summary>Set heartbeat target back to 0 without stopping the FMOD event (lets it fade naturally).</summary>
+    public void ResetHeartbeatLevel()
+    {
+        heartLevel  = 0;
+        targetHeart = 0f;
+    }
+
+    // ─────────── Breathing (Rule 3) ───────────
+
+    /// <summary>Start the looping breathing sound.</summary>
+    public void StartBreathing()
+    {
+        breathing.start();
+    }
+
+    /// <summary>Stop the looping breathing sound with a fade out.</summary>
+    public void StopBreathing()
+    {
+        breathing.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+    }
+
+    /// <summary>Set breathing intensity level: 1 = slow, 2 = medium, 3 = struggling.</summary>
+    public void SetBreathingLevel(int level)
+    {
+        // Parameter name must match the FMOD event parameter "BreathingLevel"
+        breathing.setParameterByName("BreathingLevel", (float)level);
+    }
+
+    // ─────────── Ghost Warning (Rule 3) ───────────
+
+    /// <summary>Play the ghost-is-about-to-look warning sound (bone/neck crack). Fire-and-forget.</summary>
+    public void PlayGhostWarning()
+    {
+        ghostWarning.stop(FMOD.Studio.STOP_MODE.IMMEDIATE); // restart if already playing
+        ghostWarning.start();
     }
     public void UpdateHeartbeat()
     {
