@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using InputSystem;
 using Manager;
 using Player;
 using UnityEngine;
@@ -11,6 +12,9 @@ using Random = UnityEngine.Random;
 public class Rule3 : RuleBase
 {
     public static Rule3 Instance;
+
+    // ─────────────── Input ───────────────
+    [SerializeField] private InputHandler inputHandler;
 
     // ─────────────── Papers ───────────────
     [SerializeField] private PaperSpawner paperSpawner;
@@ -278,10 +282,11 @@ public class Rule3 : RuleBase
         }
     }
 
-    static bool IsPlayerMovingMouse()
+    /// <summary>Uses the New Input System via InputHandler to detect mouse / look movement.</summary>
+    bool IsPlayerMovingMouse()
     {
-        return Mathf.Abs(Input.GetAxis("Mouse X")) > 0.01f
-            || Mathf.Abs(Input.GetAxis("Mouse Y")) > 0.01f;
+        // Threshold in pixels (raw delta) – adjust if too sensitive / not sensitive enough
+        return inputHandler.GetLookInput().sqrMagnitude > 0.01f;
     }
 
     void OnPlayerMovedDuringLook()
