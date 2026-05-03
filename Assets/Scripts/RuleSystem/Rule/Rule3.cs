@@ -59,14 +59,15 @@ public class Rule3 : RuleBase
     [SerializeField] private float vignetteReliefOnCorrect     = 0.08f;  // subtracted on correct answer
     [SerializeField] private float vignetteGameOverThreshold   = 0.92f;
 
-    // When vignette passes this point, smoothness starts ramping to 1
-    // so the vignette covers the entire screen (full blackout)
-    [SerializeField] private float vignetteBlackoutStart    = 0.78f; // intensity where smoothness begins ramping
-    [SerializeField] private float vignetteDefaultSmoothness = 0.2f; // should match Tension Profile default
+    // When vignette passes this point, smoothness + exposure both ramp toward full blackout
+    [SerializeField] private float vignetteBlackoutStart     = 0.78f; // intensity where blackout effect begins
+    [SerializeField] private float vignetteDefaultSmoothness = 0.2f;  // should match Tension Profile default
+    [SerializeField] private float maxExposureDarkening      = -6f;   // EV at full blackout (more negative = darker)
 
-    private float    _vignetteIntensity;
-    private float    _vignetteCurrentRate;
-    private Vignette _vignette;
+    private float            _vignetteIntensity;
+    private float            _vignetteCurrentRate;
+    private Vignette         _vignette;
+    private ColorAdjustments _colorAdjustments;
 
     // ─────────────── Breathing ───────────────
     private int _currentBreathingLevel = 0;
@@ -103,8 +104,10 @@ public class Rule3 : RuleBase
         AudioManager.instance.StopBreathing();
         AudioManager.instance.StopHeartbeat();
 
-        // Restore vignette to tension-profile defaults
+        // Restore vignette + exposure to tension-profile defaults
         SetVignetteValue(vignetteStartIntensity);
+        if (_colorAdjustments != null)
+            _colorAdjustments.postExposure.value = 0f;
 
         TimeManager.instance.SetTime(21, 40);
         TimeManager.instance.IsPauseTime(false);
@@ -156,7 +159,7 @@ public class Rule3 : RuleBase
 
         // ── Ghost (single spawn point, no movement) ──
         ghostInstance = Instantiate(ghostPrefab, ghostSpawnPoint.position, ghostSpawnPoint.rotation);
-        ghostAnimator = ghostInstance.GetComponent<Animator>();
+        ghostAnimator = ghostInstance.GetComponentInChildren<Animator>(); // Animator is on child GhostWithAnimation
 
         // ── Vignette: start from the profile's current value ──
         _vignetteCurrentRate = vignetteBaseIncreaseRate;
@@ -184,7 +187,9 @@ public class Rule3 : RuleBase
 
     void CacheVignetteReference()
     {
-        GameModeController.instance.globalVolume.profile.TryGet(out _vignette);
+        var profile = GameModeController.instance.globalVolume.profile;
+        profile.TryGet(out _vignette);
+        profile.TryGet(out _colorAdjustments); // requires ColorAdjustments override in Tension Profile
     }
 
     void SetVignetteValue(float intensity)
@@ -192,19 +197,26 @@ public class Rule3 : RuleBase
         if (_vignette == null) CacheVignetteReference();
         if (_vignette == null) return;
 
-        // ── Intensity: darkens the edges ──
+        // ── Vignette intensity: darkens edges ──
         _vignette.intensity.value = Mathf.Clamp01(intensity);
 
-        // ── Smoothness: ramps from default (0.2) → 1.0 as intensity approaches game-over
-        //    At smoothness = 1 the vignette covers the entire screen, giving a full blackout ──
+        // ── When approaching game-over: ramp smoothness + exposure together for full blackout ──
         if (intensity >= vignetteBlackoutStart)
         {
             float t = Mathf.InverseLerp(vignetteBlackoutStart, vignetteGameOverThreshold, intensity);
+
+            // Smoothness → 1 makes vignette cover the whole screen
             _vignette.smoothness.value = Mathf.Lerp(vignetteDefaultSmoothness, 1f, t);
+
+            // Exposure darkens the centre that vignette alone can't reach
+            if (_colorAdjustments != null)
+                _colorAdjustments.postExposure.value = Mathf.Lerp(0f, maxExposureDarkening, t);
         }
         else
         {
             _vignette.smoothness.value = vignetteDefaultSmoothness;
+            if (_colorAdjustments != null)
+                _colorAdjustments.postExposure.value = 0f;
         }
     }
 
