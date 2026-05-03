@@ -224,16 +224,6 @@ namespace Player
                 transform.position = pos;
             }
         }
-        public void SnapToGround()
-        {
-            Vector3 rayStart = transform.position + Vector3.up * 2f;
-            if (Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, 5f))
-            {
-                _characterController.enabled = false;
-                transform.position = hit.point;   // วางเท้าบนพื้น
-                _characterController.enabled = true;
-            }
-        }
 
         /// <summary>
         /// ยิง Raycast จากด้านบนลงมาหาพื้น แล้ว snap ตัวละครขึ้นไปยืนบนพื้นนั้น
