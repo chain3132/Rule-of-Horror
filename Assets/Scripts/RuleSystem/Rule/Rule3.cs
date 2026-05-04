@@ -550,14 +550,12 @@ public class Rule3 : RuleBase
         PlayerController.Instance.isBlockStanding = false;
 
         // ④ Blink back to Relax mode — use DirectBlink to skip the faint effect
-        //    (screen is already dark from death; faint would incorrectly brighten it first)
-        GameModeController.instance.DirectBlinkToMode(GameMode.Relax);
+        //    onEyesClosed callback resets camera while screen is BLACK → player never sees the snap
+        GameModeController.instance.DirectBlinkToMode(GameMode.Relax,
+            onEyesClosed: () => PlayerController.Instance.ResetCameraAfterDeath());
 
         // ⑤ Wait until eyes are fully open in Relax
         yield return new WaitUntil(() => GameModeController.instance.IsEyesOpen);
-
-        // ⑥ Snap camera back to neutral sitting orientation (removes the fall tilt)
-        PlayerController.Instance.ResetCameraAfterDeath();
 
         // ⑦ Break the synchronous chain before SetTime fires CheckRules
         yield return null;

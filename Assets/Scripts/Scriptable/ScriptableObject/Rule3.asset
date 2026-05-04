@@ -48,11 +48,11 @@ MonoBehaviour:
     isPlayer: 0
     replies: []
     nextNode: 0
-  - message: Calm down.
+  - message: Stay calm
     isPlayer: 0
     replies: []
     nextNode: 7
-  - message: You just have to find the pieces of paper with numbers on them
+  - message: You just need to find the pieces of paper with numbers on them
     isPlayer: 0
     replies: []
     nextNode: 8
@@ -60,12 +60,13 @@ MonoBehaviour:
     isPlayer: 0
     replies: []
     nextNode: 9
-  - message: But be careful, don't look at anything you shouldn't
+  - message: But be careful, try to keep your eyes open. Do not close your eyes under
+      any circumstances
     isPlayer: 0
     replies: []
     nextNode: 10
-  - message: and don't get the order wrong. 9:00 PM - 9:40 PM. This night is really
-      long."
+  - message: And if anything is watching you, do not move. 9:00 PM - 9:40 PM. This
+      night is so long
     isPlayer: 0
     replies: []
     nextNode: 11

@@ -25,8 +25,9 @@ public class GameModeController : MonoBehaviour
     public RectTransform topLid;
     public RectTransform bottomLid;
 
-    public float blinkSize = 500f;  
+    public float blinkSize = 500f;
     public float speed = 5f;
+    [SerializeField] private float deathOpenSpeed = 1f; // ความเร็วลืมตาหลังตาย (ช้า = เหมือนค่อยๆ ตื่น)
     
     [SerializeField] private MeshFilter saraMeshFilter;
     [SerializeField] private MeshCollider saraMeshCollider;
@@ -110,9 +111,10 @@ public class GameModeController : MonoBehaviour
     /// avoids the faint effect accidentally brightening the screen mid-transition.
     /// Eyelids close → ApplyMode → eyelids open. No post-processing manipulation.
     /// </summary>
-    public void DirectBlinkToMode(GameMode targetMode = GameMode.Relax)
+    /// <param name="onEyesClosed">Callback ที่จะยิงตอนตาปิดสนิท (ขณะหน้าจอดำ) — ใช้สำหรับ reset กล้องโดยที่ผู้เล่นมองไม่เห็น</param>
+    public void DirectBlinkToMode(GameMode targetMode = GameMode.Relax, System.Action onEyesClosed = null)
     {
-        StartCoroutine(BlinkRoutine(targetMode));
+        StartCoroutine(BlinkRoutine(targetMode, deathOpenSpeed, onEyesClosed));
     }
     IEnumerator FaintThenBlinkRoutine(GameMode targetMode)
     {
@@ -214,13 +216,17 @@ public class GameModeController : MonoBehaviour
     
     }
 
-    IEnumerator BlinkRoutine(GameMode targetMode)
+    IEnumerator BlinkRoutine(GameMode targetMode, float openSpeed = -1f, System.Action onEyesClosed = null)
     {
+        // openSpeed < 0 → ใช้ค่า speed ปกติ (blink ทั่วไป)
+        float actualOpenSpeed = openSpeed < 0f ? speed : openSpeed;
+
         float t = 0;
         float widthTop = topLid.sizeDelta.x;
         float widthBottom = bottomLid.sizeDelta.x;
         IsEyesOpen = false;
-        // ปิดตา
+
+        // ── ปิดตา (เร็ว) ──
         while(t < 1)
         {
             t += Time.deltaTime * speed;
@@ -231,24 +237,34 @@ public class GameModeController : MonoBehaviour
 
             yield return null;
         }
-        
+
         ApplyMode(targetMode);
+
+        // ยิง callback ตอนตาปิดสนิท (หน้าจอดำ) — reset กล้องขณะที่ผู้เล่นมองไม่เห็น
+        onEyesClosed?.Invoke();
+
         yield return new WaitForSeconds(0.8f);
 
-        // เปิดตา
+        // ── ลืมตา (speed แยกต่างหาก) ──
         t = 1;
 
         while(t > 0)
         {
-            t -= Time.deltaTime * speed;
-
-            float size = Mathf.Lerp(0, blinkSize, t);
+            t -= Time.deltaTime * actualOpenSpeed;
+            // Ease-out: ลืมตาช้าตอนแรก เร็วขึ้นเมื่อใกล้เปิดสุด
+            float curve = Mathf.Pow(t, 0.6f);
+            float size = Mathf.Lerp(0, blinkSize, curve);
 
             topLid.sizeDelta = new Vector2(widthTop, size);
-            bottomLid.sizeDelta = new Vector2(widthBottom, size);   
+            bottomLid.sizeDelta = new Vector2(widthBottom, size);
 
             yield return null;
         }
+
+        // ล็อกค่าสุดท้ายให้เป๊ะ
+        topLid.sizeDelta    = new Vector2(widthTop, 0);
+        bottomLid.sizeDelta = new Vector2(widthBottom, 0);
+
         IsEyesOpen = true;
         TimeManager.instance.IsPauseTime(false);
 
