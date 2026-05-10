@@ -39,34 +39,34 @@ MonoBehaviour:
     isPlayer: 1
     replies:
     - replyText: I curse every one of you who created this!
-      nextNode: 5
+      nextNode: 4
     - replyText: ' I don''t want to play anymore. I can''t take it anymore. I can''t
         bear this anymore.'
-      nextNode: 6
+      nextNode: 5
     nextNode: 0
   - message: Whatever you choose, in the end, it's your own choice.
     isPlayer: 0
     replies: []
-    nextNode: 0
+    nextNode: -1
   - message: Stay calm
     isPlayer: 0
     replies: []
-    nextNode: 7
+    nextNode: 6
   - message: You just need to find the pieces of paper with numbers on them
     isPlayer: 0
     replies: []
-    nextNode: 8
+    nextNode: 7
   - message: and look at them in ascending order, all four of them.
     isPlayer: 0
     replies: []
-    nextNode: 9
+    nextNode: 8
   - message: But be careful, try to keep your eyes open. Do not close your eyes under
       any circumstances
     isPlayer: 0
     replies: []
-    nextNode: 10
+    nextNode: 9
   - message: And if anything is watching you, do not move. 9:00 PM - 9:40 PM. This
       night is so long
     isPlayer: 0
     replies: []
-    nextNode: 11
+    nextNode: 10

@@ -281,6 +281,52 @@ public class AudioManager : MonoBehaviour
         rule3Death.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
     }
 
+    // ─────────── Rule 2 Atmospheric Sounds ───────────
+    // TODO: สร้าง FMOD events เหล่านี้:
+    //   event:/Rule2/Wail              – เสียงโหยหวน (one-shot)
+    //   event:/Rule2/ForestFootsteps   – เสียงคนเดินในป่า (one-shot)
+    //   event:/Rule2/Whisper           – เสียงกระซิบข้างหู (one-shot)
+    //   event:/Rule2/GhostLaugh        – เสียงผีหัวเราะเบาๆ (one-shot)
+    //   event:/Rule2/Eerie             – เสียงหวีดๆ ambient (one-shot)
+    //   event:/Rule2/DogHowl           – เสียงหมาหอนจากระยะไกล (one-shot)
+    //   event:/Rule2/BusApproach       – เสียงรถประจำทางเข้ามาใกล้ (one-shot)
+    //   event:/Rule2/RunningFootsteps  – เสียงคนวิ่งผ่านหลัง (one-shot)
+
+    private Vector3 ListenerPos =>
+        Camera.main != null ? Camera.main.transform.position : Vector3.zero;
+
+    /// <summary>เสียงโหยหวน (สุ่ม event ตอน First Blackout Return)</summary>
+    public void PlayRule2Wail()
+        => RuntimeManager.PlayOneShot("event:/Rule2/Wail", ListenerPos);
+
+    /// <summary>เสียงคนเดินในป่าข้างหลัง (สุ่ม event ตอน First Blackout Return)</summary>
+    public void PlayRule2ForestFootsteps()
+        => RuntimeManager.PlayOneShot("event:/Rule2/ForestFootsteps", ListenerPos);
+
+    /// <summary>เสียงกระซิบข้างหู (สุ่ม event ตอน First Blackout Return)</summary>
+    public void PlayRule2Whisper()
+        => RuntimeManager.PlayOneShot("event:/Rule2/Whisper", ListenerPos);
+
+    /// <summary>เสียงผีหัวเราะเบาๆ (สุ่ม sound ระหว่าง Fix Panel)</summary>
+    public void PlayRule2GhostLaugh()
+        => RuntimeManager.PlayOneShot("event:/Rule2/GhostLaugh", ListenerPos);
+
+    /// <summary>เสียงหวีดๆ ambient (สุ่ม sound ระหว่าง Fix Panel)</summary>
+    public void PlayRule2Eerie()
+        => RuntimeManager.PlayOneShot("event:/Rule2/Eerie", ListenerPos);
+
+    /// <summary>เสียงหมาหอนจากระยะไกล (สุ่ม sound ระหว่าง Fix Panel)</summary>
+    public void PlayRule2DogHowl()
+        => RuntimeManager.PlayOneShot("event:/Rule2/DogHowl", ListenerPos);
+
+    /// <summary>เสียงรถประจำทางเข้ามาใกล้ (สุ่ม sound ระหว่าง Fix Panel)</summary>
+    public void PlayRule2BusApproach()
+        => RuntimeManager.PlayOneShot("event:/Rule2/BusApproach", ListenerPos);
+
+    /// <summary>เสียงคนวิ่งผ่านหลังผู้เล่น (สุ่ม ระหว่างเดินกลับศาลา)</summary>
+    public void PlayRule2RunningFootsteps()
+        => RuntimeManager.PlayOneShot("event:/Rule2/RunningFootsteps", ListenerPos);
+
     public void UpdateHeartbeat()
     {
         currentHeart = Mathf.Lerp(currentHeart, targetHeart, Time.deltaTime * 2f);

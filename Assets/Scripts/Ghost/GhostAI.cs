@@ -190,7 +190,7 @@ public class GhostAI : MonoBehaviour
         agent.enabled = false;
         animator.SetTrigger("Vecna");
         yield return new WaitForSeconds(13f);
-        currentRule.SpawnJumpScareGhost();
+        //currentRule.SpawnJumpScareGhost();
         Destroy(gameObject,0.5f);
         
     }

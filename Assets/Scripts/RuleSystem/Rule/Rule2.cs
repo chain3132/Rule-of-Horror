@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.HeartbeatSystem;
 using InputSystem;
-using JetBrains.Annotations;
 using Manager;
 using Player;
 using Rule2;
@@ -15,365 +13,454 @@ namespace RuleSystem.Rule
     public enum Rule2State
     {
         None,
-        FirstBlackout,
-        TurnOnLight,
-        SecondBlackout,
-        FixPanel,
-        ReturnToSeat,
-        RadioWaiting,
-        GhostEvent,
+        FirstBlackout,        // ไฟดับครั้งแรก – เปิดวิทยุได้ยินเสียงคลื่น
+        FirstBlackoutReturn,  // ผู้เล่นกลับมานั่ง → สุ่ม event 1-5
+        SecondBlackout,       // ไฟดับครั้งที่ 2 – มืดสนิท, ไฟฉายกระพริบ
+        FixPanel,             // ซ่อมตู้ไฟ + เงาข้างตู้ + random sounds ทุก 5 วิ
+        ReturnToSeat,         // เดินกลับศาลา + random footstep
+        RadioWaiting,         // ไฟกระพริบ + random ghost sighting → EndRule
         Completed
     }
 
     public class Rule2 : RuleBase
     {
-        [Header("TimeToFirstBlackout")]
-        [SerializeField] float hourFirstBlackout = 0f;
-        [SerializeField] float minuteFirstBlackout = 0f;
-        [Header("TimeToSecondBlackout")]
-        [SerializeField] float hourSecondBlackout = 0f;
-        [SerializeField] float minuteSecondBlackout = 0f;
-        
-        [SerializeField] private RadioControl radioControl;
-        
-        [SerializeField] private LightPanel panelPrefab;
-        [SerializeField] private Transform[] panelSpawnPoints;
-        [SerializeField] private List<Transform> activePanelPoints;
+        // ── Timing ──────────────────────────────────────────────────────
+        [Header("Timing")]
+        [SerializeField] private float hourFirstBlackout   = 0f;
+        [SerializeField] private float minuteFirstBlackout = 0f;
 
-        [SerializeField] private GameObject runningGhost;
-        private List<LightPanel> activePanels = new List<LightPanel>();
-
-        [Header("Ghost")]
-        public GameObject ghostPrefab;
-        [SerializeField] private GameObject ghostJumpScarePrefab;
-        [SerializeField] private GameObject ghostTestPrefab;
-        private GameObject currentGhost;
-        [SerializeField] private Transform ghostSpawnPoint;
-        [SerializeField] private Transform ghostPointOutside;
-        [SerializeField] private Transform ghostPointInside;
-        [SerializeField] private Transform jumpScarePoint;
-
-        
-        [Header("Panel Setup")]
-        
-        [SerializeField] Light saraLight;
-        [SerializeField] private InputHandler inputHandler;
-        [SerializeField] private SwitchLight switchLight;
-        [SerializeField] private Rule2State currentState;
+        // ── Core References ─────────────────────────────────────────────
+        [Header("References")]
+        [SerializeField] private RadioControl     radioControl;
+        [SerializeField] private InputHandler     inputHandler;
+        [SerializeField] private SwitchLight      switchLight;
         [SerializeField] private PlayerController playerController;
+        [SerializeField] private Rule2State       currentState;
 
-        private HashSet<LightPanel> fixedPanelSet = new HashSet<LightPanel>();
-        private int fixedPanels = 0;
+        // ── Lights ──────────────────────────────────────────────────────
+        [Header("Lights")]
+        [SerializeField] private Light   saraLight;
+        [SerializeField] private Light[] streetLights;  // ไฟตรงถนน ดับตอน Second Blackout
+        [SerializeField] private Light   flashlight;    // ไฟฉายมือถือ (กระพริบระหว่างมืด)
 
-        private bool isSitting;
-        private bool radioPlaying;
-        private float radioTimer;
-        private bool lightTurnedOn;
+        // ── Panels ──────────────────────────────────────────────────────
+        [Header("Panels")]
+        [SerializeField] private LightPanel  panelPrefab;
+        [SerializeField] private Transform[] panelSpawnPoints;
 
-        private bool ghostTriggered;
-        private bool _isRadioStopped;
+        // ── Ghost & Shadows ─────────────────────────────────────────────
+        [Header("Ghost & Shadows")]
+        [SerializeField] private GameObject runningGhost;          // ผีวิ่งช่วง ReturnToSeat
 
+        [Tooltip("Prefab เงาดำๆ ที่ปรากฏหน้าผู้เล่น (First Blackout Return event 3)")]
+        [SerializeField] private GameObject shadowPrefab;
+        [SerializeField] private Transform  shadowSpawnPoint;      // จุด spawn เงาดำหน้าผู้เล่น
+
+        [Tooltip("Prefab เงาข้างตู้ไฟ ระหว่างซ่อม")]
+        [SerializeField] private GameObject panelGhostShadowPrefab;
+
+        [Tooltip("Prefab ร่างผีในศาลา (Radio Waiting ghost sighting)")]
+        [SerializeField] private GameObject pavilionGhostPrefab;
+        [SerializeField] private Transform  pavilionGhostPoint;    // จุดยืนผีในศาลา
+
+        // ── Random Sound Timing ──────────────────────────────────────────
+        [Header("Fix Panel – Random Sound Interval (sec)")]
+        [SerializeField] private float randomSoundMinInterval = 4f;
+        [SerializeField] private float randomSoundMaxInterval = 6f;
+
+        // ── Runtime ─────────────────────────────────────────────────────
+        private readonly List<LightPanel>   activePanels   = new List<LightPanel>();
+        private readonly List<GameObject>   spawnedShadows = new List<GameObject>();
+        private int                         fixedPanels;
+        private bool                        radioPlaying;
+        private bool                        _lightTurnedOn;   // ผู้เล่นกดสวิตช์ไฟแล้วในรอบ First Blackout
+        private Coroutine                   _randomSoundCoroutine;
+        private Coroutine                   _flashlightFlickerCoroutine;
+
+        // ════════════════════════════════════════════════════════════════
         #region Lifecycle
+        // ════════════════════════════════════════════════════════════════
 
         public override void StartRule()
         {
             base.StartRule();
             StartCoroutine(RuleFlow());
-            
-            //ChangeState(Rule2State.FirstBlackout);
         }
 
         void StartGameplay()
         {
-            ResetState();
+            ResetRuntime();
             SpawnRandomPanels();
             TimeManager.instance.IsPauseTime(false);
+        }
 
-        }
-        bool PlayerIsSitting()
-        {
-            return PlayerController.Instance.IsSitting();
-        }
-        bool PlayerEyesOpened()
-        {
-            return GameModeController.instance.IsEyesOpen;
-        }
+        bool PlayerIsSitting()  => PlayerController.Instance.IsSitting();
+        bool PlayerEyesOpened() => GameModeController.instance.IsEyesOpen;
+
         IEnumerator RuleFlow()
         {
             TimeManager.instance.IsPauseTime(true);
-            //  1. รอให้ผู้เล่น "นั่งก่อน"
-            yield return new WaitUntil(() => PlayerIsSitting());
+            yield return new WaitUntil(PlayerIsSitting);
             PlayerController.Instance.isBlockStanding = true;
             GameModeController.instance.BlinkToMode(GameMode.Tension);
-            yield return new WaitUntil(() => PlayerEyesOpened());
-            // 3. เริ่มกฎจริง
+            yield return new WaitUntil(PlayerEyesOpened);
             StartGameplay();
         }
-        
 
         protected override void UpdateRule()
         {
-            // sync player state
-            //isSitting = PlayerState.Instance.IsSitting;
-            if (TimeManager.instance.CheckTime((int)hourFirstBlackout, (int)minuteFirstBlackout) && currentState == Rule2State.None)
+            // ตรวจเวลา → trigger First Blackout
+            if (TimeManager.instance.CheckTime((int)hourFirstBlackout, (int)minuteFirstBlackout)
+                && currentState == Rule2State.None)
             {
                 ChangeState(Rule2State.FirstBlackout);
             }
+
             switch (currentState)
             {
-                case Rule2State.FirstBlackout:
-                    UpdateFirstBlackout();
-                    break;
-                
-                case Rule2State.TurnOnLight:
-                    UpdateTurnOnLight();
-                    break;
-                
-                case Rule2State.FixPanel:
-                    UpdateFixPanel();
-                    break;
-
-                case Rule2State.ReturnToSeat:
-                    UpdateReturnToSeat();
-                    break;
-
-                case Rule2State.RadioWaiting:
-                    UpdateRadioWaiting();
-                    break;
-
-                case Rule2State.GhostEvent:
-                    UpdateGhostEvent();
-                    break;
+                case Rule2State.FirstBlackout: UpdateFirstBlackout(); break;
+                case Rule2State.FixPanel:      UpdateFixPanel();      break;
+                case Rule2State.ReturnToSeat:  UpdateReturnToSeat();  break;
+                // FirstBlackoutReturn / SecondBlackout / RadioWaiting driven by coroutines
             }
         }
 
         public override void EndRule()
         {
-            TimeManager.instance.SetTime(20,39);
+            TimeManager.instance.SetTime(20, 39);
             TimeManager.instance.IsPauseTime(false);
             GameModeController.instance.BlinkToMode(GameMode.Relax);
             PlayerController.Instance.isBlockStanding = false;
+            StopHelperCoroutines();
             base.EndRule();
-            //ResetAll();
         }
 
         #endregion
 
-        #region State Machine
+        // ════════════════════════════════════════════════════════════════
+        #region State Machine Helpers
+        // ════════════════════════════════════════════════════════════════
+
+        void ChangeState(Rule2State next)
+        {
+            currentState = next;
+            switch (next)
+            {
+                case Rule2State.FirstBlackout:       StartFirstBlackout();       break;
+                case Rule2State.FirstBlackoutReturn: StartFirstBlackoutReturn(); break;
+                case Rule2State.SecondBlackout:      StartSecondBlackout();      break;
+                case Rule2State.FixPanel:            StartFixPanel();            break;
+                case Rule2State.ReturnToSeat:        StartReturnToSeat();        break;
+                case Rule2State.RadioWaiting:        StartRadioWaiting();        break;
+            }
+        }
+
+        void ResetRuntime()
+        {
+            fixedPanels    = 0;
+            radioPlaying   = false;
+            _lightTurnedOn = false;
+        }
+
         void SpawnRandomPanels()
         {
-            // เคลียร์ของเก่า
             foreach (var p in activePanels)
-            {
                 if (p != null) Destroy(p.gameObject);
-            }
             activePanels.Clear();
 
-            // copy list
-            List<Transform> shuffled = new List<Transform>(panelSpawnPoints);
-
-            // shuffle
-            for (int i = 0; i < shuffled.Count; i++)
+            // Fisher-Yates shuffle
+            var pool = new List<Transform>(panelSpawnPoints);
+            for (int i = pool.Count - 1; i > 0; i--)
             {
-                Transform temp = shuffled[i];
-                int rand = Random.Range(i, shuffled.Count);
-                shuffled[i] = shuffled[rand];
-                activePanelPoints.Add(shuffled[i]);
-                shuffled[rand] = temp;
+                int j = Random.Range(0, i + 1);
+                (pool[i], pool[j]) = (pool[j], pool[i]);
             }
 
-            // เลือก 2 อันแรก
-            for (int i = 0; i < 2; i++)
+            int count = Mathf.Min(2, pool.Count);
+            for (int i = 0; i < count; i++)
             {
-                LightPanel panel = Instantiate(panelPrefab, shuffled[i].position, Quaternion.identity);
-                panel.SetActiveLight(false); 
-                panel.SetRule(this,inputHandler); // ผูก callback
+                LightPanel panel = Instantiate(panelPrefab, pool[i].position, Quaternion.identity);
+                panel.SetActiveLight(false);
+                panel.SetRule(this, inputHandler);
                 activePanels.Add(panel);
             }
         }
 
-        void ChangeState(Rule2State newState)
+        void SetStreetLights(bool on)
         {
-            currentState = newState;
-
-            switch (newState)
+            if (streetLights == null) return;
+            foreach (var l in streetLights)
             {
-                case Rule2State.FirstBlackout:
-                    StartFirstBlackout();
-                    break;
-
-                case Rule2State.SecondBlackout:
-                    StartSecondBlackout();
-                    break;
-                case Rule2State.FixPanel:
-                    StartPanelFixed();
-                    break;
-                case Rule2State.ReturnToSeat:
-                    StartReturnToSeat();
-                    break;
-                case Rule2State.RadioWaiting:
-                    StartRadioPhase();
-                    break;
-
-                case Rule2State.GhostEvent:
-                    StartGhostEvent();
-                    break;
+                if (l != null) l.enabled = on;
             }
+            
         }
 
-        void ResetState()
+        void StopHelperCoroutines()
         {
-            fixedPanels = 0;
-            fixedPanelSet.Clear();
-            radioPlaying = false;
-            ghostTriggered = false;
+            if (_randomSoundCoroutine      != null) StopCoroutine(_randomSoundCoroutine);
+            if (_flashlightFlickerCoroutine != null) StopCoroutine(_flashlightFlickerCoroutine);
         }
 
         #endregion
 
-        #region Phase 1
+        // ════════════════════════════════════════════════════════════════
+        #region Phase 1 – First Blackout
+        //   ไฟดับครั้งแรก เปิดวิทยุ → เสียงคลื่น
+        // ════════════════════════════════════════════════════════════════
 
         void StartFirstBlackout()
         {
-            // TODO: ปิดไฟ + mood
             saraLight.enabled = false;
-            switchLight.UnlockSwitch(true);
             radioControl.UnlockRadio(true);
-            PlayerController.Instance.isBlockStanding = true;
-            TimeManager.instance.IsPauseTime(true);
-            radioControl.UnlockRadio(true);
-            StartCoroutine(AllowStandAfterSetup());
-        }
-        IEnumerator AllowStandAfterSetup()
-        {
-            yield return new WaitForSeconds(0.5f);
-
+            switchLight.UnlockSwitch(true);          // ← unlock สวิตช์ตั้งแต่ไฟดับรอบแรก
             PlayerController.Instance.isBlockStanding = false;
+            TimeManager.instance.IsPauseTime(true);
         }
 
         void UpdateFirstBlackout()
         {
-            if (lightTurnedOn)
-            {
-                ChangeState(Rule2State.TurnOnLight);
-            }
+            // รอผู้เล่น: เปิดวิทยุ + กดสวิตช์ไฟ + กลับมานั่ง ครบ 3 อย่าง
+            if (radioPlaying && _lightTurnedOn && PlayerIsSitting())
+                ChangeState(Rule2State.FirstBlackoutReturn);
         }
 
-        public void OnLightTurnedOn()
-        {
-            lightTurnedOn = true;
-        }
+        /// <summary>เรียกโดย RadioControl เมื่อผู้เล่นเปิดวิทยุ</summary>
         public void OnRadioTurnedOn()
         {
+            if (radioPlaying) return;
             radioPlaying = true;
+            AudioManager.instance.PlayRadio(); // เสียงคลื่น (RadioNoise)
+        }
+
+        /// <summary>เรียกโดย SwitchLight เมื่อผู้เล่นกดสวิตช์ไฟ</summary>
+        public void OnLightTurnedOn()
+        {
+            // บันทึกว่ากดสวิตช์แล้ว (ใช้ตรวจ condition ใน First Blackout)
+            _lightTurnedOn = true;
         }
 
         #endregion
 
-        #region Phase 2
+        // ════════════════════════════════════════════════════════════════
+        #region Phase 1.5 – First Blackout Return (สุ่ม event)
+        //   ผู้เล่นกลับมานั่ง → สุ่ม 1 ใน 5 สิ่ง
+        // ════════════════════════════════════════════════════════════════
 
-        void UpdateTurnOnLight()
+        void StartFirstBlackoutReturn()
         {
-            if (playerController.IsSitting() && radioPlaying)
+            StartCoroutine(FirstBlackoutReturnRoutine());
+        }
+
+        IEnumerator FirstBlackoutReturnRoutine()
+        {
+            yield return new WaitForSeconds(Random.Range(1.5f, 3f));
+
+            // สุ่ม 0-4
+            switch (Random.Range(0, 5))
             {
-                radioControl.UnlockRadio(false);
-                ChangeState(Rule2State.SecondBlackout);
-                TimeManager.instance.IsPauseTime(false);
-                PlayerController.Instance.isBlockStanding = true;
+                case 0: // เสียงโหยหวน
+                    AudioManager.instance.PlayRule2Wail();
+                    break;
+                case 1: // เสียงเหมือนคนเดินในป่าข้างหลัง
+                    AudioManager.instance.PlayRule2ForestFootsteps();
+                    break;
+                case 2: // เงาดำๆ ปรากฏหน้าผู้เล่น 2 วิแล้วหาย
+                    yield return StartCoroutine(ShowPlayerShadowRoutine());
+                    break;
+                case 3: // เสียงเหมือนมีคนกระซิบข้างหู
+                    AudioManager.instance.PlayRule2Whisper();
+                    break;
+                case 4: // ไม่มีอะไรเกิดขึ้น
+                    break;
+            }
+
+            // หน่วงก่อนเข้า Second Blackout
+            yield return new WaitForSeconds(Random.Range(3f, 6f));
+            ChangeState(Rule2State.SecondBlackout);
+        }
+
+        IEnumerator ShowPlayerShadowRoutine()
+        {
+            if (shadowPrefab != null && shadowSpawnPoint != null)
+            {
+                var shadow = Instantiate(shadowPrefab, shadowSpawnPoint.position, shadowSpawnPoint.rotation);
+                yield return new WaitForSeconds(2f);
+                Destroy(shadow);
             }
         }
 
         #endregion
 
-        #region Phase 3
+        // ════════════════════════════════════════════════════════════════
+        #region Phase 2 – Second Blackout
+        //   ทุกอย่างมืดสนิท, ไฟฉายกระพริบ, วิทยุ → บทสวด
+        // ════════════════════════════════════════════════════════════════
 
         void StartSecondBlackout()
         {
-            // TODO: ไฟกระพริบ + เสียงเพี้ยน
             StartCoroutine(SecondBlackoutCoroutine());
-            
-        }  
-        
-        private IEnumerator SecondBlackoutCoroutine()
-        {
-            yield return new WaitForSeconds(12f); // 2 minutes in game time 
-            for (int i = 0; i < 9; i++)
-            {
-                
-                saraLight.enabled = !saraLight.enabled;
-                yield return new WaitForSeconds(Random.Range(0.05f, 0.1f));
-                
-            }
-            UpdateSecondBlackout();
         }
 
-        void UpdateSecondBlackout()
+        IEnumerator SecondBlackoutCoroutine()
         {
-            TimeManager.instance.IsPauseTime(true);
-            PlayerController.Instance.isBlockStanding = true;
+            // ไฟกระพริบก่อนดับสนิท
+            for (int i = 0; i < 9; i++)
+            {
+                saraLight.enabled = !saraLight.enabled;
+                yield return new WaitForSeconds(Random.Range(0.05f, 0.1f));
+            }
+            saraLight.enabled = false;
+            SetStreetLights(false); // ไฟถนนดับ – มืดสนิท
+
+            // เปิดไฟฉาย (กระพริบเป็นช่วง)
+            if (flashlight != null)
+            {
+                flashlight.enabled = true;
+                _flashlightFlickerCoroutine = StartCoroutine(FlashlightFlickerRoutine());
+            }
+
+            // วิทยุ → ดับ → บทสวดปกติ
+            yield return new WaitForSeconds(2f);
+            AudioManager.instance.StopRadio();
+            yield return new WaitForSeconds(0.5f);
+            AudioManager.instance.PlayRadioPrayer(1); // บทสวดปกติ
+
+            // เปิดให้ซ่อมตู้ได้ทันที
+            yield return new WaitForSeconds(1f);
             ChangeState(Rule2State.FixPanel);
-            StartCoroutine(AllowStandAfterSetup());
+
+            // หลัง 30-50 วิ บทสวดเปลี่ยนเป็นถอยหลัง (background, ไม่ block Flow)
+            StartCoroutine(SwitchPrayerToReverseRoutine());
+        }
+
+        IEnumerator SwitchPrayerToReverseRoutine()
+        {
+            yield return new WaitForSeconds(Random.Range(30f, 50f));
+            if (currentState == Rule2State.FixPanel || currentState == Rule2State.ReturnToSeat)
+                AudioManager.instance.PlayRadioPrayer(0); // สวดถอยหลัง
+        }
+
+        IEnumerator FlashlightFlickerRoutine()
+        {
+            while (true)
+            {
+                // ไฟติดปกติ ซักพัก
+                yield return new WaitForSeconds(Random.Range(4f, 9f));
+
+                // กระพริบ 2-4 ครั้ง
+                int flickers = Random.Range(2, 5);
+                for (int i = 0; i < flickers; i++)
+                {
+                    if (flashlight != null) flashlight.enabled = false;
+                    yield return new WaitForSeconds(Random.Range(0.05f, 0.15f));
+                    if (flashlight != null) flashlight.enabled = true;
+                    yield return new WaitForSeconds(Random.Range(0.05f, 0.1f));
+                }
+            }
         }
 
         #endregion
 
-        #region Phase 4
+        // ════════════════════════════════════════════════════════════════
+        #region Phase 3 – Fix Panel
+        //   เงาข้างตู้, random sound ทุก 4-6 วิ
+        // ════════════════════════════════════════════════════════════════
 
-        void CreateGhost()
+        void StartFixPanel()
         {
-            Instantiate(ghostTestPrefab, activePanels[0].gameObject.transform.position + Vector3.right * 1.2f, Quaternion.identity);
-        }
-        void StartPanelFixed()
-        {
-            AudioManager.instance.StopRadio();
-            StartCoroutine(RadioWaitingCoroutine());
-
             foreach (var panel in activePanels)
             {
                 panel.SetActiveLight(true);
                 panel.UnlockPanel(true);
             }
-            CreateGhost();
 
+            SpawnPanelShadows();
+            _randomSoundCoroutine = StartCoroutine(RandomFixPanelSoundRoutine());
         }
 
-        void UpdateFixPanel()
+        void SpawnPanelShadows()
         {
-            // รอ event จาก panel (OnPanelFixed)
+            if (panelGhostShadowPrefab == null) return;
+            foreach (var panel in activePanels)
+            {
+                Vector3 pos = panel.transform.position + panel.transform.right * 1.5f;
+                var shadow = Instantiate(panelGhostShadowPrefab, pos, Quaternion.identity);
+                spawnedShadows.Add(shadow);
+            }
         }
-        IEnumerator RadioWaitingCoroutine()
+
+        void ClearPanelShadows()
         {
-            yield return new WaitForSeconds(6f);
-            AudioManager.instance.StartWomanScream();
-            AudioManager.instance.PlayRadioPrayer(1);
-            yield return new WaitForSeconds(12f);
-            AudioManager.instance.PlayRadioPrayer(0);
-
-
+            foreach (var s in spawnedShadows)
+                if (s != null) Destroy(s);
+            spawnedShadows.Clear();
         }
+
+        IEnumerator RandomFixPanelSoundRoutine()
+        {
+            while (currentState == Rule2State.FixPanel)
+            {
+                yield return new WaitForSeconds(
+                    Random.Range(randomSoundMinInterval, randomSoundMaxInterval));
+
+                if (currentState != Rule2State.FixPanel) yield break;
+
+                // สุ่ม 1 ใน 5
+                switch (Random.Range(0, 5))
+                {
+                    case 0: AudioManager.instance.PlayRule2GhostLaugh();   break;
+                    case 1: AudioManager.instance.PlayRule2Eerie();         break;
+                    case 2: AudioManager.instance.PlayRule2DogHowl();       break;
+                    case 3: AudioManager.instance.PlayRule2BusApproach();   break;
+                    case 4: break; // ไม่มีอะไร
+                }
+            }
+        }
+
+        void UpdateFixPanel() { /* รอ OnPanelFixed() callbacks */ }
+
+        /// <summary>เรียกโดย LightPanel เมื่อผู้เล่นซ่อมตู้ไฟสำเร็จ</summary>
         public void OnPanelFixed()
         {
-
-            //fixedPanelSet.Add(panel);
             fixedPanels++;
-            if (fixedPanels == 1)
-            {
-                AudioManager.instance.StopWomanScream();
-            }
-            if (fixedPanels >= 2)
-            {
-                HorrorTextUI.instance.HideText();
-                switchLight.UnlockSwitch(true);
-                runningGhost.SetActive(true);
-                ChangeState(Rule2State.ReturnToSeat);
-            }
+            if (fixedPanels < activePanels.Count) return;
+
+            // ซ่อมเสร็จทั้งหมด → หยุด sounds + คืนไฟ
+            if (_randomSoundCoroutine      != null) StopCoroutine(_randomSoundCoroutine);
+            if (_flashlightFlickerCoroutine != null) StopCoroutine(_flashlightFlickerCoroutine);
+            if (flashlight != null) flashlight.enabled = false;
+
+            ClearPanelShadows();
+
+            saraLight.enabled = true;
+            SetStreetLights(true);
+
+            HorrorTextUI.instance.HideText();
+            switchLight.UnlockSwitch(true);
+            runningGhost.SetActive(true);
+
+            ChangeState(Rule2State.ReturnToSeat);
         }
 
         #endregion
 
-        #region Phase 5
+        // ════════════════════════════════════════════════════════════════
+        #region Phase 4 – Return To Seat
+        //   เดินกลับ → สุ่มเสียงคนวิ่งผ่านหลัง
+        // ════════════════════════════════════════════════════════════════
+
         void StartReturnToSeat()
         {
+            StartCoroutine(ReturnToSeatAtmosphereRoutine());
+        }
+
+        IEnumerator ReturnToSeatAtmosphereRoutine()
+        {
+            yield return new WaitForSeconds(Random.Range(2f, 4f));
+            // 60% โอกาสได้ยินเสียงคนวิ่งผ่านหลัง
+            if (Random.value < 0.6f)
+                AudioManager.instance.PlayRule2RunningFootsteps();
         }
 
         void UpdateReturnToSeat()
@@ -383,122 +470,64 @@ namespace RuleSystem.Rule
                 runningGhost.SetActive(false);
                 PlayerController.Instance.isBlockStanding = true;
                 TimeManager.instance.IsPauseTime(false);
-                ChangeState(Rule2State.RadioWaiting);
                 HorrorTextUI.instance.HideText();
+                ChangeState(Rule2State.RadioWaiting);
             }
         }
 
         #endregion
 
-        #region Phase 6
+        // ════════════════════════════════════════════════════════════════
+        #region Phase 5 – Radio Waiting
+        //   ไฟกระพริบ + สุ่มเห็นร่างผีในศาลา 2 วิ
+        // ════════════════════════════════════════════════════════════════
 
-        void StartRadioPhase()
+        void StartRadioWaiting()
         {
-            radioPlaying = true;
-            StartCoroutine(WaitBeforeGhost());
-            //radioTimer = Random.Range(40,90);
-            //AudioManager.instance.GoToNoise();
-        }
-        IEnumerator WaitBeforeGhost()
-        {
-            yield return new WaitForSeconds(6f);
-            AudioManager.instance.StopPlayRadioPrayer();
-            //AudioManager.instance.PlayRadioPrayer(2);
-            ghostTriggered = true;
-            ChangeState(Rule2State.GhostEvent);
-        }
-        void UpdateRadioWaiting()
-        {
-            //  ถ้าลุก → หยุดเวลา + เพิ่มความเครียด
-            // if (!isSitting)
-            // {
-            //     //HeartbeatSystem.instance.AddStress(20f * Time.deltaTime);
-            //     return;
-            // }
-            
+            StartCoroutine(RadioWaitingRoutine());
         }
 
-        #endregion
-
-        #region Phase 7
-
-        void StartGhostEvent()
+        IEnumerator RadioWaitingRoutine()
         {
-            // spawn ผี
-            if (ghostPrefab != null)
-            {
-                currentGhost = Instantiate(ghostPrefab, ghostSpawnPoint.position, Quaternion.identity);
+            yield return new WaitForSeconds(Random.Range(2f, 4f));
 
-                GhostAI ai = currentGhost.GetComponent<GhostAI>();
-                ai.point1 = ghostPointOutside;
-                ai.point2 = ghostPointInside;
-                ai.saraLight = saraLight;
-                ai.Init(playerController.transform,this);
-            }
+            // 50% โอกาสเห็นร่างผีในศาลา
+            if (Random.value < 0.5f)
+                yield return StartCoroutine(PavilionGhostSightingRoutine());
 
-            // TODO: เสียงหัวเราะ / ไฟกระพริบ
-        }
-
-        void UpdateGhostEvent()
-        {
-            if (!isSitting)
-            {
-                //HeartbeatSystem.instance.AddStress(30f * Time.deltaTime);
-            }
-            
-            if (_isRadioStopped)
-            {
-                PlayerController.Instance.isBlockStanding = false;
-                ChangeState(Rule2State.Completed);
-            }
-        }
-
-        public void RadioStopped()
-        {
-            _isRadioStopped = true;
-        }
-
-        public void SpawnJumpScareGhost()
-        {
-            StartCoroutine(JumpScareRoutine());
-        }
-
-        IEnumerator JumpScareRoutine()
-        {
-            yield return new WaitForSeconds(4f);
-
-            GameObject ghost = Instantiate(
-                ghostJumpScarePrefab,
-                jumpScarePoint.position,
-                jumpScarePoint.rotation,
-                jumpScarePoint
-            );
-            AudioManager.instance.PlayJumpScareGhost();
-
-            // รอ 2 วิ
+            // รอนิดนึงหลังเหตุการณ์ → จบ Rule
             yield return new WaitForSeconds(2f);
-
-            if (ghost != null)
-            {
-                Destroy(ghost);
-            }
+            AudioManager.instance.StopPlayRadioPrayer();
             EndRule();
         }
 
-        #endregion
-
-        #region End
-
-        void ResetAll()
+        IEnumerator PavilionGhostSightingRoutine()
         {
-           
+            // ไฟดับ → ผีปรากฏ → ไฟติด → ผีอยู่ 2 วิ → ผีหาย → ไฟกระพริบ
+            saraLight.enabled = false;
+            yield return new WaitForSeconds(0.08f);
+
+            GameObject ghost = null;
+            if (pavilionGhostPrefab != null && pavilionGhostPoint != null)
+                ghost = Instantiate(pavilionGhostPrefab,
+                                    pavilionGhostPoint.position,
+                                    pavilionGhostPoint.rotation);
+
+            saraLight.enabled = true;
+            yield return new WaitForSeconds(2f);
+
+            if (ghost != null) Destroy(ghost);
+
+            // ไฟกระพริบหลังผีหาย
+            for (int i = 0; i < 5; i++)
+            {
+                saraLight.enabled = !saraLight.enabled;
+                yield return new WaitForSeconds(Random.Range(0.05f, 0.12f));
+            }
+            saraLight.enabled = true;
         }
 
         #endregion
 
-        #region Mock (คุณต้องไปผูกจริง)
-
-
-        #endregion
     }
 }

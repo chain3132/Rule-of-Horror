@@ -379,6 +379,7 @@ public class Rule3 : RuleBase
             // ── Step 4: Ghost turns back (SitTurningHeadReversed) ──
             if (ghostAnimator != null)
                 ghostAnimator.SetTrigger("TurnBack");
+            AudioManager.instance.PlayGhostWarning();
 
             yield return new WaitForSeconds(ghostTurnAnimDuration);
 

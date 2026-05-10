@@ -24,13 +24,14 @@ public class RuleManager : MonoBehaviour
 
         foreach (var rule in rules)
         {
+            if (rule == null) continue; // ป้องกัน slot ว่างใน Inspector
+
             int startTime = rule.startHour * 60 + rule.startMinute;
             int endTime = rule.endHour * 60 + rule.endMinute;
 
             // เริ่มกฎ
             if (!rule.ruleActive && currentTime >= startTime && currentTime < endTime)
             {
-                
                 rule.StartRule();
             }
 

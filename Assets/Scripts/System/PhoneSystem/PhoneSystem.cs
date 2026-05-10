@@ -11,6 +11,8 @@ namespace PhoneSystem
     {
         public PhoneState CurrentState { get; private set; }
 
+        private bool _phoneLocked;
+
         [SerializeField] private PlayerController playerController;
         [SerializeField] private GameObject phoneObject;
         [SerializeField] private PhoneAppController appController;
@@ -39,8 +41,23 @@ namespace PhoneSystem
             CurrentState = newState;
             uiController.UpdateState(newState);
         }
+        /// <summary>ล็อกไม่ให้ผู้เล่นเปิดโทรศัพท์ได้ (ใช้ตอนโทรศัพท์หาย เช่น Rule 1)</summary>
+        public void LockPhone()
+        {
+            _phoneLocked = true;
+            LowerPhone(); // บังคับซ่อน + set state = Hidden
+        }
+
+        /// <summary>ปลดล็อกให้ผู้เล่นเปิดโทรศัพท์ได้ตามปกติ</summary>
+        public void UnlockPhone()
+        {
+            _phoneLocked = false;
+        }
+
         private void TogglePhone()
         {
+            if (_phoneLocked) return; // โทรศัพท์หายอยู่ → ห้ามเปิด
+
             if (CurrentState == PhoneState.Hidden)
                 RaisePhone();
             else

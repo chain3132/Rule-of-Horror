@@ -20,17 +20,19 @@ namespace System
         private bool _isSubscribed = false;
         private bool _isUnlocked = false;
         private bool _lastLightStatus;
+        private bool _isPlayerInTrigger = false;   // ← track ว่า player อยู่ใน zone ไหม
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Player") && !_isSubscribed )
+            if (other.CompareTag("Player") && !_isSubscribed)
             {
-                interactionText.gameObject.SetActive(true) ;
-            
-                if (inputHandler != null && _isUnlocked )
+                _isPlayerInTrigger = true;
+                interactionText.gameObject.SetActive(true);
+
+                if (inputHandler != null && _isUnlocked)
                 {
                     inputHandler.OnInteractPressed += Interact;
-                    _isSubscribed = true; 
+                    _isSubscribed = true;
                 }
             }
         }
@@ -40,37 +42,48 @@ namespace System
             if (saraLight.enabled != _lastLightStatus)
             {
                 _lastLightStatus = saraLight.enabled;
-                UpdateVisuals(); 
+                UpdateVisuals();
             }
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.CompareTag("Player") )
+            if (other.CompareTag("Player"))
             {
+                _isPlayerInTrigger = false;
                 interactionText.gameObject.SetActive(false);
-            
+
                 if (inputHandler != null && _isSubscribed)
                 {
                     inputHandler.OnInteractPressed -= Interact;
-                    _isSubscribed = false; // 
+                    _isSubscribed = false;
                 }
             }
         }
+
         private void PlaySwitchSound()
         {
-            // ✅ one-shot 3D
             RuntimeManager.PlayOneShot(switchSound, transform.position);
         }
+
         public void UnlockSwitch(bool value)
         {
             _isUnlocked = value;
+
+            // ถ้า player ยืนอยู่ใน trigger อยู่แล้วตอน unlock → subscribe ทันทีเลย
+            if (_isUnlocked && _isPlayerInTrigger && !_isSubscribed && inputHandler != null)
+            {
+                inputHandler.OnInteractPressed += Interact;
+                _isSubscribed = true;
+            }
         }
+
         private void UpdateVisuals()
         {
             onSwitchObject.SetActive(_lastLightStatus);
             offSwitchObject.SetActive(!_lastLightStatus);
         }
+
         public void Interact()
         {
             _isUnlocked = false;
@@ -84,6 +97,7 @@ namespace System
         {
             return saraLight.enabled;
         }
+
         void TurnOnLight()
         {
             saraLight.enabled = true;
