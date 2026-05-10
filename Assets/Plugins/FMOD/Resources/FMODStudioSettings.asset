@@ -493,6 +493,7 @@ MonoBehaviour:
   - AmbienceBank
   - BoneBroken
   - Radio
+  - Rule2
   - RunningGhost
   - WomanSound
   BanksToLoad: []

@@ -15,11 +15,38 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639134428982498821
+  lastModified: 639140410885942417
   FileSizes:
   - Name: Desktop
     Value: 39392
   Exists: 1
+--- !u!114 &-8491681999365233650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule2/Wail
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule2/Wail
+  Guid:
+    Data1: -1360559049
+    Data2: 1106677833
+    Data3: 1552828315
+    Data4: -374133545
+  Banks:
+  - {fileID: 7142894870735434283}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &-8109406064915979547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,6 +178,33 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-4395434948002167409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule2/Rule2AmbienceBG
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule2/Rule2AmbienceBG
+  Guid:
+    Data1: -632178835
+    Data2: 1150510369
+    Data3: -1721322614
+    Data4: 913867168
+  Banks:
+  - {fileID: 7142894870735434283}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 7632
 --- !u!114 &-4159646074767631618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -275,6 +329,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 7584
+--- !u!114 &-1109608316143511213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule2/BusApproach
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule2/BusApproach
+  Guid:
+    Data1: -1875781676
+    Data2: 1179909141
+    Data3: 1273680528
+    Data4: 1227295402
+  Banks:
+  - {fileID: 7142894870735434283}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &-1082020412420637551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -381,6 +462,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 4728
+--- !u!114 &-611542505349494928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule2/DogHowl
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule2/DogHowl
+  Guid:
+    Data1: 1195252163
+    Data2: 1075302817
+    Data3: -792255319
+    Data4: -1633918762
+  Banks:
+  - {fileID: 7142894870735434283}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &-252490073037744945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -457,6 +565,7 @@ MonoBehaviour:
   - {fileID: -8109406064915979547}
   - {fileID: 5037105710454743551}
   - {fileID: -2276144933527849509}
+  - {fileID: 7142894870735434283}
   EditorEvents:
   - {fileID: 7011388528615965413}
   - {fileID: 3299800955492051082}
@@ -482,13 +591,22 @@ MonoBehaviour:
   - {fileID: 4656834964759330309}
   - {fileID: -252490073037744945}
   - {fileID: 1997278881006735890}
+  - {fileID: -8491681999365233650}
+  - {fileID: 1299686025145752659}
+  - {fileID: 9189084323817974315}
+  - {fileID: -611542505349494928}
+  - {fileID: -1109608316143511213}
+  - {fileID: 8003184304267320763}
+  - {fileID: 5741210175097861924}
+  - {fileID: -4395434948002167409}
+  - {fileID: 8974569834229332748}
   EditorParameters: []
   MasterBanks:
   - {fileID: -8687965200994253978}
   StringsBanks:
   - {fileID: 8656562136812460686}
   cacheVersion: 131858
-  cacheTime: 639135089117739543
+  cacheTime: 639140410886596370
   SerializableEventsDict:
   - key: event:/New Event
     index: 0
@@ -538,6 +656,24 @@ MonoBehaviour:
     index: 22
   - key: event:/Rule3Death
     index: 23
+  - key: event:/Rule2/Wail
+    index: 24
+  - key: event:/Rule2/GhostLaugh
+    index: 25
+  - key: event:/Rule2/ForestFootsteps
+    index: 26
+  - key: event:/Rule2/DogHowl
+    index: 27
+  - key: event:/Rule2/BusApproach
+    index: 28
+  - key: event:/Rule2/Whisper
+    index: 29
+  - key: event:/Rule2/Eerie
+    index: 30
+  - key: event:/Rule2/Rule2AmbienceBG
+    index: 31
+  - key: event:/Rule2/Rule2Ambience
+    index: 32
 --- !u!114 &388632287678487498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -647,6 +783,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 287167
+--- !u!114 &1299686025145752659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule2/GhostLaugh
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule2/GhostLaugh
+  Guid:
+    Data1: -1722218891
+    Data2: 1211219690
+    Data3: -636522363
+    Data4: 810002744
+  Banks:
+  - {fileID: 7142894870735434283}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &1997278881006735890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -854,6 +1017,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 21528
+--- !u!114 &5741210175097861924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule2/Eerie
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule2/Eerie
+  Guid:
+    Data1: 1584600060
+    Data2: 1113091195
+    Data3: 1438222741
+    Data4: -467006640
+  Banks:
+  - {fileID: 7142894870735434283}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &6900739947293751346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -909,6 +1099,26 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 129936
+--- !u!114 &7142894870735434283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Rule2.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Rule2.bank
+  Name: Rule2
+  StudioPath: bank:/Rule2
+  lastModified: 639140410886596370
+  FileSizes:
+  - Name: Desktop
+    Value: 304192
+  Exists: 1
 --- !u!114 &7593780403164264591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -990,6 +1200,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 2000
+--- !u!114 &8003184304267320763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule2/Whisper
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule2/Whisper
+  Guid:
+    Data1: -11268906
+    Data2: 1304253395
+    Data3: -1231664744
+    Data4: 1274113312
+  Banks:
+  - {fileID: 7142894870735434283}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &8656562136812460686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1005,10 +1242,10 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639134428982508860
+  lastModified: 639140410885952457
   FileSizes:
   - Name: Desktop
-    Value: 2328
+    Value: 2774
   Exists: 1
 --- !u!114 &8661769540991862282
 MonoBehaviour:
@@ -1030,6 +1267,60 @@ MonoBehaviour:
     Data4: 153454210
   Banks:
   - {fileID: -8092087314510133167}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
+--- !u!114 &8974569834229332748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule2/Rule2Ambience
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule2/Rule2Ambience
+  Guid:
+    Data1: -1717525509
+    Data2: 1091957080
+    Data3: -40178536
+    Data4: -1038228057
+  Banks:
+  - {fileID: 7142894870735434283}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 200
+--- !u!114 &9189084323817974315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule2/ForestFootsteps
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule2/ForestFootsteps
+  Guid:
+    Data1: 420271246
+    Data2: 1152147473
+    Data3: 1195737532
+    Data4: 413440027
+  Banks:
+  - {fileID: 7142894870735434283}
   IsStream: 0
   Is3D: 1
   IsOneShot: 1

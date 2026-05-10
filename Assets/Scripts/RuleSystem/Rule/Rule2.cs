@@ -35,7 +35,7 @@ namespace RuleSystem.Rule
         [SerializeField] private InputHandler     inputHandler;
         [SerializeField] private SwitchLight      switchLight;
         [SerializeField] private PlayerController playerController;
-        [SerializeField] private Rule2State       currentState;
+        [SerializeField] public Rule2State       currentState;
 
         // ── Lights ──────────────────────────────────────────────────────
         [Header("Lights")]
@@ -222,7 +222,11 @@ namespace RuleSystem.Rule
         {
             // รอผู้เล่น: เปิดวิทยุ + กดสวิตช์ไฟ + กลับมานั่ง ครบ 3 อย่าง
             if (radioPlaying && _lightTurnedOn && PlayerIsSitting())
+            {
+                PlayerController.Instance.isBlockStanding = true;
                 ChangeState(Rule2State.FirstBlackoutReturn);
+
+            }
         }
 
         /// <summary>เรียกโดย RadioControl เมื่อผู้เล่นเปิดวิทยุ</summary>
@@ -257,7 +261,7 @@ namespace RuleSystem.Rule
             yield return new WaitForSeconds(Random.Range(1.5f, 3f));
 
             // สุ่ม 0-4
-            switch (Random.Range(0, 5))
+            switch (Random.Range(0, 3))
             {
                 case 0: // เสียงโหยหวน
                     AudioManager.instance.PlayRule2Wail();
@@ -265,14 +269,10 @@ namespace RuleSystem.Rule
                 case 1: // เสียงเหมือนคนเดินในป่าข้างหลัง
                     AudioManager.instance.PlayRule2ForestFootsteps();
                     break;
-                case 2: // เงาดำๆ ปรากฏหน้าผู้เล่น 2 วิแล้วหาย
-                    yield return StartCoroutine(ShowPlayerShadowRoutine());
-                    break;
-                case 3: // เสียงเหมือนมีคนกระซิบข้างหู
+                case 2: // เสียงเหมือนมีคนกระซิบข้างหู
                     AudioManager.instance.PlayRule2Whisper();
                     break;
-                case 4: // ไม่มีอะไรเกิดขึ้น
-                    break;
+                
             }
 
             // หน่วงก่อนเข้า Second Blackout
@@ -312,7 +312,7 @@ namespace RuleSystem.Rule
             }
             saraLight.enabled = false;
             SetStreetLights(false); // ไฟถนนดับ – มืดสนิท
-
+            AudioManager.instance.PlayRule2AmbienceBG();
             // เปิดไฟฉาย (กระพริบเป็นช่วง)
             if (flashlight != null)
             {
@@ -323,12 +323,13 @@ namespace RuleSystem.Rule
             // วิทยุ → ดับ → บทสวดปกติ
             yield return new WaitForSeconds(2f);
             AudioManager.instance.StopRadio();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(6f);
             AudioManager.instance.PlayRadioPrayer(1); // บทสวดปกติ
 
             // เปิดให้ซ่อมตู้ได้ทันที
             yield return new WaitForSeconds(1f);
             ChangeState(Rule2State.FixPanel);
+            PlayerController.Instance.isBlockStanding = false;
 
             // หลัง 30-50 วิ บทสวดเปลี่ยนเป็นถอยหลัง (background, ไม่ block Flow)
             StartCoroutine(SwitchPrayerToReverseRoutine());
@@ -359,6 +360,12 @@ namespace RuleSystem.Rule
                 }
             }
         }
+        
+        public void StartCompleteAmbience()
+        {
+            AudioManager.instance.PlayRule2Ambience();
+
+        }
 
         #endregion
 
@@ -382,12 +389,9 @@ namespace RuleSystem.Rule
         void SpawnPanelShadows()
         {
             if (panelGhostShadowPrefab == null) return;
-            foreach (var panel in activePanels)
-            {
-                Vector3 pos = panel.transform.position + panel.transform.right * 1.5f;
-                var shadow = Instantiate(panelGhostShadowPrefab, pos, Quaternion.identity);
-                spawnedShadows.Add(shadow);
-            }
+            Vector3 pos = activePanels[0].transform.position + activePanels[0].transform.right * 1.5f;
+            var shadow = Instantiate(panelGhostShadowPrefab, pos, Quaternion.identity);
+            spawnedShadows.Add(shadow);
         }
 
         void ClearPanelShadows()
@@ -458,13 +462,17 @@ namespace RuleSystem.Rule
         IEnumerator ReturnToSeatAtmosphereRoutine()
         {
             yield return new WaitForSeconds(Random.Range(2f, 4f));
-            // 60% โอกาสได้ยินเสียงคนวิ่งผ่านหลัง
-            if (Random.value < 0.6f)
+            // 50% โอกาสได้ยินเสียงคนวิ่งผ่านหลัง
+            if (Random.value < 0.5f)
                 AudioManager.instance.PlayRule2RunningFootsteps();
         }
 
         void UpdateReturnToSeat()
         {
+            if (switchLight.IsLightOn())
+            {
+                AudioManager.instance.StopPlayRadioPrayer();
+            }
             if (playerController.IsSitting() && switchLight.IsLightOn())
             {
                 runningGhost.SetActive(false);

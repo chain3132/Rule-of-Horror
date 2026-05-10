@@ -6145,7 +6145,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 1
-  m_Color: {r: 0.4352083, g: 0.46457815, b: 0.5660378, a: 1}
+  m_Color: {r: 0.33535066, g: 0.36027053, b: 0.4528302, a: 1}
   m_Intensity: 0.6
   m_Range: 10
   m_SpotAngle: 30
@@ -7174,6 +7174,73 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1 &210404345
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 210404346}
+  - component: {fileID: 210404347}
+  - component: {fileID: 210404348}
+  m_Layer: 0
+  m_Name: SoundRandomPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &210404346
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 210404345}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -11.438, y: 11.496, z: -9.08}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 859750946}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &210404347
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 210404345}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 5.277111}
+  m_Center: {x: 0, y: 0, z: -0.024326324}
+--- !u!114 &210404348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 210404345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dacebc9a7f55ed04c9fc9fc4fc3d923f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundRandom
+  rule2: {fileID: 859750947}
 --- !u!1 &216796809
 GameObject:
   m_ObjectHideFlags: 0
@@ -13197,10 +13264,10 @@ MonoBehaviour:
   endHour: 19
   endMinute: 40
   ruleActive: 0
-  phoneObject: {fileID: 1280072077}
   phoneGroundObject: {fileID: 7286435367665228857, guid: 59573fcd52763b74c8e383af0f5eabb2, type: 3}
   playerResetPoint: {fileID: 365961811}
   outsideDeathTime: 5
+  phoneSystem: {fileID: 0}
   globalVolume: {fileID: 1190389803}
 --- !u!1 &433668182
 GameObject:
@@ -14021,7 +14088,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RuleManager
   rules:
-  - {fileID: 0}
+  - {fileID: 421595021}
   - {fileID: 859750947}
   - {fileID: 842431700}
   horrorTextUI: {fileID: 0}
@@ -20090,6 +20157,7 @@ Transform:
   - {fileID: 1784726957}
   - {fileID: 1368464091}
   - {fileID: 982548057}
+  - {fileID: 210404346}
   m_Father: {fileID: 591596786}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &859750947
@@ -20595,9 +20663,9 @@ MonoBehaviour:
   - {fileID: 907315735}
   - {fileID: 1151090514}
   relaxLightColor: {r: 0.54509807, g: 0.5882353, b: 0.7372549, a: 1}
-  tensionLightColor: {r: 0.43529412, g: 0.46666667, b: 0.5686275, a: 1}
+  tensionLightColor: {r: 0.15174441, g: 0.16487446, b: 0.20754719, a: 1}
   relaxSkyBoxColor: {r: 0.5019608, g: 0.45490196, b: 0.45490196, a: 1}
-  tensionSkyBoxColor: {r: 0.34901962, g: 0.30980393, b: 0.30980393, a: 1}
+  tensionSkyBoxColor: {r: 0.103773594, g: 0.08859915, b: 0.08859915, a: 1}
   relaxParticle:
   - {fileID: 28933103}
   - {fileID: 1672061735}
@@ -23724,7 +23792,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1229759053
 Transform:
   m_ObjectHideFlags: 0
@@ -23781,7 +23849,7 @@ Light:
   m_Type: 0
   m_Color: {r: 1, g: 0.908046, b: 0.75, a: 1}
   m_Intensity: 50
-  m_Range: 15
+  m_Range: 30.585749
   m_SpotAngle: 52.718857
   m_InnerSpotAngle: 35.889633
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -32229,7 +32297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimeManager
   realSecondsPerGameMinute: 6
-  currentHour: 18
+  currentHour: 19
   currentMinute: 59
 --- !u!4 &1568684707
 Transform:

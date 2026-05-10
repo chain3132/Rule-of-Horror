@@ -282,7 +282,7 @@ public class AudioManager : MonoBehaviour
     }
 
     // ─────────── Rule 2 Atmospheric Sounds ───────────
-    // TODO: สร้าง FMOD events เหล่านี้:
+    // TODO: สร้าง FMOD events เ:
     //   event:/Rule2/Wail              – เสียงโหยหวน (one-shot)
     //   event:/Rule2/ForestFootsteps   – เสียงคนเดินในป่า (one-shot)
     //   event:/Rule2/Whisper           – เสียงกระซิบข้างหู (one-shot)
@@ -295,13 +295,19 @@ public class AudioManager : MonoBehaviour
     private Vector3 ListenerPos =>
         Camera.main != null ? Camera.main.transform.position : Vector3.zero;
 
+    public void PlayRule2AmbienceBG()
+        => RuntimeManager.PlayOneShot("event:/Rule2/Rule2AmbienceBG", ListenerPos);
+    
+    public void PlayRule2Ambience()
+        => RuntimeManager.PlayOneShot("event:/Rule2/Rule2Ambience", ListenerPos);
+    
     /// <summary>เสียงโหยหวน (สุ่ม event ตอน First Blackout Return)</summary>
     public void PlayRule2Wail()
-        => RuntimeManager.PlayOneShot("event:/Rule2/Wail", ListenerPos);
+        => RuntimeManager.PlayOneShot("eve  nt:/Rule2/Wail", ListenerPos);
 
     /// <summary>เสียงคนเดินในป่าข้างหลัง (สุ่ม event ตอน First Blackout Return)</summary>
     public void PlayRule2ForestFootsteps()
-        => RuntimeManager.PlayOneShot("event:/Rule2/ForestFootsteps", ListenerPos);
+        => RuntimeManager.PlayOneShot("event:/Rule2/ForestFootsteps", ListenerPos );
 
     /// <summary>เสียงกระซิบข้างหู (สุ่ม event ตอน First Blackout Return)</summary>
     public void PlayRule2Whisper()
