@@ -329,7 +329,10 @@ public class GameModeController : MonoBehaviour
             globalVolume.profile = relaxProfile;
             bloodOverlay.SetActive(false);
             SetSaraModel(mode);
-            LightRandomCandle(); 
+            LightRandomCandle();
+            // คืนแสงเทียนที่ติดอยู่แล้วให้กลับมาสว่าง
+            foreach (var candle in candles)
+                candle.ShowLight();
             SetWindZone(GameMode.Relax);
             directionLight.color = relaxLightColor;
             RenderSettings.skybox = relaxSkyboxMat;
@@ -349,6 +352,9 @@ public class GameModeController : MonoBehaviour
             RenderSettings.skybox = tensionSkyboxMat;
             RenderSettings.skybox.SetColor("_Tint", tensionSkyBoxColor);
             SetSaraModel(mode);
+            // ซ่อนแสงเทียนทั้งหมดในโหมด Tension (isLit ยังอยู่ พอกลับ Relax จะ ShowLight คืน)
+            foreach (var candle in candles)
+                candle.HideLight();
             SetWindZone(GameMode.Tension);
             AudioManager.instance.SwitchWindAmbience(1);
             foreach (var particle in relaxParticle)

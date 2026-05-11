@@ -28,4 +28,18 @@ public class CandleLight : MonoBehaviour
     {
         return isLit;
     }
+
+    /// <summary>ซ่อนแสงชั่วคราว (isLit ยังคงอยู่) — ใช้ตอนเข้า Tension mode</summary>
+    public void HideLight()
+    {
+        if (candleLight != null)
+            candleLight.enabled = false;
+    }
+
+    /// <summary>แสดงแสงคืน ถ้าเทียนติดอยู่ — ใช้ตอนเข้า Relax mode</summary>
+    public void ShowLight()
+    {
+        if (candleLight != null)
+            candleLight.enabled = isLit;
+    }
 }

@@ -10,6 +10,22 @@ namespace Manager
 {
     public class ChatUIController : MonoBehaviour
     {
+        // ─────────────────────────── Inner Types ───────────────────────────
+
+        /// <summary>Entry ใน chat history — เป็นได้ทั้ง node ref (NPC/system) หรือ player reply string</summary>
+        private class ChatHistoryEntry
+        {
+            public ConversationData data;   // null = player reply
+            public int nodeIndex;
+            public string playerReplyText;  // ใช้เมื่อ data == null
+
+            public static ChatHistoryEntry FromNode(ConversationData d, int i)
+                => new ChatHistoryEntry { data = d, nodeIndex = i };
+
+            public static ChatHistoryEntry FromReply(string text)
+                => new ChatHistoryEntry { playerReplyText = text };
+        }
+
         // ─────────────────────────── Inspector ───────────────────────────
 
         [SerializeField] private Transform contentRoot;
@@ -38,9 +54,9 @@ namespace Manager
         private List<(ConversationData data, int nodeIndex)> timeline
             = new List<(ConversationData, int)>();
 
-        /// <summary>Timeline แยกต่างหากสำหรับแต่ละ contact</summary>
-        private Dictionary<FriendListController.ContactEntry, List<(ConversationData data, int nodeIndex)>>
-            _contactTimelines = new Dictionary<FriendListController.ContactEntry, List<(ConversationData, int)>>();
+        /// <summary>Timeline แยกต่างหากสำหรับแต่ละ contact — รองรับทั้ง node ref และ player reply</summary>
+        private Dictionary<FriendListController.ContactEntry, List<ChatHistoryEntry>>
+            _contactTimelines = new Dictionary<FriendListController.ContactEntry, List<ChatHistoryEntry>>();
 
         /// <summary>Conversations ที่เล่นผ่าน OpenContactChat ไปแล้ว (per-contact system)</summary>
         private HashSet<ConversationData> playedConversations = new HashSet<ConversationData>();
@@ -78,7 +94,12 @@ namespace Manager
             if (_contactTimelines.TryGetValue(contact, out var contactTimeline))
             {
                 foreach (var entry in contactTimeline)
-                    InstantiateBubble(entry.data.nodes[entry.nodeIndex]);
+                {
+                    if (entry.data != null)
+                        InstantiateBubble(entry.data.nodes[entry.nodeIndex]);
+                    else
+                        InstantiatePlayerReplyBubble(entry.playerReplyText);
+                }
             }
 
             // หา conversation ถัดไปที่ยังไม่ได้เล่น
@@ -102,21 +123,23 @@ namespace Manager
         {
             int index       = runner.CurrentIndex;
             var currentData = currentRunningData;
-            var entry       = (currentData, index);
+            var tupleEntry  = (currentData, index);
 
             // global timeline
-            if (!timeline.Contains(entry))
-                timeline.Add(entry);
+            if (!timeline.Contains(tupleEntry))
+                timeline.Add(tupleEntry);
 
             // contact timeline
             if (_currentContact != null)
             {
                 if (!_contactTimelines.ContainsKey(_currentContact))
-                    _contactTimelines[_currentContact] = new List<(ConversationData, int)>();
+                    _contactTimelines[_currentContact] = new List<ChatHistoryEntry>();
 
                 var ct = _contactTimelines[_currentContact];
-                if (!ct.Contains(entry))
-                    ct.Add(entry);
+                // ป้องกัน duplicate โดยเช็ค data+index
+                bool exists = ct.Exists(e => e.data == currentData && e.nodeIndex == index);
+                if (!exists)
+                    ct.Add(ChatHistoryEntry.FromNode(currentData, index));
             }
 
             InstantiateBubble(node);
@@ -154,12 +177,21 @@ namespace Manager
 
         private void OnReplyClicked(int index, ReplyOption reply)
         {
-            AddPlayerMessage(reply.replyText);
+            // เซฟ player reply ลง contact timeline ก่อน แล้วค่อย instantiate
+            if (_currentContact != null)
+            {
+                if (!_contactTimelines.ContainsKey(_currentContact))
+                    _contactTimelines[_currentContact] = new List<ChatHistoryEntry>();
+
+                _contactTimelines[_currentContact].Add(ChatHistoryEntry.FromReply(reply.replyText));
+            }
+
+            InstantiatePlayerReplyBubble(reply.replyText);
             ClearReplies();
             runner.SelectReply(index);
         }
 
-        private void AddPlayerMessage(string message)
+        private void InstantiatePlayerReplyBubble(string message)
         {
             var bubble = Instantiate(rightBubblePrefab, contentRoot);
             bubble.GetComponentInChildren<TextMeshProUGUI>().text = message;

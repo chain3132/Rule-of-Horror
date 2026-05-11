@@ -82,7 +82,7 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Action.bank
   Name: Action
   StudioPath: bank:/Action
-  lastModified: 639141113317161155
+  lastModified: 639141188723019380
   FileSizes:
   - Name: Desktop
     Value: 324320
@@ -251,8 +251,8 @@ MonoBehaviour:
     Data3: -1597859393
     Data4: 1385186284
   Banks:
-  - {fileID: -8092087314510133167}
   - {fileID: -7414909333957512450}
+  - {fileID: -8092087314510133167}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -666,7 +666,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: 8656562136812460686}
   cacheVersion: 131858
-  cacheTime: 639141118373719157
+  cacheTime: 639141188723019380
   SerializableEventsDict:
   - key: event:/New Event
     index: 0
