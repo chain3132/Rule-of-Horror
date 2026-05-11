@@ -200,9 +200,11 @@ public class AudioManager : MonoBehaviour
 
     // ─────────── Breathing (Rule 3) ───────────
 
-    /// <summary>Start the looping breathing sound.</summary>
+    /// <summary>Start the looping breathing sound.
+    /// Stop ก่อน start เสมอ เพื่อกัน FMOD instance ค้างอยู่ใน fade-out state จากรอบก่อน</summary>
     public void StartBreathing()
     {
+        breathing.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
         breathing.start();
     }
 

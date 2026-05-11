@@ -10,6 +10,12 @@ public class CandleLight : MonoBehaviour
         candleLight.enabled = false;
     }
 
+    private void OnEnable()
+    {
+        if (candleLight != null)
+            candleLight.enabled = isLit;
+    }
+
     public void LightCandle()
     {
         if (isLit) return;

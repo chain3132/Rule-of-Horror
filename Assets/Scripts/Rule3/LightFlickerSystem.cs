@@ -38,6 +38,9 @@ public class LightFlickerSystem : MonoBehaviour
     {
         foreach (var l in lights)
         {
+            // ข้ามไฟเทียน — CandleLight จัดการ enabled state เอง
+            if (l.GetComponent<CandleLight>() != null || l.GetComponentInParent<CandleLight>() != null)
+                continue;
             l.enabled = state;
         }
     }
@@ -61,6 +64,9 @@ public class LightFlickerSystem : MonoBehaviour
 
                 foreach (var l in lights)
                 {
+                    // ข้ามไฟเทียน — ไม่แก้ intensity ของมัน
+                    if (l.GetComponent<CandleLight>() != null || l.GetComponentInParent<CandleLight>() != null)
+                        continue;
                     float flicker = Random.Range(0.6f, 13f);
                     l.intensity = flicker;
                 }
@@ -76,6 +82,9 @@ public class LightFlickerSystem : MonoBehaviour
     {
         foreach (var l in lights)
         {
+            // ข้ามไฟเทียน
+            if (l.GetComponent<CandleLight>() != null || l.GetComponentInParent<CandleLight>() != null)
+                continue;
             l.intensity = 13f; // หรือค่า base ของคุณ
         }
     }
