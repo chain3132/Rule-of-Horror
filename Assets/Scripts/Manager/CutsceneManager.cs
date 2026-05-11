@@ -93,6 +93,25 @@ public class CutsceneManager : MonoBehaviour
         [Tooltip("เพิ่ม element ได้เรื่อยๆ — แสดงตามลำดับ fade in → hold → fade out\n" +
                  "ทิ้งว่างถ้า shot นี้ไม่มี credit")]
         public CreditEntry[] credits;
+
+        [Header("Car — รถวิ่งผ่านระหว่าง shot นี้")]
+        [Tooltip("GameObject รถ — วางไว้ใน scene แล้วปิดไว้ก่อน\n" +
+                 "script จะเปิดตอน shot นี้เริ่ม และปิดเมื่อเปลี่ยน shot")]
+        public GameObject carObject;
+
+        [Tooltip("Waypoints ที่รถจะวิ่งผ่าน (เรียงตามลำดับ)\n" +
+                 "รถจะ teleport ไป [0] แล้วเดินไปถึง waypoint สุดท้าย")]
+        public Transform[] carWaypoints;
+
+        [Tooltip("ความเร็วรถ (units/วินาที)")]
+        public float carSpeed = 20f;
+
+        [Tooltip("✓ = รถหันหน้าตามทิศทางที่วิ่ง")]
+        public bool carFaceDirection = true;
+
+        [Tooltip("หมุน Y เพิ่มเติมบน model (องศา) — ปรับตาม pivot ของ model\n" +
+                 "ถ้ารถหันผิดทาง ลองเปลี่ยนเป็น 90 หรือ -90 หรือ 180")]
+        public float carRotationOffset = -90f;
     }
 
     // ─────────────────────────── Inspector ───────────────────────────
@@ -171,6 +190,7 @@ public class CutsceneManager : MonoBehaviour
     private Coroutine _trackCoroutine;
     private Coroutine _barCoroutine;
     private Coroutine _creditCoroutine;
+    private Coroutine _carCoroutine;
 
     // ─────────────────────────── Lifecycle ───────────────────────────
 
@@ -276,17 +296,19 @@ public class CutsceneManager : MonoBehaviour
     {
         if (index == _currentShotIndex) return;
 
-        // ปิด shot เก่า
+        // ปิด shot เก่า + ซ่อนรถของ shot เก่า
         if (_currentShotIndex >= 0 && _currentShotIndex < shots.Length)
         {
             var prev = shots[_currentShotIndex];
             if (prev.vcam != null) prev.vcam.gameObject.SetActive(false);
+            if (prev.carObject != null) prev.carObject.SetActive(false);
         }
 
         // หยุด coroutine เก่า
-        if (_tiltCoroutine  != null) { StopCoroutine(_tiltCoroutine);  _tiltCoroutine  = null; }
-        if (_trackCoroutine != null) { StopCoroutine(_trackCoroutine); _trackCoroutine = null; }
+        if (_tiltCoroutine   != null) { StopCoroutine(_tiltCoroutine);   _tiltCoroutine   = null; }
+        if (_trackCoroutine  != null) { StopCoroutine(_trackCoroutine);  _trackCoroutine  = null; }
         if (_creditCoroutine != null) { StopCoroutine(_creditCoroutine); _creditCoroutine = null; }
+        if (_carCoroutine    != null) { StopCoroutine(_carCoroutine);    _carCoroutine    = null; }
         // ซ่อน credit ทันทีเมื่อเปลี่ยน shot
         if (creditGroup != null) creditGroup.alpha = 0f;
 
@@ -316,6 +338,10 @@ public class CutsceneManager : MonoBehaviour
         // เริ่ม credit ถ้ามีรายการ
         if (current.credits != null && current.credits.Length > 0 && creditGroup != null)
             _creditCoroutine = StartCoroutine(CreditRoutine(current));
+
+        // เริ่มรถถ้า shot นี้มีรถ
+        if (current.carObject != null && current.carWaypoints != null && current.carWaypoints.Length >= 2)
+            _carCoroutine = StartCoroutine(CarRoutine(current));
     }
 
     // ─────────────────────────── Credit Coroutine ───────────────────────────
@@ -439,6 +465,54 @@ public class CutsceneManager : MonoBehaviour
         }
     }
 
+    // ─────────────────────────── Car Coroutine ───────────────────────────
+
+    /// <summary>
+    /// teleport รถไป waypoint[0] แล้ววิ่งไปตาม waypoints ด้วยความเร็ว carSpeed
+    /// เมื่อถึงปลายทางแล้ว ซ่อนรถทันที
+    /// </summary>
+    private IEnumerator CarRoutine(CutsceneShot shot)
+    {
+        if (shot.carObject == null || shot.carWaypoints == null || shot.carWaypoints.Length < 2)
+            yield break;
+
+        Transform carT = shot.carObject.transform;
+
+        // teleport ไป waypoint แรก
+        carT.position = shot.carWaypoints[0].position;
+        carT.rotation = shot.carWaypoints[0].rotation;
+
+        shot.carObject.SetActive(true);
+
+        // วิ่งผ่านทุก waypoint
+        for (int i = 1; i < shot.carWaypoints.Length; i++)
+        {
+            Transform target = shot.carWaypoints[i];
+
+            while (Vector3.Distance(carT.position, target.position) > 0.05f)
+            {
+                carT.position = Vector3.MoveTowards(
+                    carT.position, target.position, shot.carSpeed * Time.deltaTime);
+
+                if (shot.carFaceDirection)
+                {
+                    Vector3 dir = (target.position - carT.position);
+                    dir.y = 0f;
+                    if (dir != Vector3.zero)
+                        carT.rotation = Quaternion.LookRotation(dir) * Quaternion.Euler(0f, shot.carRotationOffset, 0f);
+                }
+
+                yield return null;
+            }
+
+            carT.position = target.position;
+        }
+
+        // ถึงปลายทาง → ซ่อนรถ
+        shot.carObject.SetActive(false);
+        _carCoroutine = null;
+    }
+
     // ─────────────────────────── Walk Coroutine ───────────────────────────
 
     private IEnumerator WalkRoutine()
@@ -497,8 +571,14 @@ public class CutsceneManager : MonoBehaviour
         if (_trackCoroutine  != null) { StopCoroutine(_trackCoroutine);  _trackCoroutine  = null; }
         if (_barCoroutine    != null) { StopCoroutine(_barCoroutine);    _barCoroutine    = null; }
         if (_creditCoroutine != null) { StopCoroutine(_creditCoroutine); _creditCoroutine = null; }
+        if (_carCoroutine    != null) { StopCoroutine(_carCoroutine);    _carCoroutine    = null; }
 
-        // fade credit ออกทันทีก่อนจบ
+        // ซ่อนรถและ credit ทันที
+        if (_currentShotIndex >= 0 && _currentShotIndex < shots.Length)
+        {
+            var last = shots[_currentShotIndex];
+            if (last.carObject != null) last.carObject.SetActive(false);
+        }
         if (creditGroup != null) creditGroup.alpha = 0f;
 
         // slide bars ออก แล้วรอเสร็จก่อนสลับกล้อง
