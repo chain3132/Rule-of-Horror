@@ -166,9 +166,41 @@ public class GameModeController : MonoBehaviour
 
         Camera.main.transform.localRotation = Quaternion.identity;
 
+        // ── Reset ค่า post-processing ทั้งหมดที่ SetFaintEffect แก้ไว้ ──
+        // ทำก่อน ApplyMode เพื่อกันค่าเก่าค้างติดใน profile ที่กำลังจะ active
+        ResetFaintEffects();
+
         yield return new WaitForSeconds(0.5f);
         // เข้าสู่ blink จริง
         yield return StartCoroutine(BlinkRoutine(targetMode));
+    }
+
+    /// <summary>Reset ทุกค่าที่ SetFaintEffect แก้ไว้กลับเป็นค่ากลาง
+    /// เรียกก่อน BlinkRoutine เพื่อกันค่าค้างติดใน VolumeProfile asset</summary>
+    void ResetFaintEffects()
+    {
+        // reset cached refs (ชี้ไปที่ profile ที่ cache ตอน Start)
+        if (lens  != null) lens.intensity.value   = 0f;
+        if (chroma != null) chroma.intensity.value = 0f;
+        if (dof   != null)
+        {
+            dof.focusDistance.value = 10f;
+            dof.aperture.value      = 5.6f;
+        }
+
+        // reset current active profile (tension หรือ relax แล้วแต่ตอนนั้น)
+        if (globalVolume.profile.TryGet(out ColorAdjustments adj))
+        {
+            adj.postExposure.value = 0f;
+            adj.contrast.value     = 0f;
+            adj.saturation.value   = 0f;
+        }
+        if (globalVolume.profile.TryGet(out Vignette vig))
+            vig.intensity.value = 0.2f;
+        if (globalVolume.profile.TryGet(out LensDistortion ld))
+            ld.intensity.value = 0f;
+        if (globalVolume.profile.TryGet(out ChromaticAberration ca))
+            ca.intensity.value = 0f;
     }
 
     void SetFaintEffect(float t)

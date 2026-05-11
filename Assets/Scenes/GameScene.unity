@@ -5579,7 +5579,6 @@ MonoBehaviour:
   phoneSystem: {fileID: 269643657}
   replyRoot: {fileID: 1382242529}
   replyButtonPrefab: {fileID: 8667301332863714093, guid: c8fa5dc1d6f2c3e42873b9bef5c178ec, type: 3}
-  convoManager: {fileID: 849049214}
 --- !u!4 &46010141
 Transform:
   m_ObjectHideFlags: 0
@@ -5744,6 +5743,26 @@ MonoBehaviour:
     contactButton: {fileID: 1961849729}
     notificationBadge: {fileID: 1961849730}
     triggersRule1OnEnd: 1
+    isUnlocked: 0
+    hasBeenNotified: 0
+  - contactName: Unknow
+    conversations:
+    - {fileID: 11400000, guid: 5af67e9c6057d024aa6509912d90daf7, type: 2}
+    notifyHour: 19
+    notifyMinute: 40
+    contactButton: {fileID: 1961849729}
+    notificationBadge: {fileID: 1961849730}
+    triggersRule1OnEnd: 0
+    isUnlocked: 0
+    hasBeenNotified: 0
+  - contactName: Unknow
+    conversations:
+    - {fileID: 11400000, guid: 22149b4817a91e344ada2a9bb984e42e, type: 2}
+    notifyHour: 20
+    notifyMinute: 40
+    contactButton: {fileID: 1961849729}
+    notificationBadge: {fileID: 1961849730}
+    triggersRule1OnEnd: 0
     isUnlocked: 0
     hasBeenNotified: 0
   chatUI: {fileID: 46010140}
@@ -13731,6 +13750,7 @@ MonoBehaviour:
   creditGroup: {fileID: 1907989535}
   creditTextTop: {fileID: 1190696937}
   creditTextBottom: {fileID: 532801489}
+  cutsceneMusicEvent: event:/CutsceneMusic
   allowSkip: 0
 --- !u!4 &414192767
 Transform:
@@ -13880,6 +13900,8 @@ MonoBehaviour:
   outsideDeathTime: 5
   phoneSystem: {fileID: 269643657}
   globalVolume: {fileID: 1190389803}
+  phoneSoundEvent: event:/PhoneRinging
+  ghostHumEvent: event:/GhostHum
 --- !u!1 &433668182
 GameObject:
   m_ObjectHideFlags: 0
@@ -21443,7 +21465,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &849049214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21457,6 +21479,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ConversationManager
   conversations:
+  - data: {fileID: 11400000, guid: 5af67e9c6057d024aa6509912d90daf7, type: 2}
+    startHour: 19
+    startMinute: 40
+    endHour: 0
+    endMinute: 0
+    isUnlocked: 0
   - data: {fileID: 11400000, guid: 22149b4817a91e344ada2a9bb984e42e, type: 2}
     startHour: 20
     startMinute: 40

@@ -1,5 +1,7 @@
 using System.Collections;
 using System.HeartbeatSystem;
+using FMOD.Studio;
+using FMODUnity;
 using Manager;
 using PhoneSystem;
 using Player;
@@ -42,11 +44,21 @@ public class Rule1 : RuleBase
     [Header("Post Processing")]
     [SerializeField] private Volume globalVolume;
 
+    [Header("Sound")]
+    [Tooltip("เสียงโทรศัพท์ 3D ที่วางอยู่บนพื้น (loop)\nเว้นว่างถ้าไม่ต้องการ")]
+    [SerializeField] private string phoneSoundEvent = "";
+
+    [Tooltip("เสียงผีฮัม หลังจากเก็บโทรศัพท์จนกว่าจะนั่ง (loop)\nเว้นว่างถ้าไม่ต้องการ")]
+    [SerializeField] private string ghostHumEvent = "";
+
     // ─────────────────────────── Runtime ───────────────────────────
 
-    private Rule1State _state    = Rule1State.None;
-    private float      _dieTimer;
-    private bool       _isDying;
+    private Rule1State    _state        = Rule1State.None;
+    private float         _dieTimer;
+    private bool          _isDying;
+    private bool          _hasCompleted;   // กันไม่ให้ trigger ซ้ำหลัง EndRule
+    private EventInstance _phoneSoundInstance;
+    private EventInstance _ghostHumInstance;
 
     // ─────────────────────────── RuleBase Overrides ───────────────────────────
 
@@ -56,7 +68,7 @@ public class Rule1 : RuleBase
     /// </summary>
     public void TriggerStartRule()
     {
-        if (ruleActive) return;
+        if (ruleActive || _hasCompleted) return;   // กันทั้ง active และ completed แล้ว
         StartRule();
     }
 
@@ -69,15 +81,17 @@ public class Rule1 : RuleBase
 
     public override void EndRule()
     {
+        _hasCompleted = true;   // ล็อกไม่ให้ trigger ซ้ำ
         base.EndRule();
         ResetDistortion();
+        StopGhostHum();
+        StopPhoneSound();
         GameModeController.instance.BlinkToMode(GameMode.Relax);
         PlayerController.Instance.isBlockStanding = false;
         AudioManager.instance.SetHeartbeatLevel(0);
         AudioManager.instance.UpdateHeartbeat(); // force parameter to 0 ทันที
         TimeManager.instance.IsPauseTime(false);
-        TimeManager.instance.SetTime(19,39);
-
+        TimeManager.instance.SetTime(19, 39);
     }
 
     protected override void UpdateRule()
@@ -100,6 +114,14 @@ public class Rule1 : RuleBase
         if (phoneSystem != null) phoneSystem.LockPhone();
         // แสดงโทรศัพท์บนพื้นในเขตสีแดง
         if (phoneGroundObject != null) phoneGroundObject.SetActive(true);
+
+        // เสียงโทรศัพท์ 3D ที่ตำแหน่งโทรศัพท์บนพื้น
+        if (!string.IsNullOrWhiteSpace(phoneSoundEvent) && phoneGroundObject != null)
+        {
+            _phoneSoundInstance = RuntimeManager.CreateInstance(phoneSoundEvent);
+            RuntimeManager.AttachInstanceToGameObject(_phoneSoundInstance, phoneGroundObject.transform);
+            _phoneSoundInstance.start();
+        }
 
         _dieTimer = outsideDeathTime;
     }
@@ -131,10 +153,20 @@ public class Rule1 : RuleBase
         // ปลดล็อกโทรศัพท์ → ผู้เล่น toggle ได้อีกครั้ง
         if (phoneSystem != null) phoneSystem.UnlockPhone();
 
+        // หยุดเสียงโทรศัพท์บนพื้น
+        StopPhoneSound();
+
         // ล้าง distortion ทันที
         ResetDistortion();
         AudioManager.instance.SetHeartbeatLevel(0);
         AudioManager.instance.UpdateHeartbeat();
+
+        // เริ่มเสียงผีฮัมจนกว่าผู้เล่นจะนั่ง
+        if (!string.IsNullOrWhiteSpace(ghostHumEvent))
+        {
+            _ghostHumInstance = RuntimeManager.CreateInstance(ghostHumEvent);
+            _ghostHumInstance.start();
+        }
     }
 
     void UpdateReturnToSeat()
@@ -224,8 +256,18 @@ public class Rule1 : RuleBase
             if (cc != null) cc.enabled = true;
         }
 
-        // วางโทรศัพท์กลับบนพื้นใหม่
-        if (phoneGroundObject != null) phoneGroundObject.SetActive(true);
+        // วางโทรศัพท์กลับบนพื้นใหม่ + เริ่มเสียงใหม่
+        if (phoneGroundObject != null)
+        {
+            phoneGroundObject.SetActive(true);
+            StopPhoneSound();
+            if (!string.IsNullOrWhiteSpace(phoneSoundEvent))
+            {
+                _phoneSoundInstance = RuntimeManager.CreateInstance(phoneSoundEvent);
+                RuntimeManager.AttachInstanceToGameObject(_phoneSoundInstance, phoneGroundObject.transform);
+                _phoneSoundInstance.start();
+            }
+        }
 
         _dieTimer = outsideDeathTime;
     }
@@ -239,6 +281,26 @@ public class Rule1 : RuleBase
         {
             case Rule1State.PhoneDropped:  StartPhoneDropped();  break;
             case Rule1State.ReturnToSeat:  StartReturnToSeat();  break;
+        }
+    }
+
+    void StopPhoneSound()
+    {
+        if (_phoneSoundInstance.isValid())
+        {
+            _phoneSoundInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+            _phoneSoundInstance.release();
+            _phoneSoundInstance = default;
+        }
+    }
+
+    void StopGhostHum()
+    {
+        if (_ghostHumInstance.isValid())
+        {
+            _ghostHumInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+            _ghostHumInstance.release();
+            _ghostHumInstance = default;
         }
     }
 }

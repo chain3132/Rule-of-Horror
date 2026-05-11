@@ -32,6 +32,10 @@ public class ConversationManager : MonoBehaviour
             {
                 convo.isUnlocked = true;
                 unlockedData.Add(convo.data);
+
+                // เสียงแจ้งเตือนข้อความใหม่
+                if (AudioManager.instance != null)
+                    AudioManager.instance.PlayMessageNotification();
             }
         }
     }

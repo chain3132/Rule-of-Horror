@@ -103,7 +103,9 @@ namespace RuleSystem.Rule
             yield return new WaitUntil(PlayerIsSitting);
             PlayerController.Instance.isBlockStanding = true;
             GameModeController.instance.BlinkToMode(GameMode.Tension);
-            yield return new WaitUntil(PlayerEyesOpened);
+            yield return null;                                          // รอ 1 frame ให้ BlinkRoutine set IsEyesOpen = false ก่อน
+            yield return new WaitUntil(() => !PlayerEyesOpened());     // รอตาปิดสนิท
+            yield return new WaitUntil(PlayerEyesOpened);              // รอตาเปิดสนิทหลัง transition
             StartGameplay();
         }
 
@@ -440,7 +442,7 @@ namespace RuleSystem.Rule
             // ซ่อมเสร็จทั้งหมด → หยุด sounds + คืนไฟ
             if (_randomSoundCoroutine      != null) StopCoroutine(_randomSoundCoroutine);
             if (_flashlightFlickerCoroutine != null) StopCoroutine(_flashlightFlickerCoroutine);
-
+            flashlight.enabled = true;
             ClearPanelShadows();
 
             SetStreetLights(true);

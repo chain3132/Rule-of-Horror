@@ -183,6 +183,10 @@ public class CutsceneManager : MonoBehaviour
     [Tooltip("TextMeshProUGUI บรรทัดล่าง (ชื่อนักพัฒนา)")]
     [SerializeField] private TextMeshProUGUI creditTextBottom;
 
+    [Header("Cutscene Music")]
+    [Tooltip("FMOD Event path เพลงที่เล่นตลอด cutscene\nเว้นว่างถ้าไม่ต้องการ")]
+    [SerializeField] private string cutsceneMusicEvent = "";
+
     [Header("Skip")]
     [Tooltip("กดปุ่มใดก็ได้เพื่อ skip animation (ยังต้องนั่งอยู่)")]
     [SerializeField] private bool allowSkip = true;
@@ -199,6 +203,7 @@ public class CutsceneManager : MonoBehaviour
     private Coroutine _creditCoroutine;
     private Coroutine _carCoroutine;
     private EventInstance _carSoundInstance;
+    private EventInstance _cutsceneMusicInstance;
 
     // ─────────────────────────── Lifecycle ───────────────────────────
 
@@ -268,6 +273,13 @@ public class CutsceneManager : MonoBehaviour
         // เปิด cutscene camera ระบบ
         if (playerCamera     != null) playerCamera.enabled = false;
         if (cutsceneCameraGO != null) cutsceneCameraGO.SetActive(true);
+
+        // เริ่มเสียง cutscene
+        if (!string.IsNullOrWhiteSpace(cutsceneMusicEvent))
+        {
+            _cutsceneMusicInstance = RuntimeManager.CreateInstance(cutsceneMusicEvent);
+            _cutsceneMusicInstance.start();
+        }
 
         // ซ่อน credit ตั้งแต่ต้น
         if (creditGroup != null) creditGroup.alpha = 0f;
@@ -612,6 +624,14 @@ public class CutsceneManager : MonoBehaviour
         if (_creditCoroutine != null) { StopCoroutine(_creditCoroutine); _creditCoroutine = null; }
         if (_carCoroutine    != null) { StopCoroutine(_carCoroutine);    _carCoroutine    = null; }
         StopCarSound();
+
+        // หยุดเสียง cutscene
+        if (_cutsceneMusicInstance.isValid())
+        {
+            _cutsceneMusicInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+            _cutsceneMusicInstance.release();
+            _cutsceneMusicInstance = default;
+        }
 
         // ซ่อนรถและ credit ทันที
         if (_currentShotIndex >= 0 && _currentShotIndex < shots.Length)

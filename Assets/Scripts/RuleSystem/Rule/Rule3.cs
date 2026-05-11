@@ -167,10 +167,13 @@ public class Rule3 : RuleBase
         GameModeController.instance.BlinkToMode(GameMode.Tension);
 
         // 2. Wait for blink transition to finish (eyes re-open in Tension mode)
-        // GameModeController plays StartRule3Intro / StopRule3Intro internally during the transition
-        yield return new WaitUntil(() => PlayerEyesOpened());
+        // yield return null ก่อนเพื่อให้ BlinkRoutine set IsEyesOpen = false ก่อนที่จะเริ่มรอ
+        // ไม่งั้น WaitUntil(IsEyesOpen) อาจ pass ทันทีถ้า IsEyesOpen ยังเป็น true จาก blink ก่อนหน้า
+        yield return null;
+        yield return new WaitUntil(() => !PlayerEyesOpened());     // รอตาปิดสนิท
+        yield return new WaitUntil(() => PlayerEyesOpened());      // รอตาเปิดสนิทหลัง transition
 
-        // 3. Begin gameplay
+        // 3. Begin gameplay — ghost จะ spawn หลังตาเปิดสนิทแล้ว
         StartGameplay();
     }
 

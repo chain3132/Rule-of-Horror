@@ -21,7 +21,6 @@ namespace Manager
         [SerializeField] private PhoneSystem.PhoneSystem phoneSystem;
         [SerializeField] private Transform replyRoot;
         [SerializeField] private GameObject replyButtonPrefab;
-        [SerializeField] private ConversationManager convoManager;
 
         // ─────────────────────────── Events ───────────────────────────
 
@@ -43,8 +42,9 @@ namespace Manager
         private Dictionary<FriendListController.ContactEntry, List<(ConversationData data, int nodeIndex)>>
             _contactTimelines = new Dictionary<FriendListController.ContactEntry, List<(ConversationData, int)>>();
 
-        /// <summary>Conversations ที่เล่นไปแล้ว</summary>
+        /// <summary>Conversations ที่เล่นผ่าน OpenContactChat ไปแล้ว (per-contact system)</summary>
         private HashSet<ConversationData> playedConversations = new HashSet<ConversationData>();
+
 
         // ─────────────────────────── Lifecycle ───────────────────────────
 
@@ -95,30 +95,6 @@ namespace Manager
             // ทุก conversation ของ contact นี้จบแล้ว — ไม่ทำอะไร
         }
 
-        // ─────────────────────────── Legacy Open (ระบบเดิม) ───────────────────────────
-
-        /// <summary>เปิด chat แบบเดิมผ่าน ConversationManager — ใช้ได้ถ้าไม่ใช้ per-contact</summary>
-        public void OpenConversation()
-        {
-            _currentContact = null;
-            phoneSystem.ChangeState(PhoneState.ChatView);
-            ClearChatDisplay();
-
-            foreach (var entry in timeline)
-                InstantiateBubble(entry.data.nodes[entry.nodeIndex]);
-
-            var unlocked = convoManager.UnlockedData;
-            foreach (var data in unlocked)
-            {
-                if (!playedConversations.Contains(data))
-                {
-                    currentRunningData = data;
-                    playedConversations.Add(data);
-                    runner.StartConversation(data);
-                    return;
-                }
-            }
-        }
 
         // ─────────────────────────── Message Display ───────────────────────────
 

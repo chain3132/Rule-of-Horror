@@ -15,7 +15,7 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639141006986337660
+  lastModified: 639141110434177698
   FileSizes:
   - Name: Desktop
     Value: 39392
@@ -82,10 +82,10 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Action.bank
   Name: Action
   StudioPath: bank:/Action
-  lastModified: 639140910310416051
+  lastModified: 639141113317161155
   FileSizes:
   - Name: Desktop
-    Value: 174144
+    Value: 324320
   Exists: 1
 --- !u!114 &-7414909333957512450
 MonoBehaviour:
@@ -102,11 +102,38 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/AmbienceBank.bank
   Name: AmbienceBank
   StudioPath: bank:/AmbienceBank
-  lastModified: 639141010384227889
+  lastModified: 639141118373719157
   FileSizes:
   - Name: Desktop
-    Value: 2152000
+    Value: 3121856
   Exists: 1
+--- !u!114 &-7079097143769619240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/MainMenuBGM
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/MainMenuBGM
+  Guid:
+    Data1: 804013307
+    Data2: 1273450611
+    Data3: 231546812
+    Data4: 211321133
+  Banks:
+  - {fileID: -7414909333957512450}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 31704
 --- !u!114 &-5803895795705513871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -291,9 +318,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/carSoundEvent
+  m_Name: event:/CarSoundEvent
   m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/carSoundEvent
+  Path: event:/CarSoundEvent
   Guid:
     Data1: -1377091960
     Data2: 1191170961
@@ -629,13 +656,17 @@ MonoBehaviour:
   - {fileID: 8974569834229332748}
   - {fileID: 6846998561660260936}
   - {fileID: -3198855560229535009}
+  - {fileID: 5588771614828473323}
+  - {fileID: 4272838230826398731}
+  - {fileID: 3871428044686002687}
+  - {fileID: -7079097143769619240}
   EditorParameters: []
   MasterBanks:
   - {fileID: -8687965200994253978}
   StringsBanks:
   - {fileID: 8656562136812460686}
   cacheVersion: 131858
-  cacheTime: 639141010384227889
+  cacheTime: 639141118373719157
   SerializableEventsDict:
   - key: event:/New Event
     index: 0
@@ -705,8 +736,16 @@ MonoBehaviour:
     index: 32
   - key: event:/Notification
     index: 33
-  - key: event:/carSoundEvent
+  - key: event:/CarSoundEvent
     index: 34
+  - key: event:/PhoneRinging
+    index: 35
+  - key: event:/GhostHum
+    index: 36
+  - key: event:/CutsceneMusic
+    index: 37
+  - key: event:/MainMenuBGM
+    index: 38
 --- !u!114 &388632287678487498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -925,6 +964,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 504
+--- !u!114 &3871428044686002687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/CutsceneMusic
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/CutsceneMusic
+  Guid:
+    Data1: -485675657
+    Data2: 1121247402
+    Data3: 546286740
+    Data4: 1582137800
+  Banks:
+  - {fileID: -7414909333957512450}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 42984
 --- !u!114 &3881946057307468283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -952,6 +1018,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 2136
+--- !u!114 &4272838230826398731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/GhostHum
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/GhostHum
+  Guid:
+    Data1: 262624820
+    Data2: 1212488591
+    Data3: -1058879320
+    Data4: -1683208537
+  Banks:
+  - {fileID: -7414909333957512450}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 16104
 --- !u!114 &4656834964759330309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1050,6 +1143,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 21528
+--- !u!114 &5588771614828473323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/PhoneRinging
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/PhoneRinging
+  Guid:
+    Data1: -935531919
+    Data2: 1106691300
+    Data3: 1985893772
+    Data4: 1908219035
+  Banks:
+  - {fileID: -8092087314510133167}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 15816
 --- !u!114 &5741210175097861924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1302,10 +1422,10 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639141006986343341
+  lastModified: 639141110434187745
   FileSizes:
   - Name: Desktop
-    Value: 2872
+    Value: 3046
   Exists: 1
 --- !u!114 &8661769540991862282
 MonoBehaviour:
