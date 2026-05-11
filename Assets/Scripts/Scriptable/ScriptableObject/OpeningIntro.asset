@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41317668c27ad3e4eb2364064ad2ed14, type: 3}
+  m_Name: OpeningIntro
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableObject.ConversationData
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  nodes:
+  - message: What would you like to eat today, dear?
+    isPlayer: 0
+    replies: []
+    nextNode: 1
+  - message: I'll make it for you so you can eat as soon as you get home.
+    isPlayer: 0
+    replies: []
+    nextNode: 2
+  - message: ahmm
+    isPlayer: 1
+    replies:
+    - replyText: Pad Krapow
+      nextNode: 3
+    - replyText: Omelette Rice
+      nextNode: 4
+    nextNode: 0
+  - message: Great! I just bought some pork
+    isPlayer: 0
+    replies: []
+    nextNode: -1
+  - message: Great! Then I'll add some extra pork for you
+    isPlayer: 0
+    replies: []
+    nextNode: -1

@@ -132,6 +132,13 @@ namespace RuleSystem.Rule
             GameModeController.instance.BlinkToMode(GameMode.Relax);
             PlayerController.Instance.isBlockStanding = false;
             StopHelperCoroutines();
+            AudioManager.instance.StopAllRule2Sounds(); // หยุดทุก loop ของ Rule 2
+
+            // ลบ ElectricBox ทั้งหมดที่ spawn ไว้
+            foreach (var panel in activePanels)
+                if (panel != null) Destroy(panel.gameObject);
+            activePanels.Clear();
+
             base.EndRule();
         }
 
@@ -433,11 +440,9 @@ namespace RuleSystem.Rule
             // ซ่อมเสร็จทั้งหมด → หยุด sounds + คืนไฟ
             if (_randomSoundCoroutine      != null) StopCoroutine(_randomSoundCoroutine);
             if (_flashlightFlickerCoroutine != null) StopCoroutine(_flashlightFlickerCoroutine);
-            if (flashlight != null) flashlight.enabled = false;
 
             ClearPanelShadows();
 
-            saraLight.enabled = true;
             SetStreetLights(true);
 
             HorrorTextUI.instance.HideText();
@@ -471,7 +476,8 @@ namespace RuleSystem.Rule
         {
             if (switchLight.IsLightOn())
             {
-                AudioManager.instance.StopPlayRadioPrayer();
+                //stop all sounds
+                AudioManager.instance.StopAllRule2Sounds();
             }
             if (playerController.IsSitting() && switchLight.IsLightOn())
             {

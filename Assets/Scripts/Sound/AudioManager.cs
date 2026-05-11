@@ -21,6 +21,10 @@ public class AudioManager : MonoBehaviour
     private EventInstance breathing;    // looping breathing sfx  – set FMOD event path below
     private EventInstance ghostWarning; // one-shot neck/bone crack warning
 
+    // ── Rule 2 looping sounds (ต้องเป็น EventInstance ถึงจะ stop ได้) ──
+    private EventInstance rule2AmbienceBG; // ambient background loop ของ Rule 2
+    private EventInstance rule2Ambience;   // ambient loop รอง
+
     // ── Rule 3 exclusive sounds ──
     private EventInstance rule3HeartbeatIntro; // looping heartbeat during mode-transition (separate from the game heartbeat)
     private EventInstance rule3BuildUpTension; // build-up tension music that plays together with the intro heartbeat
@@ -70,7 +74,8 @@ public class AudioManager : MonoBehaviour
         // ── Rule 3 sounds ──
         // TODO: create "event:/Breathing" in FMOD with a "BreathingLevel" parameter (1 / 2 / 3)
         breathing = RuntimeManager.CreateInstance("event:/Breathing");
-        breathing.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(Camera.main.transform));
+        if (player != null)
+            breathing.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(player));
 
         // TODO: create "event:/GhostWarning" in FMOD (bone / neck crack one-shot)
         ghostWarning = RuntimeManager.CreateInstance("event:/GhostWarning");
@@ -81,6 +86,10 @@ public class AudioManager : MonoBehaviour
         //   event:/Rule3BuildUpTension  – looping build-up music for the blink transition
         //   event:/Rule3Ambient         – looping ambient background unique to Rule 3
         //   event:/Rule3LightBulb       – short one-shot light-bulb buzz/click
+        // ── Rule 2 looping instances ──
+        rule2AmbienceBG = RuntimeManager.CreateInstance("event:/Rule2/Rule2AmbienceBG");
+        rule2Ambience   = RuntimeManager.CreateInstance("event:/Rule2/Rule2Ambience");
+
         rule3HeartbeatIntro = RuntimeManager.CreateInstance("event:/Rule3HeartbeatIntro");
         rule3BuildUpTension = RuntimeManager.CreateInstance("event:/Rule3BuildUpTension");
         rule3Ambient        = RuntimeManager.CreateInstance("event:/Rule3Ambient");
@@ -89,7 +98,8 @@ public class AudioManager : MonoBehaviour
         rule3Death          = RuntimeManager.CreateInstance("event:/Rule3Death");
         
         WomanScream = RuntimeManager.CreateInstance("event:/WomanScream");
-        WomanScream.set3DAttributes(RuntimeUtils.To3DAttributes(womanScreamTransform[0]));
+        if (womanScreamTransform != null && womanScreamTransform.Length > 0 && womanScreamTransform[0] != null)
+            WomanScream.set3DAttributes(RuntimeUtils.To3DAttributes(womanScreamTransform[0]));
         
         jumpScare = RuntimeManager.CreateInstance("event:/JumpScareSound");
         
@@ -115,10 +125,16 @@ public class AudioManager : MonoBehaviour
         windAmbience = RuntimeManager.CreateInstance("event:/WindAmbience");
         windAmbience.start();
         windAmbience.setParameterByName("Tension", 0);
-        windAmbience.set3DAttributes(
-            RuntimeUtils.To3DAttributes(Camera.main.transform));
+        if (player != null)
+            windAmbience.set3DAttributes(RuntimeUtils.To3DAttributes(player));
         
     }
+    /// <summary>เสียงแจ้งเตือนข้อความเข้า (ใช้ตอน FriendList unlock contact)</summary>
+    public void PlayMessageNotification()
+    {
+        RuntimeManager.PlayOneShot("event:/Notification");
+    }
+
     public void SetHeartbeat(float value)
     {
         targetHeart = value;
@@ -281,55 +297,67 @@ public class AudioManager : MonoBehaviour
         rule3Death.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
     }
 
-    // ─────────── Rule 2 Atmospheric Sounds ───────────
-    // TODO: สร้าง FMOD events เ:
-    //   event:/Rule2/Wail              – เสียงโหยหวน (one-shot)
-    //   event:/Rule2/ForestFootsteps   – เสียงคนเดินในป่า (one-shot)
-    //   event:/Rule2/Whisper           – เสียงกระซิบข้างหู (one-shot)
-    //   event:/Rule2/GhostLaugh        – เสียงผีหัวเราะเบาๆ (one-shot)
-    //   event:/Rule2/Eerie             – เสียงหวีดๆ ambient (one-shot)
-    //   event:/Rule2/DogHowl           – เสียงหมาหอนจากระยะไกล (one-shot)
-    //   event:/Rule2/BusApproach       – เสียงรถประจำทางเข้ามาใกล้ (one-shot)
-    //   event:/Rule2/RunningFootsteps  – เสียงคนวิ่งผ่านหลัง (one-shot)
+    // ─────────── Rule 2 Sounds ───────────
 
     private Vector3 ListenerPos =>
-        Camera.main != null ? Camera.main.transform.position : Vector3.zero;
+        player != null ? player.position : Vector3.zero;
 
+    /// <summary>เริ่ม ambient background loop หลักของ Rule 2</summary>
     public void PlayRule2AmbienceBG()
-        => RuntimeManager.PlayOneShot("event:/Rule2/Rule2AmbienceBG", ListenerPos);
-    
+    {
+        if (player != null)
+            rule2AmbienceBG.set3DAttributes(RuntimeUtils.To3DAttributes(player));
+        rule2AmbienceBG.start();
+    }
+
+    /// <summary>เริ่ม ambient loop รองของ Rule 2</summary>
     public void PlayRule2Ambience()
-        => RuntimeManager.PlayOneShot("event:/Rule2/Rule2Ambience", ListenerPos);
-    
-    /// <summary>เสียงโหยหวน (สุ่ม event ตอน First Blackout Return)</summary>
+    {
+        if (player != null)
+            rule2Ambience.set3DAttributes(RuntimeUtils.To3DAttributes(player));
+        rule2Ambience.start();
+    }
+
+    /// <summary>หยุดเสียงทั้งหมดของ Rule 2 (loop + radio)</summary>
+    public void StopAllRule2Sounds()
+    {
+        rule2AmbienceBG.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+        rule2Ambience.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+
+        // หยุดเสียงวิทยุที่ Rule 2 ใช้
+        StopRadio();
+        StopPlayRadioPrayer();
+    }
+
+    /// <summary>เสียงโหยหวน (one-shot)</summary>
     public void PlayRule2Wail()
-        => RuntimeManager.PlayOneShot("eve  nt:/Rule2/Wail", ListenerPos);
+        => RuntimeManager.PlayOneShot("event:/Rule2/Wail", ListenerPos);
 
-    /// <summary>เสียงคนเดินในป่าข้างหลัง (สุ่ม event ตอน First Blackout Return)</summary>
+    /// <summary>เสียงคนเดินในป่าข้างหลัง (one-shot)</summary>
     public void PlayRule2ForestFootsteps()
-        => RuntimeManager.PlayOneShot("event:/Rule2/ForestFootsteps", ListenerPos );
+        => RuntimeManager.PlayOneShot("event:/Rule2/ForestFootsteps", ListenerPos);
 
-    /// <summary>เสียงกระซิบข้างหู (สุ่ม event ตอน First Blackout Return)</summary>
+    /// <summary>เสียงกระซิบข้างหู (one-shot)</summary>
     public void PlayRule2Whisper()
         => RuntimeManager.PlayOneShot("event:/Rule2/Whisper", ListenerPos);
 
-    /// <summary>เสียงผีหัวเราะเบาๆ (สุ่ม sound ระหว่าง Fix Panel)</summary>
+    /// <summary>เสียงผีหัวเราะเบาๆ (one-shot)</summary>
     public void PlayRule2GhostLaugh()
         => RuntimeManager.PlayOneShot("event:/Rule2/GhostLaugh", ListenerPos);
 
-    /// <summary>เสียงหวีดๆ ambient (สุ่ม sound ระหว่าง Fix Panel)</summary>
+    /// <summary>เสียงหวีดๆ ambient (one-shot)</summary>
     public void PlayRule2Eerie()
         => RuntimeManager.PlayOneShot("event:/Rule2/Eerie", ListenerPos);
 
-    /// <summary>เสียงหมาหอนจากระยะไกล (สุ่ม sound ระหว่าง Fix Panel)</summary>
+    /// <summary>เสียงหมาหอนจากระยะไกล (one-shot)</summary>
     public void PlayRule2DogHowl()
         => RuntimeManager.PlayOneShot("event:/Rule2/DogHowl", ListenerPos);
 
-    /// <summary>เสียงรถประจำทางเข้ามาใกล้ (สุ่ม sound ระหว่าง Fix Panel)</summary>
+    /// <summary>เสียงรถประจำทางเข้ามาใกล้ (one-shot)</summary>
     public void PlayRule2BusApproach()
         => RuntimeManager.PlayOneShot("event:/Rule2/BusApproach", ListenerPos);
 
-    /// <summary>เสียงคนวิ่งผ่านหลังผู้เล่น (สุ่ม ระหว่างเดินกลับศาลา)</summary>
+    /// <summary>เสียงคนวิ่งผ่านหลังผู้เล่น (one-shot)</summary>
     public void PlayRule2RunningFootsteps()
         => RuntimeManager.PlayOneShot("event:/Rule2/RunningFootsteps", ListenerPos);
 

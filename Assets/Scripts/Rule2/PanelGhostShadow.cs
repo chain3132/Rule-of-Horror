@@ -52,7 +52,7 @@ namespace Rule2
 
             // Optional: เล่น animation หายก่อน destroy
             // ถ้า prefab มี Animator ก็ SetTrigger("Disappear") แล้ว yield รอ
-
+            AudioManager.instance.PlayJumpScare();
             Destroy(gameObject);
             yield break;
         }

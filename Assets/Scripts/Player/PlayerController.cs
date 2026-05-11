@@ -279,6 +279,8 @@ namespace Player
         }
         private void ApplyGravity()
         {
+            if (!_characterController.enabled) return; // CC ปิดอยู่ (เช่น ตอน cutscene เดิน)
+
             _isGrounded = _characterController.isGrounded;
 
             if (_isGrounded && _verticalVelocity < 0)

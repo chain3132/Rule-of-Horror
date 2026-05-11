@@ -1,5 +1,6 @@
 using System.Collections;
 using System.HeartbeatSystem;
+using Manager;
 using PhoneSystem;
 using Player;
 using RuleSystem;
@@ -49,9 +50,20 @@ public class Rule1 : RuleBase
 
     // ─────────────────────────── RuleBase Overrides ───────────────────────────
 
+    /// <summary>
+    /// เรียกจาก FriendListController เมื่อผู้เล่นอ่าน Rules conversation จบ
+    /// ใช้แทนการ trigger อัตโนมัติจาก RuleManager (ตั้ง startHour = 23 ใน Inspector เพื่อไม่ให้ auto-trigger)
+    /// </summary>
+    public void TriggerStartRule()
+    {
+        if (ruleActive) return;
+        StartRule();
+    }
+
     public override void StartRule()
     {
         base.StartRule();
+        TimeManager.instance.IsPauseTime(true);
         ChangeState(Rule1State.PhoneDropped);
     }
 
@@ -59,8 +71,13 @@ public class Rule1 : RuleBase
     {
         base.EndRule();
         ResetDistortion();
+        GameModeController.instance.BlinkToMode(GameMode.Relax);
+        PlayerController.Instance.isBlockStanding = false;
         AudioManager.instance.SetHeartbeatLevel(0);
         AudioManager.instance.UpdateHeartbeat(); // force parameter to 0 ทันที
+        TimeManager.instance.IsPauseTime(false);
+        TimeManager.instance.SetTime(19,39);
+
     }
 
     protected override void UpdateRule()

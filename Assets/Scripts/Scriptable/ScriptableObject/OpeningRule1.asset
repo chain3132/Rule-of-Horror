@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41317668c27ad3e4eb2364064ad2ed14, type: 3}
+  m_Name: OpeningRule1
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableObject.ConversationData
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  nodes:
+  - message: Do you believe in an afterlife? Some people do
+    isPlayer: 0
+    replies: []
+    nextNode: 1
+  - message: ' but some don''t. And if we die, where do we go next?'
+    isPlayer: 0
+    replies: []
+    nextNode: 2
+  - message: Or is it just pitch black, like switching off the lights?
+    isPlayer: 0
+    replies: []
+    nextNode: 3
+  - message: It depends on whether you're ready to bear the burden that follows
+    isPlayer: 0
+    replies: []
+    nextNode: 4
+  - message: If you want to survive this situation, first, you must not go any further
+    isPlayer: 0
+    replies: []
+    nextNode: 5
+  - message: ahmm
+    isPlayer: 1
+    replies:
+    - replyText: Don't be ridiculous. I don't believe in children's fairy tales
+      nextNode: 6
+    - replyText: And what do I have to do?
+      nextNode: 7
+    nextNode: 0
+  - message: Good luck
+    isPlayer: 0
+    replies: []
+    nextNode: -1
+  - message: Just follow the rules and wait until the time comes. First, 19:00 -
+      19:40. Good luck
+    isPlayer: 0
+    replies: []
+    nextNode: -1
