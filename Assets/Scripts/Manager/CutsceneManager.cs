@@ -1,4 +1,6 @@
 using System.Collections;
+using FMOD.Studio;
+using FMODUnity;
 using Manager;
 using Player;
 using TMPro;
@@ -112,6 +114,11 @@ public class CutsceneManager : MonoBehaviour
         [Tooltip("หมุน Y เพิ่มเติมบน model (องศา) — ปรับตาม pivot ของ model\n" +
                  "ถ้ารถหันผิดทาง ลองเปลี่ยนเป็น 90 หรือ -90 หรือ 180")]
         public float carRotationOffset = -90f;
+
+        [Header("Car Sound — เสียง 3D ติดตามตำแหน่งรถ")]
+        [Tooltip("FMOD Event path ของเสียงรถ เช่น event:/SFX/CarEngine\n" +
+                 "เว้นว่างถ้าไม่ต้องการเสียง")]
+        public string carSoundEvent = "";
     }
 
     // ─────────────────────────── Inspector ───────────────────────────
@@ -191,6 +198,7 @@ public class CutsceneManager : MonoBehaviour
     private Coroutine _barCoroutine;
     private Coroutine _creditCoroutine;
     private Coroutine _carCoroutine;
+    private EventInstance _carSoundInstance;
 
     // ─────────────────────────── Lifecycle ───────────────────────────
 
@@ -309,6 +317,7 @@ public class CutsceneManager : MonoBehaviour
         if (_trackCoroutine  != null) { StopCoroutine(_trackCoroutine);  _trackCoroutine  = null; }
         if (_creditCoroutine != null) { StopCoroutine(_creditCoroutine); _creditCoroutine = null; }
         if (_carCoroutine    != null) { StopCoroutine(_carCoroutine);    _carCoroutine    = null; }
+        StopCarSound();
         // ซ่อน credit ทันทีเมื่อเปลี่ยน shot
         if (creditGroup != null) creditGroup.alpha = 0f;
 
@@ -484,6 +493,16 @@ public class CutsceneManager : MonoBehaviour
 
         shot.carObject.SetActive(true);
 
+        // ── เริ่มเสียง 3D ──
+        bool hasSound = !string.IsNullOrWhiteSpace(shot.carSoundEvent);
+        if (hasSound)
+        {
+            _carSoundInstance = RuntimeManager.CreateInstance(shot.carSoundEvent);
+            // Attach กับ transform รถ → FMOD อัปเดต 3D position/velocity อัตโนมัติทุก frame
+            RuntimeManager.AttachInstanceToGameObject(_carSoundInstance, carT);
+            _carSoundInstance.start();
+        }
+
         // วิ่งผ่านทุก waypoint
         for (int i = 1; i < shot.carWaypoints.Length; i++)
         {
@@ -508,17 +527,34 @@ public class CutsceneManager : MonoBehaviour
             carT.position = target.position;
         }
 
-        // ถึงปลายทาง → ซ่อนรถ
+        // ถึงปลายทาง → หยุดเสียง + ซ่อนรถ
+        StopCarSound();
         shot.carObject.SetActive(false);
         _carCoroutine = null;
+    }
+
+    /// <summary>หยุดและ release FMOD instance เสียงรถ (safe to call ซ้ำ)</summary>
+    private void StopCarSound()
+    {
+        if (_carSoundInstance.isValid())
+        {
+            _carSoundInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+            _carSoundInstance.release();
+            _carSoundInstance = default;
+        }
     }
 
     // ─────────────────────────── Walk Coroutine ───────────────────────────
 
     private IEnumerator WalkRoutine()
     {
-        var cc = PlayerController.Instance.GetComponent<CharacterController>();
+        var cc       = PlayerController.Instance.GetComponent<CharacterController>();
+        var animator = PlayerController.Instance.GetComponentInChildren<Animator>();
+
         if (cc != null) cc.enabled = false;
+
+        // เริ่ม animation เดิน
+        if (animator != null) animator.SetBool("walk", true);
 
         for (int i = 1; i < waypoints.Length; i++)
         {
@@ -552,6 +588,9 @@ public class CutsceneManager : MonoBehaviour
                 _playerTransform.position = wp.position;
         }
 
+        // หยุด animation เดิน
+        if (animator != null) animator.SetBool("walk", false);
+
         if (cc != null) cc.enabled = true;
 
         if (!_skipRequested && pauseBeforeSit > 0f)
@@ -572,6 +611,7 @@ public class CutsceneManager : MonoBehaviour
         if (_barCoroutine    != null) { StopCoroutine(_barCoroutine);    _barCoroutine    = null; }
         if (_creditCoroutine != null) { StopCoroutine(_creditCoroutine); _creditCoroutine = null; }
         if (_carCoroutine    != null) { StopCoroutine(_carCoroutine);    _carCoroutine    = null; }
+        StopCarSound();
 
         // ซ่อนรถและ credit ทันที
         if (_currentShotIndex >= 0 && _currentShotIndex < shots.Length)

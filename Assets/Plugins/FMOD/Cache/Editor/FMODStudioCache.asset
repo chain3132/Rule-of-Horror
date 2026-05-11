@@ -15,7 +15,7 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639140910310723607
+  lastModified: 639141006986337660
   FileSizes:
   - Name: Desktop
     Value: 39392
@@ -102,10 +102,10 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/AmbienceBank.bank
   Name: AmbienceBank
   StudioPath: bank:/AmbienceBank
-  lastModified: 639134380833953525
+  lastModified: 639141010384227889
   FileSizes:
   - Name: Desktop
-    Value: 1966944
+    Value: 2152000
   Exists: 1
 --- !u!114 &-5803895795705513871
 MonoBehaviour:
@@ -224,8 +224,8 @@ MonoBehaviour:
     Data3: -1597859393
     Data4: 1385186284
   Banks:
-  - {fileID: -7414909333957512450}
   - {fileID: -8092087314510133167}
+  - {fileID: -7414909333957512450}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -281,6 +281,33 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-3198855560229535009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/carSoundEvent
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/carSoundEvent
+  Guid:
+    Data1: -1377091960
+    Data2: 1191170961
+    Data3: 1386848898
+    Data4: -1290523727
+  Banks:
+  - {fileID: -7414909333957512450}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 21315
 --- !u!114 &-2276144933527849509
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -601,13 +628,14 @@ MonoBehaviour:
   - {fileID: -4395434948002167409}
   - {fileID: 8974569834229332748}
   - {fileID: 6846998561660260936}
+  - {fileID: -3198855560229535009}
   EditorParameters: []
   MasterBanks:
   - {fileID: -8687965200994253978}
   StringsBanks:
   - {fileID: 8656562136812460686}
   cacheVersion: 131858
-  cacheTime: 639140910310733646
+  cacheTime: 639141010384227889
   SerializableEventsDict:
   - key: event:/New Event
     index: 0
@@ -677,6 +705,8 @@ MonoBehaviour:
     index: 32
   - key: event:/Notification
     index: 33
+  - key: event:/carSoundEvent
+    index: 34
 --- !u!114 &388632287678487498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1272,10 +1302,10 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639140910310733646
+  lastModified: 639141006986343341
   FileSizes:
   - Name: Desktop
-    Value: 2828
+    Value: 2872
   Exists: 1
 --- !u!114 &8661769540991862282
 MonoBehaviour:

@@ -13613,6 +13613,7 @@ MonoBehaviour:
     carSpeed: 20
     carFaceDirection: 1
     carRotationOffset: -90
+    carSoundEvent: 
   - vcam: {fileID: 724098636}
     activateAtWaypoint: 2
     instantCut: 1
@@ -13644,6 +13645,7 @@ MonoBehaviour:
     carSpeed: 20
     carFaceDirection: 0
     carRotationOffset: 0
+    carSoundEvent: 
   - vcam: {fileID: 1136987651}
     activateAtWaypoint: 3
     instantCut: 0
@@ -13672,6 +13674,7 @@ MonoBehaviour:
     carSpeed: 20
     carFaceDirection: 1
     carRotationOffset: 90
+    carSoundEvent: event:/carSoundEvent
   - vcam: {fileID: 931289199}
     activateAtWaypoint: 4
     instantCut: 1
@@ -13688,6 +13691,7 @@ MonoBehaviour:
     carSpeed: 20
     carFaceDirection: 1
     carRotationOffset: -90
+    carSoundEvent: 
   - vcam: {fileID: 649894516}
     activateAtWaypoint: 5
     instantCut: 1
@@ -13704,6 +13708,7 @@ MonoBehaviour:
     carSpeed: 20
     carFaceDirection: 1
     carRotationOffset: -90
+    carSoundEvent: 
   waypoints:
   - {fileID: 544981305}
   - {fileID: 1309226315}
