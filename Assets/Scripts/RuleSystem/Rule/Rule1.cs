@@ -44,6 +44,39 @@ public class Rule1 : RuleBase
     [Header("Post Processing")]
     [SerializeField] private Volume globalVolume;
 
+    // ── Zone Lens Distortion (ambient barrel) ────────────────────────────────
+    [Header("Zone Lens Distortion")]
+    [Tooltip("LensDistortion intensity ของ Orange zone\n" +
+             "แนะนำ -0.10 ถึง -0.20 (เบา ๆ — wave เป็นหลัก)")]
+    [SerializeField] private float orangeLens   = -0.12f;
+    [Tooltip("ChromaticAberration ของ Orange zone")]
+    [SerializeField] private float orangeChroma = 0.30f;
+
+    [Tooltip("LensDistortion intensity ของ Red zone\n" +
+             "แนะนำ -0.25 ถึง -0.40")]
+    [SerializeField] private float redLens   = -0.30f;
+    [Tooltip("ChromaticAberration ของ Red zone")]
+    [SerializeField] private float redChroma = 0.60f;
+
+    [Header("Wave Distortion")]
+    [Tooltip("Component ที่ควบคุม WaveDistortion.shader\n" +
+             "ดู WaveDistortionEffect.cs สำหรับวิธี setup ใน Inspector")]
+    [SerializeField] private WaveDistortionEffect waveEffect;
+
+    [Header("Player Dialogue")]
+    [Tooltip("บทพูดที่แสดงตอนโทรศัพท์หายออกจากมือผู้เล่น\n" +
+             "ตัวอย่าง: 'โทรศัพท์ของฉัน... หายไปไหน?'")]
+    [SerializeField] private DialogueLine[] phoneDropDialogue;
+
+    [Tooltip("หน่วงก่อนแสดงบทพูด (วินาที) ให้เวลา effect โทรศัพท์หายเล่นก่อน")]
+    [SerializeField] private float phoneDropDialogueDelay = 0.8f;
+
+    [Header("Hint UI")]
+    [Tooltip("ข้อความ hint บอกผู้เล่นให้กด E เพื่อลุกขึ้น (แสดงตอน Rule 1 เริ่ม)\n" +
+             "เว้นว่างถ้าไม่ต้องการแสดง hint")]
+    [TextArea(1, 3)]
+    [SerializeField] private string standHintText = "E    ลุกขึ้น";
+
     [Header("Sound")]
     [Tooltip("เสียงโทรศัพท์ 3D ที่วางอยู่บนพื้น (loop)\nเว้นว่างถ้าไม่ต้องการ")]
     [SerializeField] private string phoneSoundEvent = "";
@@ -57,6 +90,7 @@ public class Rule1 : RuleBase
     private float         _dieTimer;
     private bool          _isDying;
     private bool          _hasCompleted;   // กันไม่ให้ trigger ซ้ำหลัง EndRule
+    private bool          _standHintActive;
     private EventInstance _phoneSoundInstance;
     private EventInstance _ghostHumInstance;
 
@@ -85,6 +119,7 @@ public class Rule1 : RuleBase
         base.EndRule();
         ResetDistortion();
         StopGhostHum();
+        GameHintUI.instance?.Hide();
         StopPhoneSound();
         GameModeController.instance.BlinkToMode(GameMode.Relax);
         PlayerController.Instance.isBlockStanding = false;
@@ -124,11 +159,39 @@ public class Rule1 : RuleBase
         }
 
         _dieTimer = outsideDeathTime;
+
+        // ซ่อน phone controls hint แล้วแสดง stand hint
+        if (GameHintUI.instance != null)
+        {
+            GameHintUI.instance.Hide();
+            if (!string.IsNullOrWhiteSpace(standHintText))
+            {
+                GameHintUI.instance.Show(standHintText);
+                _standHintActive = true;
+            }
+        }
+
+        if (phoneDropDialogue != null && phoneDropDialogue.Length > 0)
+            StartCoroutine(ShowPhoneDropDialogue());
+    }
+
+    IEnumerator ShowPhoneDropDialogue()
+    {
+        yield return new WaitForSeconds(phoneDropDialogueDelay);
+        if (PlayerDialogueUI.instance != null)
+            PlayerDialogueUI.instance.ShowSequence(phoneDropDialogue);
     }
 
     void UpdatePhoneDropped()
     {
         if (_isDying) return;
+
+        // ซ่อน stand hint ทันทีที่ผู้เล่นลุกขึ้น
+        if (_standHintActive && !PlayerController.Instance.IsSitting())
+        {
+            GameHintUI.instance?.Hide();
+            _standHintActive = false;
+        }
 
         ZoneLevel zone = HeartbeatSystem.instance.CurrentZoneLevel;
         ApplyZoneDistortion(zone);
@@ -155,9 +218,7 @@ public class Rule1 : RuleBase
 
         // หยุดเสียงโทรศัพท์บนพื้น
         StopPhoneSound();
-
-        // ล้าง distortion ทันที
-        ResetDistortion();
+        
         AudioManager.instance.SetHeartbeatLevel(0);
         AudioManager.instance.UpdateHeartbeat();
 
@@ -171,6 +232,11 @@ public class Rule1 : RuleBase
 
     void UpdateReturnToSeat()
     {
+        // อัปเดต wave / distortion ตาม zone เหมือน PhoneDropped state
+        // (ทำงานไม่ว่าจะหยิบโทรศัพท์แล้วหรือยัง)
+        ZoneLevel zone = HeartbeatSystem.instance.CurrentZoneLevel;
+        ApplyZoneDistortion(zone);
+
         // รอผู้เล่นกลับมานั่ง
         if (PlayerController.Instance.IsSitting())
             EndRule();
@@ -189,33 +255,69 @@ public class Rule1 : RuleBase
 
     void ApplyZoneDistortion(ZoneLevel zone)
     {
-        float lensVal   = 0f;
-        float chromaVal = 0f;
+        LensDistortion      lens   = null;
+        ChromaticAberration chroma = null;
+        if (globalVolume != null)
+        {
+            globalVolume.profile.TryGet(out lens);
+            globalVolume.profile.TryGet(out chroma);
+        }
 
         switch (zone)
         {
-            case ZoneLevel.Green:   lensVal =  0.0f; chromaVal = 0.0f; break;
-            case ZoneLevel.Orange:  lensVal = -0.3f; chromaVal = 0.3f; break;
-            case ZoneLevel.Red:     lensVal = -0.6f; chromaVal = 0.7f; break;
-            case ZoneLevel.Outside: lensVal = -1.0f; chromaVal = 1.0f; break;
+            // ── ปลอดภัย → ปิด effect ทั้งหมด ────────────────────────────
+            case ZoneLevel.Green:
+                SetLens(lens, 0f);
+                SetChroma(chroma, 0f);
+                waveEffect?.SetOff();
+                break;
+
+            // ── Orange → wave แกว่งช้า + lens เบา ๆ ──────────────────
+            case ZoneLevel.Orange:
+                SetLens(lens, orangeLens);
+                SetChroma(chroma, orangeChroma);
+                waveEffect?.SetOrange();
+                break;
+
+            // ── Red → wave รุนแรง + lens medium + chroma สูง ──────────
+            case ZoneLevel.Red:
+                SetLens(lens, redLens);
+                SetChroma(chroma, redChroma);
+                waveEffect?.SetRed();
+                break;
+
+            // ── Outside → barrel distortion สูงสุด ไม่มี wave ──────────
+            // (กำลังนับถอยหลังตาย — static ดูน่ากลัวกว่า wave)
+            case ZoneLevel.Outside:
+                SetLens(lens, -1.0f);
+                SetChroma(chroma, 1.0f);
+                waveEffect?.SetOff();
+                break;
         }
+    }
 
-        if (globalVolume == null) return;
+    static void SetLens(LensDistortion lens, float v)
+    {
+        if (lens == null) return;
+        lens.intensity.value = v;
+        lens.center.value    = Vector2.zero;
+    }
 
-        if (globalVolume.profile.TryGet(out LensDistortion lens))
-            lens.intensity.value = lensVal;
-
-        if (globalVolume.profile.TryGet(out ChromaticAberration chroma))
-            chroma.intensity.value = chromaVal;
+    static void SetChroma(ChromaticAberration chroma, float v)
+    {
+        if (chroma != null) chroma.intensity.value = v;
     }
 
     void ResetDistortion()
     {
+        waveEffect?.SetOff();
+
         if (globalVolume == null) return;
-
         if (globalVolume.profile.TryGet(out LensDistortion lens))
+        {
             lens.intensity.value = 0f;
-
+            lens.center.value    = Vector2.zero;
+        }
         if (globalVolume.profile.TryGet(out ChromaticAberration chroma))
             chroma.intensity.value = 0f;
     }

@@ -166,13 +166,11 @@ public class GameModeController : MonoBehaviour
 
         Camera.main.transform.localRotation = Quaternion.identity;
 
-        // ── Reset ค่า post-processing ทั้งหมดที่ SetFaintEffect แก้ไว้ ──
-        // ทำก่อน ApplyMode เพื่อกันค่าเก่าค้างติดใน profile ที่กำลังจะ active
-        ResetFaintEffects();
-
-        yield return new WaitForSeconds(0.5f);
-        // เข้าสู่ blink จริง
-        yield return StartCoroutine(BlinkRoutine(targetMode));
+        // ── ปิดตาทันทีหลัง faint จบ — ไม่ reset ก่อน ──────────────────
+        // ResetFaintEffects() ถูกส่งเป็น onEyesClosed callback
+        // เพื่อให้ reset เกิดขณะหน้าจอดำ (ผู้เล่นมองไม่เห็น) ไม่ใช่ก่อนปิดตา
+        // ซึ่งเป็นสาเหตุที่ทำให้เห็นภาพสว่างปกติแว๊บนึงก่อนตาหลับ
+        yield return StartCoroutine(BlinkRoutine(targetMode, -1f, ResetFaintEffects));
     }
 
     /// <summary>Reset ทุกค่าที่ SetFaintEffect แก้ไว้กลับเป็นค่ากลาง

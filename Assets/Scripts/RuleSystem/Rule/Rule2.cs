@@ -48,6 +48,12 @@ namespace RuleSystem.Rule
         [SerializeField] private LightPanel  panelPrefab;
         [SerializeField] private Transform[] panelSpawnPoints;
 
+        // ── Game Over ────────────────────────────────────────────────────
+        [Header("Game Over Reset")]
+        [Tooltip("เวลาที่ rewind ไปหลังตาย (ก่อน First Blackout)")]
+        [SerializeField] private int gameOverResetHour   = 19;
+        [SerializeField] private int gameOverResetMinute = 55;
+
         // ── Ghost & Shadows ─────────────────────────────────────────────
         [Header("Ghost & Shadows")]
         [SerializeField] private GameObject runningGhost;          // ผีวิ่งช่วง ReturnToSeat
@@ -76,6 +82,7 @@ namespace RuleSystem.Rule
         private bool                        _lightTurnedOn;   // ผู้เล่นกดสวิตช์ไฟแล้วในรอบ First Blackout
         private Coroutine                   _randomSoundCoroutine;
         private Coroutine                   _flashlightFlickerCoroutine;
+        private int                         _puzzleFailCount; // นับความผิดพลาดจาก mini-game
 
         // ════════════════════════════════════════════════════════════════
         #region Lifecycle
@@ -92,6 +99,7 @@ namespace RuleSystem.Rule
             ResetRuntime();
             SpawnRandomPanels();
             TimeManager.instance.IsPauseTime(false);
+            // isBlockStanding ยังคง true — จะ unlock ตอน StartFirstBlackout()
         }
 
         bool PlayerIsSitting()  => PlayerController.Instance.IsSitting();
@@ -166,9 +174,10 @@ namespace RuleSystem.Rule
 
         void ResetRuntime()
         {
-            fixedPanels    = 0;
-            radioPlaying   = false;
-            _lightTurnedOn = false;
+            fixedPanels      = 0;
+            radioPlaying     = false;
+            _lightTurnedOn   = false;
+            _puzzleFailCount = 0;
         }
 
         void SpawnRandomPanels()
@@ -220,10 +229,13 @@ namespace RuleSystem.Rule
 
         void StartFirstBlackout()
         {
-            saraLight.enabled = false;
-            radioControl.UnlockRadio(true);
-            switchLight.UnlockSwitch(true);          // ← unlock สวิตช์ตั้งแต่ไฟดับรอบแรก
+            // unlock ก่อนเสมอ — ต้องมาบรรทัดแรกเพื่อกันกรณีที่ reference อื่นใน scene เป็น null
+            // แล้ว throw exception ก่อนถึงบรรทัดนี้
             PlayerController.Instance.isBlockStanding = false;
+
+            if (saraLight != null)     saraLight.enabled = false;
+            if (radioControl != null)  radioControl.UnlockRadio(true);
+            if (switchLight != null)   switchLight.UnlockSwitch(true);
             TimeManager.instance.IsPauseTime(true);
         }
 
@@ -433,11 +445,95 @@ namespace RuleSystem.Rule
 
         void UpdateFixPanel() { /* รอ OnPanelFixed() callbacks */ }
 
-        /// <summary>เรียกโดย LightPanel เมื่อผู้เล่นซ่อมตู้ไฟสำเร็จ</summary>
-        public void OnPanelFixed()
+        /// <summary>
+        /// เรียกโดย LeverPuzzleController เมื่อผู้เล่นแก้ puzzle ผิด
+        /// เพิ่ม Heartbeat level ตามจำนวนครั้งที่ผิด (สูงสุด 3)
+        /// </summary>
+        /// <summary>เรียกโดย LeverPuzzleController ทุกครั้งที่ตอบผิด — เพิ่ม heartbeat</summary>
+        public void OnPuzzleFailed()
         {
+            AudioManager.instance.IncreaseHeartbeatLevel();
+        }
+
+        /// <summary>เรียกโดย LeverPuzzleController เมื่อผิดครบ maxFails ครั้ง</summary>
+        public void OnGameOver()
+        {
+            StartCoroutine(GameOverRoutine());
+        }
+
+        IEnumerator GameOverRoutine()
+        {
+            // ── หยุดทุกอย่างใน Rule2 ────────────────────────────────
+            StopHelperCoroutines();
+            AudioManager.instance.StopAllRule2Sounds();
+
+            if (_flashlightFlickerCoroutine != null)
+            {
+                StopCoroutine(_flashlightFlickerCoroutine);
+                _flashlightFlickerCoroutine = null;
+            }
+            if (flashlight != null) flashlight.enabled = true; // ค้างไฟฉายไว้ระหว่างตาย
+
+            ClearPanelShadows();
+
+            // ── Animation ล้มลง ──────────────────────────────────────
+            AudioManager.instance.PlayRule3Death();
+            yield return StartCoroutine(PlayerController.Instance.PlayDeathFallRoutine());
+
+            yield return new WaitForSeconds(0.5f);
+
+            // ── Destroy panels ───────────────────────────────────────
+            foreach (var panel in activePanels)
+                if (panel != null) Destroy(panel.gameObject);
+            activePanels.Clear();
+
+            // ── Reset player state ───────────────────────────────────
+            PlayerController.Instance.SetMovement(true);
+            PlayerController.Instance.isBlockStanding = false;
+            AudioManager.instance.ResetHeartbeatLevel();
+
+            // ── Blink กลับ Relax — reset camera ขณะตาปิด ───────────
+            GameModeController.instance.DirectBlinkToMode(
+                GameMode.Relax,
+                onEyesClosed: () =>
+                {
+                    PlayerController.Instance.ResetCameraAfterDeath();
+                    PlayerController.Instance.SetMovement(true);
+                });
+
+            yield return new WaitUntil(() => GameModeController.instance.IsEyesOpen);
+            yield return null;   // รอ 1 frame ก่อน SetTime
+
+            // ── คืนไฟ + reset state ──────────────────────────────────
+            if (saraLight != null) saraLight.enabled = true;
+            SetStreetLights(true);
+            if (radioControl != null) radioControl.UnlockRadio(false);
+            if (switchLight  != null) switchLight.UnlockSwitch(false);
+
+            currentState = Rule2State.None;
+            ResetRuntime();
+
+            // ── Rewind เวลาก่อน First Blackout ───────────────────────
+            TimeManager.instance.SetTime(gameOverResetHour, gameOverResetMinute);
+            TimeManager.instance.IsPauseTime(false);
+
+            base.EndRule();   // reset ruleActive → RuleManager จะ retrigger Rule2 เมื่อถึงเวลา
+        }
+
+        /// <summary>เรียกโดย LeverPuzzleController เมื่อผู้เล่นซ่อมตู้ไฟสำเร็จ</summary>
+        /// <param name="completedPanel">ตู้ไฟที่เพิ่งซ่อมเสร็จ — ส่งมาตรงๆ จาก controller เพื่อกันมาร์กผิดตู้</param>
+        public void OnPanelFixed(LightPanel completedPanel)
+        {
+            completedPanel.MarkFixed();   // มาร์กตู้ที่ซ่อมเสร็จจริงๆ ไม่ใช่ตู้แรกในลิสต์
+
             fixedPanels++;
-            if (fixedPanels < activePanels.Count) return;
+            if (fixedPanels < activePanels.Count)
+            {
+                // ยังเหลือตู้อีก — รีเซ็ต heartbeat ให้เริ่มใหม่
+                AudioManager.instance.ResetHeartbeatLevel();
+                AudioManager.instance.UpdateHeartbeat();
+                return;
+            }
 
             // ซ่อมเสร็จทั้งหมด → หยุด sounds + คืนไฟ
             if (_randomSoundCoroutine      != null) StopCoroutine(_randomSoundCoroutine);

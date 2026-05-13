@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using FMOD.Studio;
 using FMODUnity;
@@ -186,6 +187,20 @@ public class CutsceneManager : MonoBehaviour
     [Header("Cutscene Music")]
     [Tooltip("FMOD Event path เพลงที่เล่นตลอด cutscene\nเว้นว่างถ้าไม่ต้องการ")]
     [SerializeField] private string cutsceneMusicEvent = "";
+
+    [Header("Ending Dialogue")]
+    [Tooltip("บทพูดผู้เล่นที่แสดงหลังนั่งเก้าอี้ตอน cutscene จบ\n" +
+             "ต้องมี PlayerDialogueUI ใน scene ด้วย")]
+    [SerializeField] private DialogueLine[] endingDialogue;
+
+    [Tooltip("หน่วงก่อนแสดงบทพูด (วินาที) เพื่อให้ animation นั่งเสร็จก่อน")]
+    [SerializeField] private float endingDialogueDelay = 0.6f;
+
+    [Header("Phone Hint")]
+    [Tooltip("ข้อความ hint ที่แสดงหลัง cutscene จบ บอกผู้เล่นวิธีใช้โทรศัพท์\n" +
+             "รองรับ \\n สำหรับขึ้นบรรทัด — เว้นว่างถ้าไม่ต้องการ")]
+    [TextArea(2, 5)]
+    [SerializeField] private string phoneHintText = "TAB  หยิบโทรศัพท์\n1      เปิดแชท\n2      ไฟฉาย";
 
     [Header("Skip")]
     [Tooltip("กดปุ่มใดก็ได้เพื่อ skip animation (ยังต้องนั่งอยู่)")]
@@ -658,8 +673,24 @@ public class CutsceneManager : MonoBehaviour
         yield return new WaitUntil(() => PlayerController.Instance.IsSitting());
         yield return new WaitForSeconds(0.4f);
 
+        // แสดงบทพูดผู้เล่นหลังนั่งเก้าอี้
+        if (endingDialogue != null && endingDialogue.Length > 0 && PlayerDialogueUI.instance != null)
+        {
+            yield return new WaitForSeconds(endingDialogueDelay);
+            bool dialogueDone = false;
+            Action onDone = () => dialogueDone = true;
+            PlayerDialogueUI.instance.OnSequenceComplete += onDone;
+            PlayerDialogueUI.instance.ShowSequence(endingDialogue);
+            yield return new WaitUntil(() => dialogueDone);
+            PlayerDialogueUI.instance.OnSequenceComplete -= onDone;
+        }
+
         // บล็อกการลุก — FriendListController จะปลดล็อกเมื่อถึงเวลา 18:40
         PlayerController.Instance.isBlockStanding = true;
+
+        // แสดง hint โทรศัพท์ — ซ่อนเองเมื่อผู้เล่นกดปุ่มแชท หรือเมื่อ Rule1 เริ่ม
+        if (GameHintUI.instance != null && !string.IsNullOrWhiteSpace(phoneHintText))
+            GameHintUI.instance.Show(phoneHintText, autoDismissOnChatKey: true);
 
         PlayerController.Instance.SetLook(true);
         TimeManager.instance.IsPauseTime(false);
