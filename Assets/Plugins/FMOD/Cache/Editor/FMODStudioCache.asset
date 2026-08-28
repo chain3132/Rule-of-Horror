@@ -102,10 +102,10 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/AmbienceBank.bank
   Name: AmbienceBank
   StudioPath: bank:/AmbienceBank
-  lastModified: 639141118373719157
+  lastModified: 639144657060927805
   FileSizes:
   - Name: Desktop
-    Value: 3121856
+    Value: 3121536
   Exists: 1
 --- !u!114 &-7079097143769619240
 MonoBehaviour:
@@ -251,8 +251,8 @@ MonoBehaviour:
     Data3: -1597859393
     Data4: 1385186284
   Banks:
-  - {fileID: -7414909333957512450}
   - {fileID: -8092087314510133167}
+  - {fileID: -7414909333957512450}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -509,7 +509,7 @@ MonoBehaviour:
   Banks:
   - {fileID: -7414909333957512450}
   IsStream: 0
-  Is3D: 1
+  Is3D: 0
   IsOneShot: 0
   Parameters:
   - {fileID: 4712788606707776555}
@@ -666,7 +666,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: 8656562136812460686}
   cacheVersion: 131858
-  cacheTime: 639141188723019380
+  cacheTime: 639144657060927805
   SerializableEventsDict:
   - key: event:/New Event
     index: 0

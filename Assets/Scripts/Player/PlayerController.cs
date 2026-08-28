@@ -332,6 +332,13 @@ namespace Player
             _canLook = value;
         }
 
+        /// <summary>
+        /// Pitch pivot (child of the yaw-bearing player transform). External systems may drive
+        /// its world rotation ONLY while look is disabled via SetLook(false) — the puzzle never
+        /// writes _xRotation / body yaw, so restoring the pivot's saved rotation stays consistent.
+        /// </summary>
+        public Transform CameraPivot => cameraPivot;
+
         // ─────────────── Rule 3 Death ───────────────
 
         /// <summary>

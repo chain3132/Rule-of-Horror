@@ -77,9 +77,10 @@ namespace Rule2
         private bool IsLookingAt()
         {
             Camera cam = playerCamera != null ? playerCamera : Camera.main;
-            if (cam == null || _col == null) return false;
+            if (cam == null || _col == null || Mouse.current == null) return false;
 
-            Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+            // หน้าจอถูก fix ตอน puzzle เปิด — เล็งด้วยตำแหน่งเคอร์เซอร์แทน camera.forward
+            Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
             return Physics.Raycast(ray, out RaycastHit hit, maxLookDistance)
                    && hit.collider == _col;
         }
@@ -115,19 +116,21 @@ namespace Rule2
 
         private void OnGUI()
         {
-            if (!_isHovered || _pressing) return;
+            if (!_isHovered || _pressing || Mouse.current == null) return;
             if (puzzleController == null || !puzzleController.IsPuzzleRunning) return;
-
-            float cx = Screen.width  * 0.5f;
-            float cy = Screen.height * 0.5f;
 
             bool   isConfirm = buttonType == ButtonType.Confirm;
             Color  hintColor = isConfirm ? Color.green : new Color(1f, 0.35f, 0.35f);
             string hint      = isConfirm ? "[ คลิก: ยืนยัน ]" : "[ คลิก: รีเซ็ต ]";
 
+            // anchor ข้อความไว้ข้างเคอร์เซอร์ (GUI origin มุมซ้ายบน — flip Y)
+            Vector2 m  = Mouse.current.position.ReadValue();
+            float   gx = m.x + 18f;
+            float   gy = (Screen.height - m.y) + 8f;
+
             GUIStyle style = new GUIStyle(GUI.skin.label)
             {
-                alignment = TextAnchor.UpperCenter,
+                alignment = TextAnchor.UpperLeft,
                 fontSize  = 14,
                 fontStyle = FontStyle.Bold
             };
@@ -135,9 +138,9 @@ namespace Rule2
 
             Color prev = GUI.color;
             GUI.color = new Color(0, 0, 0, 0.7f);
-            GUI.Label(new Rect(cx - 99, cy + 14, 200, 28), hint, style);
+            GUI.Label(new Rect(gx + 1, gy + 1, 220, 28), hint, style);
             GUI.color = hintColor;
-            GUI.Label(new Rect(cx - 100, cy + 15, 200, 28), hint, style);
+            GUI.Label(new Rect(gx, gy, 220, 28), hint, style);
             GUI.color = prev;
         }
 

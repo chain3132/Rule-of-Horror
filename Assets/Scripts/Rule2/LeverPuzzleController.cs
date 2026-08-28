@@ -55,6 +55,13 @@ namespace Rule2
         [Tooltip("ระยะ raycast สำหรับ grab คันโยก (เมตร)")]
         [SerializeField] private float  leverGrabDistance = 3f;
 
+        [Header("Camera Framing")]
+        [Tooltip("จุดกล้องเฉพาะของตู้นี้ — วาง empty ให้ frame คันโยก 4 ตัว + ปุ่ม Confirm/Reset + phase dots + order slots\n" +
+                 "เว้นว่าง = fallback เล็งไปที่ตัว panel เอง (พร้อม warning)")]
+        [SerializeField] private Transform puzzleViewAnchor;
+        [Tooltip("เวลา blend กล้องเข้า/ออก (วินาที)")]
+        [SerializeField] private float     cameraBlendDuration = 0.3f;
+
         [Header("Mouse Input")]
         [Tooltip("ความไวเมาส์ต่อ pixel (แนะนำ 0.001–0.003)")]
         [SerializeField] private float mouseSensitivity = 0.002f;
@@ -81,6 +88,12 @@ namespace Rule2
         private RuleSystem.Rule.Rule2   _rule;
         private LightPanel              _panel;   // ตู้ไฟที่ controller นี้อยู่ด้วย
 
+        private bool                    _playerLocked;
+        private bool                    _lookSuppressed;   // true ตั้งแต่ SetLook(false) จนกว่าจะ SetLook(true) จริง
+        private Coroutine               _camBlendRoutine;
+        private Quaternion              _savedCamWorldRot;
+        private Quaternion              _savedCamLocalRot;
+
         // ─────────────────────────── Setup ───────────────────────────
 
         public void Initialize(RuleSystem.Rule.Rule2 rule, LightPanel panel)
@@ -99,8 +112,8 @@ namespace Rule2
             SetDotColor(phase1Dot, false);
             SetDotColor(phase2Dot, false);
 
-            // ล็อกการเดิน — ขยับได้แค่หัน
-            PlayerController.Instance.SetMovement(false);
+            // ล็อกผู้เล่น + fix หน้าจอไปที่ตู้ + โชว์เมาส์
+            LockPlayerForPuzzle();
 
             IsPuzzleRunning = true;
             BeginPhase(1);
@@ -112,7 +125,7 @@ namespace Rule2
             ReleaseGrab();
             IsPuzzleRunning = false;
             StopAllDrift();
-            PlayerController.Instance.SetMovement(true);
+            RestorePlayerFromPuzzle(restoreCamera: true);
         }
 
         public void ConfirmCurrentLever()
@@ -162,48 +175,37 @@ namespace Rule2
 
         private void OnGUI()
         {
-            if (!IsPuzzleRunning) return;
+            if (!IsPuzzleRunning || Mouse.current == null) return;
 
-            float cx = Screen.width  * 0.5f;
-            float cy = Screen.height * 0.5f;
-
+            // ไม่มี crosshair กลางจอแล้ว — หน้าจอถูก fix, ผู้เล่นเล็งด้วยเคอร์เซอร์
             AimState aim = GetCurrentAimState();
+            if (aim == AimState.None) return;
 
-            Color crossColor = aim switch
+            string hint = aim == AimState.CanGrab
+                ? "[ คลิกซ้าย: จับ ]"
+                : "[ คลิกซ้าย: ปล่อย ]";
+            Color color = aim == AimState.CanGrab
+                ? Color.yellow
+                : new Color(1f, 0.55f, 0f);   // orange
+
+            // GUI ใช้พิกัด origin มุมซ้ายบน — flip Y ของ mouse position
+            Vector2 m  = Mouse.current.position.ReadValue();
+            float   gx = m.x + 18f;
+            float   gy = (Screen.height - m.y) + 8f;
+
+            GUIStyle style = new GUIStyle(GUI.skin.label)
             {
-                AimState.CanGrab => Color.yellow,
-                AimState.Grabbed => new Color(1f, 0.55f, 0f),   // orange
-                _                => new Color(1f, 1f, 1f, 0.55f)
+                alignment = TextAnchor.UpperLeft,
+                fontSize  = 14,
+                fontStyle = FontStyle.Bold
             };
+            style.normal.textColor = color;
 
-            // ── วาด + crosshair ──────────────────────────────────────
             Color prev = GUI.color;
-            GUI.color = crossColor;
-            GUI.DrawTexture(new Rect(cx - 9, cy - 1, 18, 2), Texture2D.whiteTexture); // แนวนอน
-            GUI.DrawTexture(new Rect(cx - 1, cy - 9, 2, 18), Texture2D.whiteTexture); // แนวตั้ง
-
-            // ── ข้อความ hint ─────────────────────────────────────────
-            if (aim != AimState.None)
-            {
-                string hint = aim == AimState.CanGrab
-                    ? "[ คลิกซ้าย: จับ ]"
-                    : "[ คลิกซ้าย: ปล่อย ]";
-
-                GUIStyle style = new GUIStyle(GUI.skin.label)
-                {
-                    alignment = TextAnchor.UpperCenter,
-                    fontSize  = 14,
-                    fontStyle = FontStyle.Bold
-                };
-                style.normal.textColor = crossColor;
-
-                // เงาข้อความ
-                GUI.color = new Color(0, 0, 0, 0.7f);
-                GUI.Label(new Rect(cx - 99, cy + 14, 200, 28), hint, style);
-                GUI.color = crossColor;
-                GUI.Label(new Rect(cx - 100, cy + 15, 200, 28), hint, style);
-            }
-
+            GUI.color = new Color(0, 0, 0, 0.7f);
+            GUI.Label(new Rect(gx + 1, gy + 1, 240, 28), hint, style);   // เงา
+            GUI.color = color;
+            GUI.Label(new Rect(gx, gy, 240, 28), hint, style);
             GUI.color = prev;
         }
 
@@ -266,10 +268,11 @@ namespace Rule2
         private bool IsLookingAtLever(int leverIndex)
         {
             Camera cam = playerCamera != null ? playerCamera : Camera.main;
-            if (cam == null) return false;
+            if (cam == null || Mouse.current == null) return false;
             if (levers[leverIndex].LeverCollider == null) return false;
 
-            Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+            // หน้าจอถูก fix ไว้แล้ว — เล็งด้วยตำแหน่งเคอร์เซอร์แทน camera.forward
+            Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
             return Physics.Raycast(ray, out RaycastHit hit, leverGrabDistance)
                    && hit.collider == levers[leverIndex].LeverCollider;
         }
@@ -344,7 +347,7 @@ namespace Rule2
             _isGrabbed      = false;
             StopAllDrift();
             HideAllOrderObjects();
-            PlayerController.Instance.SetMovement(true);
+            RestorePlayerFromPuzzle(restoreCamera: true);
             _rule?.OnPanelFixed(_panel);   // ส่ง panel ที่ซ่อมเสร็จไปตรงๆ
         }
 
@@ -375,12 +378,15 @@ namespace Rule2
             if (_failCount >= maxFails)
             {
                 _busy = false;
-                PlayerController.Instance.SetMovement(true);
+                // คืนเมาส์ + หยุด blend กล้อง แต่ปล่อยให้ death sequence (PlayDeathFallRoutine +
+                // ResetCameraAfterDeath) เป็นเจ้าของกล้อง + SetLook เอง
+                RestorePlayerFromPuzzle(restoreCamera: false);
                 _rule?.OnGameOver();
                 yield break;   // หยุด — Rule2 จัดการ death sequence ต่อ
             }
 
             // ── ยังเหลือโอกาส — รีสตาร์ท ──────────────────────────────
+            // ไม่ต้อง lock/restore — ยังอยู่ใน puzzle, กล้องยังถูก fix ไว้ที่ anchor อยู่แล้ว
             yield return new WaitForSeconds(0.2f);
 
             _busy           = false;
@@ -445,6 +451,131 @@ namespace Rule2
         {
             if (dot == null) return;
             dot.material.color = on ? dotOnColor : dotOffColor;
+        }
+
+        // ─────────────────────────── Player Lock / Camera Framing ───────────────────────────
+
+        /// <summary>
+        /// ล็อกผู้เล่น + fix กล้องไปที่ตู้ + โชว์เมาส์ (mirror PhoneSystem.LockPlayer)
+        /// idempotent — FailRoutine restart ที่ไม่ตาย จะเรียกซ้ำไม่ได้
+        /// </summary>
+        private void LockPlayerForPuzzle()
+        {
+            if (_playerLocked) return;
+            _playerLocked = true;
+
+            var pc = PlayerController.Instance;
+            pc.SetMovement(false);
+            pc.SetLook(false);
+            _lookSuppressed = true;
+
+            // Confined: เคอร์เซอร์โชว์แต่ไม่หลุดจอ → Mouse.delta.y ยังไหลต่อขอบจอ (ใช้ปรับคันโยก)
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible   = true;
+
+            Transform pivot = pc.CameraPivot;
+            if (pivot == null) return;   // ไม่มี pivot — puzzle ยังเล่นได้ด้วย cursor ray
+
+            _savedCamWorldRot = pivot.rotation;
+            _savedCamLocalRot = pivot.localRotation;   // == Euler(_xRotation,0,0) ตอนยืน
+
+            if (_camBlendRoutine != null) StopCoroutine(_camBlendRoutine);
+            _camBlendRoutine = StartCoroutine(BlendCamera(
+                pivot, ResolveAnchorRotation(pivot), cameraBlendDuration,
+                snapLocalAtEnd: false, reenableLookAtEnd: false));
+        }
+
+        /// <summary>
+        /// คืนสภาพผู้เล่น (mirror PhoneSystem.UnlockPlayer) — idempotent
+        /// </summary>
+        /// <param name="restoreCamera">
+        /// false ตอน game-over: death sequence (PlayDeathFallRoutine + ResetCameraAfterDeath)
+        /// เป็นเจ้าของกล้อง + SetLook เอง — ห้ามแตะ pivot / SetLook ที่นี่
+        /// </param>
+        private void RestorePlayerFromPuzzle(bool restoreCamera)
+        {
+            if (!_playerLocked) return;
+            _playerLocked = false;
+
+            if (_camBlendRoutine != null) { StopCoroutine(_camBlendRoutine); _camBlendRoutine = null; }
+
+            var pc = PlayerController.Instance;
+            Transform pivot = pc.CameraPivot;
+
+            if (!restoreCamera)
+            {
+                // game-over — ปล่อยกล้อง + SetLook ให้ death sequence จัดการ
+                // (เคลียร์ flag เพื่อไม่ให้ OnDestroy ไปเรียก SetLook(true) แทรก death routine)
+                _lookSuppressed = false;
+            }
+            else if (pivot != null)
+            {
+                // blend กล้องกลับ แล้วค่อย SetLook(true) ตอนจบ (กัน mouse สู้กับ blend)
+                _camBlendRoutine = StartCoroutine(BlendCamera(
+                    pivot, _savedCamWorldRot, cameraBlendDuration,
+                    snapLocalAtEnd: true, reenableLookAtEnd: true));
+            }
+            else
+            {
+                // ไม่มี pivot ให้ blend — คืน look ทันที
+                pc.SetLook(true);
+                _lookSuppressed = false;
+            }
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible   = false;
+
+            if (!pc.IsSitting())   // parity กับ PhoneSystem.UnlockPlayer
+                pc.SetMovement(true);
+        }
+
+        /// <summary>safety net — ถ้าตู้ถูก destroy ระหว่าง puzzle/blend อย่าทิ้งผู้เล่นไว้แบบ look-lock</summary>
+        private void OnDestroy()
+        {
+            if (!_lookSuppressed) return;
+            _lookSuppressed = false;
+
+            var pc = PlayerController.Instance;
+            if (pc == null) return;
+            pc.SetLook(true);
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible   = false;
+            if (!pc.IsSitting()) pc.SetMovement(true);
+        }
+
+        private Quaternion ResolveAnchorRotation(Transform pivot)
+        {
+            if (puzzleViewAnchor != null) return puzzleViewAnchor.rotation;
+
+            Vector3 dir = transform.position - pivot.position;   // GameObject นี้ = LightPanel
+            if (dir.sqrMagnitude < 1e-4f) return pivot.rotation; // degenerate → ไม่ขยับกล้อง
+
+            Debug.LogWarning($"{name}: puzzleViewAnchor ยังไม่ได้ assign — fallback เล็งไปกลางตู้", this);
+            return Quaternion.LookRotation(dir.normalized, Vector3.up);
+        }
+
+        private IEnumerator BlendCamera(Transform pivot, Quaternion targetWorld, float dur,
+                                        bool snapLocalAtEnd, bool reenableLookAtEnd)
+        {
+            Quaternion start = pivot.rotation;
+            float t = 0f;
+            while (t < dur)
+            {
+                t += Time.deltaTime;
+                pivot.rotation = Quaternion.Slerp(start, targetWorld, Mathf.SmoothStep(0f, 1f, t / dur));
+                yield return null;
+            }
+            pivot.rotation = targetWorld;
+
+            if (snapLocalAtEnd) pivot.localRotation = _savedCamLocalRot;   // เป๊ะ — กัน float drift
+            if (reenableLookAtEnd)
+            {
+                PlayerController.Instance.SetLook(true);   // หลัง blend กลับเสร็จเท่านั้น
+                _lookSuppressed = false;
+            }
+
+            _camBlendRoutine = null;
+            // hold path (snapLocalAtEnd == false): ไม่ต้องทำอะไรต่อ — Look() ปิดอยู่ pivot ค้างที่เดิม
         }
     }
 }
