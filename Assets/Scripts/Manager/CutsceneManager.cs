@@ -7,6 +7,9 @@ using Player;
 using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 using UnityEngine.UI;
 
 /// <summary>
@@ -203,8 +206,15 @@ public class CutsceneManager : MonoBehaviour
     [SerializeField] private string phoneHintText = "TAB  หยิบโทรศัพท์\n1      เปิดแชท\n2      ไฟฉาย";
 
     [Header("Skip")]
-    [Tooltip("กดปุ่มใดก็ได้เพื่อ skip animation (ยังต้องนั่งอยู่)")]
+    [Tooltip("กด Spacebar เพื่อข้าม intro cutscene (ยังต้องนั่งอยู่)")]
     [SerializeField] private bool allowSkip = true;
+
+    [Tooltip("Waypoint index ที่จะ snap ไปเมื่อกด skip เช่น 7 = W_7\n" +
+             "ถ้าค่าเกินจำนวน waypoint จะใช้ waypoint สุดท้ายแทน")]
+    [SerializeField] private int skipToWaypointIndex = 7;
+
+    [Tooltip("ข้อความบอกปุ่ม skip ที่ต้องซ่อนเมื่อจบ cutscene หรือกด skip")]
+    [SerializeField] private GameObject skipText;
 
     // ─────────────────────────── Runtime ───────────────────────────
 
@@ -216,6 +226,7 @@ public class CutsceneManager : MonoBehaviour
     private Coroutine _trackCoroutine;
     private Coroutine _barCoroutine;
     private Coroutine _creditCoroutine;
+    private Coroutine _creditFadeCoroutine;
     private Coroutine _carCoroutine;
     private EventInstance _carSoundInstance;
     private EventInstance _cutsceneMusicInstance;
@@ -239,11 +250,36 @@ public class CutsceneManager : MonoBehaviour
 
     private void Update()
     {
-        if (_playing && allowSkip && Input.anyKeyDown)
-            _skipRequested = true;
+        if (_playing && allowSkip && IsSkipKeyPressedThisFrame())
+            RequestSkip();
     }
 
     // ─────────────────────────── Skip Mode ───────────────────────────
+
+    private void RequestSkip()
+    {
+        if (_skipRequested) return;
+
+        _skipRequested = true;
+        HideCreditsImmediate(stopCoroutines: true);
+        HideSkipTextImmediate();
+        TeleportPlayer(GetSkipWaypoint());
+    }
+
+    private bool IsSkipKeyPressedThisFrame()
+    {
+#if ENABLE_INPUT_SYSTEM
+        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+            return true;
+#endif
+
+#if ENABLE_LEGACY_INPUT_MANAGER
+        if (Input.GetKeyDown(KeyCode.Space))
+            return true;
+#endif
+
+        return false;
+    }
 
     private IEnumerator SkipToGameplayRoutine()
     {
@@ -252,6 +288,8 @@ public class CutsceneManager : MonoBehaviour
         PlayerController.Instance.SetMovement(false);
         PlayerController.Instance.SetLook(false);
         TimeManager.instance.IsPauseTime(true);
+
+        HideSkipTextImmediate();
 
         if (cutsceneCameraGO != null) cutsceneCameraGO.SetActive(false);
         if (playerCamera     != null) playerCamera.enabled = true;
@@ -343,10 +381,11 @@ public class CutsceneManager : MonoBehaviour
         if (_tiltCoroutine   != null) { StopCoroutine(_tiltCoroutine);   _tiltCoroutine   = null; }
         if (_trackCoroutine  != null) { StopCoroutine(_trackCoroutine);  _trackCoroutine  = null; }
         if (_creditCoroutine != null) { StopCoroutine(_creditCoroutine); _creditCoroutine = null; }
+        if (_creditFadeCoroutine != null) { StopCoroutine(_creditFadeCoroutine); _creditFadeCoroutine = null; }
         if (_carCoroutine    != null) { StopCoroutine(_carCoroutine);    _carCoroutine    = null; }
         StopCarSound();
         // ซ่อน credit ทันทีเมื่อเปลี่ยน shot
-        if (creditGroup != null) creditGroup.alpha = 0f;
+        HideCreditsImmediate(stopCoroutines: false);
 
         _currentShotIndex = index;
         var current = shots[index];
@@ -400,7 +439,7 @@ public class CutsceneManager : MonoBehaviour
                 creditTextBottom.gameObject.SetActive(!string.IsNullOrWhiteSpace(entry.line2));
 
             // ── Fade In ──
-            yield return StartCoroutine(FadeCreditGroup(0f, 1f, entry.fadeInSpeed));
+            yield return StartCreditFade(0f, 1f, entry.fadeInSpeed);
 
             // ── Hold ──
             float elapsed = 0f;
@@ -411,10 +450,20 @@ public class CutsceneManager : MonoBehaviour
             }
 
             // ── Fade Out ──
-            yield return StartCoroutine(FadeCreditGroup(1f, 0f, entry.fadeOutSpeed));
+            yield return StartCreditFade(1f, 0f, entry.fadeOutSpeed);
         }
 
         _creditCoroutine = null;
+    }
+
+    private IEnumerator StartCreditFade(float from, float to, float speed)
+    {
+        if (_creditFadeCoroutine != null)
+            StopCoroutine(_creditFadeCoroutine);
+
+        _creditFadeCoroutine = StartCoroutine(FadeCreditGroup(from, to, speed));
+        yield return _creditFadeCoroutine;
+        _creditFadeCoroutine = null;
     }
 
     /// <summary>
@@ -631,12 +680,14 @@ public class CutsceneManager : MonoBehaviour
     private IEnumerator FinishRoutine()
     {
         _playing = false;
+        HideSkipTextImmediate();
 
         // หยุด coroutine ทั้งหมด
         if (_tiltCoroutine   != null) { StopCoroutine(_tiltCoroutine);   _tiltCoroutine   = null; }
         if (_trackCoroutine  != null) { StopCoroutine(_trackCoroutine);  _trackCoroutine  = null; }
         if (_barCoroutine    != null) { StopCoroutine(_barCoroutine);    _barCoroutine    = null; }
         if (_creditCoroutine != null) { StopCoroutine(_creditCoroutine); _creditCoroutine = null; }
+        if (_creditFadeCoroutine != null) { StopCoroutine(_creditFadeCoroutine); _creditFadeCoroutine = null; }
         if (_carCoroutine    != null) { StopCoroutine(_carCoroutine);    _carCoroutine    = null; }
         StopCarSound();
 
@@ -654,7 +705,7 @@ public class CutsceneManager : MonoBehaviour
             var last = shots[_currentShotIndex];
             if (last.carObject != null) last.carObject.SetActive(false);
         }
-        if (creditGroup != null) creditGroup.alpha = 0f;
+        HideCreditsImmediate(stopCoroutines: false);
 
         // slide bars ออก แล้วรอเสร็จก่อนสลับกล้อง
         yield return StartCoroutine(AnimateBars(barHeight, 0f, barAnimDuration));
@@ -699,8 +750,43 @@ public class CutsceneManager : MonoBehaviour
 
     // ─────────────────────────── Helper ───────────────────────────
 
+    private Transform GetSkipWaypoint()
+    {
+        if (waypoints == null || waypoints.Length == 0) return null;
+
+        int targetIndex = Mathf.Clamp(skipToWaypointIndex, 0, waypoints.Length - 1);
+        return waypoints[targetIndex];
+    }
+
+    private void HideCreditsImmediate(bool stopCoroutines)
+    {
+        if (stopCoroutines)
+        {
+            if (_creditCoroutine != null) { StopCoroutine(_creditCoroutine); _creditCoroutine = null; }
+            if (_creditFadeCoroutine != null) { StopCoroutine(_creditFadeCoroutine); _creditFadeCoroutine = null; }
+        }
+
+        if (creditGroup != null)
+        {
+            creditGroup.alpha = 0f;
+            creditGroup.interactable = false;
+            creditGroup.blocksRaycasts = false;
+        }
+
+        if (creditTextTop != null) creditTextTop.text = "";
+        if (creditTextBottom != null) creditTextBottom.text = "";
+    }
+
+    private void HideSkipTextImmediate()
+    {
+        if (skipText != null)
+            skipText.SetActive(false);
+    }
+
     private void TeleportPlayer(Transform target)
     {
+        if (target == null) return;
+
         var cc = PlayerController.Instance.GetComponent<CharacterController>();
         if (cc != null) cc.enabled = false;
         _playerTransform.SetPositionAndRotation(target.position, target.rotation);
