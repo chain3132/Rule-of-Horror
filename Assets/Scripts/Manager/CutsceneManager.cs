@@ -286,6 +286,14 @@ public class CutsceneManager : MonoBehaviour
         yield return new WaitUntil(() => PlayerController.Instance.IsSitting());
         yield return new WaitForSeconds(0.3f);
 
+        // เข้าสู่สถานะเดียวกับจบ cutscene ปกติ (FinishRoutine): บล็อกการลุกจนกว่าจะถึง Rule1
+        // — FriendListController จะปลดล็อกเมื่อถึงเวลา 18:40 / Rule1.StartPhoneDropped ก็ปลดล็อกซ้ำ
+        PlayerController.Instance.isBlockStanding = true;
+
+        // แสดง hint โทรศัพท์ — ซ่อนเองเมื่อผู้เล่นกดปุ่มแชท หรือเมื่อ Rule1 เริ่ม
+        if (GameHintUI.instance != null && !string.IsNullOrWhiteSpace(phoneHintText))
+            GameHintUI.instance.Show(phoneHintText, autoDismissOnChatKey: true);
+
         PlayerController.Instance.SetLook(true);
         TimeManager.instance.IsPauseTime(false);
         gameObject.SetActive(false);

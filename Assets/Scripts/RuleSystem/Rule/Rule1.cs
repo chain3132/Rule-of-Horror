@@ -145,6 +145,8 @@ public class Rule1 : RuleBase
 
     void StartPhoneDropped()
     {
+        PlayerController.Instance.isBlockStanding = false;
+        
         // ล็อกโทรศัพท์ → ผู้เล่นกด toggle ไม่ได้
         if (phoneSystem != null) phoneSystem.LockPhone();
         // แสดงโทรศัพท์บนพื้นในเขตสีแดง

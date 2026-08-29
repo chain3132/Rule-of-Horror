@@ -69,9 +69,44 @@ public class GameModeController : MonoBehaviour
     }
     void Start()
     {
+        // กันค่า faint ค้างใน VolumeProfile asset จาก Play session ก่อน
+        // (Editor ไม่ revert การแก้ ScriptableObject asset ตอน exit play mode
+        //  → ถ้ากดหยุดตอนตาปิด หน้าจอจะดำค้างจนกว่าจะ blink ใหม่)
+        ResetProfileValues(relaxProfile);
+        ResetProfileValues(tensionProfile);
+
         globalVolume.profile.TryGet(out lens);
         globalVolume.profile.TryGet(out chroma);
         globalVolume.profile.TryGet(out dof);
+    }
+
+    void OnDisable()
+    {
+        // หยุด Play / โหลด scene ใหม่ → คืนค่า profile asset ให้สะอาด ไม่ให้ค้างไป session หน้า
+        if (instance != this) return;
+        ResetProfileValues(relaxProfile);
+        ResetProfileValues(tensionProfile);
+    }
+
+    /// <summary>คืนค่า post-processing ของ profile ที่ระบุกลับเป็นค่ากลาง (base ที่ SetFaintEffect lerp ออกไป)</summary>
+    void ResetProfileValues(VolumeProfile profile)
+    {
+        if (profile == null) return;
+
+        if (profile.TryGet(out ColorAdjustments adj))
+        {
+            adj.postExposure.value = 0f;
+            adj.contrast.value     = 0f;
+            adj.saturation.value   = 0f;
+        }
+        if (profile.TryGet(out Vignette vig))           vig.intensity.value = 0.2f;
+        if (profile.TryGet(out LensDistortion ld))      ld.intensity.value  = 0f;
+        if (profile.TryGet(out ChromaticAberration ca)) ca.intensity.value  = 0f;
+        if (profile.TryGet(out DepthOfField d))
+        {
+            d.focusDistance.value = 10f;
+            d.aperture.value      = 5.6f;
+        }
     }
     public void SetRelaxMode()
     {
@@ -186,19 +221,9 @@ public class GameModeController : MonoBehaviour
             dof.aperture.value      = 5.6f;
         }
 
-        // reset current active profile (tension หรือ relax แล้วแต่ตอนนั้น)
-        if (globalVolume.profile.TryGet(out ColorAdjustments adj))
-        {
-            adj.postExposure.value = 0f;
-            adj.contrast.value     = 0f;
-            adj.saturation.value   = 0f;
-        }
-        if (globalVolume.profile.TryGet(out Vignette vig))
-            vig.intensity.value = 0.2f;
-        if (globalVolume.profile.TryGet(out LensDistortion ld))
-            ld.intensity.value = 0f;
-        if (globalVolume.profile.TryGet(out ChromaticAberration ca))
-            ca.intensity.value = 0f;
+        // reset ทั้งสอง profile ให้ครบ ไม่ว่าตอนนั้น active อันไหนอยู่
+        ResetProfileValues(relaxProfile);
+        ResetProfileValues(tensionProfile);
     }
 
     void SetFaintEffect(float t)
@@ -334,7 +359,7 @@ public class GameModeController : MonoBehaviour
             SetWindZone(GameMode.Relax);
             directionLight.color = relaxLightColor;
             RenderSettings.skybox = relaxSkyboxMat;
-            //RenderSettings.skybox.SetColor("_Tint", relaxSkyBoxColor);
+            RenderSettings.skybox.SetColor("_Tint", relaxSkyBoxColor);
             AudioManager.instance.SwitchWindAmbience(0);
             foreach (var particle in relaxParticle)
             {
