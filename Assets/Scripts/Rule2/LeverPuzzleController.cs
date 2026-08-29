@@ -56,8 +56,10 @@ namespace Rule2
         [SerializeField] private float  leverGrabDistance = 3f;
 
         [Header("Camera Framing")]
-        [Tooltip("จุดกล้องเฉพาะของตู้นี้ — วาง empty ให้ frame คันโยก 4 ตัว + ปุ่ม Confirm/Reset + phase dots + order slots\n" +
-                 "เว้นว่าง = fallback เล็งไปที่ตัว panel เอง (พร้อม warning)")]
+        [Tooltip("pose กล้องเฉพาะของตู้นี้ — วาง empty ตรงตำแหน่งที่อยากให้กล้องอยู่ แล้วหมุนให้เล็งโดน\n" +
+                 "คันโยก 4 ตัว + ปุ่ม Confirm/Reset + phase dots + order slots ครบเฟรม\n" +
+                 "ใช้ทั้ง position และ rotation ของ transform นี้ (ถอยกล้องออกได้ด้วยการเลื่อน empty)\n" +
+                 "เว้นว่าง = fallback อยู่ที่หัวผู้เล่นแล้วหันไปกลางตู้ (พร้อม warning)")]
         [SerializeField] private Transform puzzleViewAnchor;
         [Tooltip("เวลา blend กล้องเข้า/ออก (วินาที)")]
         [SerializeField] private float     cameraBlendDuration = 0.3f;
@@ -91,8 +93,8 @@ namespace Rule2
         private bool                    _playerLocked;
         private bool                    _lookSuppressed;   // true ตั้งแต่ SetLook(false) จนกว่าจะ SetLook(true) จริง
         private Coroutine               _camBlendRoutine;
-        private Quaternion              _savedCamWorldRot;
         private Quaternion              _savedCamLocalRot;
+        private Vector3                 _savedCamLocalPos;
 
         // ─────────────────────────── Setup ───────────────────────────
 
@@ -476,12 +478,16 @@ namespace Rule2
             Transform pivot = pc.CameraPivot;
             if (pivot == null) return;   // ไม่มี pivot — puzzle ยังเล่นได้ด้วย cursor ray
 
-            _savedCamWorldRot = pivot.rotation;
             _savedCamLocalRot = pivot.localRotation;   // == Euler(_xRotation,0,0) ตอนยืน
+            _savedCamLocalPos = pivot.localPosition;   // ความสูงกล้อง (standing/sitting height)
+
+            // anchor ถ้ามี = ใช้ทั้ง position + rotation ของมัน; ไม่มี = อยู่ที่เดิม หันไปกลางตู้
+            Vector3    targetPos = puzzleViewAnchor != null ? puzzleViewAnchor.position : pivot.position;
+            Quaternion targetRot = ResolveAnchorRotation(pivot);
 
             if (_camBlendRoutine != null) StopCoroutine(_camBlendRoutine);
             _camBlendRoutine = StartCoroutine(BlendCamera(
-                pivot, ResolveAnchorRotation(pivot), cameraBlendDuration,
+                pivot, targetPos, targetRot, cameraBlendDuration,
                 snapLocalAtEnd: false, reenableLookAtEnd: false));
         }
 
@@ -504,15 +510,21 @@ namespace Rule2
 
             if (!restoreCamera)
             {
-                // game-over — ปล่อยกล้อง + SetLook ให้ death sequence จัดการ
-                // (เคลียร์ flag เพื่อไม่ให้ OnDestroy ไปเรียก SetLook(true) แทรก death routine)
+                // game-over — rotation + SetLook เป็นของ death sequence, แต่ position ต้องคืนเอง
+                // (death routine แก้แค่ localRotation ไม่แตะ position)
+                if (pivot != null) pivot.localPosition = _savedCamLocalPos;
+                // เคลียร์ flag เพื่อไม่ให้ OnDestroy ไปเรียก SetLook(true) แทรก death routine
                 _lookSuppressed = false;
             }
             else if (pivot != null)
             {
-                // blend กล้องกลับ แล้วค่อย SetLook(true) ตอนจบ (กัน mouse สู้กับ blend)
+                // blend กล้องกลับไป pose เดิม แล้วค่อย SetLook(true) ตอนจบ (กัน mouse สู้กับ blend)
+                Vector3    backPos = pivot.parent != null
+                    ? pivot.parent.TransformPoint(_savedCamLocalPos) : pivot.position;
+                Quaternion backRot = pivot.parent != null
+                    ? pivot.parent.rotation * _savedCamLocalRot : _savedCamLocalRot;
                 _camBlendRoutine = StartCoroutine(BlendCamera(
-                    pivot, _savedCamWorldRot, cameraBlendDuration,
+                    pivot, backPos, backRot, cameraBlendDuration,
                     snapLocalAtEnd: true, reenableLookAtEnd: true));
             }
             else
@@ -537,6 +549,11 @@ namespace Rule2
 
             var pc = PlayerController.Instance;
             if (pc == null) return;
+            if (pc.CameraPivot != null)
+            {
+                pc.CameraPivot.localRotation = _savedCamLocalRot;
+                pc.CameraPivot.localPosition = _savedCamLocalPos;
+            }
             pc.SetLook(true);
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible   = false;
@@ -547,27 +564,35 @@ namespace Rule2
         {
             if (puzzleViewAnchor != null) return puzzleViewAnchor.rotation;
 
-            Vector3 dir = transform.position - pivot.position;   // GameObject นี้ = LightPanel
-            if (dir.sqrMagnitude < 1e-4f) return pivot.rotation; // degenerate → ไม่ขยับกล้อง
+            Vector3 dir = transform.position - pivot.position;   
+            if (dir.sqrMagnitude < 1e-4f) return pivot.rotation; 
 
             Debug.LogWarning($"{name}: puzzleViewAnchor ยังไม่ได้ assign — fallback เล็งไปกลางตู้", this);
             return Quaternion.LookRotation(dir.normalized, Vector3.up);
         }
 
-        private IEnumerator BlendCamera(Transform pivot, Quaternion targetWorld, float dur,
-                                        bool snapLocalAtEnd, bool reenableLookAtEnd)
+        private IEnumerator BlendCamera(Transform pivot, Vector3 targetWorldPos, Quaternion targetWorldRot,
+                                        float dur, bool snapLocalAtEnd, bool reenableLookAtEnd)
         {
-            Quaternion start = pivot.rotation;
+            Vector3    startPos = pivot.position;
+            Quaternion startRot = pivot.rotation;
             float t = 0f;
             while (t < dur)
             {
                 t += Time.deltaTime;
-                pivot.rotation = Quaternion.Slerp(start, targetWorld, Mathf.SmoothStep(0f, 1f, t / dur));
+                float k = Mathf.SmoothStep(0f, 1f, t / dur);
+                pivot.position = Vector3.Lerp(startPos, targetWorldPos, k);
+                pivot.rotation = Quaternion.Slerp(startRot, targetWorldRot, k);
                 yield return null;
             }
-            pivot.rotation = targetWorld;
+            pivot.position = targetWorldPos;
+            pivot.rotation = targetWorldRot;
 
-            if (snapLocalAtEnd) pivot.localRotation = _savedCamLocalRot;   // เป๊ะ — กัน float drift
+            if (snapLocalAtEnd)   // เป๊ะ — กัน float drift ตอนคืน pose เดิม
+            {
+                pivot.localRotation = _savedCamLocalRot;
+                pivot.localPosition = _savedCamLocalPos;
+            }
             if (reenableLookAtEnd)
             {
                 PlayerController.Instance.SetLook(true);   // หลัง blend กลับเสร็จเท่านั้น

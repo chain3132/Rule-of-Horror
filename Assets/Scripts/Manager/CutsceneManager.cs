@@ -9,24 +9,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// CutsceneManager — Multi-shot intro cutscene
-///
-/// แนวคิด:
-///   ตัวละครเดินตาม waypoints ตามปกติ
-///   กล้องเป็น static shots หลายตัว สลับตามตำแหน่ง waypoint ที่ผู้เล่นเดินถึง
-///   รองรับ shot แบบ TiltUp (เงยกล้องขึ้นช้าๆ) สำหรับ shot สุดท้าย
-///
-/// Shot Types:
-///   Static   — กล้องนิ่ง ผู้เล่นเดินผ่านเฟรม
-///   TiltUp   — กล้องนิ่งแล้วค่อยๆ เงยขึ้น (ไม่ follow player)
-///
-/// Flow (disableCutscene = false):
-///   เดิน waypoints → สลับ shot → จบ → นั่ง → เริ่มเกม
-///
-/// Flow (disableCutscene = true):
-///   teleport → นั่งทันที → เริ่มเกม  (ใช้ตอน test rule อื่น)
-/// </summary>
+
 public class CutsceneManager : MonoBehaviour
 {
     public static CutsceneManager instance;

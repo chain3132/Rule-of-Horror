@@ -6,15 +6,7 @@ using ScriptableObject;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// FriendListController — จัดการรายชื่อ Contact ใน FriendList
-///
-/// Flow:
-///   TimeManager tick → ถึงเวลา → แสดง contact + badge + เสียงแจ้งเตือน
-///   contact ที่ triggersRule1OnEnd → ปลดล็อกการลุก (isBlockStanding = false) ตอน unlock
-///   ผู้เล่นกด contact → ChatUIController.OpenContactChat()
-///   Conversation จบ → delay → BlinkToMode → Rule1.TriggerStartRule()
-/// </summary>
+
 public class FriendListController : MonoBehaviour
 {
     // ─────────────────────────── Contact Data ───────────────────────────
@@ -162,7 +154,6 @@ public class FriendListController : MonoBehaviour
             Debug.LogError("[FriendListController] rule1 reference is null — assign Rule1 in Inspector");
             yield break;
         }
-
         // หน่วงสักพักหลังอ่านจบ
         yield return new WaitForSeconds(delayBeforeModeChange);
 
