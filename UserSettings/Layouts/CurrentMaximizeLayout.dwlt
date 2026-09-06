@@ -184,7 +184,7 @@ MonoBehaviour:
   - {fileID: 7}
   - {fileID: 8}
   m_Selected: 0
-  m_LastSelected: 2
+  m_LastSelected: 3
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
