@@ -15,9 +15,27 @@ public class ConversationRunner : MonoBehaviour
 
     public void StartConversation(ConversationData data)
     {
+        CancelInvoke(nameof(DisplayNode));   // กัน auto-advance ค้างจาก conversation ก่อนหน้า
         currentConversation = data;
         currentIndex = 0;
         DisplayNode();
+    }
+
+    /// <summary>เล่น conversation ต่อจาก index ที่ค้างไว้ (แสดง node ที่ index นั้นด้วย)</summary>
+    public void ResumeFrom(ConversationData data, int index)
+    {
+        CancelInvoke(nameof(DisplayNode));
+        currentConversation = data;
+        currentIndex = index;
+        DisplayNode();
+    }
+
+    /// <summary>หยุด conversation ที่กำลังเล่น + ยกเลิก auto-advance ที่ค้างอยู่ (ใช้ตอนสลับ contact)</summary>
+    public void StopConversation()
+    {
+        CancelInvoke(nameof(DisplayNode));
+        currentConversation = null;
+        currentIndex = 0;
     }
 
     private void DisplayNode()

@@ -96,8 +96,7 @@ public class GameModeController : MonoBehaviour
         if (profile.TryGet(out ColorAdjustments adj))
         {
             adj.postExposure.value = 0f;
-            adj.contrast.value     = 0f;
-            adj.saturation.value   = 0f;
+            // ไม่แตะ contrast/saturation — ปล่อยตามที่ตั้งไว้ใน profile (faint ไม่แก้แล้ว)
         }
         if (profile.TryGet(out Vignette vig))           vig.intensity.value = 0.2f;
         if (profile.TryGet(out LensDistortion ld))      ld.intensity.value  = 0f;
@@ -149,7 +148,14 @@ public class GameModeController : MonoBehaviour
     /// <param name="onEyesClosed">Callback ที่จะยิงตอนตาปิดสนิท (ขณะหน้าจอดำ) — ใช้สำหรับ reset กล้องโดยที่ผู้เล่นมองไม่เห็น</param>
     public void DirectBlinkToMode(GameMode targetMode = GameMode.Relax, System.Action onEyesClosed = null)
     {
-        StartCoroutine(BlinkRoutine(targetMode, deathOpenSpeed, onEyesClosed));
+        // path นี้ไม่ได้เรียก ResetFaintEffects — ถ้าตายกลาง transition faint จะมีค่า postExposure/
+        // contrast/vignette/distortion ค้างบน profile → เคลียร์ทั้งสองตอนตาปิด (มองไม่เห็น) ก่อนยิง callback เดิม
+        StartCoroutine(BlinkRoutine(targetMode, deathOpenSpeed, () =>
+        {
+            ResetProfileValues(relaxProfile);
+            ResetProfileValues(tensionProfile);
+            onEyesClosed?.Invoke();
+        }));
     }
     IEnumerator FaintThenBlinkRoutine(GameMode targetMode)
     {
@@ -228,11 +234,10 @@ public class GameModeController : MonoBehaviour
 
     void SetFaintEffect(float t)
     {
-        // มืดลง
+        // มืดลง (เฉพาะ postExposure — ไม่แตะ contrast/saturation เพื่อไม่ให้ภาพซีดเป็นเทา)
         if (globalVolume.profile.TryGet(out ColorAdjustments color))
         {
             color.postExposure.value = Mathf.Lerp(0f, -2f, t);
-            color.contrast.value = Mathf.Lerp(0f, -30f, t);
         }
 
         // ขอบมืด
@@ -263,12 +268,8 @@ public class GameModeController : MonoBehaviour
             dof.focusDistance.value = Mathf.Lerp(10f, 0.3f, t);
             dof.aperture.value = Mathf.Lerp(5.6f, 0.8f, t);
         }
-
-        if (globalVolume.profile.TryGet(out ColorAdjustments saturationColor))
-        {
-            saturationColor.saturation.value = Mathf.Lerp(0f, -100f, t);
-        }
-    
+        // ไม่แตะ saturation แล้ว — faint จะมืดลง (postExposure/contrast) + vignette + distortion
+        // แต่ไม่ทำให้ภาพเทาหมดสี
     }
 
     IEnumerator BlinkRoutine(GameMode targetMode, float openSpeed = -1f, System.Action onEyesClosed = null)

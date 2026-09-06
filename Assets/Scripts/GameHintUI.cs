@@ -30,6 +30,8 @@ public class GameHintUI : MonoBehaviour
 
     private Coroutine _fadeCoroutine;
     private bool      _autoDismissOnChat;
+    private bool      _phoneOnboarding;
+    private string    _phoneStage2Text;
 
     private void Awake()
     {
@@ -42,6 +44,7 @@ public class GameHintUI : MonoBehaviour
     private void OnDestroy()
     {
         SetAutoDismiss(false);
+        SetPhoneOnboarding(false);
     }
 
     // ─────────────────────────── Public API ───────────────────────────
@@ -52,15 +55,32 @@ public class GameHintUI : MonoBehaviour
     /// </summary>
     public void Show(string text, bool autoDismissOnChatKey = false)
     {
+        SetPhoneOnboarding(false);   // Show ปกติ = ยกเลิก onboarding ที่อาจค้าง
         hintText.text = text;
         SetAutoDismiss(autoDismissOnChatKey);
         FadeTo(1f);
     }
 
-    /// <summary>ซ่อน hint (fade out) และยกเลิก auto-dismiss subscription</summary>
+    /// <summary>
+    /// Onboarding โทรศัพท์แบบ 2 สเต็ป:
+    ///   สเต็ป 1 = beforeOpenText (เช่น "TAB เปิดโทรศัพท์")
+    ///   สเต็ป 2 = afterOpenText (เช่น "1 เปิดแชท\n2 ไฟฉาย") — สลับให้อัตโนมัติเมื่อผู้เล่นเปิดโทรศัพท์ครั้งแรก
+    ///   จากนั้นซ่อนเองเมื่อกดปุ่มแชท (key 1)
+    /// </summary>
+    public void ShowPhoneOnboarding(string beforeOpenText, string afterOpenText)
+    {
+        _phoneStage2Text = afterOpenText;
+        SetAutoDismiss(false);
+        SetPhoneOnboarding(true);
+        hintText.text = beforeOpenText;
+        FadeTo(1f);
+    }
+
+    /// <summary>ซ่อน hint (fade out) และยกเลิก subscription ทั้งหมด</summary>
     public void Hide()
     {
         SetAutoDismiss(false);
+        SetPhoneOnboarding(false);
         FadeTo(0f);
     }
 
@@ -83,6 +103,28 @@ public class GameHintUI : MonoBehaviour
     {
         if (index == 0) // key 1 = แชท
             Hide();
+    }
+
+    // ─────────────────────────── Phone Onboarding (2 สเต็ป) ───────────────────────────
+
+    private void SetPhoneOnboarding(bool enable)
+    {
+        if (_phoneOnboarding == enable) return;
+        _phoneOnboarding = enable;
+
+        if (inputHandler == null) return;
+
+        if (enable)
+            inputHandler.OnPhoneToggle += HandlePhoneOpened;
+        else
+            inputHandler.OnPhoneToggle -= HandlePhoneOpened;
+    }
+
+    private void HandlePhoneOpened()
+    {
+        // toggle แรกระหว่าง onboarding = ผู้เล่นเปิดโทรศัพท์ → ไปสเต็ป 2
+        SetPhoneOnboarding(false);
+        Show(_phoneStage2Text, autoDismissOnChatKey: true);
     }
 
     // ─────────────────────────── Fade ───────────────────────────

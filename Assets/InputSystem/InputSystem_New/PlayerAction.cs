@@ -163,6 +163,15 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""HoldBreath"",
+                    ""type"": ""Button"",
+                    ""id"": ""198b7efe-bf55-48a0-88fa-566ad56023c9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -341,6 +350,17 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""action"": ""RightClick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f410710d-0479-4b4d-b9fc-ec9110c7ade0"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HoldBreath"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -357,6 +377,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         m_Player_Clock = m_Player.FindAction("Clock", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_RightClick = m_Player.FindAction("RightClick", throwIfNotFound: true);
+        m_Player_HoldBreath = m_Player.FindAction("HoldBreath", throwIfNotFound: true);
     }
 
     ~@PlayerAction()
@@ -445,6 +466,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Clock;
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_RightClick;
+    private readonly InputAction m_Player_HoldBreath;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -488,6 +510,10 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/RightClick".
         /// </summary>
         public InputAction @RightClick => m_Wrapper.m_Player_RightClick;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/HoldBreath".
+        /// </summary>
+        public InputAction @HoldBreath => m_Wrapper.m_Player_HoldBreath;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -538,6 +564,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @RightClick.started += instance.OnRightClick;
             @RightClick.performed += instance.OnRightClick;
             @RightClick.canceled += instance.OnRightClick;
+            @HoldBreath.started += instance.OnHoldBreath;
+            @HoldBreath.performed += instance.OnHoldBreath;
+            @HoldBreath.canceled += instance.OnHoldBreath;
         }
 
         /// <summary>
@@ -573,6 +602,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @RightClick.started -= instance.OnRightClick;
             @RightClick.performed -= instance.OnRightClick;
             @RightClick.canceled -= instance.OnRightClick;
+            @HoldBreath.started -= instance.OnHoldBreath;
+            @HoldBreath.performed -= instance.OnHoldBreath;
+            @HoldBreath.canceled -= instance.OnHoldBreath;
         }
 
         /// <summary>
@@ -669,5 +701,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnRightClick(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "HoldBreath" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHoldBreath(InputAction.CallbackContext context);
     }
 }

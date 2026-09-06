@@ -33,6 +33,14 @@ public class AudioManager : MonoBehaviour
     private EventInstance rule3BurnPaper;      // one-shot paper burn sound
     private EventInstance rule3Death;          // one-shot death sting played when the player dies in Rule 3
 
+    // ── Rule 4 sounds ──
+    private EventInstance rule4Ambient;    // looping ambient background ของ Rule 4
+    private EventInstance rule4HoldBreath; // looping "อั้นลมหายใจ" ระหว่างกลั้น
+    private EventInstance rule4GhostChase; // looping เสียงผีไล่ (3D ตามตัวผี)
+
+    // event ของ Rule 4 อาจยังไม่ถูกสร้างใน FMOD — เก็บสถานะไว้เพื่อข้ามการเล่นแทนที่จะพัง
+    private bool _rule4AmbientOk, _rule4HoldBreathOk, _rule4GhostChaseOk;
+
     Coroutine radioCoroutine;
     
     [SerializeField] private Transform radioTransform;
@@ -96,7 +104,21 @@ public class AudioManager : MonoBehaviour
         rule3LightBulb      = RuntimeManager.CreateInstance("event:/Rule3LightBulb");
         rule3BurnPaper      = RuntimeManager.CreateInstance("event:/BurnPaper");
         rule3Death          = RuntimeManager.CreateInstance("event:/Rule3Death");
-        
+
+        // ── Rule 4 ──
+        // TODO: สร้าง event เหล่านี้ใน FMOD Studio
+        //   event:/Rule4/Rule4Ambient   – ambient loop ของ Rule 4
+        //   event:/Rule4/HoldBreath     – เสียงอั้นลมหายใจ (loop, มี parameter "BreathStrain" 0-1)
+        //   event:/Rule4/ForcedExhale   – หายใจออกแรงตอนกลั้นไม่ไหว (one-shot)
+        //   event:/Rule4/GhostChase     – เสียงผีไล่ (loop, 3D ตามตัวผี)
+        //   event:/Rule4/DollCry / DollLaugh / DollHum / DollCall / DollCough
+        //                                              – เสียงตุ๊กตา 5 แบบ (loop, 3D, attenuation ตามระยะ)
+        //   event:/Rule4/DollPickup / DollPlace        – one-shot ตอนเก็บ / วางตุ๊กตา
+        _rule4AmbientOk    = TryCreate("event:/Rule4/Rule4Ambient", out rule4Ambient);
+        _rule4HoldBreathOk = TryCreate("event:/Rule4/HoldBreath",   out rule4HoldBreath);
+        _rule4GhostChaseOk = TryCreate("event:/Rule4/GhostChase",   out rule4GhostChase);
+
+
         WomanScream = RuntimeManager.CreateInstance("event:/WomanScream");
         if (womanScreamTransform != null && womanScreamTransform.Length > 0 && womanScreamTransform[0] != null)
             WomanScream.set3DAttributes(RuntimeUtils.To3DAttributes(womanScreamTransform[0]));
@@ -129,6 +151,41 @@ public class AudioManager : MonoBehaviour
             windAmbience.set3DAttributes(RuntimeUtils.To3DAttributes(player));
         
     }
+    // ─────────── FMOD Safety ───────────
+
+    /// <summary>
+    /// สร้าง EventInstance แบบไม่พังถ้ายังไม่มี event นั้นใน FMOD
+    /// CreateInstance จะ throw EventNotFoundException ซึ่งจะทำให้ Start() หยุดกลางคัน
+    /// แล้วเสียงที่ประกาศต่อจากนั้นไม่ถูกสร้างเลย — ต้องกันไว้เสมอ
+    /// </summary>
+    private static bool TryCreate(string path, out EventInstance inst)
+    {
+        try
+        {
+            inst = RuntimeManager.CreateInstance(path);
+            return true;
+        }
+        catch (EventNotFoundException)
+        {
+            Debug.LogWarning($"[FMOD] ยังไม่มี event '{path}' — ข้ามเสียงนี้ไปก่อน");
+            inst = default;
+            return false;
+        }
+    }
+
+    /// <summary>เล่น one-shot แบบไม่พังถ้ายังไม่มี event นั้นใน FMOD</summary>
+    private static void SafeOneShot(string path, Vector3 position)
+    {
+        try
+        {
+            RuntimeManager.PlayOneShot(path, position);
+        }
+        catch (EventNotFoundException)
+        {
+            Debug.LogWarning($"[FMOD] ยังไม่มี event '{path}' — ข้ามเสียงนี้ไปก่อน");
+        }
+    }
+
     /// <summary>เสียงแจ้งเตือนข้อความเข้า (ใช้ตอน FriendList unlock contact)</summary>
     public void PlayMessageNotification()
     {
@@ -298,6 +355,83 @@ public class AudioManager : MonoBehaviour
     {
         rule3Death.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
     }
+
+    // ─────────── Rule 4 Sounds ───────────
+
+    /// <summary>เริ่ม ambient loop ของ Rule 4</summary>
+    public void StartRule4Ambient()
+    {
+        if (!_rule4AmbientOk) return;
+        if (player != null)
+            rule4Ambient.set3DAttributes(RuntimeUtils.To3DAttributes(player));
+        rule4Ambient.start();
+    }
+
+    /// <summary>หยุดเสียงทั้งหมดของ Rule 4</summary>
+    public void StopAllRule4Sounds()
+    {
+        if (_rule4AmbientOk)    rule4Ambient.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+        if (_rule4HoldBreathOk) rule4HoldBreath.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        if (_rule4GhostChaseOk) rule4GhostChase.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+    }
+
+    /// <summary>เริ่มเสียงอั้นลมหายใจ (loop ตลอดที่กลั้นอยู่)</summary>
+    public void StartHoldBreath()
+    {
+        if (!_rule4HoldBreathOk) return;
+        rule4HoldBreath.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        rule4HoldBreath.start();
+    }
+
+    /// <summary>ความทรมานของการกลั้น 0-1 — ยิ่งใกล้ 1 ยิ่งอั้นแรง</summary>
+    public void SetBreathStrain(float strain01)
+    {
+        if (!_rule4HoldBreathOk) return;
+        rule4HoldBreath.setParameterByName("BreathStrain", Mathf.Clamp01(strain01));
+    }
+
+    /// <summary>หยุดเสียงอั้นลมหายใจ</summary>
+    public void StopHoldBreath()
+    {
+        if (!_rule4HoldBreathOk) return;
+        rule4HoldBreath.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+    }
+
+    /// <summary>หายใจออกแรงตอนกลั้นไม่ไหว (one-shot)</summary>
+    public void PlayForcedExhale()
+        => SafeOneShot("event:/Rule4/ForcedExhale", ListenerPos);
+
+    /// <summary>เริ่มเสียงผีไล่ — ตำแหน่ง 3D อัปเดตผ่าน UpdateGhostChasePosition()</summary>
+    public void StartGhostChase(Transform ghost)
+    {
+        if (!_rule4GhostChaseOk) return;
+        rule4GhostChase.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        if (ghost != null)
+            rule4GhostChase.set3DAttributes(RuntimeUtils.To3DAttributes(ghost));
+        rule4GhostChase.start();
+    }
+
+    /// <summary>อัปเดตตำแหน่ง 3D ของเสียงผีไล่ (เรียกทุกเฟรมจาก Rule4Ghost)</summary>
+    public void UpdateGhostChasePosition(Transform ghost)
+    {
+        if (!_rule4GhostChaseOk || ghost == null) return;
+        rule4GhostChase.set3DAttributes(RuntimeUtils.To3DAttributes(ghost));
+    }
+
+    /// <summary>หยุดเสียงผีไล่</summary>
+    public void StopGhostChase()
+    {
+        if (!_rule4GhostChaseOk) return;
+        rule4GhostChase.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+    }
+
+    /// <summary>เสียงเก็บตุ๊กตา (one-shot)</summary>
+    public void PlayDollPickup()
+        => SafeOneShot("event:/Rule4/DollPickup", ListenerPos);
+
+    /// <summary>เสียงวางตุ๊กตาที่ศาล (one-shot)</summary>
+    public void PlayDollPlace()
+        => SafeOneShot("event:/Rule4/DollPlace", ListenerPos);
 
     // ─────────── Rule 2 Sounds ───────────
 

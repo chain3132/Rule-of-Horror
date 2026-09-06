@@ -17,7 +17,7 @@ namespace InputSystem
         #endregion
         
         #region Fields
-        private InputAction _moveAction,_lookAction,_phoneAction,_chatAction,_flashLightAction,_clockAction,_interactAction,_rightClickAction;
+        private InputAction _moveAction,_lookAction,_phoneAction,_chatAction,_flashLightAction,_clockAction,_interactAction,_rightClickAction,_holdBreathAction;
         public event Action OnPhoneToggle;
         public event Action OnSetTime;
         public event Action<int> OnAppKeyPressed;
@@ -40,6 +40,7 @@ namespace InputSystem
             _clockAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Clock");
             _interactAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Interact");
             _rightClickAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("RightClick");
+            _holdBreathAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("HoldBreath");
         }
         private void OnEnable()
         {
@@ -110,6 +111,12 @@ namespace InputSystem
 
         /// <summary>Returns the raw look (mouse delta) value from the New Input System.</summary>
         public Vector2 GetLookInput() => _lookAction.ReadValue<Vector2>();
+
+        /// <summary>true ตราบใดที่ยังกดคลิกขวาค้างอยู่ (Rule 4 — จ้องผีแบบกดค้าง)</summary>
+        public bool IsRightClickHeld() => _rightClickAction != null && _rightClickAction.IsPressed();
+
+        /// <summary>true ตราบใดที่ยังกดปุ่มกลั้นหายใจค้างอยู่ (Left Shift — Rule 4)</summary>
+        public bool IsHoldBreathHeld() => _holdBreathAction != null && _holdBreathAction.IsPressed();
 
         #endregion
         

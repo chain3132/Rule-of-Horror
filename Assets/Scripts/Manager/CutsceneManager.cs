@@ -182,11 +182,12 @@ public class CutsceneManager : MonoBehaviour
     [Tooltip("หน่วงก่อนแสดงบทพูด (วินาที) เพื่อให้ animation นั่งเสร็จก่อน")]
     [SerializeField] private float endingDialogueDelay = 0.6f;
 
-    [Header("Phone Hint")]
-    [Tooltip("ข้อความ hint ที่แสดงหลัง cutscene จบ บอกผู้เล่นวิธีใช้โทรศัพท์\n" +
-             "รองรับ \\n สำหรับขึ้นบรรทัด — เว้นว่างถ้าไม่ต้องการ")]
-    [TextArea(2, 5)]
-    [SerializeField] private string phoneHintText = "TAB  หยิบโทรศัพท์\n1      เปิดแชท\n2      ไฟฉาย";
+    [Header("Phone Hint (2 สเต็ป)")]
+    [Tooltip("สเต็ป 1 — แสดงก่อนผู้เล่นเปิดโทรศัพท์")]
+    [SerializeField] private string phoneHintBeforeOpen = "TAB  หยิบโทรศัพท์";
+    [Tooltip("สเต็ป 2 — สลับมาแสดงอัตโนมัติหลังผู้เล่นกด TAB เปิดโทรศัพท์ (รองรับ \\n)")]
+    [TextArea(2, 4)]
+    [SerializeField] private string phoneHintAfterOpen = "1      เปิดแชท\n2      ไฟฉาย";
 
     [Header("Skip")]
     [Tooltip("กด Spacebar เพื่อข้าม intro cutscene (ยังต้องนั่งอยู่)")]
@@ -271,6 +272,8 @@ public class CutsceneManager : MonoBehaviour
         PlayerController.Instance.SetMovement(false);
         PlayerController.Instance.SetLook(false);
         TimeManager.instance.IsPauseTime(true);
+        PlayerController.Instance.isBlockStanding = true;
+
 
         HideSkipTextImmediate();
 
@@ -286,13 +289,11 @@ public class CutsceneManager : MonoBehaviour
         yield return new WaitUntil(() => PlayerController.Instance.IsSitting());
         yield return new WaitForSeconds(0.3f);
 
-        // เข้าสู่สถานะเดียวกับจบ cutscene ปกติ (FinishRoutine): บล็อกการลุกจนกว่าจะถึง Rule1
-        // — FriendListController จะปลดล็อกเมื่อถึงเวลา 18:40 / Rule1.StartPhoneDropped ก็ปลดล็อกซ้ำ
-        PlayerController.Instance.isBlockStanding = true;
+        
 
         // แสดง hint โทรศัพท์ — ซ่อนเองเมื่อผู้เล่นกดปุ่มแชท หรือเมื่อ Rule1 เริ่ม
-        if (GameHintUI.instance != null && !string.IsNullOrWhiteSpace(phoneHintText))
-            GameHintUI.instance.Show(phoneHintText, autoDismissOnChatKey: true);
+        if (GameHintUI.instance != null)
+            GameHintUI.instance.ShowPhoneOnboarding(phoneHintBeforeOpen, phoneHintAfterOpen);
 
         PlayerController.Instance.SetLook(true);
         TimeManager.instance.IsPauseTime(false);
@@ -670,6 +671,7 @@ public class CutsceneManager : MonoBehaviour
 
     private IEnumerator FinishRoutine()
     {
+        PlayerController.Instance.isBlockStanding = true;
         _playing = false;
         HideSkipTextImmediate();
 
@@ -727,12 +729,10 @@ public class CutsceneManager : MonoBehaviour
             PlayerDialogueUI.instance.OnSequenceComplete -= onDone;
         }
 
-        // บล็อกการลุก — FriendListController จะปลดล็อกเมื่อถึงเวลา 18:40
-        PlayerController.Instance.isBlockStanding = true;
 
         // แสดง hint โทรศัพท์ — ซ่อนเองเมื่อผู้เล่นกดปุ่มแชท หรือเมื่อ Rule1 เริ่ม
-        if (GameHintUI.instance != null && !string.IsNullOrWhiteSpace(phoneHintText))
-            GameHintUI.instance.Show(phoneHintText, autoDismissOnChatKey: true);
+        if (GameHintUI.instance != null)
+            GameHintUI.instance.ShowPhoneOnboarding(phoneHintBeforeOpen, phoneHintAfterOpen);
 
         PlayerController.Instance.SetLook(true);
         TimeManager.instance.IsPauseTime(false);

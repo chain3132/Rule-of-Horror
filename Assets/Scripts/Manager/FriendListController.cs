@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
 using Manager;
-using Player;
 using ScriptableObject;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +17,9 @@ public class FriendListController : MonoBehaviour
         [Header("Contact Info")]
         public string contactName;
 
+        [Tooltip("รูปโปรไฟล์ของ contact นี้ — ใช้ทั้งในลิสต์และหัวแชท")]
+        public Sprite avatar;
+
         [Tooltip("ConversationData ของ contact นี้ เรียงตามลำดับที่อยากให้เล่น")]
         public ConversationData[] conversations;
 
@@ -30,6 +33,12 @@ public class FriendListController : MonoBehaviour
 
         [Tooltip("Dot/Badge แสดงว่ามีข้อความใหม่")]
         public GameObject notificationBadge;
+
+        [Tooltip("(optional) Text ชื่อบนปุ่ม contact — จะเซ็ตให้ = contactName ตอน Awake")]
+        public TMP_Text buttonNameText;
+
+        [Tooltip("(optional) Image รูปโปรไฟล์บนปุ่ม contact — จะเซ็ตให้ = avatar ตอน Awake")]
+        public Image buttonAvatarImage;
 
         [Header("Rule Trigger")]
         [Tooltip("✓ = เมื่อ conversation จบ → เริ่ม Rule1 sequence\n" +
@@ -70,6 +79,12 @@ public class FriendListController : MonoBehaviour
 
             if (contact.notificationBadge != null)
                 contact.notificationBadge.SetActive(false);
+
+            // เซ็ตชื่อ + รูปโปรไฟล์บนปุ่มจากข้อมูล contact
+            if (contact.buttonNameText != null)
+                contact.buttonNameText.text = contact.contactName;
+            if (contact.buttonAvatarImage != null && contact.avatar != null)
+                contact.buttonAvatarImage.sprite = contact.avatar;
 
             var c = contact;
             contact.contactButton?.onClick.AddListener(() => OnContactClicked(c));
@@ -118,9 +133,12 @@ public class FriendListController : MonoBehaviour
             if (AudioManager.instance != null)
                 AudioManager.instance.PlayMessageNotification();
 
-            // ปลดล็อกการลุกเมื่อ contact ที่เกี่ยวกับ Rule1 unlock (18:40)
+            // contact ของ Rule1 มาถึง → หยุดนาฬิกาเกมไว้จนกว่าผู้เล่นจะอ่านแชทกฎจบ
+            // (เวลาไม่ขยับ → Rule 2 ไม่เริ่ม, ไม่มีช่วงว่างที่กฎรันเบื้องหลังแบบไม่มี visual)
+            // นาฬิกาจะเดินต่อเองใน Rule1.EndRule() (IsPauseTime(false) + SetTime(19,39))
+            // ไม่ปลดล็อกการลุกตรงนี้แล้ว — ผู้เล่นลุกได้ตอน Rule1 เริ่ม (Rule1.StartPhoneDropped)
             if (contact.triggersRule1OnEnd)
-                PlayerController.Instance.isBlockStanding = false;
+                TimeManager.instance.IsPauseTime(true);
         }
     }
 

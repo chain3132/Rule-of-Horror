@@ -38,6 +38,12 @@ namespace Manager
         [SerializeField] private Transform replyRoot;
         [SerializeField] private GameObject replyButtonPrefab;
 
+        [Header("Chat Header")]
+        [Tooltip("Text ชื่อ contact บนหัวแชท")]
+        [SerializeField] private TMP_Text headerNameText;
+        [Tooltip("Image รูปโปรไฟล์ contact บนหัวแชท")]
+        [SerializeField] private Image headerAvatarImage;
+
         // ─────────────────────────── Events ───────────────────────────
 
         /// <summary>Fire เมื่อ conversation ของ contact จบ — FriendListController subscribe ไว้</summary>
@@ -58,8 +64,11 @@ namespace Manager
         private Dictionary<FriendListController.ContactEntry, List<ChatHistoryEntry>>
             _contactTimelines = new Dictionary<FriendListController.ContactEntry, List<ChatHistoryEntry>>();
 
-        /// <summary>Conversations ที่เล่นผ่าน OpenContactChat ไปแล้ว (per-contact system)</summary>
+        /// <summary>Conversations ที่เล่น "จบ" แล้ว (มาร์คตอน HandleConversationEnd ไม่ใช่ตอนเริ่ม)</summary>
         private HashSet<ConversationData> playedConversations = new HashSet<ConversationData>();
+
+        /// <summary>Conversation ที่เริ่มแล้วแต่ผู้เล่นสลับ contact ออกกลางคัน — เก็บ index ไว้เล่นต่อ</summary>
+        private Dictionary<ConversationData, int> _resumeIndex = new Dictionary<ConversationData, int>();
 
 
         // ─────────────────────────── Lifecycle ───────────────────────────
@@ -86,8 +95,23 @@ namespace Manager
         /// </summary>
         public void OpenContactChat(FriendListController.ContactEntry contact)
         {
+            // ── หยุด conversation ของ contact เดิมก่อน (กัน node/ตัวเลือกเด้งข้ามแชท) ──
+            // เก็บ index ที่ค้างไว้ ถ้ายังเล่นไม่จบ จะได้เล่นต่อตอนกลับมาเปิดใหม่
+            if (currentRunningData != null && !playedConversations.Contains(currentRunningData))
+                _resumeIndex[currentRunningData] = runner.CurrentIndex;
+            runner.StopConversation();
+            currentRunningData = null;
+            ClearReplies();
+
             _currentContact = contact;
             phoneSystem.ChangeState(PhoneState.ChatView);
+
+            // หัวแชท: ชื่อ + รูปโปรไฟล์ของ contact นี้
+            if (headerNameText != null)
+                headerNameText.text = contact.contactName;
+            if (headerAvatarImage != null && contact.avatar != null)
+                headerAvatarImage.sprite = contact.avatar;
+
             ClearChatDisplay();
 
             // render history ของ contact นี้เท่านั้น
@@ -102,14 +126,16 @@ namespace Manager
                 }
             }
 
-            // หา conversation ถัดไปที่ยังไม่ได้เล่น
+            // หา conversation ถัดไปที่ยังไม่จบ — เล่นต่อถ้าค้างไว้ ไม่งั้นเริ่มใหม่
             foreach (var data in contact.conversations)
             {
                 if (playedConversations.Contains(data)) continue;
 
                 currentRunningData = data;
-                playedConversations.Add(data);
-                runner.StartConversation(data);
+                if (_resumeIndex.TryGetValue(data, out int savedIdx))
+                    runner.ResumeFrom(data, savedIdx);
+                else
+                    runner.StartConversation(data);
                 return;
             }
 
@@ -130,6 +156,7 @@ namespace Manager
                 timeline.Add(tupleEntry);
 
             // contact timeline
+            bool alreadyShown = false;
             if (_currentContact != null)
             {
                 if (!_contactTimelines.ContainsKey(_currentContact))
@@ -137,12 +164,14 @@ namespace Manager
 
                 var ct = _contactTimelines[_currentContact];
                 // ป้องกัน duplicate โดยเช็ค data+index
-                bool exists = ct.Exists(e => e.data == currentData && e.nodeIndex == index);
-                if (!exists)
+                alreadyShown = ct.Exists(e => e.data == currentData && e.nodeIndex == index);
+                if (!alreadyShown)
                     ct.Add(ChatHistoryEntry.FromNode(currentData, index));
             }
 
-            InstantiateBubble(node);
+            // node ที่เคยแสดงแล้ว (ตอน resume) — history render วาดไปแล้ว ไม่ต้องวาดซ้ำ
+            if (!alreadyShown)
+                InstantiateBubble(node);
         }
 
         private void InstantiateBubble(ChatNode node)
@@ -209,6 +238,13 @@ namespace Manager
 
         private void HandleConversationEnd()
         {
+            // มาร์คว่าเล่นจบตรงนี้ (ไม่ใช่ตอนเริ่ม) — abandon กลางคันจะได้เล่นต่อได้ ไม่หาย
+            if (currentRunningData != null)
+            {
+                playedConversations.Add(currentRunningData);
+                _resumeIndex.Remove(currentRunningData);
+            }
+
             if (_currentContact != null)
                 OnContactConversationEnd?.Invoke(_currentContact);
         }

@@ -7,7 +7,8 @@ namespace Player
     public class PlayerController : MonoBehaviour
     {
         public static PlayerController Instance { get; private set; }
-        public bool isBlockStanding = false; 
+        // เริ่มเกมล็อกการลุกไว้ก่อน — ปลดล็อกเมื่อ Rule 1 เริ่ม (Rule1.StartPhoneDropped)
+        public bool isBlockStanding = true;
         #region SerializeFields
         [Header("Camera Height Settings")]
         [SerializeField] private float standingCameraHeight = 2.55f; 
@@ -51,6 +52,7 @@ namespace Player
         private float _sittingYaw;
         private bool _canMove = true;
         private bool _canLook = true;
+        private float _moveSpeedMultiplier = 1f;
         private Vector2 _externalLookForce;
         private Vector3 _beforeSitPosition;
         private Quaternion _beforeSitRotation;
@@ -246,7 +248,7 @@ namespace Player
             if (!_canMove) return;
 
             Vector3 move = transform.forward * moveInput.y + transform.right * moveInput.x;
-            move *= moveSpeed;
+            move *= moveSpeed * _moveSpeedMultiplier;
             
             _characterController.Move(move * Time.deltaTime);
             animator.SetBool("walk", moveInput.magnitude > 0.1f);
@@ -330,6 +332,47 @@ namespace Player
         public void SetLook(bool value)
         {
             _canLook = value;
+        }
+
+        /// <summary>
+        /// ซิงก์สถานะการหันของ PlayerController ให้ตรงกับทิศที่ cameraPivot ชี้อยู่จริงตอนนี้
+        ///
+        /// ระบบภายนอก (เช่น LookDistortionSystem.StartFocus) เขียน cameraPivot.rotation ตรงๆ
+        /// โดยที่ _xRotation / yaw ของตัวละครไม่เปลี่ยน พอปลดล็อก Look() จะดีดกลับมุมเดิมทันที
+        /// เรียกเมธอดนี้ก่อนปลดล็อก เพื่อให้กล้องอยู่ที่เดิมแบบไม่มีอาการเด้ง
+        /// </summary>
+        public void SyncLookToCameraDirection()
+        {
+            if (cameraPivot == null) return;
+
+            Vector3 forward = cameraPivot.forward;
+            float yaw   = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
+            float pitch = Mathf.Clamp(-Mathf.Asin(Mathf.Clamp(forward.y, -1f, 1f)) * Mathf.Rad2Deg,
+                                      -lookClamp, lookClamp);
+
+            _xRotation = pitch;
+
+            if (_isSitting)
+            {
+                // ตอนนั่ง yaw อยู่บน cameraPivot (จำกัดช่วง) ไม่ใช่บนตัวละคร
+                _sittingYaw = Mathf.Clamp(Mathf.DeltaAngle(transform.eulerAngles.y, yaw),
+                                          -sittingLookLimit, sittingLookLimit);
+                cameraPivot.localRotation = Quaternion.Euler(_xRotation, _sittingYaw, 0f);
+            }
+            else
+            {
+                transform.rotation        = Quaternion.Euler(0f, yaw, 0f);
+                cameraPivot.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
+            }
+        }
+
+        /// <summary>
+        /// ตัวคูณความเร็วเดิน (1 = ปกติ) — Rule 4 ใช้หน่วงให้เดินช้ามากตอนกลั้นหายใจ
+        /// ระบบที่เซ็ตค่านี้ต้องคืนเป็น 1 เองเสมอ
+        /// </summary>
+        public void SetMoveSpeedMultiplier(float value)
+        {
+            _moveSpeedMultiplier = Mathf.Max(0f, value);
         }
 
         /// <summary>
