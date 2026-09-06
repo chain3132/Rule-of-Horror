@@ -8,7 +8,8 @@ namespace Rule4
     ///
     /// - ผู้เล่นกด E เมื่อเข้าใกล้ + ถือตุ๊กตาอยู่ → วาง 1 ตัว
     /// - หลังผู้เล่นเก็บตุ๊กตาแต่ละตัว Rule4 จะสั่ง RelocateTo() ให้ศาลย้ายไปจุดใหม่
-    /// - ตุ๊กตาที่วางแล้วจะโผล่ที่ dollSlots ทีละช่อง เป็น feedback ว่าคืบหน้าแค่ไหน
+    /// - ตุ๊กตาที่วางแล้วจะโผล่ที่ dollSlots "ช่องของตัวมันเอง" (Doll.ShrineSlotIndex)
+    ///   ไม่ใช่เรียงตามลำดับที่วาง เพราะตุ๊กตาแต่ละแบบมีที่ทางบนศาลไม่เหมือนกัน
     /// </summary>
     public class SpiritHouse : MonoBehaviour
     {
@@ -27,7 +28,8 @@ namespace Rule4
         [SerializeField] private bool debugLog;
 
         [Header("Visual")]
-        [Tooltip("ช่องวางตุ๊กตาบนศาล เรียงตามลำดับที่จะเติม — จำนวนควรเท่ากับจำนวนตุ๊กตาทั้งหมด")]
+        [Tooltip("ช่องวางตุ๊กตาบนศาล (Slot 1, Slot 2, ...) — ปิดไว้ทั้งหมดตั้งแต่แรก" +
+                 "ลำดับในอาร์เรย์นี้คือเลขที่ DollVariant.shrineSlotIndex อ้างถึง (ตัวแรก = 0)")]
         [SerializeField] private GameObject[] dollSlots;
 
         // ── Runtime ──
@@ -35,7 +37,10 @@ namespace Rule4
         private InputHandler          _inputHandler;
         private bool                  _subscribed;
         private bool                  _hintCarryState;  // ข้อความที่แสดงอยู่ตอนนี้สะท้อนสถานะไหน
-        private int                   _filledSlots;
+
+        // hint ที่ต้องค้างจนกว่าผู้เล่นจะเดินออกจากระยะ — PlayerDialogueUI จะ fade เองเมื่อ hold ครบ
+        // ส่งค่ายาวๆ ไปเพื่อให้มันค้าง แล้วเรียก Hide() เองตอนออกนอกระยะ
+        private const float PersistentHold = 3600f;
 
         // ─────────────────────────── Setup ───────────────────────────
 
@@ -55,7 +60,6 @@ namespace Rule4
         /// <summary>ซ่อนตุ๊กตาบนศาลทั้งหมด (เริ่มกฎใหม่ / retry หลังตาย)</summary>
         public void ResetSlots()
         {
-            _filledSlots = 0;
             if (dollSlots == null) return;
             foreach (var slot in dollSlots)
                 if (slot != null) slot.SetActive(false);
@@ -99,7 +103,7 @@ namespace Rule4
         }
 
         /// <summary>แสดง hint ตามสถานะการถือตุ๊กตา — เรียกเฉพาะตอนสถานะเปลี่ยน ไม่ใช่ทุกเฟรม
-        /// (HorrorTextUI.ShowText เริ่ม typewriter ใหม่ทุกครั้งที่เรียก)</summary>
+        /// (PlayerDialogueUI.ShowLine เริ่ม typewriter ใหม่ทุกครั้งที่เรียก)</summary>
         private void ShowHint(bool carrying)
         {
             _hintCarryState = carrying;
@@ -108,8 +112,8 @@ namespace Rule4
                 Debug.Log($"[SpiritHouse] ShowHint(carrying={carrying}) " +
                           $"— อ่านจาก Rule4 id={_rule.GetInstanceID()}", this);
 
-            if (HorrorTextUI.instance != null)
-                HorrorTextUI.instance.ShowText(carrying ? placeHint : emptyHandHint);
+            if (PlayerDialogueUI.instance != null)
+                PlayerDialogueUI.instance.ShowLine(carrying ? placeHint : emptyHandHint, PersistentHold);
         }
 
         private Vector3 PlayerPosition()
@@ -124,21 +128,42 @@ namespace Rule4
             _subscribed = false;
 
             if (_inputHandler != null) _inputHandler.OnInteractPressed -= TryPlace;
-            if (HorrorTextUI.instance != null) HorrorTextUI.instance.HideText();
+            if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.Hide();
         }
 
         // ─────────────────────────── Place ───────────────────────────
+
+        /// <summary>เปิดช่องบนศาลที่เป็นของตุ๊กตาตัวนี้โดยเฉพาะ</summary>
+        private void RevealSlotFor(Doll doll)
+        {
+            if (dollSlots == null || dollSlots.Length == 0)
+            {
+                Debug.LogWarning("[SpiritHouse] ยังไม่ได้ใส่ dollSlots — วางตุ๊กตาแล้วจะไม่เห็นอะไรโผล่", this);
+                return;
+            }
+
+            if (doll == null)
+            {
+                Debug.LogWarning("[SpiritHouse] ไม่รู้ว่ากำลังวางตุ๊กตาตัวไหน — ข้ามการเปิดช่อง", this);
+                return;
+            }
+
+            int index = doll.ShrineSlotIndex;
+            if (index < 0 || index >= dollSlots.Length)
+            {
+                Debug.LogWarning($"[SpiritHouse] ตุ๊กตา '{doll.name}' ชี้ช่องที่ {index} " +
+                                 $"แต่ dollSlots มีแค่ {dollSlots.Length} ช่อง — เช็ค DollVariant.shrineSlotIndex", this);
+                return;
+            }
+
+            if (dollSlots[index] != null) dollSlots[index].SetActive(true);
+        }
 
         private void TryPlace()
         {
             if (_rule == null || !_rule.CanPlaceDoll) return;
 
-            // เติมช่องถัดไปบนศาล
-            if (dollSlots != null && _filledSlots < dollSlots.Length)
-            {
-                if (dollSlots[_filledSlots] != null) dollSlots[_filledSlots].SetActive(true);
-                _filledSlots++;
-            }
+            RevealSlotFor(_rule.CarriedDoll);
 
             AudioManager.instance.PlayDollPlace();
             Unsubscribe();

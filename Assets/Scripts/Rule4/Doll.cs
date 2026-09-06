@@ -20,6 +20,32 @@ namespace Rule4
     }
 
     /// <summary>
+    /// ตุ๊กตา 1 แบบ — จับคู่ "โมเดลที่โผล่บนพื้น" กับ "ช่องบนศาลพระภูมิ"
+    ///
+    /// ตุ๊กตาแต่ละตัวหน้าตาไม่เหมือนกัน และตำแหน่งวางบนศาลก็คนละที่
+    /// ช่องบนศาล (Slot 1..N) ถูกจัดท่า/ตำแหน่งไว้ใน scene แล้ว
+    /// ตัวนี้แค่บอกว่า "ตุ๊กตาแบบนี้ ถ้าวางสำเร็จให้เปิดช่องไหน"
+    /// </summary>
+    [System.Serializable]
+    public class DollVariant
+    {
+        [Tooltip("ชื่อไว้ดูใน Inspector เฉยๆ ไม่ได้ใช้ในโค้ด")]
+        public string name;
+
+        [Tooltip("โมเดลตุ๊กตาที่จะโผล่บนพื้นให้ผู้เล่นเก็บ (prefab จาก Models_Jedi/Prefabs)")]
+        public GameObject visualPrefab;
+
+        [Tooltip("ช่องบนศาลที่จะโผล่เมื่อวางตัวนี้สำเร็จ" +"= index ใน SpiritHouse.dollSlots (Slot 1 = 0, Slot 2 = 1, ...)")]
+        public int shrineSlotIndex;
+
+        [Tooltip("ปรับตำแหน่งโมเดลตอนวางบนพื้น (local) — แต่ละโมเดลจุดหมุนไม่เท่ากัน")]
+        public Vector3 groundOffset;
+
+        [Tooltip("ปรับการหมุนโมเดลตอนวางบนพื้น (local, องศา)")]
+        public Vector3 groundEuler;
+    }
+
+    /// <summary>
     /// ตุ๊กตา 1 ตัวใน Rule 4
     ///
     /// - ส่งเสียง loop แบบ 3D ตลอดเวลา (FMOD attenuation ทำให้ "เข้าใกล้ = ดังขึ้น" เอง)
@@ -38,6 +64,10 @@ namespace Rule4
         [Tooltip("ข้อความ hint ตอนเข้าใกล้")]
         [SerializeField] private string interactHint = "E   เก็บตุ๊กตา";
 
+        [Header("Visual")]
+        [Tooltip("จุดที่จะเอาโมเดลตุ๊กตามาแขวน — เว้นว่างได้ จะแขวนที่ตัว prefab เอง" + "prefab ตัวนี้ควรมีแต่ logic ไม่ต้องมี mesh ในตัว เพราะโมเดลมาจาก DollVariant")]
+        [SerializeField] private Transform visualRoot;
+
         // ── Runtime ──
         private RuleSystem.Rule.Rule4 _rule;
         private InputHandler          _inputHandler;
@@ -47,18 +77,58 @@ namespace Rule4
         private bool                  _subscribed;
         private bool                  _collected;
 
+        // hint ที่ต้องค้างจนกว่าผู้เล่นจะเดินออกจากระยะ — PlayerDialogueUI จะ fade เองเมื่อ hold ครบ
+        // ส่งค่ายาวๆ ไปเพื่อให้มันค้าง แล้วเรียก Hide() เองตอนออกนอกระยะ
+        private const float PersistentHold = 3600f;
+
+
         /// <summary>เสียงที่ตุ๊กตาตัวนี้ใช้ — สุ่มตอน Setup</summary>
         public DollSound Sound { get; private set; }
 
+        /// <summary>ช่องบนศาลที่ตุ๊กตาตัวนี้ต้องไปโผล่ตอนวางสำเร็จ (-1 = ยังไม่ได้ตั้ง)</summary>
+        public int ShrineSlotIndex { get; private set; } = -1;
+
+        /// <summary>แบบของตุ๊กตาตัวนี้ (โมเดล + ช่องบนศาล)</summary>
+        public DollVariant Variant { get; private set; }
+
         // ─────────────────────────── Setup ───────────────────────────
 
-        public void Setup(RuleSystem.Rule.Rule4 rule, InputHandler inputHandler, DollSound sound)
+        public void Setup(RuleSystem.Rule.Rule4 rule, InputHandler inputHandler,
+                          DollSound sound, DollVariant variant)
         {
             _rule         = rule;
             _inputHandler = inputHandler;
             Sound         = sound;
+            Variant       = variant;
+
+            if (variant != null)
+            {
+                ShrineSlotIndex = variant.shrineSlotIndex;
+                SpawnVisual(variant);
+            }
+            else
+            {
+                Debug.LogWarning("[Doll] ไม่ได้รับ DollVariant — ตุ๊กตาตัวนี้จะไม่มีโมเดล " +
+                                 "และวางที่ศาลแล้วจะไม่มีช่องไหนโผล่", this);
+            }
 
             StartVoice();
+        }
+
+        /// <summary>แขวนโมเดลของ variant นี้เข้ากับตัวตุ๊กตา</summary>
+        private void SpawnVisual(DollVariant variant)
+        {
+            if (variant.visualPrefab == null)
+            {
+                Debug.LogWarning($"[Doll] variant '{variant.name}' ยังไม่ได้ใส่ visualPrefab", this);
+                return;
+            }
+
+            Transform parent = visualRoot != null ? visualRoot : transform;
+            var visual = Instantiate(variant.visualPrefab, parent);
+
+            visual.transform.localPosition = variant.groundOffset;
+            visual.transform.localRotation = Quaternion.Euler(variant.groundEuler);
         }
 
         private void Start()
@@ -126,7 +196,8 @@ namespace Rule4
             {
                 _subscribed = true;
                 if (_inputHandler != null) _inputHandler.OnInteractPressed += TryPickUp;
-                if (HorrorTextUI.instance != null) HorrorTextUI.instance.ShowText(interactHint);
+                if (PlayerDialogueUI.instance != null)
+                    PlayerDialogueUI.instance.ShowLine(interactHint, PersistentHold);
             }
             else if (!inRange && _subscribed)
             {
@@ -151,7 +222,7 @@ namespace Rule4
             _subscribed = false;
 
             if (_inputHandler != null) _inputHandler.OnInteractPressed -= TryPickUp;
-            if (HorrorTextUI.instance != null) HorrorTextUI.instance.HideText();
+            if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.Hide();
         }
 
         // ─────────────────────────── Pickup ───────────────────────────

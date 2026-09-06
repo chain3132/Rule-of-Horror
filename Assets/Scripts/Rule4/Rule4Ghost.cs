@@ -25,6 +25,9 @@ namespace Rule4
     ///   ผู้เล่นจ้องอยู่       → staredSpeed (ช้าลง แต่ไม่หยุด)
     ///   หลังถูกบังคับหายใจ   → sprintSpeed ชั่วคราว (ผีวิ่งเข้ามา)
     ///   ปกติ                → chaseSpeed (+ speedGainPerDoll ต่อตุ๊กตาที่วางสำเร็จ)
+    ///
+    /// เสียงฝีเท้ายิงทีละก้าวตามระยะทางที่เดินได้จริง จังหวะจึงช้า/เร็วตามความเร็วผีเอง
+    /// (ถูกจ้อง = ก้าวห่าง, วิ่ง = ก้าวถี่) และเงียบสนิทเมื่อผีหยุดหรือยืนเป็นป้าย
     /// </summary>
     [RequireComponent(typeof(NavMeshAgent))]
     public class Rule4Ghost : MonoBehaviour
@@ -53,6 +56,18 @@ namespace Rule4
         [Tooltip("ระยะที่ผีจับผู้เล่นได้ → ตายทันที (เฉพาะตอน Chase)")]
         [SerializeField] private float killDistance = 1.4f;
 
+        [Header("Footsteps")]
+        [Tooltip("เดินได้กี่เมตรถึงจะลงเท้า 1 ก้าว — ยิ่งน้อยยิ่งก้าวถี่\n" +
+                 "จังหวะก้าวคำนวณจากระยะที่เดินได้จริง จึงช้า/เร็วตามความเร็วผีเองอัตโนมัติ")]
+        [SerializeField] private float strideLength = 0.9f;
+
+        [Tooltip("ความเร็วต่ำกว่านี้ถือว่าหยุดอยู่กับที่ ไม่ลงเสียงฝีเท้า")]
+        [SerializeField] private float footstepMinSpeed = 0.05f;
+
+        [Tooltip("เว้นระยะขั้นต่ำระหว่างก้าว (วินาที) — กันเสียงรัวเกินจริงถ้า strideLength ตั้งไว้สั้นไป\n" +
+                 "ตั้ง 0 เพื่อปิดตัวกันนี้")]
+        [SerializeField] private float minFootstepInterval = 0.18f;
+
         [Header("Repath")]
         [Tooltip("ความถี่ในการคำนวณเส้นทางใหม่ (วินาที)")]
         [SerializeField] private float repathInterval = 0.25f;
@@ -73,6 +88,8 @@ namespace Rule4
         private float                 _baseSpeed;
         private float                 _sprintTimer;
         private bool                  _caught;
+        private float                 _strideAccum;
+        private float                 _lastFootstepTime = -999f;
 
         /// <summary>true = ผู้เล่นกำลังจ้องผีอยู่ (StareSystem เป็นคนเซ็ต)</summary>
         public bool IsBeingStared { get; set; }
@@ -96,8 +113,6 @@ namespace Rule4
             _player    = player;
             _rule      = rule;
             _baseSpeed = chaseSpeed;
-            // ยังไม่เปิดเสียงไล่ตรงนี้ — เปิดตอน BeginChase() เท่านั้น
-            // ช่วง Marker ผีแค่ยืนเฉยๆ ไม่ควรมีเสียงไล่ดัง
         }
 
         // ─────────────────────────── Mode ───────────────────────────
@@ -148,12 +163,11 @@ namespace Rule4
             return dollPos;
         }
 
-        /// <summary>เข้าโหมดไล่ผู้เล่น + เปิดเสียงไล่</summary>
+        /// <summary>เข้าโหมดไล่ผู้เล่น</summary>
         public void BeginChase()
         {
             _mode        = GhostMode.Chase;
             _repathTimer = 0f;
-            AudioManager.instance.StartGhostChase(transform);
         }
 
         /// <summary>เร่งความเร็วพื้นฐานหลังผู้เล่นวางตุ๊กตาได้ 1 ตัว</summary>
@@ -174,12 +188,6 @@ namespace Rule4
         {
             _mode = GhostMode.Idle;
             SetMoving(false, false);
-            AudioManager.instance.StopGhostChase();
-        }
-
-        private void OnDestroy()
-        {
-            AudioManager.instance.StopGhostChase();
         }
 
         // ─────────────────────────── Update ───────────────────────────
@@ -194,11 +202,10 @@ namespace Rule4
                 return;
             }
 
-            AudioManager.instance.UpdateGhostChasePosition(transform);
-
             if (_sprintTimer > 0f) _sprintTimer -= Time.deltaTime;
 
             UpdateChase();
+            UpdateFootsteps();
         }
 
         /// <summary>ยืนนิ่ง หันหน้าตามผู้เล่นช้าๆ — ไม่เดิน ไม่ตรวจ killDistance</summary>
@@ -255,10 +262,56 @@ namespace Rule4
         private void SetMoving(bool moving, bool running)
         {
             if (_agent != null && _agent.enabled && _agent.isOnNavMesh) _agent.isStopped = !moving;
+
             if (animator == null) return;
 
             animator.SetBool(walkBoolName, moving);
             if (!string.IsNullOrEmpty(runBoolName)) animator.SetBool(runBoolName, moving && running);
+        }
+
+        /// <summary>
+        /// ยิงเสียงฝีเท้าทีละก้าวตามระยะทางที่ "เดินได้จริง" ไม่ใช่ตามเวลา
+        ///
+        /// ใช้ _agent.velocity ไม่ใช่ _agent.speed เพราะ speed เป็นแค่ค่าที่ตั้งไว้
+        /// ส่วน velocity คือความเร็วจริงที่ขยับได้ (ชนกำแพง / เลี้ยว / กำลังเบรก จะช้าลงเอง)
+        ///
+        /// ผลคือจังหวะก้าวสอดคล้องกับความเร็วทุกกรณีโดยอัตโนมัติ:
+        ///   ถูกจ้อง 0.5 m/s  → ก้าวห่าง ~1.8 วิ/ก้าว
+        ///   ไล่ปกติ 1.6 m/s  → ~0.56 วิ/ก้าว
+        ///   วิ่ง 3.2 m/s     → ~0.28 วิ/ก้าว
+        /// </summary>
+        private void UpdateFootsteps()
+        {
+            if (_agent == null || !_agent.enabled || !_agent.isOnNavMesh) return;
+            if (strideLength <= 0f) return;
+
+            // ต้องเช็คสถานะ "ถูกสั่งหยุด" ตรงๆ ห้ามพึ่ง velocity อย่างเดียว
+            // NavMeshAgent.isStopped = true ไม่ได้ทำให้ velocity เป็น 0 ทันที มันค่อยๆ ชะลอ
+            // และบางกรณีค้างค่าไว้ ทำให้ฝีเท้ายังลงต่อทั้งที่ผีหยุดแล้ว
+            if (IsPlayerHidden || _agent.isStopped)
+            {
+                _strideAccum = 0f;
+                return;
+            }
+
+            float speed = _agent.velocity.magnitude;
+
+            if (speed < footstepMinSpeed)
+            {
+                _strideAccum = 0f;   // หยุดแล้ว เริ่มนับก้าวใหม่ กันลงเท้าทันทีที่ออกตัว
+                return;
+            }
+
+            _strideAccum += speed * Time.deltaTime;
+            if (_strideAccum < strideLength) return;
+
+            _strideAccum -= strideLength;
+
+            // กันรัว: ต่อให้ระยะครบแล้ว ก็ไม่ยิงถี่กว่า minFootstepInterval
+            if (minFootstepInterval > 0f && Time.time - _lastFootstepTime < minFootstepInterval) return;
+
+            _lastFootstepTime = Time.time;
+            AudioManager.instance.PlayGhostFootstep(transform.position);
         }
     }
 }

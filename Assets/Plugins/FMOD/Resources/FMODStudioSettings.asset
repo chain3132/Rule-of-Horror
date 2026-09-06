@@ -494,6 +494,7 @@ MonoBehaviour:
   - BoneBroken
   - Radio
   - Rule2
+  - Rule4
   - RunningGhost
   - WomanSound
   BanksToLoad: []

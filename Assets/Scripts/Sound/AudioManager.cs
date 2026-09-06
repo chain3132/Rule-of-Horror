@@ -35,11 +35,11 @@ public class AudioManager : MonoBehaviour
 
     // ── Rule 4 sounds ──
     private EventInstance rule4Ambient;    // looping ambient background ของ Rule 4
-    private EventInstance rule4HoldBreath; // looping "อั้นลมหายใจ" ระหว่างกลั้น
-    private EventInstance rule4GhostChase; // looping เสียงผีไล่ (3D ตามตัวผี)
+    private EventInstance rule4HoldBreath;    // looping "อั้นลมหายใจ" ระหว่างกลั้น
+    private EventInstance rule4BreathRecover; // เสียงหายใจหอบหลังปล่อย — ถูกสั่งหยุดเมื่อ cooldown ครบ
 
     // event ของ Rule 4 อาจยังไม่ถูกสร้างใน FMOD — เก็บสถานะไว้เพื่อข้ามการเล่นแทนที่จะพัง
-    private bool _rule4AmbientOk, _rule4HoldBreathOk, _rule4GhostChaseOk;
+    private bool _rule4AmbientOk, _rule4HoldBreathOk, _rule4BreathRecoverOk;
 
     Coroutine radioCoroutine;
     
@@ -110,13 +110,33 @@ public class AudioManager : MonoBehaviour
         //   event:/Rule4/Rule4Ambient   – ambient loop ของ Rule 4
         //   event:/Rule4/HoldBreath     – เสียงอั้นลมหายใจ (loop, มี parameter "BreathStrain" 0-1)
         //   event:/Rule4/ForcedExhale   – หายใจออกแรงตอนกลั้นไม่ไหว (one-shot)
-        //   event:/Rule4/GhostChase     – เสียงผีไล่ (loop, 3D ตามตัวผี)
+        //   event:/Rule4/BreathRecover  – เสียงหายใจหอบหลังปล่อย ควรยาวไม่เกิน cooldown (5 วิ)
+        //                                 ถ้ายาวกว่านั้นจะถูกสั่งหยุดตอน cooldown ครบ
+        //   event:/Rule4/GhostFootsteps – เสียงฝีเท้าผี "หนึ่งก้าว" (one-shot 3D ไม่ใช่ loop)
+        //                                 Rule4Ghost ยิงทีละก้าวตามระยะที่เดินได้จริง จังหวะจึงตรงกับความเร็วเอง
+        //                                 ควรใส่ multi-instrument + pitch randomizer ให้ก้าวไม่ซ้ำกัน
+        //   event:/Rule4/GhostBreathHold    – เสียงผีตอนผู้เล่นเริ่มกลั้นหายใจ (one-shot)
+        //   event:/Rule4/GhostBreathRelease – เสียงผีตอนผู้เล่นปล่อยการกลั้น (one-shot)
         //   event:/Rule4/DollCry / DollLaugh / DollHum / DollCall / DollCough
         //                                              – เสียงตุ๊กตา 5 แบบ (loop, 3D, attenuation ตามระยะ)
         //   event:/Rule4/DollPickup / DollPlace        – one-shot ตอนเก็บ / วางตุ๊กตา
         _rule4AmbientOk    = TryCreate("event:/Rule4/Rule4Ambient", out rule4Ambient);
         _rule4HoldBreathOk = TryCreate("event:/Rule4/HoldBreath",   out rule4HoldBreath);
-        _rule4GhostChaseOk = TryCreate("event:/Rule4/GhostChase",   out rule4GhostChase);
+        _rule4BreathRecoverOk = TryCreate("event:/Rule4/BreathRecover", out rule4BreathRecover);
+
+        // event พวกนี้โค้ดเรียกด้วย PlayOneShot — ถ้าใน FMOD ทำเป็น loop ไว้จะเสียงทับกันไม่หยุด
+        foreach (string oneShotPath in new[]
+                 {
+                     "event:/Rule4/GhostFootsteps",
+                     "event:/Rule4/GhostBreathHold",
+                     "event:/Rule4/GhostBreathRelease",
+                     "event:/Rule4/ForcedExhale",
+                     "event:/Rule4/DollPickup",
+                     "event:/Rule4/DollPlace",
+                 })
+        {
+            WarnIfLooping(oneShotPath);
+        }
 
 
         WomanScream = RuntimeManager.CreateInstance("event:/WomanScream");
@@ -170,6 +190,32 @@ public class AudioManager : MonoBehaviour
             Debug.LogWarning($"[FMOD] ยังไม่มี event '{path}' — ข้ามเสียงนี้ไปก่อน");
             inst = default;
             return false;
+        }
+    }
+
+    /// <summary>
+    /// เตือนถ้า event ที่โค้ดเรียกแบบ one-shot ดันถูก author เป็น loop ใน FMOD
+    ///
+    /// PlayOneShot จะ start แล้ว release ทันที ตัว instance จะถูกคืนก็ต่อเมื่อมัน "หยุดเอง"
+    /// แต่ event ที่มี loop region ไม่มีวันหยุด ทุกครั้งที่เรียกจึงเปิด loop ตัวใหม่ทับเข้าไป
+    /// สั่งหยุดก็ไม่ได้เพราะ PlayOneShot ไม่คืน handle — กลายเป็นเสียงรัวที่ควบคุมไม่ได้
+    /// และไม่มี error อะไรออกมาเลย ไล่บั๊กยากมาก จึงต้องเตือนตั้งแต่ตอน start
+    /// </summary>
+    private static void WarnIfLooping(string path)
+    {
+        try
+        {
+            var desc = RuntimeManager.GetEventDescription(path);
+            desc.isOneshot(out bool oneShot);
+
+            if (!oneShot)
+                Debug.LogWarning($"[FMOD] '{path}' ถูก author เป็น loop ใน FMOD แต่โค้ดเรียกแบบ one-shot — " +
+                                 "ต้องลบ loop region / ปิดปุ่ม Loop ของ instrument แล้ว build bank ใหม่ " +
+                                 "ไม่งั้นเสียงจะทับกันไปเรื่อยๆ และสั่งหยุดไม่ได้");
+        }
+        catch (EventNotFoundException)
+        {
+            // ยังไม่ได้สร้าง event — TryCreate/SafeOneShot เตือนให้อยู่แล้ว
         }
     }
 
@@ -372,7 +418,7 @@ public class AudioManager : MonoBehaviour
     {
         if (_rule4AmbientOk)    rule4Ambient.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
         if (_rule4HoldBreathOk) rule4HoldBreath.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-        if (_rule4GhostChaseOk) rule4GhostChase.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+        if (_rule4BreathRecoverOk) rule4BreathRecover.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
     }
 
     /// <summary>เริ่มเสียงอั้นลมหายใจ (loop ตลอดที่กลั้นอยู่)</summary>
@@ -397,33 +443,40 @@ public class AudioManager : MonoBehaviour
         rule4HoldBreath.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
     }
 
+    /// <summary>
+    /// เสียงฝีเท้าผี 1 ก้าว — Rule4Ghost เป็นคนตัดสินใจว่าจะยิงเมื่อไร
+    /// โดยนับระยะทางที่เดินได้จริง ทำให้จังหวะก้าวสอดคล้องกับความเร็วโดยไม่ต้องทำ automation ใน FMOD
+    /// </summary>
+    public void PlayGhostFootstep(Vector3 position)
+        => SafeOneShot("event:/Rule4/GhostFootsteps", position);
+
+    /// <summary>เริ่มเสียงหายใจหอบหลังปล่อยการกลั้น — คู่กับช่วง cooldown</summary>
+    public void StartBreathRecover()
+    {
+        if (!_rule4BreathRecoverOk) return;
+        rule4BreathRecover.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        rule4BreathRecover.start();
+    }
+
+    /// <summary>หยุดเสียงหายใจหอบ — BreathSystem เรียกเมื่อ cooldown ครบ เพื่อการันตีว่าจบใน 5 วิ</summary>
+    public void StopBreathRecover()
+    {
+        if (!_rule4BreathRecoverOk) return;
+        rule4BreathRecover.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+    }
+
     /// <summary>หายใจออกแรงตอนกลั้นไม่ไหว (one-shot)</summary>
     public void PlayForcedExhale()
         => SafeOneShot("event:/Rule4/ForcedExhale", ListenerPos);
 
-    /// <summary>เริ่มเสียงผีไล่ — ตำแหน่ง 3D อัปเดตผ่าน UpdateGhostChasePosition()</summary>
-    public void StartGhostChase(Transform ghost)
-    {
-        if (!_rule4GhostChaseOk) return;
-        rule4GhostChase.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-        if (ghost != null)
-            rule4GhostChase.set3DAttributes(RuntimeUtils.To3DAttributes(ghost));
-        rule4GhostChase.start();
-    }
+    /// <summary>เสียงผีตอนผู้เล่น "เริ่มกลั้นหายใจ" — เล่นครั้งเดียวตอนกด</summary>
+    public void PlayGhostOnBreathHold(Vector3 position)
+        => SafeOneShot("event:/Rule4/GhostBreathHold", position);
 
-    /// <summary>อัปเดตตำแหน่ง 3D ของเสียงผีไล่ (เรียกทุกเฟรมจาก Rule4Ghost)</summary>
-    public void UpdateGhostChasePosition(Transform ghost)
-    {
-        if (!_rule4GhostChaseOk || ghost == null) return;
-        rule4GhostChase.set3DAttributes(RuntimeUtils.To3DAttributes(ghost));
-    }
-
-    /// <summary>หยุดเสียงผีไล่</summary>
-    public void StopGhostChase()
-    {
-        if (!_rule4GhostChaseOk) return;
-        rule4GhostChase.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
-    }
+    /// <summary>เสียงผีตอนผู้เล่น "ปล่อยการกลั้นหายใจ" — เล่นครั้งเดียวตอนปล่อย
+    /// (ครอบคลุมทั้งปล่อยเองและถูกบังคับหายใจออกตอนกลั้นไม่ไหว)</summary>
+    public void PlayGhostOnBreathRelease(Vector3 position)
+        => SafeOneShot("event:/Rule4/GhostBreathRelease", position);
 
     /// <summary>เสียงเก็บตุ๊กตา (one-shot)</summary>
     public void PlayDollPickup()

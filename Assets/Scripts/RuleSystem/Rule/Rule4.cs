@@ -14,7 +14,7 @@ namespace RuleSystem.Rule
     ///
     /// Flow:
     ///   1. ผู้เล่นนั่ง → blink เข้า Tension → เริ่มเล่น
-    ///   2. ตุ๊กตา 5 ตัวถูกสุ่มวางบนพื้น หาเจอได้ด้วยการฟังเสียงอย่างเดียว (ร้องไห้ / หัวเราะ / ฮัมเพลง)
+    ///   2. ตุ๊กตา dollCount ตัวถูกสุ่มวางบนพื้น หาเจอได้ด้วยการฟังเสียงอย่างเดียว (ร้องไห้ / หัวเราะ / ฮัมเพลง)
     ///      ถ้ามีตัวไหนสุ่มอยู่ใต้ศาลา จะมีเงาโผล่ออกมาให้เห็นก่อน
     ///   3. เก็บทีละตัว → เดินไปวางที่ศาลพระภูมิ → ศาลย้ายที่ทุกครั้งที่เก็บได้ → ทำซ้ำจนครบ 5
     ///   4. ผี: ตุ๊กตา 2 ตัวแรก ผียืนนิ่งเป็น "ป้ายบอกตำแหน่ง" อยู่ข้างตุ๊กตา
@@ -35,10 +35,15 @@ namespace RuleSystem.Rule
 
         // ── Dolls ───────────────────────────────────────────────────────
         [Header("Dolls")]
+        [Tooltip("Prefab ตัว logic ของตุ๊กตา (มี Doll.cs) — ไม่ต้องมี mesh ในตัว โมเดลมาจาก dollVariants")]
         [SerializeField] private Doll dollPrefab;
 
+        [Tooltip("ตุ๊กตาแต่ละแบบ: โมเดลที่โผล่บนพื้น + ช่องบนศาลที่จะเปิดเมื่อวางสำเร็จ" +
+                 "ต้องมีอย่างน้อยเท่ากับ dollCount — ระบบจะสับแล้วเลือกมา dollCount แบบทุกรอบ")]
+        [SerializeField] private DollVariant[] dollVariants;
+
         [Tooltip("จำนวนตุ๊กตาที่ต้องเก็บ")]
-        [SerializeField] private int dollCount = 5;
+        [SerializeField] private int dollCount = 8;
 
         [Tooltip("จุดสุ่มวางตุ๊กตาทั่วแมพ — ต้องมีอย่างน้อยเท่ากับ dollCount")]
         [SerializeField] private Transform[] dollSpawnPoints;
@@ -78,7 +83,8 @@ namespace RuleSystem.Rule
         // ── Hints ───────────────────────────────────────────────────────
         [Header("Hints")]
         [TextArea(2, 4)]
-        [SerializeField] private string introHint = "ศาลพระภูมิว่างเปล่า…\nหาตุ๊กตา 5 ตัวกลับมาวางให้ครบ";
+        [Tooltip("ใส่ {0} ตรงที่ต้องการให้แทนด้วยจำนวนตุ๊กตา (dollCount) — จะได้ไม่ต้องแก้ข้อความเวลาเปลี่ยนจำนวน")]
+        [SerializeField] private string introHint = "ศาลพระภูมิว่างเปล่า…\nหาตุ๊กตา {0} ตัวกลับมาวางให้ครบ";
 
         [Tooltip("แสดง introHint กี่วินาทีก่อนซ่อน")]
         [SerializeField] private float introHintDuration = 6f;
@@ -93,10 +99,17 @@ namespace RuleSystem.Rule
         private readonly List<Doll>       _dolls   = new List<Doll>();
         private readonly List<GameObject> _shadows = new List<GameObject>();
 
+        // คิวที่สับไว้ตอนเริ่มกฎ แล้วแจกทีละตัว — ตุ๊กตาโผล่ทีละตัว ไม่ใช่พร้อมกันหมด
+        private readonly List<Transform>   _spawnQueue   = new List<Transform>();
+        private readonly List<DollSound>   _soundQueue   = new List<DollSound>();
+        private readonly List<DollVariant> _variantQueue = new List<DollVariant>();
+        private int _dollsSpawned;
+
         private Rule4Ghost _ghost;
         private Doll       _carriedDoll;
         private int        _dollsPlaced;
         private int        _pickupFrame = -1;
+        private bool       _wasHoldingBreath;
         private bool       _gameplayActive;
         private bool       _isEnding;
 
@@ -109,6 +122,9 @@ namespace RuleSystem.Rule
         /// กด E ครั้งเดียวจะยิงทั้งสองตัว → เก็บแล้ววางทันทีในเฟรมเดียว จึงต้องกันไว้ 1 เฟรม
         /// </summary>
         public bool CanPlaceDoll => _carriedDoll != null && Time.frameCount != _pickupFrame;
+
+        /// <summary>ตุ๊กตาที่ถืออยู่ — SpiritHouse ใช้อ่าน ShrineSlotIndex ตอนวาง</summary>
+        public Doll CarriedDoll => _carriedDoll;
 
         /// <summary>ตุ๊กตาที่ spawn อยู่ในรอบนี้ — ใช้โดย Rule4DevSkip เพื่อวาดเส้น debug</summary>
         public IReadOnlyList<Doll> ActiveDolls => _dolls;
@@ -150,9 +166,37 @@ namespace RuleSystem.Rule
 
             AudioManager.instance.UpdateHeartbeat();
 
+            if (breathSystem == null) return;
+
+            bool holding = breathSystem.IsHolding;
+
             // ผีจะหยุดรอถ้าผู้เล่นกำลังกลั้นหายใจ
-            if (_ghost != null && breathSystem != null)
-                _ghost.IsPlayerHidden = breathSystem.IsHolding;
+            if (_ghost != null) _ghost.IsPlayerHidden = holding;
+
+            // เสียงผี 2 ตัว — ยิงครั้งเดียวตอนสถานะเปลี่ยน (edge) ไม่ใช่ทุกเฟรม
+            // ปล่อย = ครอบคลุมทั้งปล่อยเองและถูกบังคับหายใจออก
+            if (holding != _wasHoldingBreath)
+            {
+                _wasHoldingBreath = holding;
+
+                Vector3 pos = GhostSoundPosition();
+                if (holding) AudioManager.instance.PlayGhostOnBreathHold(pos);
+                else         AudioManager.instance.PlayGhostOnBreathRelease(pos);
+            }
+        }
+
+        /// <summary>
+        /// ตำแหน่งที่จะเล่นเสียงผี — ที่ตัวผีถ้ามันโผล่อยู่
+        /// ถ้าผีถูกซ่อนอยู่ (ช่วงป้ายบอกตำแหน่ง) ใช้ตำแหน่งผู้เล่นแทน จะได้ยินแน่
+        /// </summary>
+        Vector3 GhostSoundPosition()
+        {
+            if (_ghost != null && _ghost.gameObject.activeInHierarchy)
+                return _ghost.transform.position;
+
+            return PlayerController.Instance != null
+                ? PlayerController.Instance.transform.position
+                : Vector3.zero;
         }
 
         public override void EndRule()
@@ -183,6 +227,7 @@ namespace RuleSystem.Rule
             _dollsPlaced    = 0;
             _carriedDoll    = null;
             _gameplayActive = true;
+            _wasHoldingBreath = false;
 
             // ปลดล็อกการลุกก่อนเสมอ — ถ้าโค้ดข้างล่างเกิด throw (เช่น reference ใน Inspector ว่าง
             // หรือ FMOD event หาย) ผู้เล่นจะได้ไม่ติดอยู่ในท่านั่งจนเล่นต่อไม่ได้
@@ -193,7 +238,8 @@ namespace RuleSystem.Rule
             // Rule 4 ไม่ได้ใช้เวลาเป็นตัวจับจังหวะ กฎจบเมื่อวางตุ๊กตาครบเท่านั้น
             TimeManager.instance.IsPauseTime(true);
 
-            SpawnDolls();
+            if (!PrepareDollQueue()) return;
+            SpawnNextDoll();
 
             if (spiritHouse != null)
             {
@@ -217,23 +263,29 @@ namespace RuleSystem.Rule
             AudioManager.instance.StartRule4Ambient();
             AudioManager.instance.ResetHeartbeatLevel();
 
-            if (HorrorTextUI.instance != null)
+            if (PlayerDialogueUI.instance != null)
             {
-                HorrorTextUI.instance.ShowText(introHint);
-                StartCoroutine(HideIntroHintRoutine());
+                // แทน {0} ด้วยจำนวนตุ๊กตาจริง — ใช้ Replace ไม่ใช่ string.Format
+                // เพราะข้อความที่พิมพ์เอง อาจมี { } หลุดมาแล้ว Format จะ throw
+                // PlayerDialogueUI fade เองเมื่อ hold ครบ — ไม่ต้องมี coroutine คอยซ่อน
+                // (ถ้ามี จะไปลบ hint ของตุ๊กตาที่เดินไปเจอภายใน introHintDuration ทิ้ง)
+                PlayerDialogueUI.instance.ShowLine(introHint.Replace("{0}", dollCount.ToString()),
+                                                   introHintDuration);
             }
         }
 
-        IEnumerator HideIntroHintRoutine()
-        {
-            yield return new WaitForSeconds(introHintDuration);
-            if (HorrorTextUI.instance != null) HorrorTextUI.instance.HideText();
-        }
-
-        /// <summary>สุ่มจุดวางตุ๊กตาจาก pool รวม (จุดทั่วไป + จุดใต้ศาลา) แบบไม่ซ้ำจุด</summary>
-        void SpawnDolls()
+        /// <summary>
+        /// สับจุด spawn / เสียง / โมเดล ไว้ล่วงหน้าเป็นคิว dollCount ใบ แต่ยังไม่ Instantiate
+        /// ตุ๊กตาจะถูกปล่อยทีละตัวผ่าน SpawnNextDoll() — ผู้เล่นเจอทีละตัว ไม่ใช่โผล่พร้อมกันหมด
+        /// </summary>
+        bool PrepareDollQueue()
         {
             ClearDolls();
+
+            _spawnQueue.Clear();
+            _soundQueue.Clear();
+            _variantQueue.Clear();
+            _dollsSpawned = 0;
 
             var pool = new List<Transform>();
             if (dollSpawnPoints     != null) pool.AddRange(dollSpawnPoints);
@@ -243,7 +295,7 @@ namespace RuleSystem.Rule
             if (pool.Count < dollCount)
             {
                 Debug.LogError($"[Rule4] จุด spawn ตุ๊กตามีแค่ {pool.Count} จุด แต่ต้องการ {dollCount} — เพิ่มจุดใน Inspector", this);
-                return;
+                return false;
             }
 
             // Fisher-Yates
@@ -261,22 +313,79 @@ namespace RuleSystem.Rule
                 (sounds[i], sounds[j]) = (sounds[j], sounds[i]);
             }
 
-            bool anyUnderPavilion = false;
+            // ตุ๊กตาแต่ละตัวหน้าตาไม่เหมือนกัน — สับชุด variant แล้วแจกทีละแบบ ไม่ให้ซ้ำในรอบเดียว
+            var variants = BuildShuffledVariants();
+            if (variants == null) return false;
 
             for (int i = 0; i < dollCount; i++)
             {
-                Transform point = pool[i];
-                var doll = Instantiate(dollPrefab, point.position, point.rotation);
+                _spawnQueue.Add(pool[i]);
+                _soundQueue.Add(sounds[i % sounds.Count]);   // ถ้าตุ๊กตามากกว่าจำนวนเสียง ค่อยวนใช้ซ้ำ
+                _variantQueue.Add(variants[i]);
+            }
+            return true;
+        }
 
-                // ถ้าตุ๊กตามีมากกว่าจำนวนเสียง ค่อยวนกลับมาใช้ซ้ำ
-                doll.Setup(this, inputHandler, sounds[i % sounds.Count]);
-                _dolls.Add(doll);
+        /// <summary>
+        /// ปล่อยตุ๊กตาตัวถัดไปจากคิว — เรียกตอนเริ่มกฎ 1 ครั้ง แล้วเรียกอีกทุกครั้งที่วางสำเร็จ
+        /// คืน Doll ที่เพิ่ง spawn (null ถ้าคิวหมดแล้ว)
+        /// </summary>
+        Doll SpawnNextDoll()
+        {
+            if (_dollsSpawned >= _spawnQueue.Count) return null;
 
-                if (IsPavilionPoint(point)) anyUnderPavilion = true;
+            Transform point = _spawnQueue[_dollsSpawned];
+            var doll = Instantiate(dollPrefab, point.position, point.rotation);
+            doll.Setup(this, inputHandler, _soundQueue[_dollsSpawned], _variantQueue[_dollsSpawned]);
+            _dolls.Add(doll);
+            _dollsSpawned++;
+
+            // ตัวนี้ไปโผล่ใต้ศาลา → ปล่อยเงาออกมาใบ้ก่อนผู้เล่นไปเก็บ
+            if (IsPavilionPoint(point)) StartCoroutine(PavilionShadowRoutine());
+
+            return doll;
+        }
+
+        /// <summary>
+        /// สับชุด variant แล้วคืนมา dollCount ตัว — พร้อมเช็คว่า Inspector ตั้งค่ามาถูก
+        /// คืน null ถ้าตั้งค่าไม่ครบ (จะได้ไม่ spawn ตุ๊กตาที่ไม่มีโมเดล/ไม่มีช่องบนศาล)
+        /// </summary>
+        List<DollVariant> BuildShuffledVariants()
+        {
+            if (dollVariants == null || dollVariants.Length < dollCount)
+            {
+                int have = dollVariants != null ? dollVariants.Length : 0;
+                Debug.LogError($"[Rule4] dollVariants มีแค่ {have} แบบ แต่ต้องการ {dollCount} — " +
+                               "เพิ่มใน Inspector (1 แบบ = 1 โมเดล + 1 ช่องบนศาล)", this);
+                return null;
             }
 
-            // มีตุ๊กตาอยู่ใต้ศาลา → ปล่อยเงาออกมาให้เห็นก่อนไปเก็บ
-            if (anyUnderPavilion) StartCoroutine(PavilionShadowRoutine());
+            var list = new List<DollVariant>(dollVariants);
+            list.RemoveAll(v => v == null);
+
+            // เตือนถ้ามี variant ชี้ช่องบนศาลซ้ำกัน — จะทำให้ตุ๊กตาตัวหลังวางแล้วไม่มีอะไรโผล่
+            var seen = new HashSet<int>();
+            foreach (var v in list)
+            {
+                if (!seen.Add(v.shrineSlotIndex))
+                    Debug.LogWarning($"[Rule4] variant '{v.name}' ใช้ shrineSlotIndex " +
+                                     $"{v.shrineSlotIndex} ซ้ำกับตัวอื่น — ช่องบนศาลจะโผล่ไม่ครบ", this);
+            }
+
+            if (list.Count < dollCount)
+            {
+                Debug.LogError($"[Rule4] dollVariants มีช่องว่าง (null) เหลือใช้ได้ {list.Count} " +
+                               $"แต่ต้องการ {dollCount}", this);
+                return null;
+            }
+
+            // Fisher-Yates
+            for (int i = list.Count - 1; i > 0; i--)
+            {
+                int j = Random.Range(0, i + 1);
+                (list[i], list[j]) = (list[j], list[i]);
+            }
+            return list;
         }
 
         bool IsPavilionPoint(Transform point)
@@ -392,6 +501,9 @@ namespace RuleSystem.Rule
                 return;
             }
 
+            // ปล่อยตุ๊กตาตัวถัดไปก่อน — ผีต้องมีตัวให้ไปยืนข้าง
+            SpawnNextDoll();
+
             if (_dollsPlaced < guidedDollCount)
             {
                 // ยังอยู่ช่วงป้ายบอกตำแหน่ง → ผีโผล่ไปยืนข้างตุ๊กตาตัวถัดไป
@@ -483,7 +595,7 @@ namespace RuleSystem.Rule
             if (breathSystem != null) breathSystem.EndRuleCleanup();
             if (stareSystem  != null) stareSystem.EndRuleCleanup();
 
-            if (HorrorTextUI.instance != null) HorrorTextUI.instance.HideText();
+            if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.Hide();
 
             yield return new WaitForSeconds(2f);
 
@@ -554,7 +666,7 @@ namespace RuleSystem.Rule
             if (breathSystem != null) breathSystem.EndRuleCleanup();
             if (stareSystem  != null) stareSystem.EndRuleCleanup();
             AudioManager.instance.StopAllRule4Sounds();
-            if (HorrorTextUI.instance != null) HorrorTextUI.instance.HideText();
+            if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.Hide();
 
             yield return StartCoroutine(PlayerController.Instance.PlayDeathFallRoutine());
             yield return new WaitForSeconds(0.5f);
@@ -613,7 +725,7 @@ namespace RuleSystem.Rule
             AudioManager.instance.StopAllRule4Sounds();
             AudioManager.instance.ResetHeartbeatLevel();
 
-            if (HorrorTextUI.instance != null) HorrorTextUI.instance.HideText();
+            if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.Hide();
         }
 
         void ClearDolls()
@@ -622,6 +734,7 @@ namespace RuleSystem.Rule
                 if (d != null) Destroy(d.gameObject);
             _dolls.Clear();
             _carriedDoll = null;
+            _dollsSpawned = 0;
         }
 
         // กันค่า/เสียงค้างตอนกด Stop ใน Editor กลางคัน

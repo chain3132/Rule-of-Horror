@@ -42,10 +42,10 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639141110434187745
+  lastModified: 639243028225007566
   FileSizes:
   - Name: Desktop
-    Value: 3046
+    Value: 3498
   Exists: 1
 --- !u!114 &-8687965200994253978
 MonoBehaviour:
@@ -334,6 +334,60 @@ MonoBehaviour:
   - Name: Desktop
     Value: 3121536
   Exists: 1
+--- !u!114 &-7266681317762981110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule4/DollLaugh
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule4/DollLaugh
+  Guid:
+    Data1: -39454512
+    Data2: 1122912545
+    Data3: -1494452291
+    Data4: -885938586
+  Banks:
+  - {fileID: 7757759225761494530}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 4000
+--- !u!114 &-7229060856026668668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule4/GhostBreathRelease
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule4/GhostBreathRelease
+  Guid:
+    Data1: -1471980126
+    Data2: 1320722091
+    Data3: 1698583187
+    Data4: 640109470
+  Banks:
+  - {fileID: 7757759225761494530}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 80
+  Length: 0
 --- !u!114 &-7079097143769619240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -580,6 +634,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 6120
+--- !u!114 &-6264328666863891858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule4/GhostFootsteps
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule4/GhostFootsteps
+  Guid:
+    Data1: 497960152
+    Data2: 1234288377
+    Data3: 383307963
+    Data4: -2120144403
+  Banks:
+  - {fileID: 7757759225761494530}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 40
+  Length: 0
 --- !u!114 &-6153405093351605973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -962,8 +1043,8 @@ MonoBehaviour:
     Data3: -493498185
     Data4: 2133030281
   Banks:
-  - {fileID: 4007694900862675636}
   - {fileID: 481976287498695880}
+  - {fileID: 4007694900862675636}
   IsStream: 0
   Is3D: 1
   IsOneShot: 0
@@ -1436,6 +1517,33 @@ MonoBehaviour:
   - Name: Desktop
     Value: 7520
   Exists: 1
+--- !u!114 &-2232358347028063499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule4/DollCry
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule4/DollCry
+  Guid:
+    Data1: -541338667
+    Data2: 1262733622
+    Data3: -497617230
+    Data4: -850871889
+  Banks:
+  - {fileID: 7757759225761494530}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 4000
 --- !u!114 &-2136454398950410930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1693,6 +1801,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
+--- !u!114 &-948109510284329201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule4/DollCough
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule4/DollCough
+  Guid:
+    Data1: 1535714003
+    Data2: 1248824189
+    Data3: -742132832
+    Data4: -1830886714
+  Banks:
+  - {fileID: 7757759225761494530}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 4500
 --- !u!114 &-872665307649397530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2053,6 +2188,7 @@ MonoBehaviour:
   - {fileID: 2425014278828303125}
   - {fileID: -509717943944805014}
   - {fileID: 481976287498695880}
+  - {fileID: 7757759225761494530}
   EditorEvents:
   - {fileID: -4367922556603431074}
   - {fileID: -5308315210386295971}
@@ -2093,13 +2229,22 @@ MonoBehaviour:
   - {fileID: -5866324616766024719}
   - {fileID: -7533060969072648842}
   - {fileID: 4694308096508324075}
+  - {fileID: 1959112615584688764}
+  - {fileID: 3422880371210955480}
+  - {fileID: -7266681317762981110}
+  - {fileID: -948109510284329201}
+  - {fileID: -2232358347028063499}
+  - {fileID: 5453292255766840432}
+  - {fileID: -7229060856026668668}
+  - {fileID: 8386244012909772103}
+  - {fileID: -6264328666863891858}
   EditorParameters: []
   MasterBanks:
   - {fileID: 4007694900862675636}
   StringsBanks:
   - {fileID: -9029352760761313385}
   cacheVersion: 131858
-  cacheTime: 639144657060927805
+  cacheTime: 639243047162945536
   SerializableEventsDict:
   - key: event:/Rule3Death
     index: 0
@@ -2179,6 +2324,24 @@ MonoBehaviour:
     index: 37
   - key: event:/GhostWalk
     index: 38
+  - key: event:/Rule4/DollCall
+    index: 39
+  - key: event:/Rule4/DollHum
+    index: 40
+  - key: event:/Rule4/DollLaugh
+    index: 41
+  - key: event:/Rule4/DollCough
+    index: 42
+  - key: event:/Rule4/DollCry
+    index: 43
+  - key: event:/Rule4/GhostBreathHold
+    index: 44
+  - key: event:/Rule4/GhostBreathRelease
+    index: 45
+  - key: event:/Rule4/BreathRecover
+    index: 46
+  - key: event:/Rule4/GhostFootsteps
+    index: 47
 --- !u!114 &125022446526344972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2600,6 +2763,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 3864
+--- !u!114 &1959112615584688764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule4/DollCall
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule4/DollCall
+  Guid:
+    Data1: 1268633104
+    Data2: 1159730391
+    Data3: -791382136
+    Data4: -1801678529
+  Banks:
+  - {fileID: 7757759225761494530}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 4500
 --- !u!114 &1997278881006735890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2833,6 +3023,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1166
+--- !u!114 &3422880371210955480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule4/DollHum
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule4/DollHum
+  Guid:
+    Data1: 431070852
+    Data2: 1257681349
+    Data3: -1193582694
+    Data4: -494518779
+  Banks:
+  - {fileID: 7757759225761494530}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 4000
 --- !u!114 &3576093895535673261
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2929,7 +3146,7 @@ MonoBehaviour:
   Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639141110434177698
+  lastModified: 639243028224992474
   FileSizes:
   - Name: Desktop
     Value: 39392
@@ -3402,6 +3619,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 21528
+--- !u!114 &5453292255766840432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule4/GhostBreathHold
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule4/GhostBreathHold
+  Guid:
+    Data1: 1971634283
+    Data2: 1278998978
+    Data3: -444768090
+    Data4: 434733700
+  Banks:
+  - {fileID: 7757759225761494530}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 80
+  Length: 0
 --- !u!114 &5471439407180096633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3917,6 +4161,26 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 3864
+--- !u!114 &7757759225761494530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Rule4.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: ../../../Fmod/Rule of horror/RuleOfHorror/Build/Desktop/Rule4.bank
+  Name: Rule4
+  StudioPath: bank:/Rule4
+  lastModified: 639243047162945536
+  FileSizes:
+  - Name: Desktop
+    Value: 496128
+  Exists: 1
 --- !u!114 &7855662284783296693
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3991,6 +4255,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
+--- !u!114 &8386244012909772103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule4/BreathRecover
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule4/BreathRecover
+  Guid:
+    Data1: 560286674
+    Data2: 1172620907
+    Data3: 368938385
+    Data4: -1535185680
+  Banks:
+  - {fileID: 7757759225761494530}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 5000
 --- !u!114 &8656562136812460686
 MonoBehaviour:
   m_ObjectHideFlags: 0

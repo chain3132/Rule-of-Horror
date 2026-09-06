@@ -150,10 +150,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4930cacfa5a4f584b982f4bee2143922, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rule4.Rule4Ghost
-  chaseSpeed: 1.6
+  chaseSpeed: 4
   staredSpeed: 0.5
-  speedGainPerDoll: 0.15
+  sprintSpeed: 3.2
+  sprintDuration: 4
+  speedGainPerDoll: 1
+  markerTurnSpeed: 1.5
   killDistance: 1.4
   repathInterval: 0.25
   animator: {fileID: 0}
   walkBoolName: isWalk
+  runBoolName: isRun
