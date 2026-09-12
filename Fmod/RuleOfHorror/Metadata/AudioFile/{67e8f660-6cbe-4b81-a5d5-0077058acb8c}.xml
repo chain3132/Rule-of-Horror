@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{67e8f660-6cbe-4b81-a5d5-0077058acb8c}">
+		<property name="assetPath">
+			<value>Rules 4/Rule 4 ambiant/Ambiant 4.mp3</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>3.3839999999999999</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{f291b90f-c9c6-4a6b-8814-509dcaf86871}</destination>
+		</relationship>
+	</object>
+</objects>

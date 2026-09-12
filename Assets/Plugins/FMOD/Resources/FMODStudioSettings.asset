@@ -486,8 +486,17 @@ MonoBehaviour:
   VirtualChannelSettings: []
   RealChannelSettings: []
   Plugins: []
-  MasterBanks: []
-  Banks: []
+  MasterBanks:
+  - Master
+  Banks:
+  - Action
+  - AmbienceBank
+  - BoneBroken
+  - Radio
+  - Rule2
+  - Rule4
+  - RunningGhost
+  - WomanSound
   BanksToLoad: []
   LiveUpdatePort: 9264
   EnableMemoryTracking: 0

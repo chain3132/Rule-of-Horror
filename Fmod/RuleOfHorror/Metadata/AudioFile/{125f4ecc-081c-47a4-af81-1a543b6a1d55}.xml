@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{125f4ecc-081c-47a4-af81-1a543b6a1d55}">
+		<property name="assetPath">
+			<value>Rules 4/Rule 4 ambiant/bone crack 2.mp3</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.4159999999999999</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{f291b90f-c9c6-4a6b-8814-509dcaf86871}</destination>
+		</relationship>
+	</object>
+</objects>
