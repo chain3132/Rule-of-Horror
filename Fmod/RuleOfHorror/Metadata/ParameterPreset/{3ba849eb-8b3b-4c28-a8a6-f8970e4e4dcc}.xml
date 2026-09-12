@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="ParameterPreset" id="{3ba849eb-8b3b-4c28-a8a6-f8970e4e4dcc}">
+		<property name="name">
+			<value>RadioPray</value>
+		</property>
+		<relationship name="folder">
+			<destination>{72adddff-1d6d-4dc8-87e7-3cd7d080e6b9}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{efd856c2-c4d9-4081-9dd0-451039c96022}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{efd856c2-c4d9-4081-9dd0-451039c96022}">
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>

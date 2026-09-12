@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="EncodableAsset" id="{ffc40e04-e1ab-43c2-8e02-9d5af1febf16}">
+		<property name="assetPath">
+			<value>Rules 4/เสียงผี/เสียงผีหัวเราะตอนหา/</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{f291b90f-c9c6-4a6b-8814-509dcaf86871}</destination>
+		</relationship>
+	</object>
+</objects>
