@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{d4938b0b-4780-46cc-9bd9-34fb7384f732}">
+		<property name="assetPath">
+			<value>Rules 4/Rule 4 ambiant/Background ตัว 1-2 (1).mp3</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>8.8800000000000008</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{f291b90f-c9c6-4a6b-8814-509dcaf86871}</destination>
+		</relationship>
+	</object>
+</objects>
