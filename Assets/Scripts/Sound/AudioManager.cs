@@ -111,7 +111,7 @@ public class AudioManager : MonoBehaviour
         
         _rule4BackgroundOk      = TryCreate("event:/Rule4/Background Rule 4",     out rule4Background);
         _rule4BackgroundGhostOk = TryCreate("event:/Rule4/Background Ghost",      out rule4BackgroundGhost);
-        _rule4HangingBreathOk   = TryCreate("event:/Rule4/Sound Heavy Breating",  out rule4HangingBreath);
+        _rule4HangingBreathOk   = TryCreate("event:/Rule4/Ghost Breathing",  out rule4HangingBreath);
         _rule4HoldBreathOk      = TryCreate("event:/Rule4/HoldBreath",            out rule4HoldBreath);
         _rule4BreathRecoverOk = TryCreate("event:/Rule4/BreathRecover", out rule4BreathRecover);
 
@@ -122,8 +122,8 @@ public class AudioManager : MonoBehaviour
                      "event:/Rule4/GhostBreathHold",
                      "event:/Rule4/GhostBreathRelease",
                      "event:/Rule4/ForcedExhale",
-                     "event:/Rule4/DollPickup",
-                     "event:/Rule4/DollPlace",
+                     "event:/Rule4/Pick up",
+                     "event:/Rule4/Drop Doll",
                      "event:/Rule4/Rule4Ambient",
                      "event:/Rule4/Temple Gong",
                      "event:/Rule4/Crow Panic",
@@ -540,11 +540,11 @@ public class AudioManager : MonoBehaviour
 
     /// <summary>เสียงเก็บตุ๊กตา (one-shot)</summary>
     public void PlayDollPickup()
-        => SafeOneShot("event:/Rule4/DollPickup", ListenerPos);
+        => SafeOneShot("event:/Rule4/Pick up", ListenerPos);
 
     /// <summary>เสียงวางตุ๊กตาที่ศาล (one-shot)</summary>
     public void PlayDollPlace()
-        => SafeOneShot("event:/Rule4/DollPlace", ListenerPos);
+        => SafeOneShot("event:/Rule4/Drop Doll", ListenerPos);
 
     // ─────────── Rule 2 Sounds ───────────
 

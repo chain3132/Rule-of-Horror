@@ -198689,7 +198689,7 @@ MonoBehaviour:
   swayStart: 10
   darkenStart: 5
   maxHoldDuration: 18
-  cooldownDuration: 5
+  cooldownDuration: 9
   slowMoveMultiplier: 0.3
   maxDesaturation: -85
   blurFocusDistance: 0.15
