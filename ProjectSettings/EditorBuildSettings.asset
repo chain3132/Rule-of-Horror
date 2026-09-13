@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SkipIntro.unity
+    path: Assets/Scenes/Rule4.unity
     guid: 7640c430e094c504b94d3a5747fa3042
   - enabled: 1
     path: Assets/Scenes/GameScene.unity

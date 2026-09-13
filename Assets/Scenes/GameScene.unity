@@ -103783,7 +103783,7 @@ MonoBehaviour:
   stareSystem: {fileID: 1568946168}
   spiritHouse: {fileID: 4994020550488404611}
   dollPrefab: {fileID: 2619666933366091816, guid: 313b1fcf41a81814f966fe99f0fe3b0a, type: 3}
-  dollCount: 5
+  dollCount: 6
   dollSpawnPoints:
   - {fileID: 81617753}
   - {fileID: 1613196247}

@@ -136,22 +136,31 @@ namespace Rule4
         /// <summary>เปิดช่องบนศาลที่เป็นของตุ๊กตาตัวนี้โดยเฉพาะ</summary>
         private void RevealSlotFor(Doll doll)
         {
-            if (dollSlots == null || dollSlots.Length == 0)
-            {
-                Debug.LogWarning("[SpiritHouse] ยังไม่ได้ใส่ dollSlots — วางตุ๊กตาแล้วจะไม่เห็นอะไรโผล่", this);
-                return;
-            }
-
             if (doll == null)
             {
                 Debug.LogWarning("[SpiritHouse] ไม่รู้ว่ากำลังวางตุ๊กตาตัวไหน — ข้ามการเปิดช่อง", this);
                 return;
             }
 
-            int index = doll.ShrineSlotIndex;
+            RevealSlot(doll.ShrineSlotIndex, doll.name);
+        }
+
+        /// <summary>
+        /// เปิดช่องบนศาลตาม index — Rule4 ใช้เปิดช่องของตุ๊กตาที่ "วางอยู่แล้วตั้งแต่ต้น"
+        /// (variant ที่ไม่ได้ถูกสุ่มมาให้หาในรอบนี้) ผู้เล่นจะได้เห็นว่าศาลมีของครบ 8 ช่องจริง
+        /// แต่ขาดไปแค่ dollCount ตัว
+        /// </summary>
+        public void RevealSlot(int index, string owner = null)
+        {
+            if (dollSlots == null || dollSlots.Length == 0)
+            {
+                Debug.LogWarning("[SpiritHouse] ยังไม่ได้ใส่ dollSlots — ไม่มีอะไรโผล่บนศาล", this);
+                return;
+            }
+
             if (index < 0 || index >= dollSlots.Length)
             {
-                Debug.LogWarning($"[SpiritHouse] ตุ๊กตา '{doll.name}' ชี้ช่องที่ {index} " +
+                Debug.LogWarning($"[SpiritHouse] '{owner ?? "?"}' ชี้ช่องที่ {index} " +
                                  $"แต่ dollSlots มีแค่ {dollSlots.Length} ช่อง — เช็ค DollVariant.shrineSlotIndex", this);
                 return;
             }

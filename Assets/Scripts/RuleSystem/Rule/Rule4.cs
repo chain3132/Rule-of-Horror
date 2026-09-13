@@ -17,9 +17,9 @@ namespace RuleSystem.Rule
     ///   2. ตุ๊กตา dollCount ตัวถูกสุ่มวางบนพื้น หาเจอได้ด้วยการฟังเสียงอย่างเดียว (ร้องไห้ / หัวเราะ / ฮัมเพลง)
     ///      ถ้ามีตัวไหนสุ่มอยู่ใต้ศาลา จะมีเงาโผล่ออกมาให้เห็นก่อน
     ///   3. เก็บทีละตัว → เดินไปวางที่ศาลพระภูมิ → ศาลย้ายที่ทุกครั้งที่เก็บได้ → ทำซ้ำจนครบ 5
-    ///   4. ผี: ตุ๊กตา 2 ตัวแรก ผียืนนิ่งเป็น "ป้ายบอกตำแหน่ง" อยู่ข้างตุ๊กตา
-    ///           เก็บตุ๊กตา → ผีหายไป, วางที่ศาลเสร็จ → ผีโผล่ข้างตุ๊กตาตัวถัดไป
-    ///           วางตัวที่ 2 เสร็จ → spawn ผีตัวใหม่ที่จุดไกล แล้วไล่ยาวจนจบกฎ
+    ///   4. ผี: เริ่มกฎ → มีผีผูกคอตายแขวนอยู่ (HangingGhost) ไม่ไล่ แค่ให้เห็น
+    ///           วางตุ๊กตาตัวที่ 1 สำเร็จ → ตัวผีหายไป เหลือแต่เชือก
+    ///           เก็บตุ๊กตาตัวที่ 3 ขึ้นมือ → spawn ผีไล่ (Rule4Ghost) ที่จุดไกล แล้วไล่ยาวจนจบกฎ
     ///        - กดคลิกขวาค้าง = จ้อง → ผีช้าลง แต่ขยับไม่ได้ (จ้องนานเท่าไรก็ได้ ไม่ตาย)
     ///        - กด Shift ค้าง = กลั้นหายใจ → ผีมองไม่เห็น หยุดรออยู่กับที่ แต่เดินช้ามาก + จอซีด/เบลอ/โยก
     ///        - ผีเข้าใกล้เกินไป = ตายทันที
@@ -43,7 +43,7 @@ namespace RuleSystem.Rule
         [SerializeField] private DollVariant[] dollVariants;
 
         [Tooltip("จำนวนตุ๊กตาที่ต้องเก็บ")]
-        [SerializeField] private int dollCount = 8;
+        [SerializeField] private int dollCount = 6;
 
         [Tooltip("จุดสุ่มวางตุ๊กตาทั่วแมพ — ต้องมีอย่างน้อยเท่ากับ dollCount")]
         [SerializeField] private Transform[] dollSpawnPoints;
@@ -67,11 +67,24 @@ namespace RuleSystem.Rule
         [Tooltip("จุด spawn ผี — จะเลือกจุดที่ไกลจากผู้เล่นที่สุด")]
         [SerializeField] private Transform[] ghostSpawnPoints;
 
-        [Tooltip("ผีจะไป 'ยืนเป็นป้าย' ข้างตุ๊กตากี่ตัวแรก — หลังจากนั้น spawn ใหม่แล้วไล่ตลอด (สเปก = 2)")]
-        [SerializeField] private int guidedDollCount = 2;
+        [Tooltip("ผีไล่จะออกมาตอนผู้เล่น 'เก็บ' ตุ๊กตาตัวที่เท่าไรขึ้นมือ (สเปก = 3)")]
+        [SerializeField] private int chaseStartOnPickup = 3;
 
-        [Tooltip("ผียืนห่างจากตุ๊กตากี่เมตรตอนเป็นป้ายบอกตำแหน่ง")]
-        [SerializeField] private float ghostMarkerOffset = 1.2f;
+        // ── Hanging Ghost ───────────────────────────────────────────────
+        [Header("Hanging Ghost (ผีผูกคอ)")]
+        [Tooltip("prefab ผีผูกคอ — โผล่ตั้งแต่เริ่มกฎ ไม่ไล่")]
+        [SerializeField] private HangingGhost hangingGhostPrefab;
+
+        [Tooltip("จุดที่ผีผูกคอแขวนอยู่")]
+        [SerializeField] private Transform hangingPoint;
+
+        [Tooltip("ตัวผีหายไป (เหลือแต่เชือก) หลังผู้เล่นวางตุ๊กตาสำเร็จกี่ตัว (สเปก = 1)")]
+        [SerializeField] private int hangingVanishAfterPlaced = 1;
+
+        // ── Street Lamps ────────────────────────────────────────────────
+        [Header("Street Lamps")]
+        [Tooltip("ตัวคุมเสาไฟกระพริบตอนเริ่มกฎ — เว้นว่างได้ถ้ายังไม่ได้ทำ")]
+        [SerializeField] private StreetLampFlicker lampFlicker;
 
         // ── Pavilion Shadow ─────────────────────────────────────────────
         [Header("Pavilion Shadow (ใบ้ตุ๊กตาใต้ศาลา)")]
@@ -89,6 +102,22 @@ namespace RuleSystem.Rule
         [Tooltip("แสดง introHint กี่วินาทีก่อนซ่อน")]
         [SerializeField] private float introHintDuration = 6f;
 
+        // ── Audio ───────────────────────────────────────────────────────
+        [Header("Audio")]
+        [Tooltip("เก็บตุ๊กตาตัวที่เท่าไรถึงเริ่มสุ่มเสียงบรรยากาศ (สเปก = 1)")]
+        [SerializeField] private int ambientStingerStartOnPickup = 1;
+
+        [Tooltip("เก็บตุ๊กตาตัวที่เท่าไรถึงเล่นฆ้อง + อีกา แล้วหยุดเพลงพื้นหลัง (สเปก = 2)")]
+        [SerializeField] private int gongOnPickup = 2;
+
+        [Tooltip("เว้นระยะระหว่างการสุ่มเสียงบรรยากาศแต่ละครั้ง (วินาที)")]
+        [SerializeField] private float ambientStingerMinGap = 6f;
+        [SerializeField] private float ambientStingerMaxGap = 10f;
+
+        [Tooltip("โอกาสที่แต่ละรอบจะมีเสียงจริง (0–1) — ที่เหลือคือ 'อาจจะไม่มี'")]
+        [Range(0f, 1f)]
+        [SerializeField] private float ambientStingerChance = 0.75f;
+
         // ── Game Over ───────────────────────────────────────────────────
         [Header("Game Over Reset")]
         [Tooltip("เวลาที่ rewind กลับไปหลังตาย (ก่อน 22:00)")]
@@ -105,9 +134,19 @@ namespace RuleSystem.Rule
         private readonly List<DollVariant> _variantQueue = new List<DollVariant>();
         private int _dollsSpawned;
 
-        private Rule4Ghost _ghost;
-        private Doll       _carriedDoll;
-        private int        _dollsPlaced;
+        // variant ที่ไม่ถูกสุ่มมาให้หาในรอบนี้ — ถือว่า "วางอยู่บนศาลแล้ว" โชว์ตั้งแต่เริ่มกฎ
+        private readonly List<DollVariant> _prePlacedVariants = new List<DollVariant>();
+
+        private Rule4Ghost   _ghost;
+        private HangingGhost _hangingGhost;
+        private Doll         _carriedDoll;
+        private int          _dollsPlaced;
+        private int          _dollsPickedUp;   // นับตุ๊กตาที่ถูกหยิบขึ้นมือ — ตัวที่ chaseStartOnPickup จะปลุกผีไล่
+
+        // สถานะเสียงตามจังหวะกฎ
+        private bool      _backgroundStarted;     // เพลงพื้นหลังเริ่มแล้ว (ตอนลุกจากศาลาครั้งแรก)
+        private bool      _ghostBackgroundPlaying;
+        private Coroutine _ambientStingerRoutine;
         private int        _pickupFrame = -1;
         private bool       _wasHoldingBreath;
         private bool       _gameplayActive;
@@ -165,6 +204,7 @@ namespace RuleSystem.Rule
             if (!_gameplayActive) return;
 
             AudioManager.instance.UpdateHeartbeat();
+            UpdateBackgroundMusic();
 
             if (breathSystem == null) return;
 
@@ -179,25 +219,67 @@ namespace RuleSystem.Rule
             {
                 _wasHoldingBreath = holding;
 
-                Vector3 pos = GhostSoundPosition();
-                if (holding) AudioManager.instance.PlayGhostOnBreathHold(pos);
-                else         AudioManager.instance.PlayGhostOnBreathRelease(pos);
+                // เล่นเฉพาะตอนผีไล่อยู่จริง — ช่วงที่มันยืนเป็นป้าย / ถูกซ่อน / ยังไม่ spawn
+                // การกลั้นหายใจไม่มีความหมายอะไรกับผี เสียงที่ดังขึ้นมาเลยกลายเป็นบั๊กที่คนเล่นงง
+                if (IsGhostChasing())
+                {
+                    Vector3 pos = _ghost.transform.position;
+                    if (holding) AudioManager.instance.PlayGhostOnBreathHold(pos);
+                    else         AudioManager.instance.PlayGhostOnBreathRelease(pos);
+                }
             }
         }
 
         /// <summary>
-        /// ตำแหน่งที่จะเล่นเสียงผี — ที่ตัวผีถ้ามันโผล่อยู่
-        /// ถ้าผีถูกซ่อนอยู่ (ช่วงป้ายบอกตำแหน่ง) ใช้ตำแหน่งผู้เล่นแทน จะได้ยินแน่
+        /// เพลงพื้นหลังผูกกับ "อยู่ที่ศาลาหรือเปล่า":
+        ///   ลุกออกจากศาลาครั้งแรก → เพลงพื้นหลัง Rule 4 (เล่นจนเก็บตุ๊กตาตัวที่ gongOnPickup)
+        ///   กลับมานั่งระหว่างที่เพลงผีไล่เล่นอยู่ → หยุดเพลงผี
         /// </summary>
-        Vector3 GhostSoundPosition()
+        void UpdateBackgroundMusic()
         {
-            if (_ghost != null && _ghost.gameObject.activeInHierarchy)
-                return _ghost.transform.position;
+            bool sitting = PlayerIsSitting();
 
-            return PlayerController.Instance != null
-                ? PlayerController.Instance.transform.position
-                : Vector3.zero;
+            if (!_backgroundStarted && !sitting)
+            {
+                _backgroundStarted = true;
+                AudioManager.instance.StartRule4Background();
+            }
+
+            if (_ghostBackgroundPlaying && sitting)
+            {
+                _ghostBackgroundPlaying = false;
+                AudioManager.instance.StopRule4GhostBackground();
+            }
         }
+
+        /// <summary>
+        /// เสียงบรรยากาศสุ่ม — ทุก 6-10 วิ ทอยว่าจะมีเสียงไหม (ambientStingerChance)
+        /// ตัว event ใน FMOD เป็น Multi Instrument 4 เสียง จึงได้ "สุ่ม 1 ใน 4 หรือไม่มีเลย" ตามสเปก
+        /// </summary>
+        IEnumerator AmbientStingerRoutine()
+        {
+            while (_gameplayActive)
+            {
+                yield return new WaitForSeconds(Random.Range(ambientStingerMinGap, ambientStingerMaxGap));
+                if (!_gameplayActive) yield break;
+
+                if (Random.value < ambientStingerChance)
+                    AudioManager.instance.PlayRule4AmbientStinger();
+            }
+        }
+
+        void StopAmbientStingers()
+        {
+            if (_ambientStingerRoutine == null) return;
+            StopCoroutine(_ambientStingerRoutine);
+            _ambientStingerRoutine = null;
+        }
+
+        /// <summary>ผีโผล่อยู่และอยู่ในโหมดไล่ — เงื่อนไขเดียวที่เสียงกลั้น/ปล่อยหายใจของผีควรดัง</summary>
+        bool IsGhostChasing()
+            => _ghost != null
+            && _ghost.gameObject.activeInHierarchy
+            && _ghost.Mode == GhostMode.Chase;
 
         public override void EndRule()
         {
@@ -225,7 +307,10 @@ namespace RuleSystem.Rule
         {
             _isEnding       = false;
             _dollsPlaced    = 0;
+            _dollsPickedUp  = 0;
             _carriedDoll    = null;
+            _backgroundStarted      = false;
+            _ghostBackgroundPlaying = false;
             _gameplayActive = true;
             _wasHoldingBreath = false;
 
@@ -243,7 +328,12 @@ namespace RuleSystem.Rule
 
             if (spiritHouse != null)
             {
-                spiritHouse.Setup(this, inputHandler);
+                spiritHouse.Setup(this, inputHandler);   // ResetSlots ข้างใน — ต้องเรียกก่อนเปิดช่อง
+
+                // ช่องของตุ๊กตาที่ไม่ได้หายไปในรอบนี้ โชว์ไว้เลย ศาลจะได้ดู "ขาดไปบางตัว" ไม่ใช่ว่างทั้งหมด
+                foreach (var v in _prePlacedVariants)
+                    spiritHouse.RevealSlot(v.shrineSlotIndex, v.name);
+
                 // ตำแหน่งเริ่มต้น: ห่างจากจุดที่ผู้เล่นนั่งอยู่
                 spiritHouse.RelocateTo(PickShrinePointAwayFrom(PlayerController.Instance.transform.position));
             }
@@ -256,12 +346,14 @@ namespace RuleSystem.Rule
             }
             if (stareSystem != null) stareSystem.BeginRule();
 
-            // ผีอยู่ตั้งแต่ต้น — ตุ๊กตา 2 ตัวแรกมันไปยืนเป็นป้ายบอกตำแหน่งให้
-            SpawnGhost();
-            ShowGhostMarkerAtNextDoll();
+            // ผีผูกคอโผล่ตั้งแต่ต้น — แค่แขวนให้เห็น ผีไล่จริงค่อยมาตอนเก็บตุ๊กตาตัวที่ chaseStartOnPickup
+            SpawnHangingGhost();
 
-            AudioManager.instance.StartRule4Ambient();
+            // เพลงพื้นหลังยังไม่เริ่ม — รอให้ผู้เล่นลุกออกจากศาลาก่อน (เช็คใน UpdateRule)
             AudioManager.instance.ResetHeartbeatLevel();
+
+            // เสาไฟทั่วแมพกระพริบไปตลอดจนจบกฎ — CleanupGameplay เป็นคน Stop()
+            if (lampFlicker != null) lampFlicker.Play();
 
             if (PlayerDialogueUI.instance != null)
             {
@@ -323,6 +415,12 @@ namespace RuleSystem.Rule
                 _soundQueue.Add(sounds[i % sounds.Count]);   // ถ้าตุ๊กตามากกว่าจำนวนเสียง ค่อยวนใช้ซ้ำ
                 _variantQueue.Add(variants[i]);
             }
+
+            // ที่เหลือจากการสุ่ม (เช่น มี 8 แบบ สุ่มมาหา 6) = ตุ๊กตาที่ยังอยู่บนศาลตามปกติ
+            _prePlacedVariants.Clear();
+            for (int i = dollCount; i < variants.Count; i++)
+                _prePlacedVariants.Add(variants[i]);
+
             return true;
         }
 
@@ -463,7 +561,7 @@ namespace RuleSystem.Rule
 
         /// <summary>
         /// เรียกโดย Doll ตอนผู้เล่นกด E — คืน false ถ้ายังถือตุ๊กตาตัวอื่นอยู่
-        /// เก็บได้ 1 ตัว → ศาลพระภูมิย้ายที่ทันที + ผีออกมาไล่ (ครั้งแรกเท่านั้น)
+        /// เก็บได้ → ศาลพระภูมิย้ายที่ทันที; เก็บตัวที่ chaseStartOnPickup → ผีไล่ออกมา
         /// </summary>
         public bool TryPickUpDoll(Doll doll)
         {
@@ -478,9 +576,32 @@ namespace RuleSystem.Rule
             if (spiritHouse != null)
                 spiritHouse.RelocateTo(PickShrinePointAwayFrom(doll.transform.position));
 
-            // ช่วงป้ายบอกตำแหน่ง: เก็บตุ๊กตาแล้วผีหายไปเลย ค่อยโผล่ใหม่ตอนวางเสร็จ
-            // ช่วงไล่ (ตัวที่ 3 เป็นต้นไป): ไม่ต้องทำอะไร ผีไล่อยู่แล้ว
-            if (_dollsPlaced < guidedDollCount) HideGhost();
+            _dollsPickedUp++;
+
+            // ตัวที่ 1: เริ่มสุ่มเสียงบรรยากาศ
+            if (_dollsPickedUp == ambientStingerStartOnPickup && _ambientStingerRoutine == null)
+                _ambientStingerRoutine = StartCoroutine(AmbientStingerRoutine());
+
+            // ตัวที่ 2: ฆ้อง + อีกาแตกตื่น "ผีมาแล้วนะ" แล้วเพลงพื้นหลังเงียบลง
+            if (_dollsPickedUp == gongOnPickup)
+            {
+                AudioManager.instance.PlayTempleGong();
+                AudioManager.instance.PlayCrowPanic();
+                AudioManager.instance.StopRule4Background();
+            }
+
+            // ตัวที่ chaseStartOnPickup: ผีไล่ออกมาจากจุดไกล + เพลงผีไล่ + เลิกสุ่มเสียงบรรยากาศ
+            if (_dollsPickedUp == chaseStartOnPickup && _ghost == null)
+            {
+                StopAmbientStingers();
+                AudioManager.instance.StopRule4Background();   // เผื่อ gongOnPickup ตั้งไว้มากกว่า
+
+                SpawnGhost();
+                if (_ghost != null) _ghost.BeginChase();
+
+                _ghostBackgroundPlaying = true;
+                AudioManager.instance.StartRule4GhostBackground();
+            }
 
             return true;
         }
@@ -501,84 +622,16 @@ namespace RuleSystem.Rule
                 return;
             }
 
-            // ปล่อยตุ๊กตาตัวถัดไปก่อน — ผีต้องมีตัวให้ไปยืนข้าง
             SpawnNextDoll();
 
-            if (_dollsPlaced < guidedDollCount)
+            // วางครบตามที่กำหนด → ผีผูกคอหายไป เหลือแต่เชือก (เสียงทรมานหยุดด้วย)
+            if (_dollsPlaced == hangingVanishAfterPlaced && _hangingGhost != null)
             {
-                // ยังอยู่ช่วงป้ายบอกตำแหน่ง → ผีโผล่ไปยืนข้างตุ๊กตาตัวถัดไป
-                ShowGhostMarkerAtNextDoll();
+                _hangingGhost.Vanish();
+                AudioManager.instance.StopHangingGhostSounds();
             }
-            else if (_dollsPlaced == guidedDollCount)
-            {
-                // วางครบ 2 ตัวแล้ว → spawn ผีตัวใหม่ที่จุดไกลจากผู้เล่น แล้วเริ่มไล่ยาว
-                RespawnGhostForChase();
-            }
-            else
-            {
-                // ตัวที่ 4 เป็นต้นไป — ผีไล่อยู่แล้ว แค่เร่งความเร็วขึ้น
-                if (_ghost != null) _ghost.OnDollDelivered();
-            }
-        }
-
-        /// <summary>ให้ผีโผล่ไปยืนข้างตุ๊กตาที่เหลือตัวที่ใกล้ผู้เล่นที่สุด (ป้ายบอกตำแหน่ง)</summary>
-        void ShowGhostMarkerAtNextDoll()
-        {
-            if (_ghost == null) return;
-
-            Doll target = FindNearestRemainingDoll();
-            if (target == null)
-            {
-                // ไม่เหลือตุ๊กตาให้ชี้แล้ว — ข้ามไปโหมดไล่เลย
-                RespawnGhostForChase();
-                return;
-            }
-
-            _ghost.gameObject.SetActive(true);
-            _ghost.StandBeside(target.transform, ghostMarkerOffset);
-        }
-
-        /// <summary>ซ่อนผี (ตอนผู้เล่นเก็บตุ๊กตาขึ้นมือระหว่างช่วงป้ายบอกตำแหน่ง)</summary>
-        void HideGhost()
-        {
-            if (_ghost == null) return;
-
-            _ghost.Deactivate();               // ตัดเสียง + หยุด AI ก่อนซ่อน
-            _ghost.gameObject.SetActive(false);
-        }
-
-        /// <summary>
-        /// ทิ้งผีตัวเก่าแล้ว spawn ตัวใหม่ที่จุดไกลจากผู้เล่น จากนั้นเริ่มไล่ยาวจนจบกฎ
-        /// เรียกตอนผู้เล่นวางตุ๊กตาตัวที่ guidedDollCount เสร็จ
-        /// </summary>
-        void RespawnGhostForChase()
-        {
-            if (_ghost != null)
-            {
-                _ghost.Deactivate();
-                Destroy(_ghost.gameObject);
-                _ghost = null;
-            }
-
-            SpawnGhost();
-            if (_ghost != null) _ghost.BeginChase();
-        }
-
-        /// <summary>ตุ๊กตาที่ยังไม่ถูกเก็บและอยู่ใกล้ผู้เล่นที่สุด — ใช้เป็นเป้าหมายให้ผีนำทาง</summary>
-        Doll FindNearestRemainingDoll()
-        {
-            Vector3 playerPos = PlayerController.Instance.transform.position;
-            Doll  best     = null;
-            float bestDist = float.MaxValue;
-
-            foreach (var d in _dolls)
-            {
-                if (d == null || d == _carriedDoll || !d.gameObject.activeSelf) continue;
-
-                float dist = Vector3.Distance(d.transform.position, playerPos);
-                if (dist < bestDist) { bestDist = dist; best = d; }
-            }
-            return best;
+            // ถ้าผีไล่ออกมาแล้ว → เร็วขึ้นทุกครั้งที่วางสำเร็จ
+            if (_ghost != null) _ghost.OnDollDelivered();
         }
 
         /// <summary>ผู้เล่นกลั้นหายใจไม่ไหว → ผีวิ่งเข้ามา (BreathSystem.OnForcedExhale)</summary>
@@ -624,6 +677,26 @@ namespace RuleSystem.Rule
             _ghost = Instantiate(ghostPrefab, pos, rot);
             _ghost.Init(PlayerController.Instance.transform, this);
             if (stareSystem != null) stareSystem.SetGhost(_ghost);
+        }
+
+        void SpawnHangingGhost()
+        {
+            if (hangingGhostPrefab == null)
+            {
+                Debug.LogWarning("[Rule4] ยังไม่ได้ใส่ hangingGhostPrefab — จะไม่มีผีผูกคอตอนเริ่มกฎ", this);
+                return;
+            }
+
+            if (hangingPoint == null)
+            {
+                Debug.LogError("[Rule4] ยังไม่ได้ใส่ hangingPoint — ไม่รู้จะแขวนผีตรงไหน", this);
+                return;
+            }
+
+            _hangingGhost = Instantiate(hangingGhostPrefab, hangingPoint.position, hangingPoint.rotation);
+
+            // กระดูกหัก + หายใจทรมาน ดังจากตัวผีระหว่างอนิเมชั่นผูกคอ
+            AudioManager.instance.StartHangingGhostSounds(_hangingGhost.transform);
         }
 
         Transform PickFarthestGhostPoint()
@@ -706,10 +779,16 @@ namespace RuleSystem.Rule
         void CleanupGameplay()
         {
             if (breathSystem != null) breathSystem.OnForcedExhale -= HandleForcedExhale;
+            if (lampFlicker  != null) lampFlicker.Stop();
+            StopAmbientStingers();
+            _ghostBackgroundPlaying = false;
 
             if (_ghost != null) _ghost.Deactivate();
             if (_ghost != null) Destroy(_ghost.gameObject);
             _ghost = null;
+
+            if (_hangingGhost != null) Destroy(_hangingGhost.gameObject);
+            _hangingGhost = null;
 
             ClearDolls();
 

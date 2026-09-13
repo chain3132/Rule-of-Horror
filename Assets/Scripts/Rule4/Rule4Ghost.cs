@@ -22,7 +22,7 @@ namespace Rule4
     ///
     /// ความเร็วตอน Chase (เรียงตามลำดับความสำคัญ):
     ///   ผู้เล่นกลั้นหายใจ     → หยุดอยู่กับที่ รอจนหายใจออก
-    ///   ผู้เล่นจ้องอยู่       → staredSpeed (ช้าลง แต่ไม่หยุด)
+    ///   ผู้เล่นจ้องอยู่       → staredSpeed + เบรกทันที (แทบไม่ขยับ)
     ///   หลังถูกบังคับหายใจ   → sprintSpeed ชั่วคราว (ผีวิ่งเข้ามา)
     ///   ปกติ                → chaseSpeed (+ speedGainPerDoll ต่อตุ๊กตาที่วางสำเร็จ)
     ///
@@ -36,8 +36,12 @@ namespace Rule4
         [Tooltip("ความเร็วไล่ปกติ")]
         [SerializeField] private float chaseSpeed = 1.6f;
 
-        [Tooltip("ความเร็วตอนถูกผู้เล่นจ้อง — ช้าลงแต่ไม่หยุด")]
-        [SerializeField] private float staredSpeed = 0.5f;
+        [Tooltip("ความเร็วตอนถูกผู้เล่นจ้อง — 0 = นิ่งสนิท")]
+        [SerializeField] private float staredSpeed = 0.1f;
+
+        [Tooltip("อัตราเบรกตอนถูกจ้อง — ยิ่งสูงยิ่งหยุดทันที ไม่ไถลต่อ\n" +
+                 "(acceleration ปกติของ NavMeshAgent ~8 ทำให้ผีไถลไปอีกเกือบเมตรก่อนจะช้าลง)")]
+        [SerializeField] private float staredBrake = 60f;
 
         [Tooltip("ความเร็วตอนวิ่งเข้าหาผู้เล่นหลังถูกบังคับหายใจออก")]
         [SerializeField] private float sprintSpeed = 3.2f;
@@ -74,10 +78,24 @@ namespace Rule4
 
         [Header("Animation")]
         [SerializeField] private Animator animator;
-        [Tooltip("ชื่อ bool parameter ใน Animator สำหรับท่าเดิน")]
-        [SerializeField] private string walkBoolName = "isWalk";
-        [Tooltip("ชื่อ bool parameter ใน Animator สำหรับท่าวิ่ง (เว้นว่างได้ถ้าไม่มี)")]
+
+        [Tooltip("bool ใน Animator ที่พาเข้า state Run — เปิดค้างไว้ตลอดช่วงไล่ (มีท่าเดียวคือวิ่ง)")]
         [SerializeField] private string runBoolName = "isRun";
+
+        [Tooltip("float ใน Animator ที่ใช้เป็น Speed Multiplier ของ state Run\n" +
+                 "ต้องไปติ๊ก Multiplier ที่ state Run แล้วเลือก parameter นี้ ไม่งั้นค่านี้ไม่มีผล")]
+        [SerializeField] private string runSpeedParamName = "RunSpeed";
+
+        [Tooltip("ความเร็ว (m/s) ที่คลิปวิ่งดู 'พอดี' ที่ multiplier = 1\n" +
+                 "ผีวิ่งเร็วกว่านี้ → อนิเมชั่นเร็วขึ้นตามสัดส่วน ช้ากว่า → ช้าลง")]
+        [SerializeField] private float runClipNaturalSpeed = 1.6f;
+
+        [Tooltip("multiplier ต่ำสุดตอนผีแทบไม่ขยับ (ถูกจ้อง / กลั้นหายใจ)\n" +
+                 "0 = ค้างท่าไปเลย, ~0.1 = ขยับช้าๆ ให้ดูยังมีชีวิต")]
+        [SerializeField] private float minRunAnimSpeed = 0.08f;
+
+        [Tooltip("multiplier สูงสุด — กันอนิเมชั่นวิ่งรัวจนดูพังตอน sprint")]
+        [SerializeField] private float maxRunAnimSpeed = 2.5f;
 
         // ── Runtime ──
         private NavMeshAgent          _agent;
@@ -86,6 +104,8 @@ namespace Rule4
         private GhostMode             _mode = GhostMode.Idle;
         private float                 _repathTimer;
         private float                 _baseSpeed;
+        private float                 _baseAccel;
+        private bool                  _wasStared;
         private float                 _sprintTimer;
         private bool                  _caught;
         private float                 _strideAccum;
@@ -113,6 +133,7 @@ namespace Rule4
             _player    = player;
             _rule      = rule;
             _baseSpeed = chaseSpeed;
+            _baseAccel = _agent.acceleration;
         }
 
         // ─────────────────────────── Mode ───────────────────────────
@@ -206,6 +227,7 @@ namespace Rule4
 
             UpdateChase();
             UpdateFootsteps();
+            UpdateRunAnimation();
         }
 
         /// <summary>ยืนนิ่ง หันหน้าตามผู้เล่นช้าๆ — ไม่เดิน ไม่ตรวจ killDistance</summary>
@@ -235,9 +257,20 @@ namespace Rule4
 
             bool sprinting = _sprintTimer > 0f && !IsBeingStared;
 
-            if (IsBeingStared)  _agent.speed = staredSpeed;
-            else if (sprinting) _agent.speed = sprintSpeed;
-            else                _agent.speed = _baseSpeed;
+            if (IsBeingStared)
+            {
+                _agent.speed        = staredSpeed;
+                _agent.acceleration = staredBrake;
+
+                
+                if (!_wasStared) _agent.velocity = Vector3.zero;
+            }
+            else
+            {
+                _agent.acceleration = _baseAccel;
+                _agent.speed        = sprinting ? sprintSpeed : _baseSpeed;
+            }
+            _wasStared = IsBeingStared;
 
             SetMoving(true, sprinting);
             Repath(_player.position);
@@ -265,8 +298,27 @@ namespace Rule4
 
             if (animator == null) return;
 
-            animator.SetBool(walkBoolName, moving);
-            if (!string.IsNullOrEmpty(runBoolName)) animator.SetBool(runBoolName, moving && running);
+            // มีท่าเดียวคือวิ่ง — เปิด isRun ค้างไว้ตลอดที่ยังอยู่ในโหมดไล่
+            // "หยุด" ไม่ได้สลับไปท่าอื่น แต่ให้ UpdateRunAnimation ดึง multiplier ลงจนแทบนิ่งแทน
+            // (running ไม่ได้ใช้แล้ว — ความเร็วอนิเมชั่นตามความเร็วจริงอยู่แล้ว วิ่ง sprint ก็เร็วขึ้นเอง)
+            if (!string.IsNullOrEmpty(runBoolName))
+                animator.SetBool(runBoolName, _mode == GhostMode.Chase);
+        }
+
+        /// <summary>
+        /// ผูกความเร็วอนิเมชั่นวิ่งกับความเร็วที่ผีขยับได้จริง
+        /// ใช้ velocity ไม่ใช่ agent.speed — เหตุผลเดียวกับฝีเท้า: ค่าจริงที่ขยับได้ ไม่ใช่ค่าที่ตั้งไว้
+        /// ผลคือถูกจ้อง / กลั้นหายใจ → ผีชะลอ → ท่าวิ่งช้าลงตาม ไม่ต้องมี state แยก
+        /// </summary>
+        private void UpdateRunAnimation()
+        {
+            if (animator == null || string.IsNullOrEmpty(runSpeedParamName)) return;
+            if (_agent == null || !_agent.enabled || !_agent.isOnNavMesh) return;
+
+            float speed = (IsPlayerHidden || _agent.isStopped) ? 0f : _agent.velocity.magnitude;
+            float mult  = runClipNaturalSpeed > 0f ? speed / runClipNaturalSpeed : 1f;
+
+            animator.SetFloat(runSpeedParamName, Mathf.Clamp(mult, minRunAnimSpeed, maxRunAnimSpeed));
         }
 
         /// <summary>
