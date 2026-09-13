@@ -151,6 +151,7 @@ namespace RuleSystem.Rule
         private bool       _wasHoldingBreath;
         private bool       _gameplayActive;
         private bool       _isEnding;
+        private bool       _completed;   // วางตุ๊กตาครบแล้ว — เงื่อนไขเดียวที่ยอมให้ EndRule ทำงาน
 
         /// <summary>true = ผู้เล่นถือตุ๊กตาอยู่ (เก็บได้ทีละตัว)</summary>
         public bool IsCarryingDoll => _carriedDoll != null;
@@ -203,6 +204,16 @@ namespace RuleSystem.Rule
         {
             if (!_gameplayActive) return;
 
+            // ยึดนาฬิกาไว้ทุกเฟรม — Rule 4 จบด้วยการวางตุ๊กตาครบเท่านั้น ไม่ใช่ด้วยเวลา
+            // สั่งครั้งเดียวตอน StartGameplay ไม่พอ เพราะ BlinkRoutine / EndRule ของกฎอื่น
+            // สั่ง IsPauseTime(false) ได้ทุกเมื่อ พอเวลาเดินถึง 22:40 RuleManager จะสั่งจบกฎทั้งที่ยังเก็บไม่ครบ
+            if (!TimeManager.instance.IsPaused)
+            {
+                Debug.LogWarning("[Rule4] มีคนปล่อยนาฬิกาเดินระหว่างกฎ — หยุดกลับให้แล้ว " +
+                                 "(เปิด logPauseChanges ที่ TimeManager เพื่อดูว่าใคร)", this);
+                TimeManager.instance.IsPauseTime(true);
+            }
+
             AudioManager.instance.UpdateHeartbeat();
             UpdateBackgroundMusic();
 
@@ -213,20 +224,16 @@ namespace RuleSystem.Rule
             // ผีจะหยุดรอถ้าผู้เล่นกำลังกลั้นหายใจ
             if (_ghost != null) _ghost.IsPlayerHidden = holding;
 
-            // เสียงผี 2 ตัว — ยิงครั้งเดียวตอนสถานะเปลี่ยน (edge) ไม่ใช่ทุกเฟรม
-            // ปล่อย = ครอบคลุมทั้งปล่อยเองและถูกบังคับหายใจออก
+            // เสียงผีตอน "เริ่มกลั้น" — ยิงครั้งเดียวตอนสถานะเปลี่ยน (edge) ไม่ใช่ทุกเฟรม
+            // ส่วนเสียงตอน "ปล่อย" (หัวเราะ) Rule4Ghost เป็นคนยิงเอง หลังเสียงกระดูกหักของท่าคอหัก
             if (holding != _wasHoldingBreath)
             {
                 _wasHoldingBreath = holding;
 
                 // เล่นเฉพาะตอนผีไล่อยู่จริง — ช่วงที่มันยืนเป็นป้าย / ถูกซ่อน / ยังไม่ spawn
                 // การกลั้นหายใจไม่มีความหมายอะไรกับผี เสียงที่ดังขึ้นมาเลยกลายเป็นบั๊กที่คนเล่นงง
-                if (IsGhostChasing())
-                {
-                    Vector3 pos = _ghost.transform.position;
-                    if (holding) AudioManager.instance.PlayGhostOnBreathHold(pos);
-                    else         AudioManager.instance.PlayGhostOnBreathRelease(pos);
-                }
+                if (holding && IsGhostChasing())
+                    AudioManager.instance.PlayGhostOnBreathHold(_ghost.transform.position);
             }
         }
 
@@ -284,6 +291,16 @@ namespace RuleSystem.Rule
         public override void EndRule()
         {
             if (_isEnding) return;
+
+            // RuleManager เรียก EndRule เมื่อเวลาถึง endHour — Rule 4 ไม่ยอมให้เวลาเป็นคนจบ
+            // ต้องวางตุ๊กตาครบ (CompleteRoutine) เท่านั้น ถ้ายังเล่นอยู่ให้เมินคำสั่งนี้ไป
+            if (_gameplayActive && !_completed)
+            {
+                Debug.LogWarning("[Rule4] ถูกสั่ง EndRule ทั้งที่ยังเก็บตุ๊กตาไม่ครบ — เมิน (กฎจบเมื่อวางครบเท่านั้น)", this);
+                TimeManager.instance.IsPauseTime(true);
+                return;
+            }
+
             _isEnding       = true;
             _gameplayActive = false;
 
@@ -306,6 +323,7 @@ namespace RuleSystem.Rule
         void StartGameplay()
         {
             _isEnding       = false;
+            _completed      = false;
             _dollsPlaced    = 0;
             _dollsPickedUp  = 0;
             _carriedDoll    = null;
@@ -642,6 +660,7 @@ namespace RuleSystem.Rule
 
         IEnumerator CompleteRoutine()
         {
+            _completed      = true;
             _gameplayActive = false;
 
             if (_ghost != null) _ghost.Deactivate();

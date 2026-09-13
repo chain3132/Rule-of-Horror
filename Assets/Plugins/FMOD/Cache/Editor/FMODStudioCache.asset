@@ -626,7 +626,7 @@ MonoBehaviour:
   IsOneShot: 0
   Parameters: []
   MinDistance: 1
-  MaxDistance: 20
+  MaxDistance: 40
   Length: 4000
 --- !u!114 &-7005975180499254783
 MonoBehaviour:
@@ -815,7 +815,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/BoneBroken.bank
   Name: BoneBroken
   StudioPath: bank:/New Folder/BoneBroken
-  lastModified: 639248468816852838
+  lastModified: 639248992487907845
   FileSizes:
   - Name: Desktop
     Value: 7520
@@ -1463,7 +1463,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/WomanSound.bank
   Name: WomanSound
   StudioPath: bank:/WomanSound
-  lastModified: 639248468816461767
+  lastModified: 639248992487393979
   FileSizes:
   - Name: Desktop
     Value: 56096
@@ -2311,7 +2311,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule2.bank
   Name: Rule2
   StudioPath: bank:/Rule2
-  lastModified: 639248468811366932
+  lastModified: 639248992482655427
   FileSizes:
   - Name: Desktop
     Value: 943392
@@ -2624,8 +2624,8 @@ MonoBehaviour:
     Data3: -493498185
     Data4: 2133030281
   Banks:
-  - {fileID: -4368771935535294408}
   - {fileID: 2037088329598349015}
+  - {fileID: -4368771935535294408}
   IsStream: 0
   Is3D: 1
   IsOneShot: 0
@@ -2831,10 +2831,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Radio.bank
   Name: Radio
   StudioPath: bank:/Radio
-  lastModified: 639248468804596984
+  lastModified: 639248992475909013
   FileSizes:
   - Name: Desktop
-    Value: 5685888
+    Value: 5685728
   Exists: 1
 --- !u!114 &-252490073037744945
 MonoBehaviour:
@@ -3031,7 +3031,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: 8790939570095508767}
   cacheVersion: 131858
-  cacheTime: 639248468816852838
+  cacheTime: 639248992487907845
   SerializableEventsDict:
   - key: event:/Notification
     index: 0
@@ -3240,7 +3240,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule4.bank
   Name: Rule4
   StudioPath: bank:/Rule4
-  lastModified: 639248468814602161
+  lastModified: 639248992485521708
   FileSizes:
   - Name: Desktop
     Value: 1229568
@@ -3560,7 +3560,7 @@ MonoBehaviour:
   IsOneShot: 0
   Parameters: []
   MinDistance: 1
-  MaxDistance: 20
+  MaxDistance: 40
   Length: 4000
 --- !u!114 &1145852143729352893
 MonoBehaviour:
@@ -3920,7 +3920,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639248468762928340
+  lastModified: 639248992438529184
   FileSizes:
   - Name: Desktop
     Value: 39392
@@ -3998,7 +3998,7 @@ MonoBehaviour:
   IsOneShot: 0
   Parameters: []
   MinDistance: 1
-  MaxDistance: 20
+  MaxDistance: 40
   Length: 4500
 --- !u!114 &2496473338559020010
 MonoBehaviour:
@@ -4574,7 +4574,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Action.bank
   Name: Action
   StudioPath: bank:/Action
-  lastModified: 639248468742254143
+  lastModified: 639248992437162772
   FileSizes:
   - Name: Desktop
     Value: 407488
@@ -4641,10 +4641,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/AmbienceBank.bank
   Name: AmbienceBank
   StudioPath: bank:/AmbienceBank
-  lastModified: 639248468762285393
+  lastModified: 639248992437886772
   FileSizes:
   - Name: Desktop
-    Value: 3121504
+    Value: 3121536
   Exists: 1
 --- !u!114 &4431298768614482692
 MonoBehaviour:
@@ -5278,7 +5278,7 @@ MonoBehaviour:
   IsOneShot: 0
   Parameters: []
   MinDistance: 1
-  MaxDistance: 20
+  MaxDistance: 40
   Length: 4500
 --- !u!114 &5989748789366362886
 MonoBehaviour:
@@ -5461,7 +5461,7 @@ MonoBehaviour:
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
-  MaxDistance: 20
+  MaxDistance: 9
   Length: 10008
 --- !u!114 &6728868338019665853
 MonoBehaviour:
@@ -6138,7 +6138,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639248468762943390
+  lastModified: 639248992438544236
   FileSizes:
   - Name: Desktop
     Value: 3882
@@ -6212,7 +6212,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/RunningGhost.bank
   Name: RunningGhost
   StudioPath: bank:/RunningGhost
-  lastModified: 639248468815944306
+  lastModified: 639248992486744265
   FileSizes:
   - Name: Desktop
     Value: 84704

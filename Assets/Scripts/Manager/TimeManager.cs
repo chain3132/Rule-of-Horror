@@ -12,6 +12,9 @@ namespace Manager
         public int CurrentTotalMinutes => currentHour * 60 + currentMinute;
         private bool isRuleBlockingTime;
 
+        [Tooltip("log ทุกครั้งที่มีคนสั่งหยุด/เดินนาฬิกา พร้อม stack trace — ไว้ไล่ว่าใครแอบปล่อยเวลาเดิน")]
+        [SerializeField] private bool logPauseChanges;
+
         private float timer;
 
         public static event Action<int,int> OnTimeChanged;
@@ -37,8 +40,15 @@ namespace Manager
         }
         public void IsPauseTime(bool pause)
         {
+            if (logPauseChanges && pause != isRuleBlockingTime)
+                Debug.Log($"[TimeManager] {(pause ? "หยุด" : "เดิน")}นาฬิกา @ {currentHour:00}:{currentMinute:00}\n" +
+                          new System.Diagnostics.StackTrace(1, false));
+
             isRuleBlockingTime = pause;
         }
+
+        /// <summary>true = นาฬิกาถูกสั่งหยุดอยู่</summary>
+        public bool IsPaused => isRuleBlockingTime;
         
         public bool CheckTime(int hour,int minute)
         {

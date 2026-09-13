@@ -24232,7 +24232,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 1
-  m_Color: {r: 0.69803923, g: 0.7411765, b: 0.8862745, a: 1}
+  m_Color: {r: 0.4968405, g: 0.54945135, b: 0.7264151, a: 1}
   m_Intensity: 0.6
   m_Range: 10
   m_SpotAngle: 30
@@ -67793,7 +67793,7 @@ MonoBehaviour:
   creditGroup: {fileID: 1907989535}
   creditTextTop: {fileID: 1190696937}
   creditTextBottom: {fileID: 532801489}
-  cutsceneMusicEvent: event:/CutsceneMusic
+  cutsceneMusicEvent: event:/Menu/CutsceneMusic
   endingDialogue:
   - text: Whew, took long enough! If the usual waiting spot hadn't been wrecked in
       the storm, I would have reached home to see my mom ages ago
@@ -93158,7 +93158,7 @@ MonoBehaviour:
   jumpHour: 21
   jumpMinute: 59
   showDollLines: 0
-  showOnScreenHelp: 0
+  showOnScreenHelp: 1
   statusDuration: 6
 --- !u!4 &588932630
 Transform:
@@ -110913,6 +110913,11 @@ MonoBehaviour:
   introHint: "The spirit house is empty\u2026\r\nFind the six figurines and place
     them all back."
   introHintDuration: 6
+  ambientStingerStartOnPickup: 1
+  gongOnPickup: 2
+  ambientStingerMinGap: 6
+  ambientStingerMaxGap: 10
+  ambientStingerChance: 0.75
   gameOverResetHour: 21
   gameOverResetMinute: 55
 --- !u!1001 &676065913
@@ -117729,63 +117734,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 497c1d6d1072213419142c967c099788, type: 3}
   m_PrefabInstance: {fileID: 728391606}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &728870558
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1316956221250627812, guid: 96d4412338af8fb4daddf9f598425278, type: 3}
-      propertyPath: m_Name
-      value: Rule 4 Ghost
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302522708086702072, guid: 96d4412338af8fb4daddf9f598425278, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -22.707401
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302522708086702072, guid: 96d4412338af8fb4daddf9f598425278, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 11.909
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302522708086702072, guid: 96d4412338af8fb4daddf9f598425278, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -18.136982
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302522708086702072, guid: 96d4412338af8fb4daddf9f598425278, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302522708086702072, guid: 96d4412338af8fb4daddf9f598425278, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302522708086702072, guid: 96d4412338af8fb4daddf9f598425278, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302522708086702072, guid: 96d4412338af8fb4daddf9f598425278, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302522708086702072, guid: 96d4412338af8fb4daddf9f598425278, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302522708086702072, guid: 96d4412338af8fb4daddf9f598425278, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302522708086702072, guid: 96d4412338af8fb4daddf9f598425278, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 96d4412338af8fb4daddf9f598425278, type: 3}
 --- !u!1001 &729068369
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -149773,9 +149721,9 @@ MonoBehaviour:
   - {fileID: 1513055981}
   - {fileID: 907315735}
   - {fileID: 1151090514}
-  relaxLightColor: {r: 0.69855815, g: 0.7408148, b: 0.8867924, a: 1}
+  relaxLightColor: {r: 0.49803922, g: 0.54901963, b: 0.7254902, a: 1}
   tensionLightColor: {r: 0.15174441, g: 0.16487446, b: 0.20754719, a: 1}
-  relaxSkyBoxColor: {r: 0.5019608, g: 0.45490196, b: 0.45490196, a: 1}
+  relaxSkyBoxColor: {r: 0.007843138, g: 0.019607844, b: 0.039215688, a: 1}
   tensionSkyBoxColor: {r: 0.103773594, g: 0.08859915, b: 0.08859915, a: 1}
   relaxParticle:
   - {fileID: 28933103}
@@ -247314,6 +247262,7 @@ MonoBehaviour:
   realSecondsPerGameMinute: 6
   currentHour: 12
   currentMinute: 28
+  logPauseChanges: 0
 --- !u!4 &1568684707
 Transform:
   m_ObjectHideFlags: 0
@@ -342637,4 +342586,3 @@ SceneRoots:
   - {fileID: 1018012724}
   - {fileID: 11831465}
   - {fileID: 588932630}
-  - {fileID: 728870558}

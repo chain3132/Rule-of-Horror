@@ -52,6 +52,18 @@ namespace Rule4
         [Tooltip("ความเร็วที่เพิ่มขึ้นทุกครั้งที่ผู้เล่นวางตุ๊กตาสำเร็จ (กดดันขึ้นเรื่อยๆ)")]
         [SerializeField] private float speedGainPerDoll = 0.15f;
 
+        [Header("Before Chase (คอหักก่อนพุ่ง)")]
+        [Tooltip("ก่อนออกวิ่งไล่ ผีจะยืนเล่นท่า BeforeChase + เสียงกระดูกหักนานเท่านี้ (วินาที)\n" +
+                 "ควรเท่าความยาวคลิป BeforeChase (~3.97 วิ)")]
+        [SerializeField] private float beforeChaseDuration = 3.97f;
+
+        [Tooltip("เล่นท่าคอหักตอนเริ่มไล่ครั้งแรกด้วยไหม (ปิด = เฉพาะตอนผู้เล่นปล่อยกลั้นหายใจ)")]
+        [SerializeField] private bool windupOnFirstChase = true;
+
+        [Tooltip("เสียงหัวเราะ (GhostBreathRelease) ดังหลังเสียงกระดูกหักเริ่มไปแล้วกี่วินาที\n" +
+                 "ตั้งเท่า beforeChaseDuration = หัวเราะพอดีตอนออกวิ่ง / น้อยกว่า = หัวเราะระหว่างคอหัก")]
+        [SerializeField] private float laughDelayAfterCrack = 2.5f;
+
         [Header("Marker (ยืนข้างตุ๊กตา)")]
         [Tooltip("ความเร็วในการหันหน้าตามผู้เล่นตอนยืนเป็นป้าย (0 = ไม่หัน)")]
         [SerializeField] private float markerTurnSpeed = 1.5f;
@@ -108,6 +120,9 @@ namespace Rule4
         private bool                  _wasStared;
         private float                 _sprintTimer;
         private bool                  _caught;
+        private float                 _windupTimer;   // > 0 = กำลังเล่นท่าคอหัก ยังไม่ออกวิ่ง
+        private float                 _laughTimer;    // > 0 = รอถึงเวลาหัวเราะหลังกระดูกหัก
+        private bool                  _wasHidden;     // เฟรมก่อนผู้เล่นกลั้นหายใจอยู่ไหม — ไว้จับจังหวะ "ปล่อย"
         private float                 _strideAccum;
         private float                 _lastFootstepTime = -999f;
 
@@ -189,6 +204,38 @@ namespace Rule4
         {
             _mode        = GhostMode.Chase;
             _repathTimer = 0f;
+            _wasHidden   = IsPlayerHidden;
+
+            if (windupOnFirstChase) StartWindup();
+        }
+
+        /// <summary>
+        /// ท่าคอหักก่อนพุ่ง — ผียืนนิ่ง เล่น BeforeChase + เสียงกระดูกหัก แล้วค่อยออกวิ่ง
+        /// เรียกตอนเริ่มไล่ครั้งแรก และทุกครั้งที่ผู้เล่นปล่อยการกลั้นหายใจ
+        /// </summary>
+        private void StartWindup()
+        {
+            if (beforeChaseDuration <= 0f) return;
+
+            _windupTimer = beforeChaseDuration;
+            SetMoving(false, false);
+            if (animator != null && !string.IsNullOrEmpty(runBoolName)) animator.SetBool(runBoolName, false);
+
+            AudioManager.instance.PlayBonesCrack(transform.position);
+
+            // หัวเราะตามหลังกระดูกหัก — ไม่ยิงพร้อมกัน ไม่งั้นสองเสียงตีกันฟังไม่ออก
+            _laughTimer = Mathf.Max(0.01f, laughDelayAfterCrack);
+        }
+
+        /// <summary>นับถอยหลังแล้วยิงเสียงหัวเราะ — ถูกยกเลิกถ้าผู้เล่นกลั้นหายใจซ้ำก่อนถึงเวลา</summary>
+        private void UpdateLaugh()
+        {
+            if (_laughTimer <= 0f) return;
+
+            _laughTimer -= Time.deltaTime;
+            if (_laughTimer > 0f) return;
+
+            AudioManager.instance.PlayGhostOnBreathRelease(transform.position);
         }
 
         /// <summary>เร่งความเร็วพื้นฐานหลังผู้เล่นวางตุ๊กตาได้ 1 ตัว</summary>
@@ -207,7 +254,9 @@ namespace Rule4
         /// <summary>หยุดผีถาวร (จบกฎ / ตาย / ถูกซ่อน) — ตัดเสียงและ AI ทั้งหมด</summary>
         public void Deactivate()
         {
-            _mode = GhostMode.Idle;
+            _mode        = GhostMode.Idle;
+            _laughTimer  = 0f;
+            _windupTimer = 0f;
             SetMoving(false, false);
         }
 
@@ -223,35 +272,58 @@ namespace Rule4
                 return;
             }
 
-            if (_sprintTimer > 0f) _sprintTimer -= Time.deltaTime;
+            // ช่วงคอหักไม่นับเวลา sprint — ให้ไปพุ่งเต็มๆ หลังออกวิ่งจริง
+            if (_sprintTimer > 0f && _windupTimer <= 0f) _sprintTimer -= Time.deltaTime;
 
             UpdateChase();
+            UpdateLaugh();
             UpdateFootsteps();
             UpdateRunAnimation();
         }
 
         /// <summary>ยืนนิ่ง หันหน้าตามผู้เล่นช้าๆ — ไม่เดิน ไม่ตรวจ killDistance</summary>
-        private void UpdateMarker()
-        {
-            if (markerTurnSpeed <= 0f) return;
+        private void UpdateMarker() => FaceTowards(_player.position, markerTurnSpeed);
 
-            Vector3 dir = _player.position - transform.position;
+        private void FaceTowards(Vector3 target, float turnSpeed)
+        {
+            if (turnSpeed <= 0f) return;
+
+            Vector3 dir = target - transform.position;
             dir.y = 0f;
             if (dir.sqrMagnitude < 0.01f) return;
 
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
                 Quaternion.LookRotation(dir),
-                Time.deltaTime * markerTurnSpeed
+                Time.deltaTime * turnSpeed
             );
         }
 
         private void UpdateChase()
         {
-            // ผู้เล่นกลั้นหายใจ → ผีมองไม่เห็น หยุดรออยู่กับที่
+            // ผู้เล่นกลั้นหายใจ → ผีมองไม่เห็น หยุดรออยู่กับที่ (ยกเลิกท่าคอหักที่ค้างอยู่ด้วย)
             if (IsPlayerHidden)
             {
+                _windupTimer = 0f;
+                _laughTimer  = 0f;   // กลั้นซ้ำก่อนถึงคิวหัวเราะ → ไม่หัวเราะ (ผีไม่เห็นเราแล้ว)
+                _wasHidden   = true;
                 SetMoving(false, false);
+                return;
+            }
+
+            // เพิ่งปล่อยกลั้นหายใจ → ไม่พุ่งทันที เล่นท่าคอหักก่อน
+            if (_wasHidden)
+            {
+                _wasHidden = false;
+                StartWindup();
+            }
+
+            // กำลังคอหัก → ยืนนิ่ง หันหน้าหาผู้เล่น รอจนจบท่า
+            if (_windupTimer > 0f)
+            {
+                _windupTimer -= Time.deltaTime;
+                SetMoving(false, false);
+                FaceTowards(_player.position, markerTurnSpeed);
                 return;
             }
 
@@ -302,7 +374,7 @@ namespace Rule4
             // "หยุด" ไม่ได้สลับไปท่าอื่น แต่ให้ UpdateRunAnimation ดึง multiplier ลงจนแทบนิ่งแทน
             // (running ไม่ได้ใช้แล้ว — ความเร็วอนิเมชั่นตามความเร็วจริงอยู่แล้ว วิ่ง sprint ก็เร็วขึ้นเอง)
             if (!string.IsNullOrEmpty(runBoolName))
-                animator.SetBool(runBoolName, _mode == GhostMode.Chase);
+                animator.SetBool(runBoolName, _mode == GhostMode.Chase && _windupTimer <= 0f);
         }
 
         /// <summary>
