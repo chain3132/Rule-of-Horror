@@ -103,6 +103,9 @@
 		<property name="volume">
 			<value>-5</value>
 		</property>
+		<property name="looping">
+			<value>true</value>
+		</property>
 		<property name="playlistMode">
 			<value>1</value>
 		</property>
