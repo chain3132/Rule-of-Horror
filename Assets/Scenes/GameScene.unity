@@ -51321,7 +51321,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rule4.BreathSystem
   inputHandler: {fileID: 1279262527}
-  cameraTransform: {fileID: 1568439027}
+  cameraTransform: {fileID: 1568439077}
   holdBreathHandVisual: {fileID: 0}
   handAnimator: {fileID: 0}
   handHoldingBoolName: isHolding
@@ -181620,6 +181620,11 @@ Transform:
 --- !u!4 &1568439027 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2456424521835959478, guid: 0430bf69dfe141540a5a76e7e687ccd2, type: 3}
+  m_PrefabInstance: {fileID: 1568439025}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1568439077 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8476259144140611630, guid: 0430bf69dfe141540a5a76e7e687ccd2, type: 3}
   m_PrefabInstance: {fileID: 1568439025}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1568479805

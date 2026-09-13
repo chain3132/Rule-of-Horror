@@ -23,6 +23,8 @@ namespace Rule4
     /// ความเร็วตอน Chase (เรียงตามลำดับความสำคัญ):
     ///   ผู้เล่นกลั้นหายใจ     → หยุดอยู่กับที่ รอจนหายใจออก
     ///   ผู้เล่นจ้องอยู่       → staredSpeed + เบรกทันที (แทบไม่ขยับ)
+    ///   ผู้เล่นกลั้นหายใจ     → มองไม่เห็นผู้เล่น เดินเร่ร่อน (isWalk) ไม่ไล่ ไม่ฆ่า
+    ///   ปล่อยกลั้น            → ท่าคอหัก + Bones Crack → หัวเราะ → วิ่งไล่ต่อ
     ///   หลังถูกบังคับหายใจ   → sprintSpeed ชั่วคราว (ผีวิ่งเข้ามา)
     ///   ปกติ                → chaseSpeed (+ speedGainPerDoll ต่อตุ๊กตาที่วางสำเร็จ)
     ///
@@ -64,6 +66,23 @@ namespace Rule4
                  "ตั้งเท่า beforeChaseDuration = หัวเราะพอดีตอนออกวิ่ง / น้อยกว่า = หัวเราะระหว่างคอหัก")]
         [SerializeField] private float laughDelayAfterCrack = 2.5f;
 
+        [Tooltip("DEBUG: log ตำแหน่ง Y ของ root / ตัวโมเดล ทุก 0.5 วิ ระหว่างท่าคอหัก — ไว้ไล่ว่าอะไรลอย")]
+        [SerializeField] private bool debugWindupHeight;
+
+        [Header("Wander (ผู้เล่นกลั้นหายใจ)")]
+        [Tooltip("ความเร็วเดินเร่ร่อนตอนมองไม่เห็นผู้เล่น")]
+        [SerializeField] private float wanderSpeed = 0.8f;
+
+        [Tooltip("สุ่มจุดเดินภายในรัศมีนี้รอบตัวผี")]
+        [SerializeField] private float wanderRadius = 6f;
+
+        [Tooltip("เปลี่ยนจุดเดินใหม่ทุกกี่วินาที (หรือเมื่อถึงจุดแล้ว)")]
+        [SerializeField] private float wanderRepathInterval = 3f;
+
+        [Tooltip("ห้ามเลือกจุดที่ 'เข้าหาผู้เล่น' — ค่ายิ่งต่ำยิ่งหันหนี (1 = ไม่สน, 0 = ห้ามมุ่งหน้าหาเลย, -0.3 = ต้องเบี่ยงออกชัดๆ)")]
+        [Range(-1f, 1f)]
+        [SerializeField] private float wanderMaxDotToPlayer = 0.2f;
+
         [Header("Marker (ยืนข้างตุ๊กตา)")]
         [Tooltip("ความเร็วในการหันหน้าตามผู้เล่นตอนยืนเป็นป้าย (0 = ไม่หัน)")]
         [SerializeField] private float markerTurnSpeed = 1.5f;
@@ -94,6 +113,9 @@ namespace Rule4
         [Tooltip("bool ใน Animator ที่พาเข้า state Run — เปิดค้างไว้ตลอดช่วงไล่ (มีท่าเดียวคือวิ่ง)")]
         [SerializeField] private string runBoolName = "isRun";
 
+        [Tooltip("bool ใน Animator ที่พาเข้า state Walk — เปิดตอนผู้เล่นกลั้นหายใจแล้วผีเดินเร่ร่อน")]
+        [SerializeField] private string walkBoolName = "isWalk";
+
         [Tooltip("float ใน Animator ที่ใช้เป็น Speed Multiplier ของ state Run\n" +
                  "ต้องไปติ๊ก Multiplier ที่ state Run แล้วเลือก parameter นี้ ไม่งั้นค่านี้ไม่มีผล")]
         [SerializeField] private string runSpeedParamName = "RunSpeed";
@@ -109,6 +131,16 @@ namespace Rule4
         [Tooltip("multiplier สูงสุด — กันอนิเมชั่นวิ่งรัวจนดูพังตอน sprint")]
         [SerializeField] private float maxRunAnimSpeed = 2.5f;
 
+        [Tooltip("float ใน Animator ที่ใช้เป็น Speed Multiplier ของ state Walk (ตอนเดินเร่ร่อน)")]
+        [SerializeField] private string walkSpeedParamName = "WalkSpeed";
+
+        [Tooltip("ความเร็ว (m/s) ที่คลิปเดินดู 'พอดี' ที่ multiplier = 1 — ควรใกล้ wanderSpeed")]
+        [SerializeField] private float walkClipNaturalSpeed = 0.8f;
+
+        [Tooltip("ช่วง multiplier ของท่าเดิน — min กันค้างท่าตอนเลี้ยว/ชนกำแพง")]
+        [SerializeField] private float minWalkAnimSpeed = 0.2f;
+        [SerializeField] private float maxWalkAnimSpeed = 1.6f;
+
         // ── Runtime ──
         private NavMeshAgent          _agent;
         private Transform             _player;
@@ -123,6 +155,7 @@ namespace Rule4
         private float                 _windupTimer;   // > 0 = กำลังเล่นท่าคอหัก ยังไม่ออกวิ่ง
         private float                 _laughTimer;    // > 0 = รอถึงเวลาหัวเราะหลังกระดูกหัก
         private bool                  _wasHidden;     // เฟรมก่อนผู้เล่นกลั้นหายใจอยู่ไหม — ไว้จับจังหวะ "ปล่อย"
+        private float                 _wanderTimer;   // นับถอยหลังถึงจะสุ่มจุดเดินใหม่
         private float                 _strideAccum;
         private float                 _lastFootstepTime = -999f;
 
@@ -219,7 +252,7 @@ namespace Rule4
 
             _windupTimer = beforeChaseDuration;
             SetMoving(false, false);
-            if (animator != null && !string.IsNullOrEmpty(runBoolName)) animator.SetBool(runBoolName, false);
+            SetAnimState(run: false, walk: false);   // → BeforeChase
 
             AudioManager.instance.PlayBonesCrack(transform.position);
 
@@ -284,6 +317,8 @@ namespace Rule4
         /// <summary>ยืนนิ่ง หันหน้าตามผู้เล่นช้าๆ — ไม่เดิน ไม่ตรวจ killDistance</summary>
         private void UpdateMarker() => FaceTowards(_player.position, markerTurnSpeed);
 
+        private float _nextHeightLog;
+
         private void FaceTowards(Vector3 target, float turnSpeed)
         {
             if (turnSpeed <= 0f) return;
@@ -301,13 +336,16 @@ namespace Rule4
 
         private void UpdateChase()
         {
-            // ผู้เล่นกลั้นหายใจ → ผีมองไม่เห็น หยุดรออยู่กับที่ (ยกเลิกท่าคอหักที่ค้างอยู่ด้วย)
+            // ผู้เล่นกลั้นหายใจ → ผีมองไม่เห็น เดินเร่ร่อนไปเรื่อย ไม่สนทิศผู้เล่น (ยกเลิกท่าคอหักที่ค้างอยู่ด้วย)
             if (IsPlayerHidden)
             {
                 _windupTimer = 0f;
                 _laughTimer  = 0f;   // กลั้นซ้ำก่อนถึงคิวหัวเราะ → ไม่หัวเราะ (ผีไม่เห็นเราแล้ว)
-                _wasHidden   = true;
-                SetMoving(false, false);
+
+                if (!_wasHidden) _wanderTimer = 0f;   // เพิ่งเริ่มกลั้น → สุ่มจุดใหม่ทันที
+                _wasHidden = true;
+
+                UpdateWander();
                 return;
             }
 
@@ -355,6 +393,54 @@ namespace Rule4
             }
         }
 
+        /// <summary>
+        /// เดินเร่ร่อนตอนมองไม่เห็นผู้เล่น — สุ่มจุดบน NavMesh รอบตัว โดยไม่เลือกจุดที่มุ่งหน้าหาผู้เล่น
+        /// ให้ผู้เล่นรู้สึกว่า "มันหาเราอยู่" แต่ไม่ใช่การไล่ (ไม่ตรวจ killDistance ในโหมดนี้)
+        /// </summary>
+        private void UpdateWander()
+        {
+            if (_agent == null || !_agent.enabled || !_agent.isOnNavMesh) return;
+
+            _agent.speed        = wanderSpeed;
+            _agent.acceleration = _baseAccel;
+            _agent.isStopped    = false;
+            SetAnimState(run: false, walk: true);
+
+            _wanderTimer -= Time.deltaTime;
+            bool arrived = !_agent.pathPending && _agent.remainingDistance <= Mathf.Max(_agent.stoppingDistance, 0.3f);
+            if (_wanderTimer > 0f && !arrived) return;
+
+            _wanderTimer = wanderRepathInterval;
+
+            if (TryPickWanderPoint(out Vector3 point))
+                _agent.SetDestination(point);
+        }
+
+        private bool TryPickWanderPoint(out Vector3 point)
+        {
+            Vector3 toPlayer = _player.position - transform.position;
+            toPlayer.y = 0f;
+            toPlayer.Normalize();
+
+            // ลองหลายครั้ง — ทิ้งจุดที่พาเข้าหาผู้เล่น และจุดที่ไม่อยู่บน NavMesh
+            for (int i = 0; i < 10; i++)
+            {
+                Vector2 r   = Random.insideUnitCircle.normalized * Random.Range(wanderRadius * 0.4f, wanderRadius);
+                Vector3 dir = new Vector3(r.x, 0f, r.y);
+
+                if (Vector3.Dot(dir.normalized, toPlayer) > wanderMaxDotToPlayer) continue;
+
+                if (NavMesh.SamplePosition(transform.position + dir, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+                {
+                    point = hit.position;
+                    return true;
+                }
+            }
+
+            point = transform.position;
+            return false;
+        }
+
         private void Repath(Vector3 destination)
         {
             _repathTimer -= Time.deltaTime;
@@ -368,13 +454,17 @@ namespace Rule4
         {
             if (_agent != null && _agent.enabled && _agent.isOnNavMesh) _agent.isStopped = !moving;
 
-            if (animator == null) return;
+            // ท่าไล่มีท่าเดียวคือวิ่ง — isRun เปิดค้างตลอดโหมดไล่ (ยกเว้นช่วงคอหัก)
+            // ความเร็วอนิเมชั่นตามความเร็วจริงอยู่แล้ว วิ่ง sprint ก็เร็วขึ้นเอง
+            SetAnimState(run: _mode == GhostMode.Chase && _windupTimer <= 0f, walk: false);
+        }
 
-            // มีท่าเดียวคือวิ่ง — เปิด isRun ค้างไว้ตลอดที่ยังอยู่ในโหมดไล่
-            // "หยุด" ไม่ได้สลับไปท่าอื่น แต่ให้ UpdateRunAnimation ดึง multiplier ลงจนแทบนิ่งแทน
-            // (running ไม่ได้ใช้แล้ว — ความเร็วอนิเมชั่นตามความเร็วจริงอยู่แล้ว วิ่ง sprint ก็เร็วขึ้นเอง)
-            if (!string.IsNullOrEmpty(runBoolName))
-                animator.SetBool(runBoolName, _mode == GhostMode.Chase && _windupTimer <= 0f);
+        /// <summary>เซ็ต bool ของ Animator ทีเดียวทั้งคู่ — กัน isRun/isWalk เปิดพร้อมกันแล้ว state ตีกัน</summary>
+        private void SetAnimState(bool run, bool walk)
+        {
+            if (animator == null) return;
+            if (!string.IsNullOrEmpty(runBoolName))  animator.SetBool(runBoolName,  run);
+            if (!string.IsNullOrEmpty(walkBoolName)) animator.SetBool(walkBoolName, walk);
         }
 
         /// <summary>
@@ -384,13 +474,24 @@ namespace Rule4
         /// </summary>
         private void UpdateRunAnimation()
         {
-            if (animator == null || string.IsNullOrEmpty(runSpeedParamName)) return;
+            if (animator == null) return;
             if (_agent == null || !_agent.enabled || !_agent.isOnNavMesh) return;
 
-            float speed = (IsPlayerHidden || _agent.isStopped) ? 0f : _agent.velocity.magnitude;
-            float mult  = runClipNaturalSpeed > 0f ? speed / runClipNaturalSpeed : 1f;
+            float speed = _agent.isStopped ? 0f : _agent.velocity.magnitude;
 
-            animator.SetFloat(runSpeedParamName, Mathf.Clamp(mult, minRunAnimSpeed, maxRunAnimSpeed));
+            // ท่าวิ่ง — ตอนกลั้นหายใจผีอยู่ state Walk ค่านี้ไม่มีผล แต่ดึงลงไว้ให้ตอนกลับมา Run ไม่กระตุก
+            if (!string.IsNullOrEmpty(runSpeedParamName))
+            {
+                float runMult = runClipNaturalSpeed > 0f ? (IsPlayerHidden ? 0f : speed) / runClipNaturalSpeed : 1f;
+                animator.SetFloat(runSpeedParamName, Mathf.Clamp(runMult, minRunAnimSpeed, maxRunAnimSpeed));
+            }
+
+            // ท่าเดิน — ผูกกับความเร็วจริงตอนเดินเร่ร่อน วิธีเดียวกับ Run
+            if (!string.IsNullOrEmpty(walkSpeedParamName))
+            {
+                float walkMult = walkClipNaturalSpeed > 0f ? speed / walkClipNaturalSpeed : 1f;
+                animator.SetFloat(walkSpeedParamName, Mathf.Clamp(walkMult, minWalkAnimSpeed, maxWalkAnimSpeed));
+            }
         }
 
         /// <summary>
@@ -412,7 +513,7 @@ namespace Rule4
             // ต้องเช็คสถานะ "ถูกสั่งหยุด" ตรงๆ ห้ามพึ่ง velocity อย่างเดียว
             // NavMeshAgent.isStopped = true ไม่ได้ทำให้ velocity เป็น 0 ทันที มันค่อยๆ ชะลอ
             // และบางกรณีค้างค่าไว้ ทำให้ฝีเท้ายังลงต่อทั้งที่ผีหยุดแล้ว
-            if (IsPlayerHidden || _agent.isStopped)
+            if (_agent.isStopped)
             {
                 _strideAccum = 0f;
                 return;

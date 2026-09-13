@@ -1,0 +1,13 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GhostRule4_Chase
+  m_Controller: {fileID: 9100000, guid: 09a66af9caba3dc48b48d0d7fffce410, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: d75ac2d124dee124abb8eaaa1420a017, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 92b009a895e8492198c76b9b49747b11, type: 2}

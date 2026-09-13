@@ -93,14 +93,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4930cacfa5a4f584b982f4bee2143922, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rule4.Rule4Ghost
-  chaseSpeed: 4
+  chaseSpeed: 5.5
   staredSpeed: 0.1
   staredBrake: 60
   sprintSpeed: 3.2
   sprintDuration: 4
-  speedGainPerDoll: 0.5
+  speedGainPerDoll: 1.5
+  beforeChaseDuration: 3.97
+  windupOnFirstChase: 1
+  laughDelayAfterCrack: 2.5
+  debugWindupHeight: 1
   markerTurnSpeed: 1.5
-  killDistance: 1.4
+  killDistance: 3
   strideLength: 0.9
   footstepMinSpeed: 0.05
   minFootstepInterval: 0.18
@@ -297,7 +301,11 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: 3eec5440724c39640a7c07349cd36504, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 09a66af9caba3dc48b48d0d7fffce410, type: 2}
+      objectReference: {fileID: 22100000, guid: 2520be84a7ed4ec2836cf7907c39bb44, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 3eec5440724c39640a7c07349cd36504, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

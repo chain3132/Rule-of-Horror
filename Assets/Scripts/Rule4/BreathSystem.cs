@@ -93,6 +93,8 @@ namespace Rule4
 
         private ColorAdjustments _colorAdjustments;
         private DepthOfField     _depthOfField;
+        private bool             _addedDepthOfField;   // เราเป็นคนเติม DoF เข้า profile เอง → ต้องถอดคืน
+        private VolumeProfile    _profileWithDof;
         private bool             _profileCached;
         private float            _origSaturation;
         private float            _origFocusDistance;
@@ -314,8 +316,30 @@ namespace Rule4
 
             VolumeProfile profile = GameModeController.instance.globalVolume.profile;
             profile.TryGet(out _colorAdjustments);
-            profile.TryGet(out _depthOfField);
             profile.TryGet(out _vignette);
+
+            // TensionProfile ไม่มี Depth Of Field override → TryGet ได้ null → ไม่เบลอเลยเงียบๆ
+            // ถ้าไม่มีก็ใส่ให้ชั่วคราวตอน runtime แล้วถอดคืนตอน Restore (ไม่ให้ค้างใน asset)
+            if (!profile.TryGet(out _depthOfField))
+            {
+                _depthOfField = profile.Add<DepthOfField>(overrides: false);
+                _depthOfField.mode.overrideState          = true;
+                _depthOfField.mode.value                  = DepthOfFieldMode.Bokeh;
+                _depthOfField.focusDistance.overrideState = true;
+                _depthOfField.aperture.overrideState      = true;
+                _depthOfField.focalLength.overrideState   = true;
+                _depthOfField.focalLength.value           = 50f;
+                _depthOfField.focusDistance.value         = 10f;   // ไกล = ชัดทั้งภาพ
+                _depthOfField.aperture.value              = 5.6f;
+                _addedDepthOfField = true;
+                _profileWithDof    = profile;
+            }
+            else
+            {
+                // มี override อยู่แล้วแต่ถ้าปิดเช็คบ็อกซ์ไว้ก็ไม่เบลอ — เปิดให้เฉพาะช่องที่เราคุม
+                _depthOfField.focusDistance.overrideState = true;
+                _depthOfField.aperture.overrideState      = true;
+            }
 
             _origSaturation    = _colorAdjustments != null ? _colorAdjustments.saturation.value    : 0f;
             _origPostExposure  = _colorAdjustments != null ? _colorAdjustments.postExposure.value  : 0f;
@@ -347,6 +371,17 @@ namespace Rule4
                 _vignette.intensity.value  = _origVignetteIntensity;
                 _vignette.smoothness.value = _origVignetteSmoothness;
             }
+
+            // ถอด DoF ที่เราเติมเองออก — VolumeProfile เป็น asset ถ้าทิ้งไว้จะไปโผล่ในไฟล์ถาวร
+            if (_addedDepthOfField && _profileWithDof != null && _depthOfField != null)
+            {
+                _profileWithDof.Remove<DepthOfField>();
+                Destroy(_depthOfField);
+            }
+            _addedDepthOfField = false;
+            _profileWithDof    = null;
+            _depthOfField      = null;
+
             _profileCached = false; // ให้ cache ใหม่รอบหน้า (ค่าอาจเปลี่ยนตาม mode)
         }
 
