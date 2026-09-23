@@ -56,6 +56,12 @@ namespace Player
         private Vector2 _externalLookForce;
         private Vector3 _beforeSitPosition;
         private Quaternion _beforeSitRotation;
+
+        // จำกัดมุมหัน (yaw) รอบทิศที่กำหนด — Rule 5 ใช้ล็อกให้มองได้แค่ 180° ตอนจับสายสิญจน์
+        private bool  _yawLimitActive;
+        private float _yawLimitCenter;
+        private float _yawLimitHalf;
+
         public bool IsSitting() => _isSitting;
 
 
@@ -273,6 +279,73 @@ namespace Player
             else
             {
                 transform.Rotate(Vector3.up * mouseX);
+                if (_yawLimitActive) ClampYawToLimit();
+            }
+        }
+
+        /// <summary>
+        /// จำกัดให้หันซ้าย/ขวาได้ไม่เกิน halfAngle องศาจาก centerYaw (world, องศา)
+        /// Rule 5 เรียกทุกเฟรมด้วยทิศของสายสิญจน์ตรงที่ผู้เล่นยืนอยู่ → มองไปข้างหลังไม่ได้
+        /// ไม่มีผลตอนนั่ง (ตอนนั่งมี sittingLookLimit อยู่แล้ว) — ต้องเรียก ClearYawLimit() เองเมื่อเลิกใช้
+        /// </summary>
+        public void SetYawLimit(float centerYaw, float halfAngle)
+        {
+            _yawLimitActive = true;
+            _yawLimitCenter = centerYaw;
+            _yawLimitHalf   = Mathf.Max(0f, halfAngle);
+            if (!_isSitting) ClampYawToLimit();
+        }
+
+        public void ClearYawLimit() => _yawLimitActive = false;
+
+        private void ClampYawToLimit()
+        {
+            float delta = Mathf.DeltaAngle(_yawLimitCenter, transform.eulerAngles.y);
+            if (Mathf.Abs(delta) <= _yawLimitHalf) return;
+
+            delta = Mathf.Clamp(delta, -_yawLimitHalf, _yawLimitHalf);
+            transform.rotation = Quaternion.Euler(0f, _yawLimitCenter + delta, 0f);
+        }
+
+        /// <summary>
+        /// ขยับตัวละครด้วย delta โลกตรงๆ (แนวราบ) — ใช้โดยระบบที่คุมตำแหน่งเอง เช่น เดินตามสายสิญจน์ใน Rule 5
+        /// ทำงานได้แม้ SetMovement(false) อยู่ (นั่นคือจุดประสงค์: ปิดเดินอิสระ แล้วให้ระบบภายนอกพาเดินแทน)
+        /// แรงโน้มถ่วงยังทำงานตามปกติจาก ApplyGravity()
+        /// </summary>
+        public void MoveExternal(Vector3 worldDelta, bool walking)
+        {
+            if (_characterController == null || !_characterController.enabled) return;
+
+            worldDelta.y = 0f;
+            _characterController.Move(worldDelta);
+            if (animator != null) animator.SetBool("walk", walking);
+        }
+
+        /// <summary>
+        /// หันตัว + กล้องไปมองจุดในโลกทันที (ทั้ง yaw และ pitch) — ใช้บังคับให้ผู้เล่นมองผีตอน jumpscare
+        /// ควรเรียกหลัง SetLook(false) ไม่งั้น Look() จะดึงกลับตามเมาส์ในเฟรมถัดไป
+        /// </summary>
+        public void LookAtWorldPoint(Vector3 point)
+        {
+            if (cameraPivot == null) return;
+
+            Vector3 dir = point - cameraPivot.position;
+            if (dir.sqrMagnitude < 0.0001f) return;
+
+            float yaw   = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+            float pitch = -Mathf.Asin(Mathf.Clamp(dir.normalized.y, -1f, 1f)) * Mathf.Rad2Deg;
+            _xRotation  = Mathf.Clamp(pitch, -lookClamp, lookClamp);
+
+            if (_isSitting)
+            {
+                _sittingYaw = Mathf.Clamp(Mathf.DeltaAngle(transform.eulerAngles.y, yaw),
+                                          -sittingLookLimit, sittingLookLimit);
+                cameraPivot.localRotation = Quaternion.Euler(_xRotation, _sittingYaw, 0f);
+            }
+            else
+            {
+                transform.rotation        = Quaternion.Euler(0f, yaw, 0f);
+                cameraPivot.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
             }
         }
         public void SetExternalLookForce(Vector2 force)

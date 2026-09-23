@@ -44,6 +44,12 @@ public class AudioManager : MonoBehaviour
     private bool _rule4BackgroundOk, _rule4BackgroundGhostOk, _rule4HangingBreathOk;
     private bool _rule4HoldBreathOk, _rule4BreathRecoverOk;
 
+    // ── Rule 5 sounds ──
+    private EventInstance rule5Background; // เพลงพื้นหลังตลอดกฎ
+    private EventInstance rule5Ching;      // ฉิ่ง loop — ดังอยู่ = ห้ามเดิน (Rule5 เป็นคน start/stop ตามเวลาที่สุ่ม)
+    private EventInstance rule5Untangle;   // loop ตอนกด E ค้างแก้สายพัน
+    private bool _rule5BackgroundOk, _rule5ChingOk, _rule5UntangleOk;
+
     Coroutine radioCoroutine;
     
     [SerializeField] private Transform radioTransform;
@@ -115,6 +121,10 @@ public class AudioManager : MonoBehaviour
         _rule4HoldBreathOk      = TryCreate("event:/Rule4/HoldBreath",            out rule4HoldBreath);
         _rule4BreathRecoverOk = TryCreate("event:/Rule4/BreathRecover", out rule4BreathRecover);
 
+        _rule5BackgroundOk = TryCreate("event:/Rule5/Background Rule 5", out rule5Background);
+        _rule5ChingOk      = TryCreate("event:/Rule5/Ching",             out rule5Ching);
+        _rule5UntangleOk   = TryCreate("event:/Rule5/Untangle",          out rule5Untangle);
+
         // event พวกนี้โค้ดเรียกด้วย PlayOneShot — ถ้าใน FMOD ทำเป็น loop ไว้จะเสียงทับกันไม่หยุด
         foreach (string oneShotPath in new[]
                  {
@@ -128,6 +138,15 @@ public class AudioManager : MonoBehaviour
                      "event:/Rule4/Temple Gong",
                      "event:/Rule4/Crow Panic",
                      "event:/Rule4/Bones Crack",
+                     "event:/Rule5/Bell",
+                     "event:/Rule5/GhostChingChap",
+                     "event:/Rule5/GrabThread",
+                     "event:/Rule5/ReleaseThread",
+                     "event:/Rule5/UntangleDone",
+                     "event:/Rule5/GhostChaseStart",
+                     "event:/Rule5/Jumpscare",
+                     "event:/Rule5/HeartAttack",
+                     "event:/Rule5/Complete",
                  })
         {
             WarnIfLooping(oneShotPath);
@@ -545,6 +564,90 @@ public class AudioManager : MonoBehaviour
     /// <summary>เสียงวางตุ๊กตาที่ศาล (one-shot)</summary>
     public void PlayDollPlace()
         => SafeOneShot("event:/Rule4/Drop Doll", ListenerPos);
+
+    // ─────────── Rule 5 Sounds ───────────
+
+    /// <summary>เพลงพื้นหลัง Rule 5 — เริ่มตอนเริ่มเล่นจริง หยุดตอนจบ/ตาย</summary>
+    public void StartRule5Background()
+    {
+        if (!_rule5BackgroundOk) return;
+        rule5Background.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        rule5Background.start();
+    }
+
+    public void StopRule5Background()
+    {
+        if (!_rule5BackgroundOk) return;
+        rule5Background.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+    }
+
+    /// <summary>ระฆังวัด 1 ครั้ง — ผู้เล่นต้องนับเอง</summary>
+    public void PlayRule5Bell()
+        => SafeOneShot("event:/Rule5/Bell", ListenerPos);
+
+    /// <summary>ฉิ่งเริ่มดัง (loop) — ระหว่างนี้ผู้เล่นต้องหยุดเดิน</summary>
+    public void StartRule5Ching()
+    {
+        if (!_rule5ChingOk) return;
+        rule5Ching.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        rule5Ching.start();
+    }
+
+    public void StopRule5Ching()
+    {
+        if (!_rule5ChingOk) return;
+        rule5Ching.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+    }
+
+    /// <summary>ผีกระซิบ "ฉิ่ง ฉับ" (3D ที่ตัวผี)</summary>
+    public void PlayRule5GhostChingChap(Vector3 position)
+        => SafeOneShot("event:/Rule5/GhostChingChap", position);
+
+    public void PlayRule5GrabThread()
+        => SafeOneShot("event:/Rule5/GrabThread", ListenerPos);
+
+    public void PlayRule5ReleaseThread()
+        => SafeOneShot("event:/Rule5/ReleaseThread", ListenerPos);
+
+    /// <summary>เสียงมือแกะสายพัน (loop ระหว่างกด E ค้าง)</summary>
+    public void StartRule5Untangle()
+    {
+        if (!_rule5UntangleOk) return;
+        rule5Untangle.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        rule5Untangle.start();
+    }
+
+    public void StopRule5Untangle()
+    {
+        if (!_rule5UntangleOk) return;
+        rule5Untangle.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+    }
+
+    public void PlayRule5UntangleDone()
+        => SafeOneShot("event:/Rule5/UntangleDone", ListenerPos);
+
+    /// <summary>ผีออกวิ่งไล่ (ระฆังครบแล้วผู้เล่นปล่อยมือ)</summary>
+    public void PlayRule5GhostChaseStart(Vector3 position)
+        => SafeOneShot("event:/Rule5/GhostChaseStart", position);
+
+    /// <summary>ผีโผล่หน้าแล้วพุ่งเข้ามา</summary>
+    public void PlayRule5Jumpscare(Vector3 position)
+        => SafeOneShot("event:/Rule5/Jumpscare", position);
+
+    /// <summary>หัวใจวาย (ปล่อยสายเกิน 15 วิ)</summary>
+    public void PlayRule5HeartAttack()
+        => SafeOneShot("event:/Rule5/HeartAttack", ListenerPos);
+
+    /// <summary>จบกฎสำเร็จ</summary>
+    public void PlayRule5Complete()
+        => SafeOneShot("event:/Rule5/Complete", ListenerPos);
+
+    public void StopAllRule5Sounds()
+    {
+        StopRule5Background();
+        StopRule5Ching();
+        StopRule5Untangle();
+    }
 
     // ─────────── Rule 2 Sounds ───────────
 

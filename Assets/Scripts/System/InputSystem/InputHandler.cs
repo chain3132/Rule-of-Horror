@@ -112,8 +112,14 @@ namespace InputSystem
         /// <summary>Returns the raw look (mouse delta) value from the New Input System.</summary>
         public Vector2 GetLookInput() => _lookAction.ReadValue<Vector2>();
 
+        /// <summary>ค่าเดินดิบ (WASD) — Rule 5 อ่านเอาแค่แกน y (W) ตอนเดินตามสายสิญจน์</summary>
+        public Vector2 GetMoveInput() => _moveAction != null ? _moveAction.ReadValue<Vector2>() : Vector2.zero;
+
         /// <summary>true ตราบใดที่ยังกดคลิกขวาค้างอยู่ (Rule 4 — จ้องผีแบบกดค้าง)</summary>
         public bool IsRightClickHeld() => _rightClickAction != null && _rightClickAction.IsPressed();
+
+        /// <summary>true ตราบใดที่ยังกด E ค้างอยู่ (Rule 5 — แก้สายสิญจน์ที่พันกัน)</summary>
+        public bool IsInteractHeld() => _interactAction != null && _interactAction.IsPressed();
 
         /// <summary>true ตราบใดที่ยังกดปุ่มกลั้นหายใจค้างอยู่ (Left Shift — Rule 4)</summary>
         public bool IsHoldBreathHeld() => _holdBreathAction != null && _holdBreathAction.IsPressed();
