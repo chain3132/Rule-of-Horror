@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{80fe2a2b-4521-4d6c-9889-28fbd73262d8}">
+		<property name="assetPath">
+			<value>Rule 5/GhostChingChap.mp3</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.6559999999999999</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{f291b90f-c9c6-4a6b-8814-509dcaf86871}</destination>
+		</relationship>
+	</object>
+</objects>

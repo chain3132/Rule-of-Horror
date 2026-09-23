@@ -495,6 +495,7 @@ MonoBehaviour:
   - Radio
   - Rule2
   - Rule4
+  - Rule5
   - RunningGhost
   - WomanSound
   BanksToLoad: []
