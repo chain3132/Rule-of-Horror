@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{c65ced48-8c49-43b3-8103-e1463407f90e}">
+		<property name="assetPath">
+			<value>GhostScream.mp3</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>2.1360000000000001</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{f291b90f-c9c6-4a6b-8814-509dcaf86871}</destination>
+		</relationship>
+	</object>
+</objects>
