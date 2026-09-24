@@ -17,30 +17,33 @@ namespace Rule5
     /// (ฉายตำแหน่ง transform ลงบนเส้น) แล้วกันช่วง ±blockRadius เมตร
     ///
     /// ย้ายสิ่งกีดขวาง = ลาก GameObject นี้ ไม่ต้องกรอกระยะเอง
+    ///
+    /// Bind() คำนวณตำแหน่งบนเส้นแต่ "ไม่โชว์ตัว" — ThreadObstacleSpawner เป็นคนเลือกจังหวะ Reveal()
+    /// ตอนที่จุดนั้นอยู่นอกสายตาผู้เล่น จึงไม่มีใครเห็นมันโผล่
     /// </summary>
     public class ThreadObstacle : MonoBehaviour
     {
         [SerializeField] private ObstacleKind kind = ObstacleKind.Detour;
 
-        [Tooltip("ช่วงที่กั้นบนเส้น (เมตร) — วัดจากจุดที่ฉายลงเส้นออกไปทั้งสองข้าง")]
+        [Tooltip("Blocked span along the thread, in metres, measured both ways from where this object projects onto the line.")]
         [SerializeField] private float blockRadius = 1.2f;
 
-        [Tooltip("Detour: ผ้าแดงจุดจับใหม่จะอยู่เลยขอบสิ่งกีดขวางไปอีกเท่านี้ (เมตร)")]
+        [Tooltip("Detour only: how far past the blocked span the re-grab cloth is placed, in metres.")]
         [SerializeField] private float regrabMargin = 0.6f;
 
-        [Tooltip("Untangle: กด E ค้างกี่วินาทีถึงจะแก้หลุด")]
+        [Tooltip("Untangle only: seconds of holding E needed to free the thread.")]
         [SerializeField] private float untangleDuration = 3f;
 
-        [Tooltip("ผ่านแล้วให้เก็บสิ่งกีดขวางออกเลยไหม (เหมาะกับ Untangle — สายที่พันกันหายไป)")]
+        [Tooltip("Remove the obstacle once the player is past it. Suits Untangle, where the tangle should disappear.")]
         [SerializeField] private bool clearAfterPass = false;
 
-        [Tooltip("โมเดล/เอฟเฟกต์ที่จะปิดเมื่อ clearAfterPass — เว้นว่าง = ปิดทั้ง GameObject นี้")]
+        [Tooltip("Model or effect to hide when the obstacle is shown/hidden. Leave empty to toggle this whole GameObject.")]
         [SerializeField] private GameObject visual;
 
-        [Tooltip("ข้อความตอนเดินมาชน (เว้นว่างได้)")]
+        [Tooltip("Hint shown when the player walks into it. Optional.")]
         [SerializeField] private string hint = "มีอะไรขวางอยู่… ต้องปล่อยมือแล้วเดินอ้อม";
 
-        [Tooltip("ไกลจากเส้นเกินนี้ถือว่าไม่ได้อยู่บนสาย — จะถูกข้าม + เตือนใน Console")]
+        [Tooltip("Further than this from the thread counts as not on it: the obstacle is skipped and a warning is logged.")]
         [SerializeField] private float maxDistanceFromThread = 3f;
 
         public ObstacleKind Kind             => kind;
@@ -56,8 +59,17 @@ namespace Rule5
 
         public bool IsValid { get; private set; }
 
-        /// <summary>หาตำแหน่งตัวเองบนเส้น — Walker เรียกตอนเริ่มกฎ</summary>
-        public void Bind(SacredThreadPath path)
+        /// <summary>true = โชว์ตัวอยู่แล้ว (ถูก Reveal แล้ว)</summary>
+        public bool IsRevealed { get; private set; }
+
+        /// <summary>จุดกลางของสิ่งกีดขวางบนเส้น (เมตรจากต้นสาย)</summary>
+        public float BlockCenter => (BlockStart + BlockEnd) * 0.5f;
+
+        /// <summary>
+        /// หาตำแหน่งตัวเองบนเส้น — ไม่โชว์ตัว ต้องเรียก Reveal() ต่อ
+        /// คืน false ถ้าวางไว้ห่างเส้นเกินไป (ตัวนั้นจะถูกข้าม)
+        /// </summary>
+        public bool Bind(SacredThreadPath path)
         {
             Cleared = false;
             float center = path.ClosestDistanceAlong(transform.position, out float off);
@@ -66,21 +78,37 @@ namespace Rule5
             if (!IsValid)
             {
                 Debug.LogWarning($"[Rule5] สิ่งกีดขวาง '{name}' อยู่ห่างสาย {off:0.0} ม. (เกิน {maxDistanceFromThread}) — ข้าม", this);
-                return;
+                return false;
             }
 
             BlockStart = center - blockRadius;
             BlockEnd   = center + blockRadius;
+            return true;
+        }
+
+        /// <summary>โชว์ตัว — Spawner เรียกตอนจุดนี้อยู่นอกสายตาผู้เล่น</summary>
+        public void Reveal()
+        {
+            IsRevealed = true;
             if (visual != null) visual.SetActive(true); else gameObject.SetActive(true);
+        }
+
+        /// <summary>ซ่อนตัว (ยังไม่ถึงคิวโผล่ / เคลียร์ตอนจบกฎ) — ยังกั้นทางไม่ได้</summary>
+        public void Hide()
+        {
+            IsRevealed = false;
+            if (visual != null) visual.SetActive(false); else gameObject.SetActive(false);
         }
 
         /// <summary>ผู้เล่นผ่านไปแล้ว (อ้อมสำเร็จ / แก้หลุด)</summary>
         public void MarkPassed()
         {
             Cleared = true;
-            if (!clearAfterPass) return;
-            if (visual != null) visual.SetActive(false); else gameObject.SetActive(false);
+            if (clearAfterPass) Hide();
         }
+
+        /// <summary>true = กั้นทางอยู่จริงตอนนี้ (โชว์ตัวแล้ว + ยังไม่ถูกผ่าน + วางถูกที่)</summary>
+        public bool IsBlocking => IsValid && IsRevealed && !Cleared;
 
         private void OnDrawGizmos()
         {

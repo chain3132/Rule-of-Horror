@@ -7,84 +7,71 @@ using Random = UnityEngine.Random;
 
 namespace RuleSystem.Rule
 {
-    /// <summary>
-    /// กฎข้อ 5 — "ปิดตาแล้วเดินตามสายสิญจน์ ฟังระฆังให้ครบ 3 ครั้ง"
-    ///
-    /// Flow:
-    ///   1. ผู้เล่นนั่ง → blink เข้า Tension → สายสิญจน์ + ผ้าแดง + ผีโผล่ที่จุดเริ่มสาย, มือผีบังจอ
-    ///   2. เดินไปกด E ที่ผ้าแดงจุดเริ่ม → ตัวถูกล็อกกับสาย เดินได้แค่ W มองได้ 180°
-    ///      ผีเดินเคียงข้างไปด้วย
-    ///   3. ระหว่างเดิน (จับอยู่ + ขยับ) ระฆังจะดังเป็นระยะ — ดังได้เกิน 3 ผู้เล่นต้องนับเอง
-    ///      เสียงฉิ่งดังเมื่อไรต้องหยุดเดินจนกว่าจะเงียบ (เดินต่อ = ตาย)
-    ///      เสียงผีกระซิบ "ฉิ่ง ฉับ" สุ่มระหว่างจับสาย
-    ///   4. ปล่อยมือ (E) ได้ แต่ต้องกลับมาจับที่ผ้าแดงจุดเดิม
-    ///      ปล่อยแล้วไม่จับ: หัวใจเต้น slow 0-5 / fast 5-10 / critical 10-15 / 15+ หัวใจวายตาย
-    ///      ผีค่อยๆ เดินเข้าหา ใกล้เกิน = ตาย
-    ///   5. ระฆังครบ 3 → ปล่อยมือ → ผีวิ่งไล่ทันที → วิ่งไปนั่งที่ศาลา
-    ///      นั่งตอนระฆัง == 3 พอดี → จบกฎ / ไม่ใช่ 3 → ผีโผล่หน้าพุ่งเข้ามา (jumpscare) ตาย
-    ///   สิ่งกีดขวางบนสาย (ThreadObstacle) บังคับให้ต้องปล่อยมือ / กด E ค้างแก้สายพัน
-    /// </summary>
+    
     public class Rule5 : RuleBase
     {
         // ── References ──────────────────────────────────────────────────
         [Header("References")]
         [SerializeField] private SacredThreadWalker walker;
 
-        [Tooltip("มือผีที่บังหน้าจอ (UI/GameObject ที่ปิดไว้) — เปิดตลอดช่วงเล่นกฎ")]
+        [Tooltip("Reveals obstacles one at a time while the player cannot see them. Optional: leave empty for a run with no obstacles.")]
+        [SerializeField] private ThreadObstacleSpawner obstacleSpawner;
+
+        [Tooltip("Ghost hand covering the screen (a UI object or GameObject left disabled). Enabled for the whole rule.")]
         [SerializeField] private GameObject ghostHandOverlay;
 
         // ── Ghost ───────────────────────────────────────────────────────
         [Header("Ghost")]
         [SerializeField] private Rule5Ghost ghostPrefab;
 
-        [Tooltip("จุดยืนรอตอนเริ่มกฎ — เว้นว่าง = ยืนอีกฝั่งของสายตรงจุดเริ่ม")]
+        [Tooltip("Where the ghost waits when the rule starts. Leave empty to have it stand across the thread from the start point.")]
         [SerializeField] private Transform ghostWaitPoint;
 
-        [Tooltip("ถ้าเว้น ghostWaitPoint: ยืนห่างจากสายไปอีกฝั่งกี่เมตร")]
+        [Tooltip("Used when ghostWaitPoint is empty: how far across the thread the ghost stands, in metres.")]
         [SerializeField] private float ghostWaitSideOffset = 1.5f;
 
-        [Tooltip("เริ่มกฎแล้วผู้เล่นไม่ยอมมาจับสายภายในกี่วินาที ผีจะเริ่มเดินเข้าหา")]
+        [Tooltip("Seconds after the rule starts, with the player never grabbing the thread, before the ghost starts walking towards them.")]
         [SerializeField] private float approachIfNotGrabbedAfter = 25f;
 
         // ── Bells ───────────────────────────────────────────────────────
-        [Header("Bells (ระฆัง)")]
-        [Tooltip("ต้องได้ยินกี่ครั้งพอดีถึงจะไปนั่งจบกฎได้")]
+        [Header("Bells")]
+        [Tooltip("Exact number of bells the player must hear before sitting down finishes the rule.")]
         [SerializeField] private int requiredBells = 3;
 
-        [Tooltip("เว้นช่วงระหว่างระฆังแต่ละครั้ง (วินาทีที่ 'เดินอยู่' — ปล่อยมือ/หยุดเดิน เวลาไม่นับ)")]
+        [Tooltip("Gap between bells, in seconds of walking. Time spent stopped or off the thread does not count.")]
         [SerializeField] private float bellMinGap = 10f;
         [SerializeField] private float bellMaxGap = 20f;
 
-        [Tooltip("ระฆังครั้งแรกดังหลังเริ่มเดินกี่วินาที")]
+        [Tooltip("Seconds of walking before the first bell rings.")]
         [SerializeField] private float firstBellDelay = 8f;
 
-        [Tooltip("นับเวลาระฆังเฉพาะตอนขยับ (ติ๊ก) หรือแค่จับสายก็นับ (ไม่ติ๊ก)")]
+        [Tooltip("Ticked: bell time only counts while actually moving. Unticked: holding the thread is enough.")]
         [SerializeField] private bool bellsRequireWalking = true;
 
         // ── Ching ───────────────────────────────────────────────────────
-        [Header("Ching (ฉิ่ง — ต้องหยุดเดิน)")]
+        [Header("Ching (the player must stop walking)")]
         [SerializeField] private float chingMinGap = 12f;
         [SerializeField] private float chingMaxGap = 25f;
 
-        [Tooltip("ฉิ่งดังนานกี่วินาที (สุ่มในช่วง)")]
+        [Tooltip("How long the ching keeps ringing, in seconds, picked at random in this range.")]
         [SerializeField] private float chingMinDuration = 3f;
         [SerializeField] private float chingMaxDuration = 6f;
 
-        [Tooltip("เดินระหว่างฉิ่งดังได้นานสุดกี่วินาที (รวม) ก่อนโดนลงโทษ — เผื่อเวลาตอบสนอง")]
+        [Tooltip("Total seconds of walking allowed while the ching rings before it counts as a violation. Reaction-time grace.")]
         [SerializeField] private float chingMoveGrace = 0.5f;
 
-        [Tooltip("เดินตอนฉิ่งดัง → ตาย (ติ๊ก) / ไม่ติ๊ก = แค่ผีจะเข้ามาประชิด 1 ก้าว (ยังไม่ทำ — ตายอย่างเดียวไปก่อน)")]
+        [Tooltip("Ticked: walking while the ching rings kills the player. Unticked would only bring the ghost one step closer, which is not implemented yet.")]
         [SerializeField] private bool chingViolationKills = true;
 
         // ── Ghost voice ─────────────────────────────────────────────────
-        [Header("Ghost Voice (ฉิ่ง ฉับ)")]
+        [Header("Ghost Voice (the whispered \"ching chap\")")]
         [SerializeField] private float voiceMinGap = 8f;
         [SerializeField] private float voiceMaxGap = 18f;
         [Range(0f, 1f)]
         [SerializeField] private float voiceChance = 0.7f;
 
         // ── Heartbeat after release ─────────────────────────────────────
-        [Header("Heartbeat (ปล่อยมือแล้วไม่กลับมาจับ)")]
+        [Header("Heartbeat (let go and never come back)")]
         [SerializeField] private float heartSlowUntil     = 5f;
         [SerializeField] private float heartFastUntil     = 10f;
         [SerializeField] private float heartCriticalUntil = 15f;   // เกินนี้ = หัวใจวาย
@@ -92,7 +79,7 @@ namespace RuleSystem.Rule
         // ── Hints ───────────────────────────────────────────────────────
         [Header("Hints")]
         [TextArea(2, 4)]
-        [SerializeField] private string introHint = "จับสายสิญจน์แล้วเดินไป…\nฟังเสียงระฆังให้ครบ {0} ครั้ง แล้วกลับมานั่ง";
+        [SerializeField] private string introHint = "";
         [SerializeField] private float  introHintDuration = 6f;
 
         // ── Game Over ───────────────────────────────────────────────────
@@ -121,7 +108,47 @@ namespace RuleSystem.Rule
         /// <summary>จำนวนระฆังที่ดังไปแล้วในรอบนี้ (debug / UI)</summary>
         public int BellCount => _bellCount;
 
+        /// <summary>จำนวนระฆังที่ต้องได้ยินพอดีถึงจะนั่งจบกฎได้</summary>
+        public int RequiredBells => requiredBells;
+
         public bool IsChingActive => _chingActive;
+
+        /// <summary>true = กฎกำลังเล่นอยู่จริง (ผ่าน blink เข้ามาแล้ว ยังไม่ตาย/ยังไม่จบ)</summary>
+        public bool IsGameplayActive => _gameplayActive;
+
+        /// <summary>ผีของรอบนี้ (null ถ้ายังไม่ spawn) — ใช้โดย Rule5DevSkip</summary>
+        public Rule5Ghost ActiveGhost => _ghost;
+
+        /// <summary>ตัวเดินสาย — ใช้โดย Rule5DevSkip อ่านสถานะจับ/ระยะ</summary>
+        public SacredThreadWalker Walker => walker;
+
+        /// <summary>ตัวปล่อยสิ่งกีดขวาง (null ถ้าไม่ได้ใส่) — ใช้โดย Rule5DevSkip</summary>
+        public ThreadObstacleSpawner ObstacleSpawner => obstacleSpawner;
+
+        // ── Debug hooks (Rule5DevSkip เท่านั้น) ──────────────────────────
+
+        /// <summary>DEBUG: ทำให้ระฆังดังทันที 1 ครั้ง โดยไม่ต้องรอเวลา</summary>
+        public void DebugRingBell()
+        {
+            if (!_gameplayActive) return;
+            _bellTimer = Random.Range(bellMinGap, bellMaxGap);
+            _bellCount++;
+            AudioManager.instance.PlayRule5Bell();
+            Debug.Log($"[Rule5] (debug) ระฆังครั้งที่ {_bellCount}", this);
+        }
+
+        /// <summary>DEBUG: เปิด/ปิดเสียงฉิ่งด้วยมือ (เปิดแล้วค้างไว้จนกดปิด)</summary>
+        public void DebugToggleChing()
+        {
+            if (!_gameplayActive) return;
+
+            if (_chingActive) { StopChing(); return; }
+
+            _chingRemaining = 9999f;
+            _chingViolation = 0f;
+            _chingActive    = true;
+            AudioManager.instance.StartRule5Ching();
+        }
 
         // ════════════════════════════════════════════════════════════════
         #region Lifecycle
@@ -235,6 +262,7 @@ namespace RuleSystem.Rule
             walker.OnGrabbed  += HandleGrabbed;
             walker.OnReleased += HandleReleased;
             walker.BeginRule();
+            if (obstacleSpawner != null) obstacleSpawner.BeginRule();
 
             SpawnGhost();
 
@@ -425,6 +453,15 @@ namespace RuleSystem.Rule
                 pos = walker.Thread.GetGroundPoint(0f) - walker.Thread.GetRight(0f) * ghostWaitSideOffset;
             else pos = PlayerController.Instance.transform.position + PlayerController.Instance.transform.forward * 3f;
 
+            // ต้องดึงจุด spawn เข้า NavMesh ก่อน Instantiate — NavMeshAgent ที่เกิดนอก NavMesh
+            // จะสร้างไม่สำเร็จ ("Failed to create agent because there is no valid NavMesh")
+            // แล้วทุก property ของมันจะ throw รัวทุกเฟรมหลังจากนั้น
+            if (UnityEngine.AI.NavMesh.SamplePosition(pos, out var hit, 12f, UnityEngine.AI.NavMesh.AllAreas))
+                pos = hit.position;
+            else
+                Debug.LogWarning($"[Rule5] ไม่เจอ NavMesh ใกล้จุด spawn ผี ({pos}) — " +
+                                 "ผีจะเดินด้วย Transform (ไม่หลบสิ่งกีดขวาง) ควร bake NavMesh คลุมเส้นสายสิญจน์", this);
+
             _ghost = Instantiate(ghostPrefab, pos, Quaternion.identity);
             _ghost.Init(PlayerController.Instance.transform, walker, OnGhostCaughtPlayer);
             _ghost.EnterWait(pos);
@@ -451,6 +488,7 @@ namespace RuleSystem.Rule
             if (_ghost != null) _ghost.Deactivate();
             StopChing();
             if (walker != null) walker.EndRuleCleanup();
+            if (obstacleSpawner != null) obstacleSpawner.EndRuleCleanup();
             if (ghostHandOverlay != null) ghostHandOverlay.SetActive(false);
             AudioManager.instance.ResetHeartbeatLevel();
             AudioManager.instance.PlayRule5Complete();
@@ -570,6 +608,8 @@ namespace RuleSystem.Rule
                 walker.OnReleased -= HandleReleased;
                 walker.EndRuleCleanup();
             }
+
+            if (obstacleSpawner != null) obstacleSpawner.EndRuleCleanup();
 
             if (_ghost != null) { _ghost.Deactivate(); Destroy(_ghost.gameObject); }
             _ghost = null;

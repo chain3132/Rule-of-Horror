@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using InputSystem;
 using Player;
 using UnityEngine;
@@ -23,24 +24,24 @@ namespace Rule5
         [SerializeField] private SacredThreadPath thread;
         [SerializeField] private InputHandler     inputHandler;
 
-        [Tooltip("มือที่โผล่มาจับสาย (GameObject ที่ปิดไว้) — เปิดตอนจับ ปิดตอนปล่อย เว้นว่างได้")]
+        [Tooltip("Hand visual shown while holding the thread (a GameObject left disabled). Enabled on grab, disabled on release. Optional.")]
         [SerializeField] private GameObject holdHandVisual;
 
         [Header("Grab")]
-        [Tooltip("ต้องอยู่ห่างผ้าแดงไม่เกินกี่เมตรถึงกด E จับได้")]
+        [Tooltip("Maximum distance from the red cloth, in metres, at which E can grab the thread.")]
         [SerializeField] private float grabRadius = 2f;
 
-        [Tooltip("ผู้เล่นยืนห่างจากเส้นไปทางขวาของทิศเดินกี่เมตร (ไม่ให้ยืนทับสาย)")]
+        [Tooltip("How far the player stands to the right of the thread, in metres, so they do not stand on top of it.")]
         [SerializeField] private float playerSideOffset = 0.5f;
 
-        [Tooltip("ตอนเพิ่งจับ ตัวจะถูกดูดเข้าหาตำแหน่งบนสายด้วยความเร็วนี้ (m/s) — ไม่วาร์ป")]
+        [Tooltip("Speed (m/s) the player is pulled to their spot on the thread after grabbing. Not a teleport.")]
         [SerializeField] private float snapSpeed = 6f;
 
         [Header("Walk")]
-        [Tooltip("ความเร็วเดินตามสาย (m/s)")]
+        [Tooltip("Walking speed along the thread (m/s).")]
         [SerializeField] private float walkSpeed = 1.6f;
 
-        [Tooltip("มองซ้าย/ขวาได้ข้างละกี่องศาจากทิศสาย (90 = รวม 180°)")]
+        [Tooltip("Look limit to each side of the thread direction, in degrees (90 = 180 degrees total).")]
         [SerializeField] private float lookHalfAngle = 90f;
 
         [Header("Hints")]
@@ -51,7 +52,9 @@ namespace Rule5
 
         // ── Runtime ──
         private PlayerController _player;
-        private ThreadObstacle[] _obstacles = Array.Empty<ThreadObstacle>();
+
+        // สิ่งกีดขวางที่ "โผล่มาแล้ว" เท่านั้น — ThreadObstacleSpawner ทยอยเติมเข้ามาระหว่างเล่น
+        private readonly List<ThreadObstacle> _obstacles = new List<ThreadObstacle>();
 
         private bool  _active;
         private bool  _holding;
@@ -77,6 +80,9 @@ namespace Rule5
 
         /// <summary>ตำแหน่งผู้เล่นบนเส้น (เมตรจากจุดเริ่ม)</summary>
         public float Distance => _distance;
+
+        /// <summary>ระยะบนเส้นของ "จุดที่ต้องไปกด E จับ" ตอนนี้ (ต้นสาย หรือผ้าแดงที่ปล่อยไว้)</summary>
+        public float GrabPointDistance => _everGrabbed ? _regrabDistance : 0f;
 
         public SacredThreadPath Thread => thread;
 
@@ -110,9 +116,9 @@ namespace Rule5
             thread.ShowEndpointMarkers();
             thread.HideReleaseMarker();
 
-            // รวมตัวที่ถูกปิดไปตอนรอบก่อน (clearAfterPass) ด้วย — Bind จะเปิดกลับให้
-            _obstacles = FindObjectsByType<ThreadObstacle>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            foreach (var o in _obstacles) o.Bind(thread);
+            // ไม่ไปกวาดหา ThreadObstacle เองแล้ว — ThreadObstacleSpawner เป็นคนตัดสินว่าตัวไหนโผล่เมื่อไร
+            // (ตัวที่ผู้ทำฉากอยาก "มีตั้งแต่แรก" ให้ใส่ใน spawner ช่อง revealAtStart)
+            _obstacles.Clear();
 
             if (inputHandler != null)
             {
@@ -120,6 +126,28 @@ namespace Rule5
                 inputHandler.OnInteractPressed += HandleInteract;
             }
             if (holdHandVisual != null) holdHandVisual.SetActive(false);
+        }
+
+        /// <summary>
+        /// เพิ่มสิ่งกีดขวางที่เพิ่งโผล่เข้าสู่ระบบกั้นทาง — ThreadObstacleSpawner เรียก
+        /// (ถ้ายังไม่ได้ Bind ให้ Bind ที่นี่ จะได้ไม่มีตัวที่ IsValid = false หลุดเข้ามา)
+        /// </summary>
+        public void RegisterObstacle(ThreadObstacle obstacle)
+        {
+            if (obstacle == null || thread == null || _obstacles.Contains(obstacle)) return;
+            if (!obstacle.IsValid && !obstacle.Bind(thread)) return;
+            _obstacles.Add(obstacle);
+        }
+
+        /// <summary>จำนวนสิ่งกีดขวางที่ยังกั้นทางอยู่ (debug HUD)</summary>
+        public int BlockingObstacleCount
+        {
+            get
+            {
+                int n = 0;
+                foreach (var o in _obstacles) if (o != null && o.IsBlocking) n++;
+                return n;
+            }
         }
 
         /// <summary>ปิดระบบ + คืนสภาพผู้เล่น — เรียกตอนจบกฎ / ตาย</summary>
@@ -235,7 +263,7 @@ namespace Rule5
         {
             foreach (var o in _obstacles)
             {
-                if (o == null || !o.IsValid || o.Cleared) continue;
+                if (o == null || !o.IsBlocking) continue;
 
                 // อยู่ในช่วงกั้นอยู่แล้ว (เช่น หยุดตรงขอบพอดี แล้ว float เลื่อนเข้าไปนิดเดียว) → ห้ามก้าว
                 float blockLen = o.BlockEnd - o.BlockStart;
@@ -331,8 +359,7 @@ namespace Rule5
 
         private bool IsNearGrabPoint()
         {
-            float   d   = _everGrabbed ? _regrabDistance : 0f;
-            Vector3 p   = thread.GetGroundPoint(d);
+            Vector3 p   = thread.GetGroundPoint(GrabPointDistance);
             Vector3 dif = _player.transform.position - p; dif.y = 0f;
             return dif.magnitude <= grabRadius;
         }

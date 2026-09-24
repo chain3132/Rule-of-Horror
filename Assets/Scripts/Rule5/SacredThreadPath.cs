@@ -20,29 +20,33 @@ namespace Rule5
     public class SacredThreadPath : MonoBehaviour
     {
         [Header("Shape")]
-        [Tooltip("ปลายสายวนกลับมาต่อจุดเริ่มไหม (สายรอบศาลา = ติ๊ก) — ถ้าไม่ติ๊ก เดินถึงปลายแล้วมือจะหลุดเอง")]
+        [Tooltip("Close the thread back to the first point (tick for a loop around the pavilion). Unticked: the player lets go automatically at the far end.")]
         [SerializeField] private bool loop = true;
 
-        [Tooltip("ยกเส้นขึ้นจากจุดที่วางกี่เมตร (ให้อยู่ระดับมือ) — ตัวจุดลูกวางที่พื้นได้เลย")]
+        [Tooltip("Height above each waypoint the thread is drawn at, in metres (hand level). Waypoints themselves can sit on the ground.")]
         [SerializeField] private float threadHeight = 1.1f;
 
         [Header("Visual")]
-        [Tooltip("LineRenderer ที่ใช้วาดสาย — เว้นว่างได้ จะหาที่ตัวเองหรือสร้างให้")]
+        [Tooltip("LineRenderer used to draw the thread. Leave empty to reuse the one on this object, or have one added automatically.")]
         [SerializeField] private LineRenderer line;
 
         [SerializeField] private float threadWidth = 0.02f;
 
-        [Header("Markers (ผ้าแดง)")]
-        [Tooltip("ผ้าแดงจุดเริ่ม — โผล่ตอนเริ่มกฎ ตรงจุด P0")]
+        [Tooltip("Hide the thread in play mode until the rule starts, so it is not visible during Relax. " +
+                 "The line still shows in the Scene view while editing.")]
+        [SerializeField] private bool hideUntilRuleStarts = true;
+
+        [Header("Markers (red cloth)")]
+        [Tooltip("Red cloth at the start point. Spawned when the rule begins, at waypoint P0.")]
         [SerializeField] private GameObject startMarkerPrefab;
 
-        [Tooltip("ผ้าแดงจุดจบ — ใช้เฉพาะสายที่ไม่ loop")]
+        [Tooltip("Red cloth at the end point. Only used when the thread is not a loop.")]
         [SerializeField] private GameObject endMarkerPrefab;
 
-        [Tooltip("ผ้าแดงจุดที่ปล่อยมือ — ย้ายไปตรงที่ผู้เล่นปล่อย ต้องกลับมาจับตรงนี้")]
+        [Tooltip("Red cloth marking where the player let go. It moves to that spot, and the thread can only be grabbed again there.")]
         [SerializeField] private GameObject releaseMarkerPrefab;
 
-        [Tooltip("ผ้าแดงทุกผืนแขวนสูงจากพื้นเท่านี้ (ไม่รวม threadHeight) — 0 = แขวนที่ระดับสาย")]
+        [Tooltip("Extra height for every cloth marker, on top of threadHeight. 0 = hangs level with the thread.")]
         [SerializeField] private float markerHeightOffset = 0f;
 
         // ── Runtime cache ──
@@ -71,6 +75,17 @@ namespace Rule5
         {
             EnsureLine();
             _dirty = true;
+
+            // ตอนเล่นจริงต้องซ่อนไว้ก่อน — ไม่งั้นเส้นสายสิญจน์โชว์ตั้งแต่โหมด Relax
+            // (edit mode ปล่อยให้เห็นตามปกติ ไม่งั้นจัดวางจุดไม่ได้)
+            if (Application.isPlaying && hideUntilRuleStarts) SetThreadVisible(false);
+        }
+
+        /// <summary>เปิด/ปิดเส้นสาย — Walker เรียกตอนเริ่ม/จบกฎ</summary>
+        public void SetThreadVisible(bool visible)
+        {
+            EnsureLine();
+            if (line != null) line.enabled = visible;
         }
 
         private void OnValidate()
@@ -297,6 +312,7 @@ namespace Rule5
         public void ShowEndpointMarkers()
         {
             EnsureBuilt();
+            SetThreadVisible(true);
             if (_startMarker == null && startMarkerPrefab != null)
                 _startMarker = Instantiate(startMarkerPrefab, MarkerRoot);
             PlaceMarker(_startMarker, 0f);
@@ -337,6 +353,8 @@ namespace Rule5
         /// <summary>ลบผ้าแดงทั้งหมด — ตอนจบกฎ / ตาย</summary>
         public void ClearMarkers()
         {
+            if (hideUntilRuleStarts) SetThreadVisible(false);
+
             DestroyMarker(ref _startMarker);
             DestroyMarker(ref _endMarker);
             DestroyMarker(ref _releaseMarker);

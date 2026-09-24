@@ -233,16 +233,24 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    // event ที่ยังไม่มีใน FMOD — เตือนครั้งเดียวต่อ path
+    // ไม่งั้นเสียงที่ยิงถี่ๆ (ฝีเท้าผี / ระฆัง) จะท่วม Console จนหา error จริงไม่เจอ
+    private static readonly System.Collections.Generic.HashSet<string> _missingEvents
+        = new System.Collections.Generic.HashSet<string>();
+
     /// <summary>เล่น one-shot แบบไม่พังถ้ายังไม่มี event นั้นใน FMOD</summary>
     private static void SafeOneShot(string path, Vector3 position)
     {
+        if (_missingEvents.Contains(path)) return;
+
         try
         {
             RuntimeManager.PlayOneShot(path, position);
         }
         catch (EventNotFoundException)
         {
-            Debug.LogWarning($"[FMOD] ยังไม่มี event '{path}' — ข้ามเสียงนี้ไปก่อน");
+            _missingEvents.Add(path);
+            Debug.LogWarning($"[FMOD] ยังไม่มี event '{path}' — ข้ามเสียงนี้ไปก่อน (เตือนครั้งเดียว)");
         }
     }
 

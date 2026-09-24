@@ -6,7 +6,7 @@ using UnityEngine;
 /// เครื่องมือช่วยวางสายสิญจน์ใน Scene view
 ///   - ลาก handle ที่จุดแต่ละจุดได้ตรงๆ โดยไม่ต้องคลิกเลือกลูกทีละตัว (มี Undo)
 ///   - ป้ายเลขบอกลำดับจุด + ระยะสะสม
-///   - ปุ่มใน Inspector: เพิ่มจุดต่อท้าย / แทรกจุดกึ่งกลางทุกช่วง / วางทุกจุดลงพื้น
+///   - ปุ่มใน Inspector: Add waypoint at end / Subdivide every segment / Snap all waypoints to ground
 /// </summary>
 [CustomEditor(typeof(SacredThreadPath))]
 public class SacredThreadPathEditor : Editor
@@ -20,16 +20,16 @@ public class SacredThreadPathEditor : Editor
         var path = (SacredThreadPath)target;
 
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField($"จุดทั้งหมด {path.WaypointCount}  •  ยาว {path.TotalLength:0.0} ม.", EditorStyles.miniLabel);
-        EditorGUILayout.HelpBox("จุดหักของสาย = GameObject ลูก เรียงตามลำดับใน Hierarchy\n" +
-                                "ลากจุดใน Scene ได้เลย เส้นจะตามเอง — ย้ายทั้งเส้นให้ย้ายตัวแม่", MessageType.Info);
+        EditorGUILayout.LabelField($"{path.WaypointCount} waypoints  •  {path.TotalLength:0.0} m long", EditorStyles.miniLabel);
+        EditorGUILayout.HelpBox("Waypoints are the child GameObjects, in Hierarchy order.\n" +
+                                "Drag them straight in the Scene and the thread follows. Move this object to move the whole thread.", MessageType.Info);
 
         using (new EditorGUILayout.HorizontalScope())
         {
-            if (GUILayout.Button("＋ เพิ่มจุดต่อท้าย")) AddPointAtEnd(path);
-            if (GUILayout.Button("แทรกจุดกึ่งกลางทุกช่วง")) Subdivide(path);
+            if (GUILayout.Button("Add waypoint at end")) AddPointAtEnd(path);
+            if (GUILayout.Button("Subdivide every segment")) Subdivide(path);
         }
-        if (GUILayout.Button("วางทุกจุดลงพื้น (Raycast ลง)")) SnapAllToGround(path);
+        if (GUILayout.Button("Snap all waypoints to ground")) SnapAllToGround(path);
     }
 
     private void OnSceneGUI()
@@ -56,7 +56,7 @@ public class SacredThreadPathEditor : Editor
             if (i > 0) cumulative += Vector3.Distance(prev, p.position);
             prev = p.position;
 
-            Handles.Label(p.position + Vector3.up * 0.3f, $"P{i}  ({cumulative:0.0} ม.)", EditorStyles.whiteBoldLabel);
+            Handles.Label(p.position + Vector3.up * 0.3f, $"P{i}  ({cumulative:0.0} m)", EditorStyles.whiteBoldLabel);
         }
     }
 
