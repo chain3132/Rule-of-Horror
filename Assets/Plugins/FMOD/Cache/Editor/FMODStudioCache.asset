@@ -896,7 +896,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/BoneBroken.bank
   Name: BoneBroken
   StudioPath: bank:/New Folder/BoneBroken
-  lastModified: 639257922844813344
+  lastModified: 639258754188007212
   FileSizes:
   - Name: Desktop
     Value: 7520
@@ -1598,7 +1598,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/WomanSound.bank
   Name: WomanSound
   StudioPath: bank:/WomanSound
-  lastModified: 639257922839522348
+  lastModified: 639258754188525462
   FileSizes:
   - Name: Desktop
     Value: 56096
@@ -2446,7 +2446,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule2.bank
   Name: Rule2
   StudioPath: bank:/Rule2
-  lastModified: 639257922835551240
+  lastModified: 639258754188409186
   FileSizes:
   - Name: Desktop
     Value: 943392
@@ -2786,8 +2786,8 @@ MonoBehaviour:
     Data3: -493498185
     Data4: 2133030281
   Banks:
-  - {fileID: -4368771935535294408}
   - {fileID: 2037088329598349015}
+  - {fileID: -4368771935535294408}
   IsStream: 0
   Is3D: 1
   IsOneShot: 0
@@ -2993,7 +2993,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Radio.bank
   Name: Radio
   StudioPath: bank:/Radio
-  lastModified: 639257922835034080
+  lastModified: 639258754188338919
   FileSizes:
   - Name: Desktop
     Value: 5685888
@@ -3207,7 +3207,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: 8790939570095508767}
   cacheVersion: 131858
-  cacheTime: 639257923959283912
+  cacheTime: 639258754188525462
   SerializableEventsDict:
   - key: event:/Notification
     index: 0
@@ -3442,7 +3442,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule4.bank
   Name: Rule4
   StudioPath: bank:/Rule4
-  lastModified: 639257922838960982
+  lastModified: 639258754188490396
   FileSizes:
   - Name: Desktop
     Value: 1335072
@@ -4149,7 +4149,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639257923958926532
+  lastModified: 639258754188012244
   FileSizes:
   - Name: Desktop
     Value: 39392
@@ -4884,7 +4884,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Action.bank
   Name: Action
   StudioPath: bank:/Action
-  lastModified: 639257922833178628
+  lastModified: 639258754187818953
   FileSizes:
   - Name: Desktop
     Value: 407488
@@ -4951,7 +4951,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/AmbienceBank.bank
   Name: AmbienceBank
   StudioPath: bank:/AmbienceBank
-  lastModified: 639257922834017459
+  lastModified: 639258754187997191
   FileSizes:
   - Name: Desktop
     Value: 3121504
@@ -5713,7 +5713,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule5.bank
   Name: Rule5
   StudioPath: bank:/Rule5
-  lastModified: 639257923959283912
+  lastModified: 639258754188505426
   FileSizes:
   - Name: Desktop
     Value: 627296
@@ -6522,7 +6522,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639257923958946594
+  lastModified: 639258754188012244
   FileSizes:
   - Name: Desktop
     Value: 4496
@@ -6623,7 +6623,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/RunningGhost.bank
   Name: RunningGhost
   StudioPath: bank:/RunningGhost
-  lastModified: 639257922839244191
+  lastModified: 639258754188515460
   FileSizes:
   - Name: Desktop
     Value: 84704

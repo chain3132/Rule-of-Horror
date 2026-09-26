@@ -257,7 +257,11 @@ namespace Rule5
                         : walker.IsHolding ? (walker.IsWalking ? "จับ+เดิน" : "จับ (หยุด)")
                         : walker.EverGrabbed ? "ปล่อยมือ" : "ยังไม่เคยจับ";
 
-            string ghost = rule5.ActiveGhost != null ? rule5.ActiveGhost.Mode.ToString() : "-";
+            var    g     = rule5.ActiveGhost;
+            string ghost = g == null ? "-"
+                         : g.Mode == Rule5GhostMode.Escort
+                            ? $"Escort {g.EscortDistance:0.0} ม. ({g.EscortCloseness01 * 100f:0}%)"
+                            : g.Mode.ToString();
             float  dist  = walker != null ? walker.Distance : 0f;
 
             var spawner = rule5.ObstacleSpawner;
@@ -266,6 +270,7 @@ namespace Rule5
                         : $"{walker.BlockingObstacleCount} กั้นอยู่";
 
             return $"ระฆัง {rule5.BellCount}/{rule5.RequiredBells}  |  " +
+                   $"สวด {(rule5.HasPrayed ? "แล้ว" : "ยัง")}  |  " +
                    $"ฉิ่ง {(rule5.IsChingActive ? "ดัง!" : "เงียบ")}  |  " +
                    $"สาย: {hold} @ {dist:0.0} ม.  |  ผี: {ghost}  |  ขวาง: {obs}";
         }

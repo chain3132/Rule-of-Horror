@@ -9,9 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Rule4.unity
     guid: 7640c430e094c504b94d3a5747fa3042
   - enabled: 1
-    path: Assets/Scenes/GameScene.unity
-    guid: 43476b01f4da1ce44a91fc17fd49e023
-  - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: 543abc7579d5d124b8f73c913d8ead68
   m_configObjects:

@@ -30,7 +30,9 @@ namespace RuleSystem.Rule
         [Tooltip("Used when ghostWaitPoint is empty: how far across the thread the ghost stands, in metres.")]
         [SerializeField] private float ghostWaitSideOffset = 1.5f;
 
-        [Tooltip("Seconds after the rule starts, with the player never grabbing the thread, before the ghost starts walking towards them.")]
+        [Tooltip("Seconds after the rule starts, with the player never once grabbing the thread, before the ghost starts walking towards them. " +
+                 "This is the only case where the ghost walks over on its own: once the thread has been held, letting go leaves the ghost standing " +
+                 "where it is until the player prays.")]
         [SerializeField] private float approachIfNotGrabbedAfter = 25f;
 
         // ── Bells ───────────────────────────────────────────────────────
@@ -60,8 +62,11 @@ namespace RuleSystem.Rule
         [Tooltip("Total seconds of walking allowed while the ching rings before it counts as a violation. Reaction-time grace.")]
         [SerializeField] private float chingMoveGrace = 0.5f;
 
-        [Tooltip("Ticked: walking while the ching rings kills the player. Unticked would only bring the ghost one step closer, which is not implemented yet.")]
-        [SerializeField] private bool chingViolationKills = true;
+        [Tooltip("Text shown the first time the player keeps walking through a ching. Leave empty for no hint. " +
+                 "Walking does not kill outright: the ghost behind closes in for as long as it lasts, and kills once it is close enough " +
+                 "(tune the distances on the ghost prefab).")]
+        [TextArea(1, 3)]
+        [SerializeField] private string chingWarnHint = "หยุดเดิน… มีอะไรขยับเข้ามาใกล้ข้างหลัง";
 
         // ── Ghost voice ─────────────────────────────────────────────────
         [Header("Ghost Voice (the whispered \"ching chap\")")]
@@ -69,6 +74,24 @@ namespace RuleSystem.Rule
         [SerializeField] private float voiceMaxGap = 18f;
         [Range(0f, 1f)]
         [SerializeField] private float voiceChance = 0.7f;
+
+        // ── Pray ────────────────────────────────────────────────────────
+        [Header("Pray (Spacebar = \"I am going back to my seat\")")]
+        [Tooltip("The player must pray, while still holding the thread, before sitting down counts as finishing the rule. " +
+                 "Praying is what sets the ghost chasing once the thread is let go, and it stops the heart attack countdown. " +
+                 "Sitting down without praying is a loss even with every bell counted.")]
+        [TextArea(1, 3)]
+        [SerializeField] private string prayHint = "…ขอลาแล้วนะ";
+
+        [Tooltip("Shown when the player presses the pray key after letting go of the thread, which is too late. Leave empty for no hint.")]
+        [TextArea(1, 3)]
+        [SerializeField] private string prayNotHoldingHint = "ต้องจับสายสิญจน์อยู่ถึงจะพนมมือไหว้ได้";
+
+        [Tooltip("Animator on the player that plays the praying animation. Optional, nothing is wired up yet.")]
+        [SerializeField] private Animator prayAnimator;
+
+        [Tooltip("Trigger fired on that animator when the player prays.")]
+        [SerializeField] private string prayTrigger = "pray";
 
         // ── Heartbeat after release ─────────────────────────────────────
         [Header("Heartbeat (let go and never come back)")]
@@ -100,10 +123,12 @@ namespace RuleSystem.Rule
         private float _chingRemaining;
         private float _chingViolation;
         private bool  _chingActive;
+        private bool  _chingWarned;
         private float _voiceTimer;
         private float _releaseTimer;
         private float _notGrabbedTimer;
         private int   _heartLevel;
+        private bool  _prayed;
 
         /// <summary>จำนวนระฆังที่ดังไปแล้วในรอบนี้ (debug / UI)</summary>
         public int BellCount => _bellCount;
@@ -112,6 +137,9 @@ namespace RuleSystem.Rule
         public int RequiredBells => requiredBells;
 
         public bool IsChingActive => _chingActive;
+
+        /// <summary>true = สวดมนต์แล้ว (กด Space) — ผีไล่อยู่ และนั่งลงถึงจะนับว่าชนะ</summary>
+        public bool HasPrayed => _prayed;
 
         /// <summary>true = กฎกำลังเล่นอยู่จริง (ผ่าน blink เข้ามาแล้ว ยังไม่ตาย/ยังไม่จบ)</summary>
         public bool IsGameplayActive => _gameplayActive;
@@ -146,6 +174,7 @@ namespace RuleSystem.Rule
 
             _chingRemaining = 9999f;
             _chingViolation = 0f;
+            _chingWarned    = false;
             _chingActive    = true;
             AudioManager.instance.StartRule5Ching();
         }
@@ -197,8 +226,9 @@ namespace RuleSystem.Rule
             UpdateChing(holding, walking);
             if (!_gameplayActive) return;
 
+            UpdatePray(holding);
             UpdateGhostVoice(holding);
-            UpdateReleaseHeartbeat(holding);
+            UpdateHeartbeat(holding);
             UpdateNotGrabbed(holding);
         }
 
@@ -242,14 +272,16 @@ namespace RuleSystem.Rule
             _chingTimer     = Random.Range(chingMinGap, chingMaxGap);
             _chingActive    = false;
             _chingViolation = 0f;
+            _chingWarned    = false;
             _voiceTimer     = Random.Range(voiceMinGap, voiceMaxGap);
             _releaseTimer   = 0f;
             _notGrabbedTimer = 0f;
             _heartLevel     = 0;
+            _prayed         = false;
 
             PlayerController.Instance.isBlockStanding = false;
             TimeManager.instance.IsPauseTime(true);
-            AudioManager.instance.ResetHeartbeatLevel();
+            AudioManager.instance.SilenceHeartbeat();
 
             if (walker == null)
             {
@@ -285,16 +317,17 @@ namespace RuleSystem.Rule
             }
             if (!sitting) return;
 
-            // นั่งแล้ว
-            if (_bellCount == requiredBells)
+            // นั่งแล้ว — ต้องครบทั้งจำนวนระฆัง และต้องสวดมนต์ลาก่อนถึงจะนับว่าชนะ
+            if (_bellCount == requiredBells && _prayed)
             {
                 StartCoroutine(CompleteRoutine());
+                return;
             }
-            else
-            {
-                Debug.Log($"[Rule5] นั่งตอนระฆัง {_bellCount}/{requiredBells} — ผิดเงื่อนไข → jumpscare", this);
-                StartJumpscareDeath();
-            }
+
+            Debug.Log(_bellCount != requiredBells
+                        ? $"[Rule5] นั่งตอนระฆัง {_bellCount}/{requiredBells} — ผิดเงื่อนไข → jumpscare"
+                        : "[Rule5] ระฆังครบแต่ไม่ได้สวดมนต์ลา — ผิดเงื่อนไข → jumpscare", this);
+            StartJumpscareDeath();
         }
 
         void UpdateBells(bool holding, bool walking)
@@ -320,13 +353,7 @@ namespace RuleSystem.Rule
                 if (walking)
                 {
                     _chingViolation += Time.deltaTime;
-                    if (chingViolationKills && _chingViolation > chingMoveGrace)
-                    {
-                        Debug.Log("[Rule5] เดินตอนฉิ่งดัง → ตาย", this);
-                        StopChing();
-                        StartJumpscareDeath();
-                        return;
-                    }
+                    if (_chingViolation > chingMoveGrace) ApplyChingPressure();
                 }
 
                 if (_chingRemaining <= 0f) StopChing();
@@ -342,15 +369,81 @@ namespace RuleSystem.Rule
             _chingTimer     = Random.Range(chingMinGap, chingMaxGap);
             _chingRemaining = Random.Range(chingMinDuration, chingMaxDuration);
             _chingViolation = 0f;
+            _chingWarned    = false;
             _chingActive    = true;
             AudioManager.instance.StartRule5Ching();
+        }
+
+        
+        void ApplyChingPressure()
+        {
+            if (_ghost != null) _ghost.PressEscort(Time.deltaTime);
+
+            if (_chingWarned) return;
+            _chingWarned = true;
+            Debug.Log("[Rule5] เดินตอนฉิ่งดัง → ผีข้างหลังเริ่มขยับเข้ามา", this);
+
+            if (!string.IsNullOrEmpty(chingWarnHint) && PlayerDialogueUI.instance != null)
+                PlayerDialogueUI.instance.ShowLine(chingWarnHint, 3f);
+
+            if (_ghost != null)
+                AudioManager.instance.PlayRule5GhostChingChap(_ghost.transform.position + Vector3.up * 1.5f);
         }
 
         void StopChing()
         {
             if (!_chingActive) return;
             _chingActive = false;
-            AudioManager.instance.StopRule5Ching();
+            if (AudioManager.instance != null) AudioManager.instance.StopRule5Ching();
+        }
+
+        /// <summary>
+        /// กด Space = สวดมนต์ลา "โอเค ฉันจะกลับไปนั่งที่แล้ว" — กดได้เฉพาะตอนที่ยังจับสายอยู่เท่านั้น
+        ///
+        /// ลำดับที่ตั้งใจให้เป็น: จับสาย → นับระฆังครบ → สวดลา (Space, มือหลุดเอง) → วิ่งกลับไปนั่ง
+        /// กด Space แล้วมือจะหลุดจากสายให้เอง (ไม่ต้องกด E ซ้ำ) แล้วผีถึงออกไล่ตรงจังหวะนั้น
+        /// ปล่อยมือไปแล้วค่อยกด = สายไป ไม่นับ / ไม่สวดแล้วไปนั่ง = ไม่ชนะ ต่อให้ระฆังครบก็ตาม
+        /// </summary>
+        void UpdatePray(bool holding)
+        {
+            if (_prayed || walker == null || !walker.PrayPressedThisFrame) return;
+
+            if (!holding)
+            {
+                // ยังไม่เคยแตะสายเลย = ยังไม่ได้เริ่มกฎด้วยซ้ำ เงียบไว้ ไม่ต้องบอกใบ้ว่ามีปุ่มนี้อยู่
+                if (!walker.EverGrabbed) return;
+
+                if (!string.IsNullOrEmpty(prayNotHoldingHint) && PlayerDialogueUI.instance != null)
+                    PlayerDialogueUI.instance.ShowLine(prayNotHoldingHint, 3f);
+                return;
+            }
+
+            Pray();
+        }
+
+        void Pray()
+        {
+            _prayed       = true;
+            _releaseTimer = 0f;   // สวดแล้ว = ประกาศว่ากำลังกลับไปนั่ง ไม่ตายด้วยหัวใจวายอีก
+            Debug.Log($"[Rule5] สวดมนต์ลา (ระฆัง {_bellCount}/{requiredBells}) — ผีจะออกไล่ตอนปล่อยมือ", this);
+
+            if (prayAnimator != null && !string.IsNullOrEmpty(prayTrigger)) prayAnimator.SetTrigger(prayTrigger);
+            AudioManager.instance.PlayRule5Pray();
+
+            // สวดจบ = เลิกจับสายแล้ว ไม่ต้องกด E ซ้ำ
+            // ปล่อยมือตรงนี้ทำให้ HandleReleased ทำงาน → ผีออกไล่พอดีจังหวะที่ผู้เล่นวิ่งได้
+            if (walker != null)
+            {
+                walker.SetGrabHintEnabled(false);   // จากนี้ไปคือวิ่งกลับไปนั่ง ไม่ใช่กลับมาจับสาย
+                walker.ReleaseByPlayer();
+            }
+
+            if (!string.IsNullOrEmpty(prayHint) && PlayerDialogueUI.instance != null)
+                PlayerDialogueUI.instance.ShowLine(prayHint, 3f);
+
+            // กันเหนียว เผื่อปล่อยมือไม่สำเร็จด้วยเหตุใดก็ตาม
+            if (_ghost != null && _ghost.Mode != Rule5GhostMode.Chase &&
+                walker != null && !walker.IsHolding) _ghost.BeginChase();
         }
 
         void UpdateGhostVoice(bool holding)
@@ -368,33 +461,59 @@ namespace RuleSystem.Rule
             AudioManager.instance.PlayRule5GhostChingChap(pos);
         }
 
-        /// <summary>ปล่อยมือแล้วไม่กลับมาจับ → หัวใจเต้นแรงขึ้นเรื่อยๆ → หัวใจวาย</summary>
-        void UpdateReleaseHeartbeat(bool holding)
+        /// <summary>
+        /// เสียงหัวใจ 2 ที่มา — จับสายอยู่: ตามระยะผีที่ตามหลัง / ปล่อยมือแล้วไม่กลับมาจับ: ตามเวลาจนหัวใจวาย
+        /// (สองอย่างนี้เกิดพร้อมกันไม่ได้ เลยใช้ _heartLevel ตัวเดียวกัน)
+        /// </summary>
+        void UpdateHeartbeat(bool holding)
         {
             if (holding || walker == null || !walker.EverGrabbed)
             {
-                if (_heartLevel != 0) { _heartLevel = 0; AudioManager.instance.ResetHeartbeatLevel(); }
                 _releaseTimer = 0f;
+                SetHeartLevel(holding ? GhostCloseHeartLevel() : 0);
+                return;
+            }
+
+            // สวดมนต์ลาแล้ว — หัวใจวายไม่นับอีก เหลือแค่ผีที่ไล่อยู่ข้างหลัง (เต้นแรงค้างไว้เลย)
+            if (_prayed)
+            {
+                _releaseTimer = 0f;
+                SetHeartLevel(3);
                 return;
             }
 
             _releaseTimer += Time.deltaTime;
 
-            int level = _releaseTimer < heartSlowUntil ? 1
-                      : _releaseTimer < heartFastUntil ? 2
-                      : 3;
-
-            if (level != _heartLevel)
-            {
-                _heartLevel = level;
-                AudioManager.instance.SetHeartbeatLevel(level);
-            }
+            SetHeartLevel(_releaseTimer < heartSlowUntil ? 1
+                        : _releaseTimer < heartFastUntil ? 2
+                        : 3);
 
             if (_releaseTimer >= heartCriticalUntil)
             {
                 Debug.Log("[Rule5] ปล่อยสายเกินเวลา → หัวใจวาย", this);
                 StartHeartAttackDeath();
             }
+        }
+
+        /// <summary>ผีตามหลังใกล้แค่ไหน → ระดับเสียงหัวใจ (0 = เงียบ)</summary>
+        int GhostCloseHeartLevel()
+        {
+            if (_ghost == null || _ghost.Mode != Rule5GhostMode.Escort) return 0;
+
+            float t = _ghost.EscortCloseness01;
+            return t < 0.15f ? 0
+                 : t < 0.5f  ? 1
+                 : t < 0.8f  ? 2
+                 : 3;
+        }
+
+        void SetHeartLevel(int level)
+        {
+            if (level == _heartLevel) return;
+            _heartLevel = level;
+
+            if (level <= 0) AudioManager.instance.ResetHeartbeatLevel();
+            else            AudioManager.instance.SetHeartbeatLevel(level);
         }
 
         /// <summary>ตั้งแต่เริ่มกฎ ยังไม่ยอมมาจับสาย → ผีเริ่มเดินเข้าหา</summary>
@@ -428,9 +547,11 @@ namespace RuleSystem.Rule
 
             if (_ghost == null) return;
 
-            // ระฆังครบแล้วปล่อย → ผีไล่ทันที (ผู้เล่นต้องวิ่งไปศาลา)
-            if (_bellCount >= requiredBells) _ghost.BeginChase();
-            else                             _ghost.EnterApproach();
+            // สวดลาไว้แล้วค่อยปล่อยมือ = ผีออกไล่ตรงนี้ (จังหวะเดียวกับที่ผู้เล่นเริ่มวิ่งได้พอดี)
+            // ปล่อยมือเฉยๆ โดยไม่ได้สวด = ผียืนรออยู่ตรงนั้น ไม่ตามไปไหน ต่อให้ระฆังครบแล้วก็ตาม
+            // ระหว่างนั้นตัวกดดันคือเวลานับถอยหลังหัวใจวายอย่างเดียว
+            if (_prayed) _ghost.BeginChase();
+            else         _ghost.EnterStandby();
         }
 
         #endregion
@@ -453,9 +574,7 @@ namespace RuleSystem.Rule
                 pos = walker.Thread.GetGroundPoint(0f) - walker.Thread.GetRight(0f) * ghostWaitSideOffset;
             else pos = PlayerController.Instance.transform.position + PlayerController.Instance.transform.forward * 3f;
 
-            // ต้องดึงจุด spawn เข้า NavMesh ก่อน Instantiate — NavMeshAgent ที่เกิดนอก NavMesh
-            // จะสร้างไม่สำเร็จ ("Failed to create agent because there is no valid NavMesh")
-            // แล้วทุก property ของมันจะ throw รัวทุกเฟรมหลังจากนั้น
+            
             if (UnityEngine.AI.NavMesh.SamplePosition(pos, out var hit, 12f, UnityEngine.AI.NavMesh.AllAreas))
                 pos = hit.position;
             else
@@ -490,7 +609,7 @@ namespace RuleSystem.Rule
             if (walker != null) walker.EndRuleCleanup();
             if (obstacleSpawner != null) obstacleSpawner.EndRuleCleanup();
             if (ghostHandOverlay != null) ghostHandOverlay.SetActive(false);
-            AudioManager.instance.ResetHeartbeatLevel();
+            AudioManager.instance.SilenceHeartbeat();
             AudioManager.instance.PlayRule5Complete();
 
             yield return new WaitForSeconds(2f);
@@ -517,7 +636,7 @@ namespace RuleSystem.Rule
 
             StopChing();
             if (walker != null) walker.ForceRelease(silent: true);
-            AudioManager.instance.StopRule5Background();
+            AudioManager.instance.StopAllRule5Sounds();   // รวมเสียงหัวใจด้วย ไม่งั้นดังคลอ jumpscare ยาวไปถึง Relax
             if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.Hide();
 
             player.SetLook(false);
@@ -548,7 +667,7 @@ namespace RuleSystem.Rule
             StopChing();
             if (walker != null) walker.ForceRelease(silent: true);
             if (_ghost != null) _ghost.Deactivate();
-            AudioManager.instance.StopRule5Background();
+            AudioManager.instance.StopAllRule5Sounds();
             AudioManager.instance.PlayRule5HeartAttack();
             if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.Hide();
 
@@ -572,7 +691,7 @@ namespace RuleSystem.Rule
             var player = PlayerController.Instance;
             player.SetMovement(true);
             player.isBlockStanding = false;
-            AudioManager.instance.ResetHeartbeatLevel();
+            AudioManager.instance.SilenceHeartbeat();
 
             GameModeController.instance.DirectBlinkToMode(
                 GameMode.Relax,
@@ -616,8 +735,9 @@ namespace RuleSystem.Rule
 
             if (ghostHandOverlay != null) ghostHandOverlay.SetActive(false);
 
-            AudioManager.instance.StopAllRule5Sounds();
-            AudioManager.instance.ResetHeartbeatLevel();
+            // StopAllRule5Sounds ดับเสียงหัวใจให้ด้วยแล้ว (SilenceHeartbeat ข้างใน)
+            if (AudioManager.instance != null) AudioManager.instance.StopAllRule5Sounds();
+            _heartLevel = 0;
 
             var player = PlayerController.Instance;
             if (player != null) player.ClearYawLimit();
@@ -632,6 +752,11 @@ namespace RuleSystem.Rule
                 walker.OnGrabbed  -= HandleGrabbed;
                 walker.OnReleased -= HandleReleased;
             }
+
+            // ถูกปิดทั้งที่ยังเล่นอยู่ (เปลี่ยน scene / โหลดเซฟ) — เสียงของกฎต้องไม่ค้างต่อไป
+            if (!_gameplayActive) return;
+            _gameplayActive = false;
+            CleanupGameplay();
         }
 
         #endregion

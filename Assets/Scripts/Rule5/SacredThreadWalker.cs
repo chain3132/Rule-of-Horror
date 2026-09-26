@@ -14,7 +14,8 @@ namespace Rule5
     ///
     ///   E ใกล้ผ้าแดง   → จับ: ล็อกตัวผู้เล่นไว้ข้างสาย เดินได้แค่ W (ตามทิศสาย) มองได้แค่ 180° ข้างหน้า
     ///   E ขณะจับ        → ปล่อย: ผ้าแดง "จุดปล่อย" ไปรอตรงนั้น จะกลับมาจับใหม่ต้องมาที่นี่เท่านั้น
-    ///   ชนสิ่งกีดขวาง   → Detour: มือหลุดเอง ผ้าแดงไปรออีกฝั่ง / Untangle: หยุด กด E ค้างแก้ให้หลุด
+    ///   ชนสิ่งกีดขวาง   → หยุดตรงขอบทั้งคู่ มือไม่หลุดเอง ผู้เล่นเป็นคนตัดสินใจ:
+    ///                      Detour: กด E ปล่อยมือ ผ้าแดงไปรออีกฝั่ง / Untangle: กด E ค้างแก้ให้หลุด
     ///
     /// ตัวนี้ดูแลแค่การเคลื่อนที่ + สถานะจับ/ปล่อย — ระฆัง / ฉิ่ง / หัวใจ / ผี อยู่ที่ Rule5.cs
     /// </summary>
@@ -41,13 +42,17 @@ namespace Rule5
         [Tooltip("Walking speed along the thread (m/s).")]
         [SerializeField] private float walkSpeed = 1.6f;
 
-        [Tooltip("Look limit to each side of the thread direction, in degrees (90 = 180 degrees total).")]
-        [SerializeField] private float lookHalfAngle = 90f;
+        [Tooltip("Look limit to each side of the thread direction, in degrees. 90 would be a flat 180 degrees of vision; " +
+                 "this is deliberately wider so the player can crane round far enough to catch the ghost walking behind them. " +
+                 "Raise it to make the ghost easier to see, lower it to hide the ghost completely.")]
+        [Range(45f, 180f)]
+        [SerializeField] private float lookHalfAngle = 130f;
 
         [Header("Hints")]
         [SerializeField] private string grabHint        = "E   จับสายสิญจน์";
         [SerializeField] private string wrongSpotHint   = "ต้องกลับไปจับตรงผ้าแดงที่ปล่อยไว้";
         [SerializeField] private string untangleHint    = "สายพันกัน… กด E ค้างเพื่อแก้";
+        [SerializeField] private string detourHint      = "มีอะไรขวางอยู่… กด E ปล่อยมือแล้วเดินอ้อม";
         [SerializeField] private string endOfThreadHint = "สุดสาย…";
 
         // ── Runtime ──
@@ -63,6 +68,7 @@ namespace Rule5
         private float _distance;          // ตำแหน่งผู้เล่นบนเส้น
         private float _regrabDistance;    // ผ้าแดงที่ต้องกลับมาจับ (หลังปล่อย)
         private bool  _hintShown;
+        private bool  _grabHintEnabled = true;
 
         private ThreadObstacle _blockedBy;       // Untangle ที่ขวางอยู่ตอนนี้
         private ThreadObstacle _pendingDetour;   // Detour ที่เพิ่งทำให้มือหลุด — จับใหม่ได้แล้วค่อยนับว่าผ่าน
@@ -85,6 +91,9 @@ namespace Rule5
         public float GrabPointDistance => _everGrabbed ? _regrabDistance : 0f;
 
         public SacredThreadPath Thread => thread;
+
+        /// <summary>true = เฟรมนี้ผู้เล่นเพิ่งกดปุ่มสวดมนต์ (Space) — Rule5 เป็นคนตัดสินว่าจะให้มีผลไหม</summary>
+        public bool PrayPressedThisFrame => inputHandler != null && inputHandler.WasPrayPressed();
 
         public event Action                OnGrabbed;
         public event Action<ReleaseReason> OnReleased;
@@ -110,11 +119,11 @@ namespace Rule5
             _distance       = 0f;
             _regrabDistance = 0f;
             _blockedBy      = null;
-            _untangling     = false;
-            _hintShown      = false;
+            _untangling      = false;
+            _hintShown       = false;
+            _grabHintEnabled = true;
 
             thread.ShowEndpointMarkers();
-            thread.HideReleaseMarker();
 
             // ไม่ไปกวาดหา ThreadObstacle เองแล้ว — ThreadObstacleSpawner เป็นคนตัดสินว่าตัวไหนโผล่เมื่อไร
             // (ตัวที่ผู้ทำฉากอยาก "มีตั้งแต่แรก" ให้ใส่ใน spawner ช่อง revealAtStart)
@@ -125,6 +134,8 @@ namespace Rule5
                 inputHandler.OnInteractPressed -= HandleInteract;
                 inputHandler.OnInteractPressed += HandleInteract;
             }
+            else Debug.LogError("[Rule5] SacredThreadWalker ยังไม่ได้ใส่ inputHandler — " +
+                                "จับสาย (E) / เดิน (W) / สวดมนต์ (Space) จะไม่ทำงานเลย", this);
             if (holdHandVisual != null) holdHandVisual.SetActive(false);
         }
 
@@ -189,6 +200,8 @@ namespace Rule5
         /// <summary>โชว์ "E จับสาย" ตอนเข้าใกล้ผ้าแดงที่จับได้</summary>
         private void UpdateGrabHint()
         {
+            if (!_grabHintEnabled) return;
+
             bool near = IsNearGrabPoint();
             if (near == _hintShown) return;
             _hintShown = near;
@@ -227,6 +240,9 @@ namespace Rule5
 
             // ดูดตัวเข้าหาจุดบนสาย (ตอนเพิ่งจับจะค่อยๆ เข้าไป ตอนเดินอยู่แล้วก็ตามพอดี)
             MovePlayerToward(TargetPosition(), snapSpeed * Time.deltaTime + step);
+
+            // ผ้าแดงเลื่อนตามมือไปด้วย — ผู้เล่นที่ถูกปิดตาจะได้รู้ว่าเดินมาถึงไหนแล้วตอนแอบมอง
+            thread.SetGripMarker(_distance, releaseLook: false);
         }
 
         private Vector3 TargetPosition()
@@ -240,7 +256,10 @@ namespace Rule5
             _player.MoveExternal(delta, _walking);
         }
 
-        /// <summary>ล็อกให้หันได้แค่ครึ่งวงหน้าตามทิศสายตรงจุดที่ยืน</summary>
+        /// <summary>
+        /// ล็อกทิศที่หันได้ให้อยู่ในช่วง ±lookHalfAngle รอบทิศของสายตรงจุดที่ยืน
+        /// กว้างกว่าครึ่งวงหน้านิดหน่อย — พอให้ชะเง้อกลับไปเห็นผีที่เดินตามหลังได้แวบหนึ่ง แต่ยังหันหลังกลับไม่ได้
+        /// </summary>
         private void UpdateLookLimit()
         {
             Vector3 fwd = thread.GetForward(_distance);
@@ -255,9 +274,12 @@ namespace Rule5
         // ═══════════════════════════════════════════════════════════════
 
         /// <summary>
-        /// ก่อนก้าว: ถ้าก้าวนี้จะเข้าไปในช่วงที่สิ่งกีดขวางกั้น
-        ///   Detour   → มือหลุดตรงขอบ ผ้าแดงไปรออีกฝั่ง (คืน 0 = ไม่ก้าว)
-        ///   Untangle → หยุดตรงขอบ รอกด E ค้าง
+        /// ก่อนก้าว: ถ้าก้าวนี้จะเข้าไปในช่วงที่สิ่งกีดขวางกั้น → หยุดตรงขอบ (ทั้ง 2 ชนิด)
+        ///
+        /// มือไม่หลุดเอง เพราะการโดนกระชากมือหลุดโดยไม่ได้สั่งเองมันงงและรู้สึกเหมือนบั๊ก
+        /// จากตรงนี้ผู้เล่นเป็นคนกด E เอง — HandleInteract ดูชนิดของตัวที่ขวางแล้วแยกทางให้:
+        ///   Detour   → ปล่อยมือ ผ้าแดงไปรออีกฝั่ง เดินอ้อมเอา
+        ///   Untangle → กดค้างแก้สายพัน ไม่ต้องปล่อยมือ
         /// </summary>
         private float ClampStepByObstacles(float step)
         {
@@ -273,25 +295,16 @@ namespace Rule5
                 float gapToStart = isInside ? 0f : thread.ForwardGap(_distance, o.BlockStart);
                 if (!isInside && (gapToStart < 0f || gapToStart > step)) continue;   // เลยไปแล้ว / ยังไม่ถึง
 
-                if (o.Kind == ObstacleKind.Untangle)
+                if (_blockedBy != o)   // เพิ่งเดินมาชน — โชว์ hint ครั้งเดียว ไม่ยิงซ้ำทุกเฟรม
                 {
-                    if (_blockedBy != o)   // เพิ่งเดินมาชน — โชว์ hint ครั้งเดียว ไม่ยิงซ้ำทุกเฟรม
-                    {
-                        _blockedBy = o;
-                        if (PlayerDialogueUI.instance != null)
-                            PlayerDialogueUI.instance.ShowLine(string.IsNullOrEmpty(o.Hint) ? untangleHint : o.Hint, 3600f);
-                    }
-                    return Mathf.Max(0f, gapToStart);
-                }
+                    _blockedBy = o;
 
-                // Detour
-                _distance       = thread.WrapDistance(_distance + gapToStart);
-                _regrabDistance = thread.WrapDistance(o.RegrabPoint);
-                _pendingDetour  = o;
-                Release(ReleaseReason.Obstacle);
-                if (PlayerDialogueUI.instance != null && !string.IsNullOrEmpty(o.Hint))
-                    PlayerDialogueUI.instance.ShowLine(o.Hint, 4f);
-                return 0f;
+                    string hint = !string.IsNullOrEmpty(o.Hint) ? o.Hint
+                                : o.Kind == ObstacleKind.Untangle ? untangleHint
+                                : detourHint;
+                    if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.ShowLine(hint, 3600f);
+                }
+                return Mathf.Max(0f, gapToStart);
             }
             return step;
         }
@@ -331,15 +344,23 @@ namespace Rule5
 
             if (_holding)
             {
-                // ติดสายพันอยู่ → E = เริ่มแก้ ไม่ใช่ปล่อยมือ
-                if (_blockedBy != null && !_untangling)
+                if (_untangling) return;
+
+                if (_blockedBy != null)
                 {
-                    _untangling    = true;
-                    _untangleTimer = _blockedBy.UntangleDuration;
-                    AudioManager.instance.StartRule5Untangle();
+                    // ติดสายพันอยู่ → E = เริ่มแก้ ไม่ใช่ปล่อยมือ
+                    if (_blockedBy.Kind == ObstacleKind.Untangle)
+                    {
+                        _untangling    = true;
+                        _untangleTimer = _blockedBy.UntangleDuration;
+                        AudioManager.instance.StartRule5Untangle();
+                        return;
+                    }
+
+                    // ติดของที่ต้องเดินอ้อม → E = ปล่อยมือตรงนี้ ผ้าแดงไปรออีกฝั่ง
+                    ReleaseForDetour(_blockedBy);
                     return;
                 }
-                if (_untangling) return;
 
                 Release(ReleaseReason.Manual);
                 return;
@@ -380,12 +401,21 @@ namespace Rule5
             }
 
             _player.SetMovement(false);
-            thread.HideReleaseMarker();
+            thread.SetGripMarker(_distance, releaseLook: false);
             if (holdHandVisual != null) holdHandVisual.SetActive(true);
             if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.Hide();
 
             AudioManager.instance.PlayRule5GrabThread();
             OnGrabbed?.Invoke();
+        }
+
+        /// <summary>ปล่อยมือเพราะต้องเดินอ้อมสิ่งกีดขวาง — ผ้าแดงจุดจับใหม่ไปรออีกฝั่งของมัน</summary>
+        private void ReleaseForDetour(ThreadObstacle o)
+        {
+            _regrabDistance = thread.WrapDistance(o.RegrabPoint);
+            _pendingDetour  = o;
+            Release(ReleaseReason.Obstacle);
+            if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.Hide();
         }
 
         private void Release(ReleaseReason reason)
@@ -401,7 +431,9 @@ namespace Rule5
             // ผ้าแดงจุดปล่อย: ปล่อยเอง = ตรงที่ยืน / ชนสิ่งกีดขวาง = อีกฝั่งของมัน (เซ็ตไว้แล้ว)
             if (reason != ReleaseReason.Obstacle) _regrabDistance = _distance;
 
-            if (reason != ReleaseReason.Forced) thread.ShowReleaseMarker(_regrabDistance);
+            // ปล่อยมือ → ผ้าแดงไปรอที่จุดที่ต้องกลับมาจับ
+            // ชนสิ่งกีดขวาง = อีกฝั่งของมัน ผ้าแดงจะไถลตามเส้นข้ามไปรอให้เห็นว่าต้องไปต่อตรงไหน
+            if (reason != ReleaseReason.Forced) thread.SetGripMarker(_regrabDistance, releaseLook: true);
 
             _player.SetMovement(true);
             _player.ClearYawLimit();
@@ -410,6 +442,31 @@ namespace Rule5
 
             if (reason != ReleaseReason.Forced) AudioManager.instance.PlayRule5ReleaseThread();
             OnReleased?.Invoke(reason);
+        }
+
+        /// <summary>
+        /// เปิด/ปิดข้อความ "E จับสายสิญจน์" — Rule5 ปิดหลังผู้เล่นสวดมนต์ลา
+        /// (ตอนนั้นเป้าหมายคือวิ่งกลับไปนั่ง ไม่ใช่กลับมาจับสายอีก ข้อความจะค้างเกะกะเปล่าๆ)
+        /// </summary>
+        public void SetGrabHintEnabled(bool on)
+        {
+            _grabHintEnabled = on;
+            if (on || !_hintShown) return;
+
+            _hintShown = false;
+            if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.Hide();
+        }
+
+        /// <summary>
+        /// ปล่อยมือแทนการกด E — Rule5 เรียกตอนผู้เล่นสวดมนต์ลา จะได้ไม่ต้องกด E ซ้ำอีกที
+        /// ถ้ากำลังติดสิ่งกีดขวางแบบต้องอ้อมอยู่ ก็ปล่อยแบบ Detour ให้ ผ้าแดงจะได้ไปรอถูกฝั่ง
+        /// </summary>
+        public void ReleaseByPlayer()
+        {
+            if (!_holding) return;
+
+            if (_blockedBy != null && _blockedBy.Kind == ObstacleKind.Detour) { ReleaseForDetour(_blockedBy); return; }
+            Release(ReleaseReason.Manual);
         }
 
         /// <summary>ปล่อยมือโดยระบบ (ตาย / จบกฎ) — ไม่วางผ้าแดง ไม่มีเสียง</summary>

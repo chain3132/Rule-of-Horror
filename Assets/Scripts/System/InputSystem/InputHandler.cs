@@ -18,6 +18,7 @@ namespace InputSystem
         
         #region Fields
         private InputAction _moveAction,_lookAction,_phoneAction,_chatAction,_flashLightAction,_clockAction,_interactAction,_rightClickAction,_holdBreathAction;
+        private InputAction _prayAction;   // ไม่บังคับต้องมีใน asset — ไม่มีก็อ่าน Space ตรงๆ
         public event Action OnPhoneToggle;
         public event Action OnSetTime;
         public event Action<int> OnAppKeyPressed;
@@ -41,6 +42,7 @@ namespace InputSystem
             _interactAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Interact");
             _rightClickAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("RightClick");
             _holdBreathAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("HoldBreath");
+            _prayAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Pray");   // null ได้ ไม่ต้องมีก็ได้
         }
         private void OnEnable()
         {
@@ -120,6 +122,17 @@ namespace InputSystem
 
         /// <summary>true ตราบใดที่ยังกด E ค้างอยู่ (Rule 5 — แก้สายสิญจน์ที่พันกัน)</summary>
         public bool IsInteractHeld() => _interactAction != null && _interactAction.IsPressed();
+
+        /// <summary>
+        /// เฟรมนี้เพิ่งกดปุ่ม "สวดมนต์" (Rule 5 — บอกว่าจะเลิกจับสายกลับไปนั่งแล้ว)
+        /// ใช้ action ชื่อ "Pray" ถ้ามีใน asset — ยังไม่มีก็อ่าน Space จากคีย์บอร์ดตรงๆ ไปก่อน
+        /// จะได้ไม่ต้องไปแก้ .inputactions ก่อนถึงจะเทสได้ (วันไหนเพิ่ม action ชื่อนี้ มันจะสลับไปใช้เอง)
+        /// </summary>
+        public bool WasPrayPressed()
+        {
+            if (_prayAction != null) return _prayAction.triggered;
+            return Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+        }
 
         /// <summary>true ตราบใดที่ยังกดปุ่มกลั้นหายใจค้างอยู่ (Left Shift — Rule 4)</summary>
         public bool IsHoldBreathHeld() => _holdBreathAction != null && _holdBreathAction.IsPressed();

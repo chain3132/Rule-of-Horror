@@ -87,6 +87,11 @@ public static class TreeItMaterialConverter
         // ใบเรนเดอร์สองด้าน + cutout
         mat.SetFloat("_Cull", 0);
         mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
+
+        // ต้องเปิด GPU Instancing เสมอ — Terrain วาดต้นไม้ด้วย DrawMeshInstanced
+        // ถ้า material ไม่ติ๊กไว้ จะกลายเป็น 1 draw call ต่อ 1 ต้นต่อ 1 submesh
+        // (paint ไปสองสามพันต้น = Batches หลายหมื่นทันที)
+        mat.enableInstancing = true;
         EditorUtility.SetDirty(mat);
         return true;
     }

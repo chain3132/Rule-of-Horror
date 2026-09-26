@@ -31,7 +31,7 @@ Shader "Rule of Horror/TreeIt Wind"
         [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull (Off = สองด้าน)", Float) = 0
 
         [Header(Translucency (leaf backlight))]
-        _TransmissionMap ("Transmission Map (R)", 2D) = "white" {}
+        _TransmissionMap ("Transmission Map (R)", 2D) = "black" {}   // black = ไม่ใส่ map แล้วปิดแสงทะลุใบไปเลย
         _Translucency    ("Translucency", Range(0, 2)) = 0.6
         _TranslucencyPower ("Translucency Focus", Range(1, 16)) = 4
 
@@ -73,6 +73,23 @@ Shader "Rule of Horror/TreeIt Wind"
         TEXTURE2D(_BumpMap);          SAMPLER(sampler_BumpMap);
         TEXTURE2D(_TransmissionMap);  SAMPLER(sampler_TransmissionMap);
 
+        // ── ตั้งใจให้ shader นี้ "ไม่ compatible" กับ SRP Batcher ──────────────────────────
+        // คู่มือ Unity: "GPU instancing works with custom shaders only if you disable the
+        // SRP Batcher or make a shader incompatible with the SRP Batcher"
+        // = ถ้า shader compatible กับ SRP Batcher อยู่ Unity จะ "เมิน" ช่อง Enable GPU Instancing
+        //   ของ material ไปเลย ติ๊กก็ไม่มีผล
+        //
+        // ต้นไม้ที่ paint ลง Terrain ไม่ได้วาดผ่าน SRP Batcher (Terrain วาดเองด้วย tree renderer)
+        // พอ instancing ถูกเมิน จึงเหลือ 1 draw call ต่อ 1 ต้น ต่อ 1 submesh → paint 7,000 ต้น
+        // = Batches หลายหมื่นทันที ซึ่งเป็นอาการที่เจอจริง
+        //
+        // การประกาศ material property ไว้ "นอก" CBUFFER(UnityPerMaterial) ทำให้ shader
+        // ไม่ compatible → Unity กลับไปใช้ GPU instancing ให้ตามที่ติ๊กไว้
+        // แลกกับการเสีย SRP Batcher ซึ่งช่วยอะไรต้นไม้บน Terrain ไม่ได้อยู่แล้ว
+        float  _WindStrength, _WindSpeed, _TrunkBend, _BranchSway, _LeafFlutter, _FlutterFrequency;
+        float4 _DefaultWindDir;
+        float  _DefaultWindMain;
+
         CBUFFER_START(UnityPerMaterial)
             float4 _BaseMap_ST;
             half4  _BaseColor;
@@ -82,9 +99,6 @@ Shader "Rule of Horror/TreeIt Wind"
             half   _Translucency;
             half   _TranslucencyPower;
             float  _TrunkChannel, _BranchChannel, _LeafChannel, _IgnoreVertexColor;
-            float  _WindStrength, _WindSpeed, _TrunkBend, _BranchSway, _LeafFlutter, _FlutterFrequency;
-            float4 _DefaultWindDir;
-            float  _DefaultWindMain;
         CBUFFER_END
 
         // global — ตั้งโดย TreeItWindZone.cs (ไม่อยู่ใน CBUFFER เพราะเป็นค่ากลางทุก material)
@@ -183,7 +197,14 @@ Shader "Rule of Horror/TreeIt Wind"
             #pragma vertex   Vert
             #pragma fragment Frag
             #pragma multi_compile_instancing
+            #pragma multi_compile _ LOD_FADE_CROSSFADE
             #pragma multi_compile_fog
+
+            // ต้นไม้บางต้นสีเพี้ยน (รุ้ง/ชมพู/เขียว) หลังเปิด GPU Instancing?
+            // = ข้อมูล light probe "ต่อ instance" ที่ Terrain อัปโหลดมาเพี้ยน (มักเกิดเมื่อยังไม่ได้ bake แสง
+            //   แต่ Terrain ติ๊ก Bake Light Probes For Trees ไว้)
+            // เปิดบรรทัดล่างนี้ = ทุกต้นใช้ ambient probe ตัวเดียวกัน สีจะนิ่งเหมือนกันหมด
+            //#pragma instancing_options nolightprobe
 
             // URP lighting keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
@@ -196,6 +217,18 @@ Shader "Rule of Horror/TreeIt Wind"
             #pragma multi_compile _ SHADOWS_SHADOWMASK
             #pragma multi_compile _ _LIGHT_LAYERS
             #pragma multi_compile_fragment _ _LIGHT_COOKIES
+
+            // ── keyword ของ Reflection Probe — ขาดไม่ได้ ──────────────────────────────
+            // URP asset ของโปรเจกต์นี้เปิดไว้ทั้ง 3 อย่าง:
+            //   m_ReflectionProbeBlending / m_ReflectionProbeBoxProjection / m_ReflectionProbeAtlas = 1
+            // โหมด Atlas เก็บ reflection probe ทุกตัวไว้ใน texture atlas ใบเดียว ไม่ใช่ cubemap แยก
+            // shader ที่ไม่ประกาศ keyword พวกนี้จะถูก compile เป็นเวอร์ชันที่อ่านแบบ cubemap เดิม
+            // แล้วไปอ่านข้อมูลผิดที่ → ได้สีมั่วตาม reflect vector ของแต่ละพิกเซล
+            // ยิ่งไกลยิ่งเห็นชัด เพราะ normal map ถูกย่อจน normal แกว่งแรงทุกพิกเซล
+            #pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING
+            #pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION
+            #pragma multi_compile_fragment _ _REFLECTION_PROBE_ATLAS
+            #pragma multi_compile_fragment _ REFLECTION_PROBE_ROTATION
             #pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -242,12 +275,17 @@ Shader "Rule of Horror/TreeIt Wind"
                 OUT.tangentWS   = half4(n.tangentWS, IN.tangentOS.w * GetOddNegativeScale());
                 OUT.vertexSH    = SampleSHVertex(n.normalWS);
                 OUT.fogFactor   = ComputeFogFactor(OUT.positionCS.z);
-                OUT.shadowCoord = TransformWorldToShadowCoord(posWS);
+                #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
+                    OUT.shadowCoord = TransformWorldToShadowCoord(posWS);
+                #endif
                 return OUT;
             }
 
             half4 Frag(Varyings IN, FRONT_FACE_TYPE face : FRONT_FACE_SEMANTIC) : SV_Target
             {
+                #ifdef LOD_FADE_CROSSFADE
+                    LODFadeCrossFade(IN.positionCS);   // LOD cross-fade ของ URP ใช้ dither clip
+                #endif
                 UNITY_SETUP_INSTANCE_ID(IN);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
 
@@ -267,9 +305,20 @@ Shader "Rule of Horror/TreeIt Wind"
                 inputData.positionCS            = IN.positionCS;
                 inputData.normalWS              = normalWS;
                 inputData.viewDirectionWS       = viewDirWS;
-                inputData.shadowCoord           = IN.shadowCoord;
+                // ห้ามใช้ค่าที่ interpolate มาจาก vertex ตอนเปิด shadow cascade
+                // cascade ถูกเลือกจากระยะของ "พิกเซล" ไม่ใช่ของ vertex — ถ้า interpolate ข้ามขอบ cascade
+                // พิกัดที่ได้จะชี้ไปผิดที่ใน shadow map → ค่าเงาสุ่มมั่วเป็นจุดๆ (เห็นชัดตอนอยู่ไกล)
+                // URP/Lit ก็ทำแบบนี้ (InitializeInputData ใน LitForwardPass.hlsl)
+                #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
+                    inputData.shadowCoord = IN.shadowCoord;
+                #elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
+                    inputData.shadowCoord = TransformWorldToShadowCoord(IN.positionWS);
+                #else
+                    inputData.shadowCoord = float4(0, 0, 0, 0);
+                #endif
                 inputData.fogCoord              = IN.fogFactor;
-                inputData.bakedGI               = SampleSHPixel(IN.vertexSH, normalWS);
+                // กันค่าติดลบ/ค่าพุ่งจาก SH ที่เพี้ยน — ปล่อยไว้จะกลายเป็นสีแปลกๆ บนใบ
+                inputData.bakedGI               = max(half3(0, 0, 0), SampleSHPixel(IN.vertexSH, normalWS));
                 inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(IN.positionCS);
                 inputData.shadowMask            = half4(1,1,1,1);
 
@@ -284,11 +333,13 @@ Shader "Rule of Horror/TreeIt Wind"
                 half4 color = UniversalFragmentPBR(inputData, surfaceData);
 
                 // ── แสงทะลุใบ: มองย้อนแสงแล้วใบสว่างขึ้น ให้ใบกล้วยดูบาง ──
-                Light mainLight = GetMainLight(IN.shadowCoord);
-                half  transmission = SAMPLE_TEXTURE2D(_TransmissionMap, sampler_TransmissionMap, IN.uv).r;
+                Light mainLight = GetMainLight(inputData.shadowCoord);
+                half  transmission = saturate(SAMPLE_TEXTURE2D(_TransmissionMap, sampler_TransmissionMap, IN.uv).r);
                 half  backLight = pow(saturate(dot(viewDirWS, -mainLight.direction)), _TranslucencyPower);
-                color.rgb += baseTex.rgb * mainLight.color * mainLight.shadowAttenuation
-                           * backLight * transmission * _Translucency;
+                // clamp ไว้ที่ 1 — กันค่าพุ่งเกินช่วงปกติเวลาเจอแสงแรงๆ ย้อนใบพร้อมกันหลายดวง
+                half3 backLightColor = baseTex.rgb * mainLight.color * mainLight.shadowAttenuation
+                                     * backLight * transmission * _Translucency;
+                color.rgb += min(backLightColor, half3(1, 1, 1));
 
                 color.rgb = MixFog(color.rgb, IN.fogFactor);
                 return color;
@@ -311,6 +362,7 @@ Shader "Rule of Horror/TreeIt Wind"
             #pragma vertex   Vert
             #pragma fragment Frag
             #pragma multi_compile_instancing
+            #pragma multi_compile _ LOD_FADE_CROSSFADE
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
@@ -368,6 +420,9 @@ Shader "Rule of Horror/TreeIt Wind"
 
             half4 Frag(Varyings IN) : SV_Target
             {
+                #ifdef LOD_FADE_CROSSFADE
+                    LODFadeCrossFade(IN.positionCS);   // LOD cross-fade ของ URP ใช้ dither clip
+                #endif
                 UNITY_SETUP_INSTANCE_ID(IN);
                 half a = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv).a * _BaseColor.a;
                 clip(a - _Cutoff);
@@ -390,6 +445,7 @@ Shader "Rule of Horror/TreeIt Wind"
             #pragma vertex   Vert
             #pragma fragment Frag
             #pragma multi_compile_instancing
+            #pragma multi_compile _ LOD_FADE_CROSSFADE
 
             struct Attributes
             {
@@ -421,6 +477,9 @@ Shader "Rule of Horror/TreeIt Wind"
 
             half4 Frag(Varyings IN) : SV_Target
             {
+                #ifdef LOD_FADE_CROSSFADE
+                    LODFadeCrossFade(IN.positionCS);   // LOD cross-fade ของ URP ใช้ dither clip
+                #endif
                 UNITY_SETUP_INSTANCE_ID(IN);
                 half a = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv).a * _BaseColor.a;
                 clip(a - _Cutoff);
@@ -442,6 +501,7 @@ Shader "Rule of Horror/TreeIt Wind"
             #pragma vertex   Vert
             #pragma fragment Frag
             #pragma multi_compile_instancing
+            #pragma multi_compile _ LOD_FADE_CROSSFADE
 
             struct Attributes
             {
@@ -475,6 +535,9 @@ Shader "Rule of Horror/TreeIt Wind"
 
             half4 Frag(Varyings IN, FRONT_FACE_TYPE face : FRONT_FACE_SEMANTIC) : SV_Target
             {
+                #ifdef LOD_FADE_CROSSFADE
+                    LODFadeCrossFade(IN.positionCS);   // LOD cross-fade ของ URP ใช้ dither clip
+                #endif
                 UNITY_SETUP_INSTANCE_ID(IN);
                 half a = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv).a * _BaseColor.a;
                 clip(a - _Cutoff);

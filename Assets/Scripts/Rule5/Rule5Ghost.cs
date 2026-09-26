@@ -9,17 +9,22 @@ namespace Rule5
     {
         Idle,       // ไม่ทำอะไร
         Wait,       // ยืนรอที่จุดเริ่มสาย หันหน้าตามผู้เล่น
-        Escort,     // เดินเคียงข้างผู้เล่นตามสาย (ตอนจับสายอยู่)
+        Escort,     // เดินตามหลังผู้เล่นตามสาย (ตอนจับสายอยู่)
         Approach,   // ผู้เล่นไม่ได้จับสาย → เดินเข้าหาช้าๆ ใกล้เกิน = ตาย
         Chase,      // ระฆังครบแล้วปล่อยมือ → วิ่งไล่
         Jumpscare   // โผล่หน้าแล้วพุ่งเข้าหา (ตาย)
     }
 
+    /// <summary>ผีเดินตามหลังฝั่งไหนของสาย — ผู้เล่นเดินอยู่ฝั่งขวาของสาย ปกติจึงให้ผีอยู่ฝั่งซ้าย</summary>
+    public enum EscortSide { Left, Right }
+
     /// <summary>
     /// ผีของ Rule 5 — เดินไปพร้อมกับผู้เล่นตามสายสิญจน์
     ///
     ///   Wait     : เริ่มกฎ ยืนรออยู่ข้างจุดเริ่มสาย
-    ///   Escort   : ผู้เล่นจับสาย → เดินเคียงข้างอีกฝั่งของสาย นำหน้าเล็กน้อย
+    ///   Escort   : ผู้เล่นจับสาย → เดินตามหลังตรงๆ (escortAngle ~170°)
+    ///              ปกติมองไม่เห็น ต้องชะเง้อจนสุดขอบที่ lookHalfAngle อนุญาตถึงจะเห็นที่หางตา
+    ///              เดินทั้งที่ฉิ่งดัง → PressEscort() ทำให้มันขยับเข้ามาใกล้เรื่อยๆ จนฆ่า
     ///   Approach : ผู้เล่นไม่ได้จับ → ค่อยๆ เดินเข้าหา เข้าใกล้กว่า killDistance = ตาย
     ///   Chase    : ระฆังครบ 3 แล้วผู้เล่นปล่อยมือ → วิ่งไล่ทันที
     ///   Jumpscare: ตายแบบผิดเงื่อนไข → โผล่ตรงหน้า พุ่งเข้ามา (New Animation)
@@ -32,15 +37,31 @@ namespace Rule5
         [SerializeField] private float approachSpeed = 0.9f;
         [SerializeField] private float chaseSpeed    = 3.6f;
 
-        [Header("Escort (walking alongside)")]
-        [Tooltip("How far the ghost walks from the thread on the far side, opposite the player, in metres.")]
-        [SerializeField] private float escortSideOffset = 1.2f;
+        [Header("Escort (walking behind the player)")]
+        [Tooltip("Angle between the direction of travel and the ghost, in degrees. 0 = straight ahead, 180 = directly behind. " +
+                 "Keep it near 180 so the ghost really is behind the player: what decides whether they can glance at it is the " +
+                 "look limit on SacredThreadWalker, not this. A few degrees off 180 keeps it out of the player's own footsteps.")]
+        [Range(90f, 180f)]
+        [SerializeField] private float escortAngle = 170f;
 
-        [Tooltip("How far ahead of the player along the thread the ghost stays, in metres. Negative = behind.")]
-        [SerializeField] private float escortLead = 0.8f;
+        [Tooltip("Side of the thread the ghost trails on. The player walks on the right of the thread, so Left keeps it clear of them.")]
+        [SerializeField] private EscortSide escortSide = EscortSide.Left;
+
+        [Tooltip("Distance the ghost keeps from the player while nothing is wrong, in metres.")]
+        [SerializeField] private float escortDistance = 3f;
 
         [Tooltip("If the ghost drifts further than this from where it should be, it is warped back. Stops it getting stuck on a wall and lost.")]
         [SerializeField] private float escortTeleportDistance = 8f;
+
+        [Header("Escort - closing in (walking while the ching rings)")]
+        [Tooltip("Metres the ghost closes in for every second the player keeps walking while the ching rings.")]
+        [SerializeField] private float escortCloseInSpeed = 0.35f;
+
+        [Tooltip("Metres the ghost drops back per second once the player stops breaking the rule. Set to 0 to make the distance lost permanent.")]
+        [SerializeField] private float escortRecoverSpeed = 0.15f;
+
+        [Tooltip("The ghost gets this close behind the player while escorting and the player dies, in metres.")]
+        [SerializeField] private float escortKillDistance = 0.8f;
 
         [Header("Approach / Chase")]
         [Tooltip("Seconds the ghost waits after the player lets go before walking towards them.")]
@@ -105,8 +126,31 @@ namespace Rule5
         private bool               _caught;
         private Vector3            _lastPosition;
         private bool               _warnedNoNavMesh;
+        private float              _escortDistance;
+        private float              _pressedUntil;     // เวลาล่าสุดที่โดน PressEscort — กันลำดับ Update สลับกัน
 
         public Rule5GhostMode Mode => _mode;
+
+        /// <summary>ระยะที่ผีตามหลังอยู่ตอนนี้ (เมตร) — หดลงทุกครั้งที่ผู้เล่นเดินตอนฉิ่งดัง</summary>
+        public float EscortDistance => _escortDistance;
+
+        /// <summary>0 = ตามหลังห่างปกติ, 1 = ประชิดจนฆ่า — Rule5 เอาไปทำเสียงหัวใจ / HUD</summary>
+        public float EscortCloseness01 =>
+            Mathf.Clamp01(Mathf.InverseLerp(escortDistance, escortKillDistance, _escortDistance));
+
+        /// <summary>
+        /// ผู้เล่นทำผิด (เดินทั้งที่ฉิ่งดัง) → ผีที่ตามหลังขยับเข้ามาใกล้ขึ้นตามเวลาที่ยังฝืนเดิน
+        /// เรียกทุกเฟรมที่ยังผิดอยู่ พอหยุดเรียกมันจะค่อยๆ ถอยกลับไปเองด้วย escortRecoverSpeed
+        /// </summary>
+        public void PressEscort(float deltaTime)
+        {
+            if (_mode != Rule5GhostMode.Escort || _caught) return;
+            _pressedUntil   = Time.time + 0.1f;
+            _escortDistance = Mathf.Max(escortKillDistance, _escortDistance - escortCloseInSpeed * deltaTime);
+        }
+
+        /// <summary>คืนระยะตามหลังเป็นค่าปกติ (เริ่มกฎใหม่ / ให้อภัยผู้เล่น)</summary>
+        public void ResetEscortDistance() => _escortDistance = escortDistance;
 
         // ═══════════════════════════════════════════════════════════════
         #region Setup / Mode
@@ -117,6 +161,7 @@ namespace Rule5
             _agent = GetComponent<NavMeshAgent>();
             if (animator == null) animator = GetComponentInChildren<Animator>();
             _lastPosition = transform.position;
+            ResetEscortDistance();
 
             // spawn ห่าง NavMesh → Unity สร้าง agent ไม่ได้ ("no valid NavMesh") แล้วทุก property
             // ของ agent จะ throw ทันที ลองดึงเข้าหา NavMesh ที่ใกล้สุดก่อนตั้งแต่เฟรมแรก
@@ -169,12 +214,14 @@ namespace Rule5
             _walker   = walker;
             _onCaught = onCaught;
             _caught   = false;
+            ResetEscortDistance();
         }
 
         /// <summary>ยืนรอที่จุด (ข้างจุดเริ่มสาย)</summary>
         public void EnterWait(Vector3 position)
         {
             _mode = Rule5GhostMode.Wait;
+            ResetEscortDistance();
             Warp(position);
             SetMoving(false);
             SetAnim(walk: false, run: false);
@@ -195,6 +242,18 @@ namespace Rule5
             _approachTimer = approachDelay;
             _repathTimer   = 0f;
             SetAgentSpeed(approachSpeed);
+            SetMoving(false);
+            SetAnim(walk: false, run: false);
+        }
+
+        /// <summary>
+        /// ยืนนิ่งอยู่ตรงที่เดิม หันหน้าตามผู้เล่น — ใช้ตอนผู้เล่นปล่อยมือแต่ยังไม่ได้สวดมนต์
+        /// ต่างจาก EnterWait() ตรงที่ไม่ย้ายตำแหน่ง และไม่รีเซ็ตระยะที่ถูกบีบมาจากตอนฉิ่ง
+        /// </summary>
+        public void EnterStandby()
+        {
+            if (_mode == Rule5GhostMode.Chase || _mode == Rule5GhostMode.Jumpscare) return;
+            _mode = Rule5GhostMode.Wait;
             SetMoving(false);
             SetAnim(walk: false, run: false);
         }
@@ -241,10 +300,10 @@ namespace Rule5
         {
             if (_walker == null || _walker.Thread == null) return;
 
-            var   thread = _walker.Thread;
-            float d      = thread.WrapDistance(_walker.Distance + escortLead);
-            // อีกฝั่งของสาย = ทางซ้ายของทิศเดิน (ผู้เล่นอยู่ขวา)
-            Vector3 target = thread.GetGroundPoint(d) - thread.GetRight(d) * escortSideOffset;
+            UpdateEscortDistance();
+            if (_caught) return;
+
+            Vector3 target = EscortTarget();
 
             // หลุดไกลเกิน → ดึงกลับ (โหมด fallback ไม่ต้องดึง เพราะมันเดินเข้าหาเป้าด้วย transform อยู่แล้ว)
             if (AgentUsable && Vector3.Distance(transform.position, target) > escortTeleportDistance)
@@ -267,7 +326,7 @@ namespace Rule5
             SetMoving(true);
             Repath(target);
 
-            // ผู้เล่นหยุด → ผีก็หยุดข้างๆ หันมามอง
+            // ผู้เล่นหยุด → ผีก็หยุดตามหลัง หันมามอง
             bool arrived = !_agent.pathPending && _agent.remainingDistance <= Mathf.Max(_agent.stoppingDistance, 0.25f);
             if (!playerMoving && arrived)
             {
@@ -279,6 +338,36 @@ namespace Rule5
             {
                 SetAnim(walk: true, run: false);
             }
+        }
+
+        /// <summary>
+        /// จุดที่ผีควรยืน — วัดจากตัวผู้เล่น ไม่ใช่จากเส้นสาย เพราะสิ่งที่ต้องคุมคือ "มุมที่ผู้เล่นจะเห็น"
+        /// ใช้ทิศของสายตรงจุดที่ผู้เล่นยืนเป็นแกน (หน้า/ขวา) แล้วกาง escortAngle ไปด้านหลังฝั่ง escortSide
+        /// </summary>
+        private Vector3 EscortTarget()
+        {
+            var     thread = _walker.Thread;
+            float   d      = thread.WrapDistance(_walker.Distance);
+            Vector3 fwd    = thread.GetForward(d);
+            Vector3 side   = thread.GetRight(d) * (escortSide == EscortSide.Left ? -1f : 1f);
+
+            float   rad = escortAngle * Mathf.Deg2Rad;
+            Vector3 dir = fwd * Mathf.Cos(rad) + side * Mathf.Sin(rad);
+            if (dir.sqrMagnitude < 0.0001f) dir = -fwd;
+
+            return GroundAt(_player.position + dir.normalized * _escortDistance);
+        }
+
+        /// <summary>
+        /// ระยะตามหลังของเฟรมนี้ — เฟรมไหนไม่โดน PressEscort ก็ถอยกลับไปหาค่าปกติ
+        /// (เช็คด้วยเวลา ไม่ใช่ flag เพราะ Rule5.UpdateRule กับ Update ของตัวนี้ไม่การันตีลำดับ)
+        /// </summary>
+        private void UpdateEscortDistance()
+        {
+            if (Time.time > _pressedUntil && _escortDistance < escortDistance)
+                _escortDistance = Mathf.Min(escortDistance, _escortDistance + escortRecoverSpeed * Time.deltaTime);
+
+            if (_escortDistance <= escortKillDistance + 0.0001f) Caught();
         }
 
         private void UpdateApproach()
@@ -325,7 +414,12 @@ namespace Rule5
         {
             if (_caught) return;
             if (Vector3.Distance(transform.position, _player.position) > killDistance) return;
+            Caught();
+        }
 
+        private void Caught()
+        {
+            if (_caught) return;
             _caught = true;
             _mode   = Rule5GhostMode.Idle;
             SetMoving(false);

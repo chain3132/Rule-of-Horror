@@ -12,6 +12,8 @@ namespace Rule5
     ///   - ใช้ปุ่มใน Inspector (SacredThreadPathEditor) เพื่อ "เพิ่มจุดต่อท้าย" / "วางทุกจุดลงพื้น"
     ///   - ย้ายทั้งเส้น = ย้าย GameObject แม่ ตัวเดียว
     ///   - ผ้าแดงจุดเริ่ม / จุดจบ / จุดที่ปล่อยมือ ระบบสร้างให้เองตอน runtime จาก prefab ข้างล่าง
+    ///     ผ้าแดงหลักจะ "เลื่อนตามมือ" ไปเรื่อยๆ ระหว่างเดิน (ดูได้ว่าถึงไหนแล้ว) และเลื่อนตามไป
+    ///     รออีกฝั่งเวลาต้องปล่อยมืออ้อมสิ่งกีดขวาง
     ///   - สิ่งกีดขวาง (ThreadObstacle) วางไว้ที่ไหนก็ได้ใกล้เส้น — มันหาตำแหน่งบนเส้นให้เอง
     ///
     /// ตำแหน่งบนเส้นทั้งหมดวัดเป็น "ระยะทางจากจุดเริ่ม" (เมตร) — ผู้เล่น / ผี / ผ้าแดง ใช้เลขเดียวกันหมด
@@ -37,14 +39,24 @@ namespace Rule5
         [SerializeField] private bool hideUntilRuleStarts = true;
 
         [Header("Markers (red cloth)")]
-        [Tooltip("Red cloth at the start point. Spawned when the rule begins, at waypoint P0.")]
+        [Tooltip("Red cloth marking the player's grip. Spawned at waypoint P0 when the rule begins, then slides along the thread " +
+                 "with the hand so it always shows how far along the player is.")]
         [SerializeField] private GameObject startMarkerPrefab;
 
         [Tooltip("Red cloth at the end point. Only used when the thread is not a loop.")]
         [SerializeField] private GameObject endMarkerPrefab;
 
-        [Tooltip("Red cloth marking where the player let go. It moves to that spot, and the thread can only be grabbed again there.")]
+        [Tooltip("Red cloth used instead of the grip cloth while the player is not holding on: it waits at the one spot where " +
+                 "the thread can be grabbed again. Leave empty to keep using the grip cloth for that as well.")]
         [SerializeField] private GameObject releaseMarkerPrefab;
+
+        [Tooltip("How fast the cloth slides along the thread to catch up with the hand, in m/s. " +
+                 "0 = it jumps there. Keep it above the walking speed or it will trail behind.")]
+        [SerializeField] private float markerFollowSpeed = 4f;
+
+        [Tooltip("The cloth jumps instead of sliding when it has more than this to catch up, in metres " +
+                 "(start of the rule, or a detour that skips a long stretch of thread).")]
+        [SerializeField] private float markerSnapDistance = 8f;
 
         [Tooltip("Extra height for every cloth marker, on top of threadHeight. 0 = hangs level with the thread.")]
         [SerializeField] private float markerHeightOffset = 0f;
@@ -58,6 +70,12 @@ namespace Rule5
         // ผ้าแดงห้ามเป็นลูกของตัวนี้ (ลูก = จุดหักของสาย) — เก็บไว้ใต้ root แยกต่างหาก
         private GameObject _startMarker, _endMarker, _releaseMarker;
         private Transform  _markerRoot;
+
+        // ผ้าแดงตัวที่เดินตามมือ — เก็บเป็น "ระยะบนเส้น" ตัวเดียว แล้วไล่เข้าหาเป้าทีละเฟรม
+        private float _markerDistance;        // ที่อยู่จริงตอนนี้
+        private float _markerTargetDistance;  // ที่ที่ควรไปอยู่ (มือผู้เล่น / จุดกลับมาจับ)
+        private bool  _markerActive;
+        private bool  _markerReleaseLook;     // true = ปล่อยมืออยู่ → ใช้ผ้าแดง "จุดกลับมาจับ"
 
         /// <summary>true = ปลายสายต่อกลับจุดเริ่ม</summary>
         public bool Loop => loop;
@@ -110,6 +128,7 @@ namespace Rule5
             }
 
             if (_dirty) Rebuild();
+            if (Application.isPlaying) SlideGripMarker();
         }
 
         #endregion
@@ -313,9 +332,6 @@ namespace Rule5
         {
             EnsureBuilt();
             SetThreadVisible(true);
-            if (_startMarker == null && startMarkerPrefab != null)
-                _startMarker = Instantiate(startMarkerPrefab, MarkerRoot);
-            PlaceMarker(_startMarker, 0f);
 
             if (!loop)
             {
@@ -323,6 +339,10 @@ namespace Rule5
                     _endMarker = Instantiate(endMarkerPrefab, MarkerRoot);
                 PlaceMarker(_endMarker, _totalLength);
             }
+
+            // ผ้าแดงหลักเริ่มที่ต้นสาย แล้วจากนี้ไปมันจะเดินตามมือเอง
+            _markerActive   = false;          // บังคับให้ SetGripMarker วางทับทันที ไม่ไถลมาจากที่เก่า
+            SetGripMarker(0f, releaseLook: false);
         }
 
         private Transform MarkerRoot
@@ -334,26 +354,75 @@ namespace Rule5
             }
         }
 
-        /// <summary>ย้ายผ้าแดง "จุดปล่อยมือ" ไปที่ระยะ d — ผู้เล่นต้องกลับมาจับตรงนี้</summary>
-        public void ShowReleaseMarker(float d)
+        /// <summary>
+        /// บอกผ้าแดงหลักว่า "ตอนนี้จุดสำคัญอยู่ที่ระยะ d"
+        ///   จับอยู่    → d = ตำแหน่งมือ ผ้าแดงเลื่อนตามไปเรื่อยๆ = ตัวบอกว่าเดินมาถึงไหนแล้ว
+        ///   ปล่อยมือ  → d = จุดที่ต้องกลับมาจับ (อ้อมสิ่งกีดขวางแล้วมันไปรออีกฝั่งให้) + สลับเป็นผ้าแดง releaseMarkerPrefab
+        /// Walker เรียกทุกเฟรมที่เดิน — ไม่แพง เพราะแค่เก็บตัวเลขเป้าหมายไว้
+        /// </summary>
+        public void SetGripMarker(float d, bool releaseLook)
         {
-            if (_releaseMarker == null && releaseMarkerPrefab != null)
-                _releaseMarker = Instantiate(releaseMarkerPrefab, MarkerRoot);
-            if (_releaseMarker == null) return;
+            EnsureBuilt();
+            _markerTargetDistance = WrapDistance(d);
+            _markerReleaseLook    = releaseLook;
 
-            _releaseMarker.SetActive(true);
-            PlaceMarker(_releaseMarker, d);
+            if (!_markerActive)
+            {
+                _markerActive   = true;
+                _markerDistance = _markerTargetDistance;
+            }
+
+            ApplyGripMarkerVisual();
+            PlaceMarker(GripMarkerObject, _markerDistance);
         }
 
-        public void HideReleaseMarker()
+        /// <summary>ตัวที่กำลังโชว์อยู่ — ผ้าแดงตามมือ หรือผ้าแดงจุดกลับมาจับ</summary>
+        private GameObject GripMarkerObject
+            => _markerReleaseLook && _releaseMarker != null ? _releaseMarker : _startMarker;
+
+        /// <summary>สร้างผ้าแดงเท่าที่ต้องใช้ แล้วเปิดตัวเดียวปิดอีกตัว (ไม่งั้นจะเห็นผ้าแดงซ้อนกัน 2 ผืน)</summary>
+        private void ApplyGripMarkerVisual()
         {
-            if (_releaseMarker != null) _releaseMarker.SetActive(false);
+            if (_startMarker == null && startMarkerPrefab != null)
+                _startMarker = Instantiate(startMarkerPrefab, MarkerRoot);
+
+            if (_markerReleaseLook && _releaseMarker == null && releaseMarkerPrefab != null)
+                _releaseMarker = Instantiate(releaseMarkerPrefab, MarkerRoot);
+
+            bool useRelease = _markerReleaseLook && _releaseMarker != null;
+            if (_startMarker   != null) _startMarker.SetActive(!useRelease);
+            if (_releaseMarker != null) _releaseMarker.SetActive(useRelease);
+        }
+
+        /// <summary>
+        /// ไถลผ้าแดงเข้าหาเป้าทีละเฟรม — เดินหน้าตามเส้นเสมอ (ForwardGap) ผ้าแดงจะได้ไม่ตัดทะลุมุมสาย
+        /// ระหว่างเดินปกติ gap ≈ 0 อยู่แล้ว การไถลจะเห็นผลตอนอ้อมสิ่งกีดขวางเป็นหลัก
+        /// </summary>
+        private void SlideGripMarker()
+        {
+            if (!_markerActive) return;
+
+            var marker = GripMarkerObject;
+            if (marker == null) return;
+
+            float gap = ForwardGap(_markerDistance, _markerTargetDistance);
+
+            // gap < 0 = เป้าอยู่ข้างหลัง (เส้นไม่ loop) → ไถลถอยหลังไม่ได้ ตัดไปเลย
+            if (markerFollowSpeed <= 0f || gap < 0f || gap > markerSnapDistance) _markerDistance = _markerTargetDistance;
+            else if (gap > 0.0001f)
+                _markerDistance = WrapDistance(_markerDistance + Mathf.Min(gap, markerFollowSpeed * Time.deltaTime));
+            else return;   // ถึงแล้ว ไม่ต้องขยับ
+
+            PlaceMarker(marker, _markerDistance);
         }
 
         /// <summary>ลบผ้าแดงทั้งหมด — ตอนจบกฎ / ตาย</summary>
         public void ClearMarkers()
         {
             if (hideUntilRuleStarts) SetThreadVisible(false);
+
+            _markerActive      = false;
+            _markerReleaseLook = false;
 
             DestroyMarker(ref _startMarker);
             DestroyMarker(ref _endMarker);

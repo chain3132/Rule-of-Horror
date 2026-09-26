@@ -17,6 +17,10 @@ public static class TreeItTerrainPrefabBuilder
     // ต้องลดลงเสมอ ไม่งั้น SetLODs จะ error แล้ว LOD Group ว่างเปล่า → Terrain วาดไม่ได้เลย
     private const float FirstLodTransition = 0.35f;
 
+    // สัดส่วนหน้าจอที่ LOD สุดท้ายหายไป — ต่ำไว้เพื่อให้ยังเห็นต้นไม้ที่อยู่ไกล
+    // (Terrain คุมระยะด้วย Tree Distance อยู่แล้ว ปล่อยให้ค่านี้เป็นตัว cull จะตัดเร็วเกินไป)
+    private const float LastLodCull = 0.002f;
+
     [MenuItem("Rule of Horror/TreeIt/สร้าง Prefab ต้นไม้สำหรับ Terrain (จาก FBX ที่เลือก)")]
     private static void Build()
     {
@@ -55,6 +59,12 @@ public static class TreeItTerrainPrefabBuilder
         var root = new GameObject(name + "_Terrain");
         var lods = new List<LOD>();
 
+        // material ของ LOD0 — ใช้เป็นตัวอ้างอิงให้ LOD อื่นทั้งหมด
+        // ไฟล์ _LOD1..N.fbx มี material ฝังอยู่ในตัวเอง (URP/Lit ที่ Unity สร้างให้ตอน import)
+        // ถ้าปล่อยไว้ LOD ไกลๆ จะไม่ใช่ shader ต้นไม้ → ไม่มีลม ไม่ instanced (SRP Batcher กินไปแทน)
+        // แล้วจะงงมาก เพราะ LOD0 ที่เห็นใกล้ๆ ดูถูกต้องทุกอย่าง
+        Material[] lod0Materials = null;
+
         for (int i = 0; i < models.Count; i++)
         {
             if (!TryCombine(models[i], out Mesh mesh, out Material[] mats))
@@ -70,15 +80,29 @@ public static class TreeItTerrainPrefabBuilder
             GameObject go = i == 0 ? root : new GameObject($"LOD{i}");
             if (i != 0) go.transform.SetParent(root.transform, false);
 
+            if (i == 0) lod0Materials = mats;
+            else         mats = RemapToLod0(mats, lod0Materials, models[i].name);
+
             go.AddComponent<MeshFilter>().sharedMesh = mesh;
             var mr = go.AddComponent<MeshRenderer>();
             mr.sharedMaterials = mats;
 
-            float h = Mathf.Max(FirstLodTransition / Mathf.Pow(2f, i), 0.01f + 0.001f * (models.Count - i));
+            // LOD สุดท้ายต้อง cull ที่ค่าต่ำมาก ไม่งั้นต้นไม้จะหายไปทั้งที่ยังอยู่ในระยะ Tree Distance
+            // (กรณีมี LOD เดียว ค่านี้คือจุด cull จุดเดียวของทั้งต้น)
+            bool  isLast = i == models.Count - 1;
+            float h = isLast
+                ? LastLodCull
+                : Mathf.Max(FirstLodTransition / Mathf.Pow(2f, i), LastLodCull + 0.001f * (models.Count - i));
             lods.Add(new LOD(h, new Renderer[] { mr }));
         }
 
-        if (lods.Count > 1)
+        // ต้องมี LODGroup "เสมอ" แม้จะมี LOD เดียว
+        // Terrain: prototype ที่ไม่มี LODGroup จะถูกส่งเข้า "default impostor system"
+        //          (Unity เตือนเองใน Inspector ของ Paint Trees)
+        //          พอเลย Tree Billboard Distance มันจะเลิกวาด mesh แล้ววาด billboard ที่สร้างเอง
+        //          ซึ่งรองรับแค่ shader ตระกูล Nature/Soft Occlusion — เจอ shader อื่นแล้วได้ภาพมั่วเป็นจุดสี
+        // มี LODGroup = Terrain วาด mesh ตามปกติทุกระยะ ไม่แตะระบบ impostor เลย
+        if (lods.Count > 0)
         {
             var group = root.AddComponent<LODGroup>();
             group.SetLODs(lods.ToArray());
@@ -94,6 +118,38 @@ public static class TreeItTerrainPrefabBuilder
 
         Debug.Log($"[TreeIt] สร้าง {prefabPath} ({lods.Count} LOD) — ลากใส่ Terrain ▸ Paint Trees ▸ Edit Trees ได้เลย",
                   AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath));
+    }
+
+    /// <summary>
+    /// จับ material ของ LOD ให้ตรงกับของ LOD0 — จับคู่ด้วยชื่อก่อน ถ้าไม่เจอค่อยใช้ลำดับ submesh
+    /// (material ฝังใน FBX ของ LOD ชื่อเดียวกับตัวที่แยกไฟล์ไว้ของ LOD0 เสมอ เพราะมาจากโมเดลเดียวกัน)
+    /// </summary>
+    private static Material[] RemapToLod0(Material[] lodMats, Material[] lod0Mats, string lodName)
+    {
+        if (lod0Mats == null || lod0Mats.Length == 0) return lodMats;
+
+        var result = new Material[lodMats.Length];
+
+        for (int i = 0; i < lodMats.Length; i++)
+        {
+            string wanted = lodMats[i] != null ? lodMats[i].name : null;
+            Material match = null;
+
+            if (!string.IsNullOrEmpty(wanted))
+                foreach (var m in lod0Mats)
+                    if (m != null && m.name == wanted) { match = m; break; }
+
+            if (match == null && i < lod0Mats.Length) match = lod0Mats[i];   // ชื่อไม่ตรง → ใช้ลำดับ
+
+            if (match == null)
+            {
+                result[i] = lodMats[i];
+                Debug.LogWarning($"[TreeIt] {lodName}: หา material คู่ของ '{wanted}' ใน LOD0 ไม่เจอ — " +
+                                 "LOD นี้จะใช้ material ที่ฝังมากับ FBX (คนละ shader กับ LOD0)");
+            }
+            else result[i] = match;
+        }
+        return result;
     }
 
     /// <summary>รวม MeshFilter ทุกตัวใน model เป็น mesh เดียว — 1 submesh ต่อ 1 material (bake transform ลูกเข้าไป)</summary>

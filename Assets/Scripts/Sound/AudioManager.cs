@@ -139,6 +139,7 @@ public class AudioManager : MonoBehaviour
                      "event:/Rule4/Crow Panic",
                      "event:/Rule4/Bones Crack",
                      "event:/Rule5/Bell",
+                     "event:/Rule5/Pray",
                      "event:/Rule5/GhostChingChap",
                      "event:/Rule5/GrabThread",
                      "event:/Rule5/ReleaseThread",
@@ -321,6 +322,21 @@ public class AudioManager : MonoBehaviour
     {
         heartLevel  = 0;
         targetHeart = 0f;
+    }
+
+    /// <summary>
+    /// ดับเสียงหัวใจทันที — เขียนพารามิเตอร์ลง FMOD เลย ไม่รอ UpdateHeartbeat() มา lerp ลงให้
+    ///
+    /// ResetHeartbeatLevel() ตั้งได้แค่ "เป้าหมาย" ส่วนค่าจริงเดินเข้าหาเป้าใน UpdateHeartbeat()
+    /// ซึ่งมีแต่กฎที่กำลังเล่นอยู่เป็นคนเรียก — พอกฎจบก็ไม่มีใครเรียกอีก ค่าเลยค้างอยู่ระดับเดิม
+    /// แล้วเสียงหัวใจดังข้ามไปทั้งโหมด Tension และ Relax เรียกตัวนี้แทนทุกครั้งที่จบกฎ/ตาย
+    /// </summary>
+    public void SilenceHeartbeat()
+    {
+        heartLevel   = 0;
+        targetHeart  = 0f;
+        currentHeart = 0f;
+        heartbeat.setParameterByName("HeartLevel", 0f);
     }
 
     // ─────────── Breathing (Rule 3) ───────────
@@ -646,15 +662,21 @@ public class AudioManager : MonoBehaviour
     public void PlayRule5HeartAttack()
         => SafeOneShot("event:/Rule5/HeartAttack", ListenerPos);
 
+    /// <summary>ผู้เล่นสวดมนต์ (กด Space) บอกว่าจะกลับไปนั่งแล้ว</summary>
+    public void PlayRule5Pray()
+        => SafeOneShot("event:/Rule5/Pray", ListenerPos);
+
     /// <summary>จบกฎสำเร็จ</summary>
     public void PlayRule5Complete()
         => SafeOneShot("event:/Rule5/Complete", ListenerPos);
 
+    /// <summary>เคลียร์เสียงทุกอย่างของ Rule 5 — เรียกตอนจบกฎ / ตาย / ถูกปิดกลางคัน</summary>
     public void StopAllRule5Sounds()
     {
         StopRule5Background();
         StopRule5Ching();
         StopRule5Untangle();
+        SilenceHeartbeat();   // เสียงหัวใจเป็นของกลาง ถ้าไม่ดับตรงนี้จะค้างดังยาวข้ามโหมด
     }
 
     // ─────────── Rule 2 Sounds ───────────
