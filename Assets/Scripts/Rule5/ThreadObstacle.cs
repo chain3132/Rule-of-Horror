@@ -2,6 +2,16 @@ using UnityEngine;
 
 namespace Rule5
 {
+    /// <summary>วิธีวางกล่องกันตัวผู้เล่นของสิ่งกีดขวาง</summary>
+    public enum BlockerFit
+    {
+        /// <summary>วางคร่อมเส้น หันตามทิศสาย — ความยาวของกล่องคือความยาวตามแนวเส้น</summary>
+        AcrossThread,
+
+        /// <summary>วางทับตัวโมเดล ใช้ทิศที่โมเดลหันอยู่ — สำหรับของยาวๆ ที่วางไม่ตั้งฉากกับเส้น (โลงศพ ฯลฯ)</summary>
+        MatchModel
+    }
+
     /// <summary>วิธีผ่านสิ่งกีดขวางบนสายสิญจน์</summary>
     public enum ObstacleKind
     {
@@ -52,11 +62,21 @@ namespace Rule5
                  "through a model that has no collider of its own. Untick when the model already blocks the way properly.")]
         [SerializeField] private bool blockPlayerPhysically = true;
 
-        [Tooltip("Height of that box, in metres.")]
-        [SerializeField] private float blockerHeight = 2.2f;
+        [Tooltip("Where the box goes. " +
+                 "Across Thread: centred on the thread and turned to follow it, so its length runs along the thread. " +
+                 "Match Model: centred on this object and turned the way the model faces, for something long that does not sit " +
+                 "square to the thread (a coffin, a wall). It still sits on the ground at thread height.")]
+        [SerializeField] private BlockerFit blockerFit = BlockerFit.AcrossThread;
 
-        [Tooltip("Width of that box across the thread, in metres. Wide enough to stop the player squeezing past the thread side.")]
+        [Tooltip("Length of that box, in metres: along the thread, or along the model's own forward (blue Z arrow) when matching the model. " +
+                 "0 = work it out from Block Radius.")]
+        [SerializeField] private float blockerLength = 0f;
+
+        [Tooltip("Width of that box, in metres: across the thread, or across the model (red X arrow) when matching the model.")]
         [SerializeField] private float blockerWidth = 1.6f;
+
+        [Tooltip("Height of that box, in metres, measured up from the ground.")]
+        [SerializeField] private float blockerHeight = 2.2f;
 
         public ObstacleKind Kind             => kind;
         public float        UntangleDuration => untangleDuration;
@@ -77,8 +97,17 @@ namespace Rule5
         // กล่องตันที่ระบบสร้างเองคร่อมเส้นสายสิญจน์ — ไม่ใช่ collider ของโมเดล
         private GameObject _blocker;
 
-        /// <summary>ระยะที่หน้ากล่องร่นเข้าไปจากขอบเขตกั้นแต่ละข้าง (เมตร)</summary>
+        /// <summary>ระยะที่หน้ากล่องร่นเข้าไปจากขอบเขตกั้นแต่ละข้าง (เมตร) ตอนคิดความยาวให้อัตโนมัติ</summary>
         private const float BlockerInset = 0.3f;
+
+        /// <summary>
+        /// ความยาวกล่องที่จะใช้จริง — กรอกเองได้ ถ้าปล่อย 0 จะคิดจาก blockRadius ให้
+        /// (ค่าอัตโนมัติสั้นกว่าช่วงที่กั้นข้างละ BlockerInset ผู้เล่นที่ถูกหยุดตรงขอบพอดี
+        ///  จะได้ยืนห่างกล่องนิดหน่อย ไม่ไปจมอยู่ในกล่องแล้วโดน CharacterController ดันออกมั่วๆ)
+        /// </summary>
+        private float BlockerLength => blockerLength > 0.01f
+            ? blockerLength
+            : Mathf.Max(0.2f, blockRadius * 2f - BlockerInset * 2f);
 
         /// <summary>จุดกลางของสิ่งกีดขวางบนเส้น (เมตรจากต้นสาย)</summary>
         public float BlockCenter => (BlockStart + BlockEnd) * 0.5f;
@@ -136,17 +165,24 @@ namespace Rule5
                 Mathf.Approximately(s.y, 0f) ? 1f : 1f / s.y,
                 Mathf.Approximately(s.z, 0f) ? 1f : 1f / s.z);
 
-            float center = BlockCenter;
-            _blocker.transform.SetPositionAndRotation(
-                path.GetGroundPoint(center),
-                Quaternion.LookRotation(path.GetForward(center), Vector3.up));
+            Vector3 ground = path.GetGroundPoint(BlockCenter);
+            Vector3 forward;
 
-            // สั้นกว่าช่วงที่กั้นอยู่ข้างละ BlockerInset — ผู้เล่นที่ถูกปล่อยมือตรงขอบเขตกั้นพอดี
-            // จะได้ยืนห่างกล่องนิดหน่อย ไม่ไปจมอยู่ในกล่องแล้วโดน CharacterController ดันออกมั่วๆ
+            if (blockerFit == BlockerFit.MatchModel)
+            {
+                // ทับตัวโมเดล แต่ยังนั่งอยู่บนพื้นระดับเดียวกับเส้น (กันเคสที่ pivot ของโมเดลลอยหรือจม)
+                ground  = new Vector3(transform.position.x, ground.y, transform.position.z);
+                forward = transform.forward;
+                forward.y = 0f;
+                if (forward.sqrMagnitude < 0.0001f) forward = path.GetForward(BlockCenter);
+            }
+            else forward = path.GetForward(BlockCenter);
+
+            _blocker.transform.SetPositionAndRotation(ground, Quaternion.LookRotation(forward.normalized, Vector3.up));
+
             var box = _blocker.GetComponent<BoxCollider>();
             box.isTrigger = false;
-            box.size      = new Vector3(blockerWidth, blockerHeight,
-                                        Mathf.Max(0.2f, (BlockEnd - BlockStart) - BlockerInset * 2f));
+            box.size      = new Vector3(blockerWidth, blockerHeight, BlockerLength);
             box.center    = new Vector3(0f, blockerHeight * 0.5f, 0f);
 
             _blocker.SetActive(IsRevealed);
@@ -185,10 +221,14 @@ namespace Rule5
 
             // กล่องกันตัวผู้เล่น — เห็นขนาดจริงตั้งแต่ตอนจัดฉาก (ตัวจริงสร้างตอนเริ่มกฎ)
             if (!blockPlayerPhysically || kind != ObstacleKind.Detour) return;
-            Gizmos.matrix = Matrix4x4.TRS(transform.position + Vector3.up * blockerHeight * 0.5f,
-                                          transform.rotation, Vector3.one);
-            Gizmos.DrawWireCube(Vector3.zero, new Vector3(blockerWidth, blockerHeight,
-                                Mathf.Max(0.2f, blockRadius * 2f - BlockerInset * 2f)));
+            Vector3 yaw = transform.forward; yaw.y = 0f;
+            Quaternion rot = yaw.sqrMagnitude > 0.0001f
+                ? Quaternion.LookRotation(yaw.normalized, Vector3.up)
+                : Quaternion.identity;
+
+            Gizmos.matrix = Matrix4x4.TRS(transform.position + Vector3.up * blockerHeight * 0.5f, rot, Vector3.one);
+            Gizmos.DrawWireCube(Vector3.zero, new Vector3(blockerWidth, blockerHeight, BlockerLength));
+            Gizmos.matrix = Matrix4x4.identity;
         }
     }
 }

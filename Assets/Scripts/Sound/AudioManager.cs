@@ -617,6 +617,20 @@ public class AudioManager : MonoBehaviour
         rule5Ching.start();
     }
 
+    /// <summary>
+    /// true = instance ของเสียงฉิ่งยังดังอยู่จริง
+    /// ใช้เช็คว่า event ที่ทำไว้เป็น loop จริงไหม — ถ้าเป็น one-shot มันจะดังจบไปเองก่อนหมดเวลาห้ามเดิน
+    /// </summary>
+    public bool IsRule5ChingPlaying()
+    {
+        if (!_rule5ChingOk) return false;
+
+        rule5Ching.getPlaybackState(out FMOD.Studio.PLAYBACK_STATE state);
+        return state == FMOD.Studio.PLAYBACK_STATE.PLAYING
+            || state == FMOD.Studio.PLAYBACK_STATE.STARTING
+            || state == FMOD.Studio.PLAYBACK_STATE.SUSTAINING;
+    }
+
     public void StopRule5Ching()
     {
         if (!_rule5ChingOk) return;

@@ -55,16 +55,27 @@ namespace RuleSystem.Rule
         [SerializeField] private float chingMinGap = 12f;
         [SerializeField] private float chingMaxGap = 25f;
 
-        [Tooltip("How long the ching keeps ringing, in seconds, picked at random in this range.")]
+        [Tooltip("How long the ching keeps ringing, in seconds, picked at random in this range. " +
+                 "This is how long walking is punished for - the FMOD event has to be a loop, or the sound stops early " +
+                 "and the player is left being punished by a ching they can no longer hear.")]
         [SerializeField] private float chingMinDuration = 3f;
         [SerializeField] private float chingMaxDuration = 6f;
+
+        [Tooltip("Start the ching sound again whenever the FMOD event finishes before the time above is up. " +
+                 "Harmless when event:/Rule5/Ching really is a loop (it never finishes), and it stops a one-shot event " +
+                 "from leaving the player punished by a ching they can no longer hear.")]
+        [SerializeField] private bool repeatChingSound = true;
 
         [Tooltip("Total seconds of walking allowed while the ching rings before it counts as a violation. Reaction-time grace.")]
         [SerializeField] private float chingMoveGrace = 0.5f;
 
+        [Tooltip("Speed, in m/s, above which the player counts as walking while they are off the thread. " +
+                 "The ching keeps ringing when the thread is let go - going round an obstacle is no excuse to move through one.")]
+        [SerializeField] private float chingMoveThreshold = 0.25f;
+
         [Tooltip("Text shown the first time the player keeps walking through a ching. Leave empty for no hint. " +
-                 "Walking does not kill outright: the ghost behind closes in for as long as it lasts, and kills once it is close enough " +
-                 "(tune the distances on the ghost prefab).")]
+                 "Walking does not kill outright: the ghost behind closes in for as long as it lasts and stays there, " +
+                 "so it adds up across chings until it is close enough to kill (tune the distances on the ghost prefab).")]
         [TextArea(1, 3)]
         [SerializeField] private string chingWarnHint = "หยุดเดิน… มีอะไรขยับเข้ามาใกล้ข้างหลัง";
 
@@ -127,6 +138,8 @@ namespace RuleSystem.Rule
         private float _voiceTimer;
         private float _releaseTimer;
         private float _notGrabbedTimer;
+        private Vector3 _lastPlayerFlat;
+        private bool  _markerWhispered;
         private int   _heartLevel;
         private bool  _prayed;
 
@@ -227,6 +240,7 @@ namespace RuleSystem.Rule
             if (!_gameplayActive) return;
 
             UpdatePray(holding);
+            UpdateGhostAtMarker();
             UpdateGhostVoice(holding);
             UpdateHeartbeat(holding);
             UpdateNotGrabbed(holding);
@@ -277,6 +291,8 @@ namespace RuleSystem.Rule
             _releaseTimer   = 0f;
             _notGrabbedTimer = 0f;
             _heartLevel     = 0;
+            _lastPlayerFlat = FlatPlayerPosition();
+            _markerWhispered = false;
             _prayed         = false;
 
             PlayerController.Instance.isBlockStanding = false;
@@ -346,11 +362,19 @@ namespace RuleSystem.Rule
 
         void UpdateChing(bool holding, bool walking)
         {
+            // ต้องอ่านทุกเฟรมเพื่อให้ตำแหน่งอ้างอิงไม่ค้าง ไม่งั้นเฟรมแรกหลังปล่อยมือจะเห็นเป็นกระโดดไกล
+            bool physicallyMoving = PlayerIsMoving();
+            bool moving           = holding ? walking : physicallyMoving;
+
             if (_chingActive)
             {
                 _chingRemaining -= Time.deltaTime;
 
-                if (walking)
+                // event ที่ไม่ได้ทำเป็น loop จะเงียบไปเองกลางคัน ทั้งที่กฎห้ามเดินยังมีผลอยู่
+                if (repeatChingSound && !AudioManager.instance.IsRule5ChingPlaying())
+                    AudioManager.instance.StartRule5Ching();
+
+                if (moving)
                 {
                     _chingViolation += Time.deltaTime;
                     if (_chingViolation > chingMoveGrace) ApplyChingPressure();
@@ -360,24 +384,32 @@ namespace RuleSystem.Rule
                 return;
             }
 
-            // ฉิ่งสุ่มดังเฉพาะตอนจับสายอยู่ (ปล่อยมืออยู่ก็ไม่มีความหมาย)
-            if (!holding) return;
+            // ดังได้ตั้งแต่แตะสายครั้งแรก และเลิกดังหลังสวดมนต์ลา (ช่วงนั้นเหลือแค่วิ่งหนีผี)
+            // ไม่ผูกกับ "จับสายอยู่" แล้ว — ไม่งั้นแค่กด E ปล่อยมือก็ตัดเสียงฉิ่งทิ้งได้ทุกครั้ง
+            if (walker == null || !walker.EverGrabbed || _prayed) return;
 
             _chingTimer -= Time.deltaTime;
             if (_chingTimer > 0f) return;
 
-            _chingTimer     = Random.Range(chingMinGap, chingMaxGap);
-            _chingRemaining = Random.Range(chingMinDuration, chingMaxDuration);
+            // เรียง min/max ให้ถูกก่อนสุ่ม — กรอกสลับกันไว้ใน Inspector แล้วได้ช่วงที่ไม่ได้ตั้งใจ
+            _chingTimer     = RandomInRange(chingMinGap, chingMaxGap);
+            _chingRemaining = RandomInRange(chingMinDuration, chingMaxDuration);
             _chingViolation = 0f;
             _chingWarned    = false;
             _chingActive    = true;
             AudioManager.instance.StartRule5Ching();
+
+            Debug.Log($"[Rule5] ฉิ่งเริ่มดัง {_chingRemaining:0.0} วิ (ห้ามเดิน) — ครั้งถัดไปอีก {_chingTimer:0.0} วิ", this);
         }
 
-        
+        /// <summary>
+        /// ยังเดินทั้งที่ฉิ่งดัง — ไม่ตายทันที แต่ผีที่เดินตามหลังขยับเข้ามาใกล้ขึ้นทุกเฟรมที่ยังฝืนเดิน
+        /// และไม่ถอยกลับอีกเลย หยุดเดินคือแค่หยุดเสียระยะเพิ่ม สะสมข้ามฉิ่งไปเรื่อยๆ
+        /// จนประชิดพอ = ตาย (Rule5Ghost เป็นคนเรียก OnGhostCaughtPlayer)
+        /// </summary>
         void ApplyChingPressure()
         {
-            if (_ghost != null) _ghost.PressEscort(Time.deltaTime);
+            if (_ghost != null) _ghost.PressCloser(Time.deltaTime);
 
             if (_chingWarned) return;
             _chingWarned = true;
@@ -390,12 +422,39 @@ namespace RuleSystem.Rule
                 AudioManager.instance.PlayRule5GhostChingChap(_ghost.transform.position + Vector3.up * 1.5f);
         }
 
+        /// <summary>
+        /// ตัวผู้เล่นขยับจริงไหมในเฟรมนี้ (วัดแนวราบ) — ใช้ตอนปล่อยมือ ซึ่ง walker ไม่ได้เป็นคนพาเดินแล้ว
+        /// เรียกทุกเฟรมเสมอ ไม่ว่าจะจับสายอยู่หรือไม่ เพื่อให้ _lastPlayerFlat ไม่ค้างของเก่า
+        /// </summary>
+        bool PlayerIsMoving()
+        {
+            Vector3 flat  = FlatPlayerPosition();
+            float   speed = Time.deltaTime > 0f ? Vector3.Distance(flat, _lastPlayerFlat) / Time.deltaTime : 0f;
+            _lastPlayerFlat = flat;
+            return speed > chingMoveThreshold;
+        }
+
+        Vector3 FlatPlayerPosition()
+        {
+            var player = PlayerController.Instance;
+            if (player == null) return _lastPlayerFlat;
+
+            Vector3 p = player.transform.position;
+            return new Vector3(p.x, 0f, p.z);
+        }
+
         void StopChing()
         {
             if (!_chingActive) return;
             _chingActive = false;
             if (AudioManager.instance != null) AudioManager.instance.StopRule5Ching();
+
+            Debug.Log($"[Rule5] ฉิ่งหยุด (เดินผิดไป {_chingViolation:0.0} วิ) — เดินได้แล้ว", this);
         }
+
+        /// <summary>สุ่มในช่วง โดยไม่สนว่ากรอก min/max สลับกันมาหรือเปล่า</summary>
+        static float RandomInRange(float a, float b)
+            => Random.Range(Mathf.Min(a, b), Mathf.Max(a, b));
 
         /// <summary>
         /// กด Space = สวดมนต์ลา "โอเค ฉันจะกลับไปนั่งที่แล้ว" — กดได้เฉพาะตอนที่ยังจับสายอยู่เท่านั้น
@@ -425,6 +484,7 @@ namespace RuleSystem.Rule
         {
             _prayed       = true;
             _releaseTimer = 0f;   // สวดแล้ว = ประกาศว่ากำลังกลับไปนั่ง ไม่ตายด้วยหัวใจวายอีก
+            StopChing();          // เลิกกฎห้ามเดินไปด้วย จากนี้คือวิ่งหนีอย่างเดียว
             Debug.Log($"[Rule5] สวดมนต์ลา (ระฆัง {_bellCount}/{requiredBells}) — ผีจะออกไล่ตอนปล่อยมือ", this);
 
             if (prayAnimator != null && !string.IsNullOrEmpty(prayTrigger)) prayAnimator.SetTrigger(prayTrigger);
@@ -446,6 +506,20 @@ namespace RuleSystem.Rule
                 walker != null && !walker.IsHolding) _ghost.BeginChase();
         }
 
+        /// <summary>
+        /// ผีคืบมาถึงผ้าแดงแล้ว — กระซิบครั้งเดียวจากตรงจุดนั้น ให้ผู้เล่นที่อยู่อีกฝั่งของสิ่งกีดขวาง
+        /// พอรู้ว่ามีอะไรมายืนดักรออยู่ตรงทางกลับ (ตอนนี้ห้ามไม่ได้แล้ว กลับไปจับเมื่อไรก็ตาย)
+        /// </summary>
+        void UpdateGhostAtMarker()
+        {
+            if (_ghost == null || !_ghost.ReachedMarker) return;
+            if (_markerWhispered) return;
+
+            _markerWhispered = true;
+            AudioManager.instance.PlayRule5GhostChingChap(_ghost.transform.position + Vector3.up * 1.5f);
+            Debug.Log("[Rule5] ผีคืบถึงผ้าแดงแล้ว — ยืนดักรอ กลับมาจับสายเมื่อไรคือตาย", this);
+        }
+
         void UpdateGhostVoice(bool holding)
         {
             if (!holding) return;
@@ -462,15 +536,18 @@ namespace RuleSystem.Rule
         }
 
         /// <summary>
-        /// เสียงหัวใจ 2 ที่มา — จับสายอยู่: ตามระยะผีที่ตามหลัง / ปล่อยมือแล้วไม่กลับมาจับ: ตามเวลาจนหัวใจวาย
-        /// (สองอย่างนี้เกิดพร้อมกันไม่ได้ เลยใช้ _heartLevel ตัวเดียวกัน)
+        /// เสียงหัวใจดังเฉพาะตอนมือหลุดจากสายเท่านั้น — คือช่วงนับถอยหลังหัวใจวาย
+        /// และช่วงที่สวดมนต์ลาแล้วโดนไล่ (ดังค้างระดับสูงสุด)
+        ///
+        /// ตอนยังจับสายอยู่เงียบเสมอ ต่อให้ผีขยับเข้ามาใกล้จากการเดินตอนฉิ่งดังก็ตาม
+        /// ช่วงนั้นความกดดันมาจากเสียงฉิ่งกับเสียงกระซิบของผีอยู่แล้ว
         /// </summary>
         void UpdateHeartbeat(bool holding)
         {
             if (holding || walker == null || !walker.EverGrabbed)
             {
                 _releaseTimer = 0f;
-                SetHeartLevel(holding ? GhostCloseHeartLevel() : 0);
+                SetHeartLevel(0);
                 return;
             }
 
@@ -493,18 +570,6 @@ namespace RuleSystem.Rule
                 Debug.Log("[Rule5] ปล่อยสายเกินเวลา → หัวใจวาย", this);
                 StartHeartAttackDeath();
             }
-        }
-
-        /// <summary>ผีตามหลังใกล้แค่ไหน → ระดับเสียงหัวใจ (0 = เงียบ)</summary>
-        int GhostCloseHeartLevel()
-        {
-            if (_ghost == null || _ghost.Mode != Rule5GhostMode.Escort) return 0;
-
-            float t = _ghost.EscortCloseness01;
-            return t < 0.15f ? 0
-                 : t < 0.5f  ? 1
-                 : t < 0.8f  ? 2
-                 : 3;
         }
 
         void SetHeartLevel(int level)
@@ -536,6 +601,15 @@ namespace RuleSystem.Rule
         {
             if (!_gameplayActive) return;
             _releaseTimer = 0f;
+
+            // ผีมายืนดักอยู่ที่ผ้าแดงแล้ว — ยื่นมือไปจับสายคือยื่นมือเข้าหามันพอดี
+            if (_ghost != null && _ghost.ReachedMarker)
+            {
+                Debug.Log("[Rule5] กลับมาจับสายทั้งที่ผีดักอยู่ที่ผ้าแดง → ตาย", this);
+                StartJumpscareDeath();
+                return;
+            }
+
             if (_ghost != null && _ghost.Mode != Rule5GhostMode.Chase) _ghost.EnterEscort();
         }
 
@@ -543,15 +617,14 @@ namespace RuleSystem.Rule
         {
             if (!_gameplayActive || reason == ReleaseReason.Forced) return;
 
-            StopChing();   // ฉิ่งที่ค้างอยู่ไม่มีความหมายแล้ว
-
+            // ไม่หยุดเสียงฉิ่งตรงนี้ — ปล่อยมือแล้วก็ยังห้ามเดินอยู่ดี
+            // (เดินอ้อมสิ่งกีดขวางระหว่างฉิ่งดัง = ผีคืบเข้าหาผ้าแดงที่ต้องกลับมาจับ)
             if (_ghost == null) return;
 
             // สวดลาไว้แล้วค่อยปล่อยมือ = ผีออกไล่ตรงนี้ (จังหวะเดียวกับที่ผู้เล่นเริ่มวิ่งได้พอดี)
-            // ปล่อยมือเฉยๆ โดยไม่ได้สวด = ผียืนรออยู่ตรงนั้น ไม่ตามไปไหน ต่อให้ระฆังครบแล้วก็ตาม
-            // ระหว่างนั้นตัวกดดันคือเวลานับถอยหลังหัวใจวายอย่างเดียว
+            // ปล่อยมือเฉยๆ โดยไม่ได้สวด = ผีไปเฝ้าผ้าแดงจุดกลับมาจับ ไม่ตามตัวผู้เล่นไปไหน
             if (_prayed) _ghost.BeginChase();
-            else         _ghost.EnterStandby();
+            else         _ghost.EnterStalk();
         }
 
         #endregion
@@ -653,7 +726,7 @@ namespace RuleSystem.Rule
                 StartCoroutine(WaitThenFlag(routine, () => done = true));
                 while (!done)
                 {
-                    player.LookAtWorldPoint(_ghost.transform.position + Vector3.up * 1.6f);
+                    player.LookAtWorldPoint(_ghost.LookAtPoint);
                     yield return null;
                 }
             }

@@ -258,9 +258,10 @@ namespace Rule5
                         : walker.EverGrabbed ? "ปล่อยมือ" : "ยังไม่เคยจับ";
 
             var    g     = rule5.ActiveGhost;
+            bool   tracking = g != null && (g.Mode == Rule5GhostMode.Escort || g.Mode == Rule5GhostMode.Stalk);
             string ghost = g == null ? "-"
-                         : g.Mode == Rule5GhostMode.Escort
-                            ? $"Escort {g.EscortDistance:0.0} ม. ({g.EscortCloseness01 * 100f:0}%)"
+                         : tracking
+                            ? $"{g.Mode} {g.EscortDistance:0.0} ม. ({g.EscortCloseness01 * 100f:0}%)"
                             : g.Mode.ToString();
             float  dist  = walker != null ? walker.Distance : 0f;
 

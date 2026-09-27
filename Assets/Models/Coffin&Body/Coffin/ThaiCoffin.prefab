@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &4541986449750697512
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -20.499588
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 10.0734215
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 6.5301914
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      propertyPath: m_Name
+      value: ThaiCoffin
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4701775655953183439}
+  m_SourcePrefab: {fileID: 100100000, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+--- !u!1 &3731523994517117817 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 258f66914d7460a4d9855348b3a90da3, type: 3}
+  m_PrefabInstance: {fileID: 4541986449750697512}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4701775655953183439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3731523994517117817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e61d562622ceca43954859d413329d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rule5.ThreadObstacle
+  kind: 0
+  blockRadius: 2.13
+  regrabMargin: 1
+  untangleDuration: 3
+  clearAfterPass: 1
+  visual: {fileID: 0}
+  hint: 
+  maxDistanceFromThread: 3
+  blockPlayerPhysically: 1
+  blockerFit: 0
+  blockerLength: 3.82
+  blockerWidth: 1.23
+  blockerHeight: 1.33

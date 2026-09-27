@@ -106,11 +106,14 @@ MonoBehaviour:
   approachDelay: 2
   killDistance: 2.5
   turnSpeed: 2
+  jumpscareInPlace: 1
+  jumpscareInPlaceMaxDistance: 8
   jumpscareStartDistance: 3.5
-  jumpscareEndDistance: 0.45
-  jumpscareHold: 0.6
-  jumpscareRush: 0.35
+  jumpscareAnimationDuration: 2.9
+  jumpscareRootMotion: 1
   jumpscareLinger: 0.8
+  jumpscareLookTarget: {fileID: 0}
+  jumpscareLookHeight: 0.7
   strideLength: 0.9
   footstepMinSpeed: 0.05
   animator: {fileID: 721230193153240017}
@@ -307,7 +310,7 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: 3eec5440724c39640a7c07349cd36504, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 22100000, guid: 2520be84a7ed4ec2836cf7907c39bb44, type: 2}
+      objectReference: {fileID: 22100000, guid: e2a822c5baa53d84db3f7a353c8caabe, type: 2}
     - target: {fileID: 5866666021909216657, guid: 3eec5440724c39640a7c07349cd36504, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0

@@ -10,6 +10,8 @@ namespace Rule5
         Idle,       // ไม่ทำอะไร
         Wait,       // ยืนรอที่จุดเริ่มสาย หันหน้าตามผู้เล่น
         Escort,     // เดินตามหลังผู้เล่นตามสาย (ตอนจับสายอยู่)
+        Stalk,      // ผู้เล่นปล่อยมือ → ยืนเฝ้าผ้าแดงจุดกลับมาจับ ขยับเข้าใกล้มันทุกครั้งที่ผู้เล่นเดินตอนฉิ่งดัง
+                    // คืบจนถึงผ้าแดงแล้วไม่ฆ่าทันที แต่ยืนดักรอให้ผู้เล่นกลับมาจับเอง (ReachedMarker)
         Approach,   // ผู้เล่นไม่ได้จับสาย → เดินเข้าหาช้าๆ ใกล้เกิน = ตาย
         Chase,      // ระฆังครบแล้วปล่อยมือ → วิ่งไล่
         Jumpscare   // โผล่หน้าแล้วพุ่งเข้าหา (ตาย)
@@ -24,7 +26,11 @@ namespace Rule5
     ///   Wait     : เริ่มกฎ ยืนรออยู่ข้างจุดเริ่มสาย
     ///   Escort   : ผู้เล่นจับสาย → เดินตามหลังตรงๆ (escortAngle ~170°)
     ///              ปกติมองไม่เห็น ต้องชะเง้อจนสุดขอบที่ lookHalfAngle อนุญาตถึงจะเห็นที่หางตา
-    ///              เดินทั้งที่ฉิ่งดัง → PressEscort() ทำให้มันขยับเข้ามาใกล้เรื่อยๆ จนฆ่า
+    ///   Stalk    : ผู้เล่นปล่อยมือ → ย้ายไปเฝ้าผ้าแดงจุดกลับมาจับแทน ไม่ตามตัวผู้เล่น
+    ///
+    ///   ทั้ง Escort และ Stalk ใช้ "ระยะ" ตัวเดียวกัน (_escortDistance) เดินทางทางเดียว — หดลงทุกครั้ง
+    ///   ที่ผู้เล่นเดินขณะฉิ่งดัง (PressCloser) ไม่คืนกลับ พอหดจนถึง escortKillDistance = ตาย
+    ///   ต่างกันแค่ว่าวัดระยะจากอะไร: ตัวผู้เล่น (จับสายอยู่) หรือผ้าแดง (ปล่อยมืออยู่)
     ///   Approach : ผู้เล่นไม่ได้จับ → ค่อยๆ เดินเข้าหา เข้าใกล้กว่า killDistance = ตาย
     ///   Chase    : ระฆังครบ 3 แล้วผู้เล่นปล่อยมือ → วิ่งไล่ทันที
     ///   Jumpscare: ตายแบบผิดเงื่อนไข → โผล่ตรงหน้า พุ่งเข้ามา (New Animation)
@@ -54,13 +60,11 @@ namespace Rule5
         [SerializeField] private float escortTeleportDistance = 8f;
 
         [Header("Escort - closing in (walking while the ching rings)")]
-        [Tooltip("Metres the ghost closes in for every second the player keeps walking while the ching rings.")]
+        [Tooltip("Metres the ghost closes in for every second the player keeps walking while the ching rings. " +
+                 "Ground given up this way is never won back: it adds up across every ching until the ghost is close enough to kill.")]
         [SerializeField] private float escortCloseInSpeed = 0.35f;
 
-        [Tooltip("Metres the ghost drops back per second once the player stops breaking the rule. Set to 0 to make the distance lost permanent.")]
-        [SerializeField] private float escortRecoverSpeed = 0.15f;
-
-        [Tooltip("The ghost gets this close behind the player while escorting and the player dies, in metres.")]
+        [Tooltip("The ghost gets this close to the player (or to the red cloth, once the thread has been let go) and the player dies, in metres.")]
         [SerializeField] private float escortKillDistance = 0.8f;
 
         [Header("Approach / Chase")]
@@ -74,20 +78,36 @@ namespace Rule5
         [SerializeField] private float turnSpeed = 2f;
 
         [Header("Jumpscare")]
-        [Tooltip("How far in front of the player the ghost appears, in metres.")]
+        [Tooltip("Play the jumpscare where the ghost is standing when it catches the player, instead of moving it in front of them. " +
+                 "The animation is what lunges, so nothing here moves the ghost. Only a ghost further away than the distance below " +
+                 "is moved in front first.")]
+        [SerializeField] private bool jumpscareInPlace = true;
+
+        [Tooltip("Caught from further away than this, in metres, and the ghost is moved in front of the player first " +
+                 "(dying while sitting, with the ghost left far down the thread, would otherwise be a camera turn towards nothing).")]
+        [SerializeField] private float jumpscareInPlaceMaxDistance = 8f;
+
+        [Tooltip("How far in front of the player the ghost appears, in metres, when it did have to be moved.")]
         [SerializeField] private float jumpscareStartDistance = 3.5f;
 
-        [Tooltip("Distance the ghost rushes in to, in metres.")]
-        [SerializeField] private float jumpscareEndDistance = 0.45f;
+        [Tooltip("Length of the jumpscare animation, in seconds. 0 = read it off the animator, which needs the transition into " +
+                 "the jumpscare state to be near instant.")]
+        [SerializeField] private float jumpscareAnimationDuration = 3f;
 
-        [Tooltip("Seconds the ghost stands there showing its face before rushing in.")]
-        [SerializeField] private float jumpscareHold = 0.6f;
+        [Tooltip("Tick when the jumpscare animation moves the ghost itself (root motion). Leave off and the ghost lunges on the spot.")]
+        [SerializeField] private bool jumpscareRootMotion = false;
 
-        [Tooltip("Duration of the rush, in seconds.")]
-        [SerializeField] private float jumpscareRush = 0.35f;
-
-        [Tooltip("Seconds the face lingers after the rush lands, before the screen cuts away.")]
+        [Tooltip("Seconds the face lingers after the animation ends, before the screen cuts away.")]
         [SerializeField] private float jumpscareLinger = 0.8f;
+
+        [Tooltip("Exactly what the player's camera is aimed at during the jumpscare, such as an empty parented to the head bone. " +
+                 "Leave empty to aim at the ghost's own renderers, which is right whatever the model's pivot is.")]
+        [SerializeField] private Transform jumpscareLookTarget;
+
+        [Tooltip("Used when there is no look target: height up the ghost the camera aims at. 0 = the feet, 1 = the top of the head. " +
+                 "Lower it to keep more of the body on screen, raise it to stare it in the face.")]
+        [Range(0f, 1f)]
+        [SerializeField] private float jumpscareLookHeight = 0.7f;
 
         [Header("Footsteps")]
         [SerializeField] private float strideLength      = 0.9f;
@@ -126,10 +146,40 @@ namespace Rule5
         private bool               _caught;
         private Vector3            _lastPosition;
         private bool               _warnedNoNavMesh;
+        private Renderer[]         _renderers;
         private float              _escortDistance;
-        private float              _pressedUntil;     // เวลาล่าสุดที่โดน PressEscort — กันลำดับ Update สลับกัน
 
         public Rule5GhostMode Mode => _mode;
+
+        /// <summary>
+        /// จุดที่กล้องผู้เล่นควรจ้องตอน jumpscare
+        ///
+        /// ห้ามใช้ transform.position + ความสูงคงที่ เพราะ pivot ของโมเดลผีไม่จำเป็นต้องอยู่ที่เท้า
+        /// ถ้า pivot อยู่กลางตัว การบวกความสูงหัวเข้าไปอีกจะกลายเป็นเล็งเหนือหัวไปเลย
+        /// ยิ่งผียืนประชิดยิ่งเงยสูง จนแทบไม่เห็นตัว — วัดจากขอบเขตของ renderer จริงแทน
+        /// </summary>
+        public Vector3 LookAtPoint
+        {
+            get
+            {
+                if (jumpscareLookTarget != null) return jumpscareLookTarget.position;
+
+                if (_renderers == null || _renderers.Length == 0) return transform.position + Vector3.up * 1.6f;
+
+                bool has = false;
+                Bounds b = new Bounds(transform.position, Vector3.zero);
+
+                foreach (var r in _renderers)
+                {
+                    if (r == null || !r.enabled) continue;
+                    if (!has) { b = r.bounds; has = true; }
+                    else        b.Encapsulate(r.bounds);
+                }
+                if (!has) return transform.position + Vector3.up * 1.6f;
+
+                return new Vector3(b.center.x, b.min.y + b.size.y * jumpscareLookHeight, b.center.z);
+            }
+        }
 
         /// <summary>ระยะที่ผีตามหลังอยู่ตอนนี้ (เมตร) — หดลงทุกครั้งที่ผู้เล่นเดินตอนฉิ่งดัง</summary>
         public float EscortDistance => _escortDistance;
@@ -139,13 +189,24 @@ namespace Rule5
             Mathf.Clamp01(Mathf.InverseLerp(escortDistance, escortKillDistance, _escortDistance));
 
         /// <summary>
-        /// ผู้เล่นทำผิด (เดินทั้งที่ฉิ่งดัง) → ผีที่ตามหลังขยับเข้ามาใกล้ขึ้นตามเวลาที่ยังฝืนเดิน
-        /// เรียกทุกเฟรมที่ยังผิดอยู่ พอหยุดเรียกมันจะค่อยๆ ถอยกลับไปเองด้วย escortRecoverSpeed
+        /// true = ผีคืบมาถึงผ้าแดงจุดกลับมาจับแล้ว และยืนดักรออยู่ตรงนั้น
+        ///
+        /// ไม่ฆ่าทันทีเหมือนตอน Escort เพราะตอนนั้นผู้เล่นอยู่คนละฝั่งของสิ่งกีดขวาง
+        /// ตายทั้งที่ไม่เห็นอะไรเลยมันงง — รอให้เดินกลับมาจับสายเองแล้วค่อยโดนคว้า (Rule5 สั่งตาย)
         /// </summary>
-        public void PressEscort(float deltaTime)
+        public bool ReachedMarker =>
+            _mode == Rule5GhostMode.Stalk && _escortDistance <= escortKillDistance + 0.0001f;
+
+        /// <summary>
+        /// ผู้เล่นทำผิด (เดินทั้งที่ฉิ่งดัง) → ผีขยับเข้ามาใกล้ขึ้นตามเวลาที่ยังฝืนเดิน
+        ///   จับสายอยู่  → ใกล้ตัวผู้เล่นขึ้น
+        ///   ปล่อยมืออยู่ → ใกล้ผ้าแดงจุดกลับมาจับขึ้น (ผู้เล่นเดินหนีไปไหนก็ไม่ช่วย เพราะยังไงก็ต้องกลับมาจับตรงนั้น)
+        /// เรียกทุกเฟรมที่ยังผิดอยู่ — ระยะที่เสียไปไม่คืนแล้ว หยุดเดินคือแค่ "หยุดเสียเพิ่ม"
+        /// สะสมข้ามฉิ่งทุกรอบจนกว่าจะประชิดพอที่จะฆ่า
+        /// </summary>
+        public void PressCloser(float deltaTime)
         {
-            if (_mode != Rule5GhostMode.Escort || _caught) return;
-            _pressedUntil   = Time.time + 0.1f;
+            if ((_mode != Rule5GhostMode.Escort && _mode != Rule5GhostMode.Stalk) || _caught) return;
             _escortDistance = Mathf.Max(escortKillDistance, _escortDistance - escortCloseInSpeed * deltaTime);
         }
 
@@ -160,6 +221,7 @@ namespace Rule5
         {
             _agent = GetComponent<NavMeshAgent>();
             if (animator == null) animator = GetComponentInChildren<Animator>();
+            _renderers = GetComponentsInChildren<Renderer>();
             _lastPosition = transform.position;
             ResetEscortDistance();
 
@@ -247,15 +309,18 @@ namespace Rule5
         }
 
         /// <summary>
-        /// ยืนนิ่งอยู่ตรงที่เดิม หันหน้าตามผู้เล่น — ใช้ตอนผู้เล่นปล่อยมือแต่ยังไม่ได้สวดมนต์
-        /// ต่างจาก EnterWait() ตรงที่ไม่ย้ายตำแหน่ง และไม่รีเซ็ตระยะที่ถูกบีบมาจากตอนฉิ่ง
+        /// ผู้เล่นปล่อยมือ → ไปเฝ้าผ้าแดงจุดกลับมาจับ ห่างจากมันเท่ากับระยะที่เหลืออยู่ตอนนี้
+        ///
+        /// ไม่ตามตัวผู้เล่นไปไหนทั้งนั้น (ผู้เล่นอาจต้องเดินอ้อมสิ่งกีดขวางอยู่) แต่ก็ไม่ใช่ยืนแข็งเฉยๆ —
+        /// เดินขณะฉิ่งดังเมื่อไร มันก็คืบเข้าหาผ้าแดงเมื่อนั้น ถึงผ้าแดงเมื่อไรคือตาย
+        /// ปล่อยมือเฉยๆ ตามปกติ ผ้าแดงจะอยู่ตรงที่ผู้เล่นยืนพอดี ผีจึงไม่ขยับไปไหนเลย
         /// </summary>
-        public void EnterStandby()
+        public void EnterStalk()
         {
             if (_mode == Rule5GhostMode.Chase || _mode == Rule5GhostMode.Jumpscare) return;
-            _mode = Rule5GhostMode.Wait;
-            SetMoving(false);
-            SetAnim(walk: false, run: false);
+            _mode        = Rule5GhostMode.Stalk;
+            _repathTimer = 0f;
+            SetAgentSpeed(approachSpeed);
         }
 
         public void BeginChase()
@@ -287,6 +352,7 @@ namespace Rule5
             {
                 case Rule5GhostMode.Wait:     FaceTowards(_player.position); break;
                 case Rule5GhostMode.Escort:   UpdateEscort();   break;
+                case Rule5GhostMode.Stalk:    UpdateStalk();    break;
                 case Rule5GhostMode.Approach: UpdateApproach(); break;
                 case Rule5GhostMode.Chase:    UpdateChase();    break;
             }
@@ -300,7 +366,7 @@ namespace Rule5
         {
             if (_walker == null || _walker.Thread == null) return;
 
-            UpdateEscortDistance();
+            if (_escortDistance <= escortKillDistance + 0.0001f) Caught();
             if (_caught) return;
 
             Vector3 target = EscortTarget();
@@ -358,16 +424,37 @@ namespace Rule5
             return GroundAt(_player.position + dir.normalized * _escortDistance);
         }
 
-        /// <summary>
-        /// ระยะตามหลังของเฟรมนี้ — เฟรมไหนไม่โดน PressEscort ก็ถอยกลับไปหาค่าปกติ
-        /// (เช็คด้วยเวลา ไม่ใช่ flag เพราะ Rule5.UpdateRule กับ Update ของตัวนี้ไม่การันตีลำดับ)
-        /// </summary>
-        private void UpdateEscortDistance()
+        /// <summary>เฝ้าผ้าแดง — ยืนห่างจากมันตามระยะที่เหลือ วัดตามแนวสาย</summary>
+        private void UpdateStalk()
         {
-            if (Time.time > _pressedUntil && _escortDistance < escortDistance)
-                _escortDistance = Mathf.Min(escortDistance, _escortDistance + escortRecoverSpeed * Time.deltaTime);
+            if (_walker == null || _walker.Thread == null) return;
 
-            if (_escortDistance <= escortKillDistance + 0.0001f) Caught();
+            // ถึงผ้าแดงแล้วก็ยังยืนเฝ้าต่อไป ไม่ฆ่าเอง — Rule5 จะสั่งตอนผู้เล่นกลับมาจับสาย
+            var     thread = _walker.Thread;
+            float   d      = thread.WrapDistance(_walker.GrabPointDistance - _escortDistance);
+            Vector3 target = thread.GetGroundPoint(d);
+
+            if (!AgentUsable)
+            {
+                bool moved = Vector3.Distance(transform.position, target) > 0.35f &&
+                             FallbackMoveTowards(target, approachSpeed);
+                SetAnim(walk: moved, run: false);
+                if (!moved) FaceTowards(_player.position);
+                return;
+            }
+
+            SetAgentSpeed(approachSpeed);
+            SetMoving(true);
+            Repath(target);
+
+            bool arrived = !_agent.pathPending && _agent.remainingDistance <= Mathf.Max(_agent.stoppingDistance, 0.3f);
+            if (arrived)
+            {
+                SetMoving(false);
+                SetAnim(walk: false, run: false);
+                FaceTowards(_player.position);
+            }
+            else SetAnim(walk: true, run: false);
         }
 
         private void UpdateApproach()
@@ -433,40 +520,70 @@ namespace Rule5
         // ═══════════════════════════════════════════════════════════════
 
         /// <summary>
-        /// โผล่ตรงหน้าผู้เล่นแล้วพุ่งเข้ามา — คนเรียกต้องล็อกกล้องผู้เล่น (SetLook(false) + LookAtWorldPoint) เอง
+        /// เล่นท่า jumpscare — คนเรียกต้องล็อกกล้องผู้เล่น (SetLook(false) + LookAtWorldPoint) เอง
+        ///
+        /// ตัวสคริปต์ไม่ขยับผีเข้าหาผู้เล่นแล้ว ปล่อยให้อนิเมชั่นเป็นคนเล่าเรื่องทั้งหมด
+        /// (ยืนนิ่ง → ชูมือ → กระโจน) ผีตัวที่ตะครุบผู้เล่นได้มันอยู่ประชิดอยู่แล้ว ไม่ต้องวาร์ปซ้ำ
+        /// เหลือแค่เคสที่ผีอยู่ไกลจริงๆ เช่น ตายเพราะนั่งผิดเงื่อนไขตอนผียืนค้างอยู่กลางสาย
+        /// ถึงจะย้ายมาโผล่ตรงหน้าก่อน ไม่งั้นกล้องจะหันไปจ้องที่ว่างเปล่า
         /// </summary>
         public IEnumerator JumpscareRoutine(Transform playerCamera)
         {
             _mode = Rule5GhostMode.Jumpscare;
+            SetMoving(false);
             if (_agent != null && _agent.enabled) _agent.enabled = false;
 
-            Vector3 camFwd = playerCamera.forward; camFwd.y = 0f;
-            if (camFwd.sqrMagnitude < 0.001f) camFwd = _player.forward;
-            camFwd.Normalize();
+            if (!jumpscareInPlace ||
+                Vector3.Distance(transform.position, _player.position) > jumpscareInPlaceMaxDistance)
+            {
+                Vector3 camFwd = playerCamera != null ? playerCamera.forward : _player.forward;
+                camFwd.y = 0f;
+                if (camFwd.sqrMagnitude < 0.001f) camFwd = _player.forward;
 
-            Vector3 basePos = _player.position;
-            Vector3 start   = GroundAt(basePos + camFwd * jumpscareStartDistance);
-            Vector3 end     = GroundAt(basePos + camFwd * jumpscareEndDistance);
+                transform.position = GroundAt(_player.position + camFwd.normalized * jumpscareStartDistance);
+            }
 
-            transform.position = start;
-            transform.rotation = Quaternion.LookRotation(-camFwd, Vector3.up);
+            FaceInstantly(_player.position);
             SetAnim(walk: false, run: false);
-            if (animator != null && !string.IsNullOrEmpty(jumpscareTrigger)) animator.SetTrigger(jumpscareTrigger);
+
+            if (animator != null)
+            {
+                animator.applyRootMotion = jumpscareRootMotion;
+                if (!string.IsNullOrEmpty(jumpscareTrigger)) animator.SetTrigger(jumpscareTrigger);
+            }
             AudioManager.instance.PlayRule5Jumpscare(transform.position);
 
-            yield return new WaitForSeconds(jumpscareHold);
-
-            float t = 0f;
-            while (t < jumpscareRush)
+            if (jumpscareAnimationDuration > 0.01f)
             {
-                t += Time.deltaTime;
-                float k = Mathf.SmoothStep(0f, 1f, t / jumpscareRush);
-                transform.position = Vector3.Lerp(start, end, k);
-                yield return null;
+                yield return new WaitForSeconds(jumpscareAnimationDuration);
             }
-            transform.position = end;
+            else
+            {
+                // ให้ animator เข้า state ของ jumpscare ก่อนค่อยอ่านความยาวคลิป
+                yield return null;
+                yield return null;
+                yield return new WaitForSeconds(CurrentStateLength());
+            }
 
             yield return new WaitForSeconds(jumpscareLinger);
+        }
+
+        /// <summary>ความยาวของ state ที่ animator เล่นอยู่ตอนนี้ (คิดค่า speed ด้วย) — ใช้ตอน duration = 0</summary>
+        private float CurrentStateLength()
+        {
+            if (animator == null) return 2.5f;
+
+            var   info  = animator.GetCurrentAnimatorStateInfo(0);
+            float speed = Mathf.Abs(animator.speed * info.speed);
+            return speed > 0.01f ? info.length / speed : info.length;
+        }
+
+        /// <summary>หันเข้าหาจุดทันที ไม่ต้องค่อยๆ หมุนเหมือน FaceTowards</summary>
+        private void FaceInstantly(Vector3 target)
+        {
+            Vector3 dir = target - transform.position; dir.y = 0f;
+            if (dir.sqrMagnitude < 0.0001f) return;
+            transform.rotation = Quaternion.LookRotation(dir.normalized, Vector3.up);
         }
 
         private static Vector3 GroundAt(Vector3 p)
