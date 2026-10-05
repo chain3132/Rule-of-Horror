@@ -51,6 +51,12 @@ public class GameModeController : MonoBehaviour
     
     public static GameModeController instance;
     public bool IsEyesOpen { get; private set; } = false;
+
+    /// <summary>โหมดที่มีผลอยู่ตอนนี้ — เปลี่ยนตอน ApplyMode คือตอนตาปิดสนิท ไม่ใช่ตอนสั่ง</summary>
+    public GameMode CurrentMode { get; private set; } = GameMode.Relax;
+
+    /// <summary>ยิงตอนโหมดเปลี่ยนจริง (ตาปิดอยู่) — โทรศัพท์ใช้ตัวนี้ตัดสินว่าจะเริ่มหลอนเมื่อไร</summary>
+    public static event Action<GameMode> OnModeChanged;
     LensDistortion lens;
     ChromaticAberration chroma;
     DepthOfField dof;
@@ -348,6 +354,13 @@ public class GameModeController : MonoBehaviour
     void ApplyMode(GameMode mode)
     {
         Debug.Log($"Applying {mode} mode");
+
+        if (CurrentMode != mode)
+        {
+            CurrentMode = mode;
+            OnModeChanged?.Invoke(mode);
+        }
+
         if (mode == GameMode.Relax)
         {
             globalVolume.profile = relaxProfile;

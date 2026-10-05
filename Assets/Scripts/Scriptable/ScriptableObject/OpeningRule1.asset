@@ -26,22 +26,32 @@ MonoBehaviour:
     isPlayer: 0
     replies: []
     nextNode: 1
+    recordsRule: {fileID: 11400000, guid: c38b87b498789fe4aa590bb4c41e41d1, type: 2}
+    recordsAsCooperative: 1
   - message: ' but some don''t. And if we die, where do we go next?'
     isPlayer: 0
     replies: []
     nextNode: 2
+    recordsRule: {fileID: 11400000, guid: c38b87b498789fe4aa590bb4c41e41d1, type: 2}
+    recordsAsCooperative: 1
   - message: Or is it just pitch black, like switching off the lights?
     isPlayer: 0
     replies: []
     nextNode: 3
+    recordsRule: {fileID: 11400000, guid: c38b87b498789fe4aa590bb4c41e41d1, type: 2}
+    recordsAsCooperative: 1
   - message: It depends on whether you're ready to bear the burden that follows
     isPlayer: 0
     replies: []
     nextNode: 4
+    recordsRule: {fileID: 11400000, guid: c38b87b498789fe4aa590bb4c41e41d1, type: 2}
+    recordsAsCooperative: 1
   - message: If you want to survive this situation, first, you must not go any further
     isPlayer: 0
     replies: []
     nextNode: 5
+    recordsRule: {fileID: 11400000, guid: c38b87b498789fe4aa590bb4c41e41d1, type: 2}
+    recordsAsCooperative: 1
   - message: ahmm
     isPlayer: 1
     replies:
@@ -50,12 +60,18 @@ MonoBehaviour:
     - replyText: And what do I have to do?
       nextNode: 7
     nextNode: 0
+    recordsRule: {fileID: 11400000, guid: c38b87b498789fe4aa590bb4c41e41d1, type: 2}
+    recordsAsCooperative: 1
   - message: Good luck
     isPlayer: 0
     replies: []
     nextNode: -1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
   - message: Just follow the rules and wait until the time comes. First, 19:00 -
       19:40. Good luck
     isPlayer: 0
     replies: []
     nextNode: -1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1

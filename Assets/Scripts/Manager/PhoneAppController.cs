@@ -24,14 +24,17 @@ namespace Manager
             var app = apps[index];
             phoneSystem.ChangeState(app.openState);
         }
+        /// <summary>
+        /// ปุ่มตัวเลขอันนี้เปิดแอปอะไร — อ่านจากลิสต์ apps ใน Inspector ไม่ฮาร์ดโค้ดแล้ว
+        ///
+        /// เดิมเป็น switch ที่ผูกไว้ว่าปุ่ม 3 = นาฬิกา ซึ่งชนกับดีไซน์ใหม่ที่ปุ่ม 3 = แอปกฎ
+        /// (เวลาย้ายไปอยู่บนแถบสถานะถาวรแล้ว ไม่ต้องมีแอปแยก)
+        /// ย้ายมาอ่านจาก PhoneAppData.openState แทน จะสลับลำดับแอปทีหลังก็ไม่ต้องแก้โค้ด
+        /// </summary>
         public PhoneState GetStateByIndex(int index)
         {
-            switch (index)
-            {
-                case 0: return PhoneState.FriendList;
-                case 1: return PhoneState.FlashLight;
-                case 2: return PhoneState.Clock;
-            }
+            if (apps != null && index >= 0 && index < apps.Count && apps[index] != null)
+                return apps[index].openState;
 
             return PhoneState.AppSelection;
         }

@@ -101,10 +101,10 @@ MonoBehaviour:
   escortDistance: 3
   escortTeleportDistance: 8
   escortCloseInSpeed: 0.6
-  escortRecoverSpeed: 0.2
   escortKillDistance: 0.5
   approachDelay: 2
-  killDistance: 2.5
+  killDistance: 2
+  chaseGrace: 1.5
   turnSpeed: 2
   jumpscareInPlace: 1
   jumpscareInPlaceMaxDistance: 8

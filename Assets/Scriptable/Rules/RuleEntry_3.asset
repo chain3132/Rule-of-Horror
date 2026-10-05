@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d45dcf287c33007408283061f0a39fc8, type: 3}
+  m_Name: RuleEntry_3
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableObject.RuleEntryData
+  ruleNumber: 3
+  title: Stare at Numbers
+  summary: Find 4 number papers, then stare at them until they disappear, ordered
+    from lowest to highest number
+  startHour: 21
+  startMinute: 0
+  endHour: 21
+  endMinute: 40
+  factSlots: 3
+  factsIfCooperative:
+  - Stare at each paper one by one, from lowest to highest, until you complete all
+    4 papers
+  - Keep your eyes wide open. Do not blink at all
+  - If something is watching, do not move
+  factsIfDefiant:
+  - Stare at each paper one by one, from lowest to highest, until you complete all
+    4 papers
+  hands:
+  - key: Hold Left-Click
+    action: Stare at paper
+  - key: Release all keys
+    action: Stay still

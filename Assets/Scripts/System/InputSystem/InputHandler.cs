@@ -19,6 +19,7 @@ namespace InputSystem
         #region Fields
         private InputAction _moveAction,_lookAction,_phoneAction,_chatAction,_flashLightAction,_clockAction,_interactAction,_rightClickAction,_holdBreathAction;
         private InputAction _prayAction;   // ไม่บังคับต้องมีใน asset — ไม่มีก็อ่าน Space ตรงๆ
+        private InputAction _rulePrevAction, _ruleNextAction;   // เหมือนกัน ไม่มีก็อ่าน A/D ตรงๆ
         public event Action OnPhoneToggle;
         public event Action OnSetTime;
         public event Action<int> OnAppKeyPressed;
@@ -43,6 +44,8 @@ namespace InputSystem
             _rightClickAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("RightClick");
             _holdBreathAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("HoldBreath");
             _prayAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Pray");   // null ได้ ไม่ต้องมีก็ได้
+            _rulePrevAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("RulePrev");
+            _ruleNextAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("RuleNext");
         }
         private void OnEnable()
         {
@@ -136,6 +139,59 @@ namespace InputSystem
 
         /// <summary>true ตราบใดที่ยังกดปุ่มกลั้นหายใจค้างอยู่ (Left Shift — Rule 4)</summary>
         public bool IsHoldBreathHeld() => _holdBreathAction != null && _holdBreathAction.IsPressed();
+
+        /// <summary>
+        /// A / D ตอนเปิดแอปกฎ = พลิกไปกฎข้อก่อนหน้า / ข้อถัดไป
+        ///
+        /// ใช้ action ชื่อ "RulePrev"/"RuleNext" ถ้ามีใน asset ไม่มีก็อ่าน A/D ตรงๆ เหมือน Pray
+        /// RuleBookController เป็นคนกันเองว่าจะรับเฉพาะตอนเปิดแอปกฎอยู่ ไม่งั้นมันจะไปกินปุ่มเดิน
+        /// </summary>
+        public bool WasRulePrevPressed()
+        {
+            if (_rulePrevAction != null) return _rulePrevAction.triggered;
+            return Keyboard.current != null && Keyboard.current.aKey.wasPressedThisFrame;
+        }
+
+        /// <inheritdoc cref="WasRulePrevPressed"/>
+        public bool WasRuleNextPressed()
+        {
+            if (_ruleNextAction != null) return _ruleNextAction.triggered;
+            return Keyboard.current != null && Keyboard.current.dKey.wasPressedThisFrame;
+        }
+
+        // ── เลื่อนรายการในโทรศัพท์ ────────────────────────────────────────
+        // จอโทรศัพท์ถ่ายผ่านกล้องลง RenderTexture ตัวชี้เมาส์บนจอจริงจึงไปโดนปุ่มในนั้นไม่ได้เลย
+        // ทุกอย่างในโทรศัพท์ต้องกดด้วยคีย์บอร์ดล้วน — ชุดนี้คือปุ่มเลื่อนขึ้น/ลง/ตกลง
+
+        /// <summary>W หรือลูกศรขึ้น — เลื่อนขึ้นในรายชื่อ</summary>
+        public bool WasNavUpPressed()
+        {
+            if (Keyboard.current == null) return false;
+            return Keyboard.current.wKey.wasPressedThisFrame || Keyboard.current.upArrowKey.wasPressedThisFrame;
+        }
+
+        /// <summary>S หรือลูกศรลง — เลื่อนลงในรายชื่อ</summary>
+        public bool WasNavDownPressed()
+        {
+            if (Keyboard.current == null) return false;
+            return Keyboard.current.sKey.wasPressedThisFrame || Keyboard.current.downArrowKey.wasPressedThisFrame;
+        }
+
+        /// <summary>
+        /// Enter — เปิดสิ่งที่เลือกอยู่ในโทรศัพท์
+        ///
+        /// ตั้งใจไม่ใช้ E ถึงแม้จะเป็นปุ่มยืนยันที่คุ้นกว่า เพราะ E ยิง OnInteractPressed ทั่วเกม
+        /// ซึ่งกฎต่างๆ ฟังอยู่ — เปิดโทรศัพท์ขณะจับสายสิญจน์แล้วกด E เลือกรายชื่อ มือจะหลุดจากสายไปด้วย
+        /// ถ้าอยากได้ E จริงๆ ต้องกันที่ต้นทางก่อน (ให้ InputHandler ไม่ยิง OnInteractPressed
+        /// ตอนโทรศัพท์เปิดอยู่) แล้วค่อยเพิ่ม _interactAction.triggered เข้ามาตรงนี้
+        /// </summary>
+        public bool WasConfirmPressed()
+            => Keyboard.current != null &&
+               (Keyboard.current.enterKey.wasPressedThisFrame || Keyboard.current.numpadEnterKey.wasPressedThisFrame);
+
+        /// <summary>ล้อเมาส์ — ใช้เลื่อนแชท (ล้อยังใช้ได้ถึงจะคลิกไม่ได้)</summary>
+        public float GetScrollDelta()
+            => Mouse.current != null ? Mouse.current.scroll.ReadValue().y : 0f;
 
         #endregion
         

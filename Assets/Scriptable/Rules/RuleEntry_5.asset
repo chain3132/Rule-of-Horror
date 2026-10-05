@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d45dcf287c33007408283061f0a39fc8, type: 3}
+  m_Name: RuleEntry_5
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableObject.RuleEntryData
+  ruleNumber: 5
+  title: Sacred Thread
+  summary: When the sacred thread surrounds the pavilion, grab it and walk along
+    the path until the bell calls you back
+  startHour: 23
+  startMinute: 0
+  endHour: 23
+  endMinute: 40
+  factSlots: 4
+  factsIfCooperative:
+  - If you hear a crying sound, stop walking, stay quiet, then continue walking
+  - When the bell rings for the 3rd time, return to sit at the pavilion
+  - 'Do not let go of your hand for too long   '
+  - Ignore the sounds behind you
+  factsIfDefiant:
+  - Do not let go of the sacred thread
+  hands:
+  - key: E
+    action: Grab / Release sacred thread
+  - key: W
+    action: Follow the thread
+  - key: Space
+    action: Pray

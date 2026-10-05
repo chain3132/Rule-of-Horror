@@ -104,6 +104,11 @@ namespace RuleSystem.Rule
         [Tooltip("Trigger fired on that animator when the player prays.")]
         [SerializeField] private string prayTrigger = "pray";
 
+        [Tooltip("Seconds the praying plays out before the hands come off the thread and the ghost starts chasing.\n" +
+                 "The thread stays held throughout, so the ghost keeps trailing behind instead of lunging, and the ching " +
+                 "has already stopped, so no more ground is lost. Set to 0 to let go on the same frame the key is pressed.")]
+        [SerializeField] private float prayDuration = 2.5f;
+
         // ── Heartbeat after release ─────────────────────────────────────
         [Header("Heartbeat (let go and never come back)")]
         [SerializeField] private float heartSlowUntil     = 5f;
@@ -485,25 +490,50 @@ namespace RuleSystem.Rule
             _prayed       = true;
             _releaseTimer = 0f;   // สวดแล้ว = ประกาศว่ากำลังกลับไปนั่ง ไม่ตายด้วยหัวใจวายอีก
             StopChing();          // เลิกกฎห้ามเดินไปด้วย จากนี้คือวิ่งหนีอย่างเดียว
-            Debug.Log($"[Rule5] สวดมนต์ลา (ระฆัง {_bellCount}/{requiredBells}) — ผีจะออกไล่ตอนปล่อยมือ", this);
+            Debug.Log($"[Rule5] สวดมนต์ลา (ระฆัง {_bellCount}/{requiredBells}) — " +
+                      $"อีก {prayDuration:0.0} วิ มือจะหลุดเองแล้วผีออกไล่", this);
 
             if (prayAnimator != null && !string.IsNullOrEmpty(prayTrigger)) prayAnimator.SetTrigger(prayTrigger);
             AudioManager.instance.PlayRule5Pray();
 
-            // สวดจบ = เลิกจับสายแล้ว ไม่ต้องกด E ซ้ำ
-            // ปล่อยมือตรงนี้ทำให้ HandleReleased ทำงาน → ผีออกไล่พอดีจังหวะที่ผู้เล่นวิ่งได้
-            if (walker != null)
-            {
-                walker.SetGrabHintEnabled(false);   // จากนี้ไปคือวิ่งกลับไปนั่ง ไม่ใช่กลับมาจับสาย
-                walker.ReleaseByPlayer();
-            }
+            if (walker != null) walker.SetGrabHintEnabled(false);   // จากนี้คือวิ่งกลับไปนั่ง ไม่ใช่กลับมาจับสาย
 
             if (!string.IsNullOrEmpty(prayHint) && PlayerDialogueUI.instance != null)
                 PlayerDialogueUI.instance.ShowLine(prayHint, 3f);
 
+            if (prayDuration > 0f) { StartCoroutine(PrayRoutine()); return; }
+            FinishPray();
+        }
+
+        /// <summary>
+        /// รอให้สวดจบก่อนมือจะหลุด — ก่อนหน้านี้ปล่อยมือในเฟรมเดียวกับที่กด Space
+        /// ผีจึงออกไล่ทันทีจากระยะที่มันตามหลังอยู่ ซึ่งแคบกว่า killDistance ได้ = ตายทันทีโดยไม่ได้วิ่ง
+        ///
+        /// ระหว่างสวดยังจับสายอยู่ ผีจึงยังเดินตามหลังตามปกติ (ไม่พุ่ง) และฉิ่งก็หยุดไปแล้ว
+        /// ระยะที่เหลือจึงนิ่ง ไม่หดเพิ่มระหว่างนี้
+        /// กด E ปล่อยมือเองกลางคันได้ — ลูปจะหลุดแล้วให้ HandleReleased เป็นคนสั่งไล่
+        /// </summary>
+        IEnumerator PrayRoutine()
+        {
+            float left = prayDuration;
+            while (left > 0f && _gameplayActive && walker != null && walker.IsHolding)
+            {
+                left -= Time.deltaTime;
+                yield return null;
+            }
+
+            if (!_gameplayActive) yield break;
+            FinishPray();
+        }
+
+        /// <summary>สวดจบ — ปล่อยมือให้เอง (ไม่ต้องกด E ซ้ำ) แล้ว HandleReleased จะสั่งผีออกไล่</summary>
+        void FinishPray()
+        {
+            if (walker != null && walker.IsHolding) walker.ReleaseByPlayer();
+
             // กันเหนียว เผื่อปล่อยมือไม่สำเร็จด้วยเหตุใดก็ตาม
             if (_ghost != null && _ghost.Mode != Rule5GhostMode.Chase &&
-                walker != null && !walker.IsHolding) _ghost.BeginChase();
+                (walker == null || !walker.IsHolding)) _ghost.BeginChase();
         }
 
         /// <summary>

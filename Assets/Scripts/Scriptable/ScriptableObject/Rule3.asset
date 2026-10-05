@@ -26,15 +26,21 @@ MonoBehaviour:
     isPlayer: 0
     replies: []
     nextNode: 1
+    recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
+    recordsAsCooperative: 1
   - message: You have to find four pieces of paper with numbers on them
     isPlayer: 0
     replies: []
     nextNode: 2
+    recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
+    recordsAsCooperative: 1
   - message: ' You have to stare at them until the numbers disappear, in ascending
       order'
     isPlayer: 0
     replies: []
     nextNode: 3
+    recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
+    recordsAsCooperative: 1
   - message: Ahmm...
     isPlayer: 1
     replies:
@@ -44,29 +50,43 @@ MonoBehaviour:
         bear this anymore.'
       nextNode: 5
     nextNode: 0
+    recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
+    recordsAsCooperative: 1
   - message: Whatever you choose, in the end, it's your own choice.
     isPlayer: 0
     replies: []
     nextNode: -1
+    recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
+    recordsAsCooperative: 1
   - message: Stay calm
     isPlayer: 0
     replies: []
     nextNode: 6
+    recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
+    recordsAsCooperative: 1
   - message: You just need to find the pieces of paper with numbers on them
     isPlayer: 0
     replies: []
     nextNode: 7
+    recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
+    recordsAsCooperative: 1
   - message: and look at them in ascending order, all four of them.
     isPlayer: 0
     replies: []
     nextNode: 8
+    recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
+    recordsAsCooperative: 1
   - message: But be careful, try to keep your eyes open. Do not close your eyes under
       any circumstances
     isPlayer: 0
     replies: []
     nextNode: 9
+    recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
+    recordsAsCooperative: 1
   - message: And if anything is watching you, do not move. 9:00 PM - 9:40 PM. This
       night is so long
     isPlayer: 0
     replies: []
     nextNode: 10
+    recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
+    recordsAsCooperative: 1

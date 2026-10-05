@@ -20,6 +20,9 @@ namespace PhoneSystem
         [SerializeField] private InputHandler input;
         [SerializeField] private ConversationRunner runner;
 
+        [Tooltip("ใส่ ChatUIController — ตอนมีตัวเลือกคำตอบค้างอยู่ ปุ่มตัวเลขจะกลายเป็นปุ่มเลือกคำตอบ")]
+        [SerializeField] private ChatUIController chatUI;
+
         
         private void OnEnable()
         {
@@ -84,6 +87,9 @@ namespace PhoneSystem
                 case PhoneState.Clock:
                     ChangeState(PhoneState.AppSelection);
                     break;
+                case PhoneState.RuleBook:
+                    ChangeState(PhoneState.AppSelection);
+                    break;
 
                 case PhoneState.AppSelection:
                     LowerPhone();
@@ -100,9 +106,22 @@ namespace PhoneSystem
             ChangeState(PhoneState.AppSelection);
         }
 
+        /// <summary>
+        /// กดปุ่มตัวเลขเพื่อเปิดแอป — ใช้ได้ตลอดตราบใดที่โทรศัพท์ยกอยู่ ไม่ต้องถอยกลับหน้าโฮมก่อน
+        ///
+        /// เดิมรับเฉพาะตอนอยู่หน้า AppSelection แต่ดีไซน์ใหม่ให้สลับแอปตรงๆ ได้
+        /// (อยู่ในแอปกฎแล้วกด 1 = กลับไปแชท / อยู่ในแชทแล้วกด 3 = เปิดกฎ)
+        /// ปุ่มตัวเลขจึงกลายเป็นปุ่มสลับแอป ไม่ใช่ปุ่มกดจากหน้าโฮมอย่างเดียว
+        /// </summary>
         public void OpenAppByIndex(int index)
         {
-            if (CurrentState != PhoneState.AppSelection) return;
+            if (CurrentState == PhoneState.Hidden) return;
+
+            // มีตัวเลือกคำตอบค้างอยู่ → เลข 1/2 คือการเลือกคำตอบ ไม่ใช่การสลับแอป
+            // (ตามดีไซน์: ในหน้าแชท "1 2 เลือกคำตอบ" แต่ในหน้าอื่น "1 กลับไปแชท")
+            // จอโทรศัพท์ถ่ายลง RenderTexture เมาส์คลิกปุ่มในนั้นไม่ได้ ปุ่มตัวเลขจึงเป็นทางเดียว
+            if (chatUI != null && chatUI.AwaitingReply && chatUI.TrySelectReply(index)) return;
+
             PhoneState state = appController.GetStateByIndex(index);
 
             if (state != PhoneState.FlashLight)

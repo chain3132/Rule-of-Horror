@@ -44,10 +44,17 @@ namespace Manager
         [Tooltip("Image รูปโปรไฟล์ contact บนหัวแชท")]
         [SerializeField] private Image headerAvatarImage;
 
+        [Header("Keyboard")]
+        [Tooltip("ใส่ InputHandler — ใช้อ่านล้อเมาส์สำหรับเลื่อนแชท")]
+        [SerializeField] private InputSystem.InputHandler inputHandler;
+
+        [Tooltip("ความเร็วเลื่อนแชทด้วยล้อเมาส์")]
+        [SerializeField] private float scrollSpeed = 0.35f;
+
         // ─────────────────────────── Events ───────────────────────────
 
         /// <summary>Fire เมื่อ conversation ของ contact จบ — FriendListController subscribe ไว้</summary>
-        public event Action<FriendListController.ContactEntry> OnContactConversationEnd;
+        public event Action<FriendListController.ContactEntry, ConversationData> OnContactConversationEnd;
 
         // ─────────────────────────── Runtime ───────────────────────────
 
@@ -69,6 +76,42 @@ namespace Manager
 
         /// <summary>Conversation ที่เริ่มแล้วแต่ผู้เล่นสลับ contact ออกกลางคัน — เก็บ index ไว้เล่นต่อ</summary>
         private Dictionary<ConversationData, int> _resumeIndex = new Dictionary<ConversationData, int>();
+
+        /// <summary>ตัวเลือกคำตอบที่ค้างอยู่บนจอตอนนี้ — กดเลข 1/2 แทนการคลิกได้</summary>
+        private List<ReplyOption> _pendingReplies;
+
+
+        // ─────────────────────────── Keyboard (จอโทรศัพท์คลิกไม่ได้) ───────────────────────────
+
+        /// <summary>true = มีตัวเลือกคำตอบรออยู่ ปุ่มตัวเลขตอนนี้ควรเป็นปุ่มเลือกคำตอบ ไม่ใช่ปุ่มสลับแอป</summary>
+        public bool AwaitingReply => _pendingReplies != null && _pendingReplies.Count > 0;
+
+        /// <summary>
+        /// เลือกคำตอบด้วยหมายเลข (0 = ตัวเลือกแรก) — คืน false ถ้าไม่มีตัวเลือกนั้น
+        ///
+        /// จอโทรศัพท์ถ่ายผ่านกล้องลง RenderTexture เมาส์จึงคลิกปุ่มในนั้นไม่ได้เลย
+        /// ปุ่มยังอยู่และยังกดได้ถ้าวันหลังย้าย UI ออกมาจอจริง แต่ทางหลักคือคีย์บอร์ด
+        /// </summary>
+        public bool TrySelectReply(int index)
+        {
+            if (!AwaitingReply || index < 0 || index >= _pendingReplies.Count) return false;
+
+            OnReplyClicked(index, _pendingReplies[index]);
+            return true;
+        }
+
+        private void Update()
+        {
+            // เลื่อนแชทด้วยล้อเมาส์ — ล้อยังใช้ได้ถึงจะคลิกไม่ได้
+            if (inputHandler == null || phoneSystem == null || scrollRect == null) return;
+            if (phoneSystem.CurrentState != PhoneState.ChatView) return;
+
+            float scroll = inputHandler.GetScrollDelta();
+            if (Mathf.Approximately(scroll, 0f)) return;
+
+            scrollRect.verticalNormalizedPosition =
+                Mathf.Clamp01(scrollRect.verticalNormalizedPosition + scroll * scrollSpeed * Time.unscaledDeltaTime);
+        }
 
 
         // ─────────────────────────── Lifecycle ───────────────────────────
@@ -126,9 +169,13 @@ namespace Manager
                 }
             }
 
-            // หา conversation ถัดไปที่ยังไม่จบ — เล่นต่อถ้าค้างไว้ ไม่งั้นเริ่มใหม่
-            foreach (var data in contact.conversations)
+            // หาชุดถัดไปที่ส่งถึงแล้วแต่ยังอ่านไม่จบ — เล่นต่อถ้าค้างไว้ ไม่งั้นเริ่มใหม่
+            //
+            // กรองด้วย delivered ด้วย ไม่ใช่แค่ยังไม่จบ ไม่งั้นเปิดแชทตอนสองทุ่มจะได้อ่าน
+            // ข้อความที่คนปริศนายังไม่ได้ส่งไปแล้ว
+            foreach (var message in contact.DeliveredMessages)
             {
+                var data = message.conversation;
                 if (playedConversations.Contains(data)) continue;
 
                 currentRunningData = data;
@@ -195,6 +242,7 @@ namespace Manager
         public void ShowReplies(List<ReplyOption> replies)
         {
             ClearReplies();
+            _pendingReplies = replies;
             for (int i = 0; i < replies.Count; i++)
             {
                 int index = i;
@@ -230,6 +278,7 @@ namespace Manager
 
         private void ClearReplies()
         {
+            _pendingReplies = null;
             foreach (Transform child in replyRoot)
                 Destroy(child.gameObject);
         }
@@ -238,15 +287,19 @@ namespace Manager
 
         private void HandleConversationEnd()
         {
+            var finished = currentRunningData;
+
             // มาร์คว่าเล่นจบตรงนี้ (ไม่ใช่ตอนเริ่ม) — abandon กลางคันจะได้เล่นต่อได้ ไม่หาย
-            if (currentRunningData != null)
+            if (finished != null)
             {
-                playedConversations.Add(currentRunningData);
-                _resumeIndex.Remove(currentRunningData);
+                playedConversations.Add(finished);
+                _resumeIndex.Remove(finished);
             }
 
+            // ส่ง conversation ที่จบไปด้วย เพราะ contact หนึ่งคนมีหลายชุด
+            // ฝั่งรับต้องรู้ว่าชุดไหนจบ ถึงจะตัดสินได้ว่าต้องเข้า Rule 1 ต่อหรือเปล่า
             if (_currentContact != null)
-                OnContactConversationEnd?.Invoke(_currentContact);
+                OnContactConversationEnd?.Invoke(_currentContact, finished);
         }
     }
 }

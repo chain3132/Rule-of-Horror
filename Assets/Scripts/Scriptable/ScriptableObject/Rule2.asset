@@ -26,25 +26,35 @@ MonoBehaviour:
     isPlayer: 0
     replies: []
     nextNode: 1
+    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsAsCooperative: 1
   - message: When you're sitting at the pavilion and the only light that helps you
       see goes out
     isPlayer: 0
     replies: []
     nextNode: 2
+    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsAsCooperative: 1
   - message: ou must get up and turn the light back on and return to your seat. Also,
       before you sit back down
     isPlayer: 0
     replies: []
     nextNode: 3
+    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsAsCooperative: 1
   - message: don't forget to turn on the radio. Then, once you have the light and
       radio on
     isPlayer: 0
     replies: []
     nextNode: 4
+    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsAsCooperative: 1
   - message: return to your seat and wait for the radio to turn off."
     isPlayer: 0
     replies: []
     nextNode: 5
+    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsAsCooperative: 1
   - message: ahmm
     isPlayer: 1
     replies:
@@ -53,29 +63,43 @@ MonoBehaviour:
     - replyText: Okay, I've read the rules. What are the other details?
       nextNode: 7
     nextNode: 0
+    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsAsCooperative: 1
   - message: You can't escape this
     isPlayer: 0
     replies: []
     nextNode: -1
+    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsAsCooperative: 1
   - message: It's not difficult
     isPlayer: 0
     replies: []
     nextNode: 8
+    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsAsCooperative: 1
   - message: You just have to turn on the light and the radio and return to your
       seat
     isPlayer: 0
     replies: []
     nextNode: 9
+    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsAsCooperative: 1
   - message: Wait until the radio turns off. But the path isn't that simple, is it?
     isPlayer: 0
     replies: []
     nextNode: 10
+    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsAsCooperative: 1
   - message: f the light doesn't come on, you have to fix it. Simple. As for the
       time, 20:00 - 20:40
     isPlayer: 0
     replies: []
     nextNode: 11
+    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsAsCooperative: 1
   - message: May you survive and be safe
     isPlayer: 0
     replies: []
     nextNode: -1
+    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsAsCooperative: 1

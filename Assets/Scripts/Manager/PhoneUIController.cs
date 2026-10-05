@@ -17,6 +17,8 @@ namespace Manager
         [SerializeField] private GameObject flashLightPanel;
         [SerializeField] private GameObject flashLightObj;
         [SerializeField] private GameObject clockPanel;
+        [Tooltip("แอปกฎ (ปุ่ม 3) — ที่เก็บกฎที่คนปริศนาส่งมา")]
+        [SerializeField] private GameObject ruleBookPanel;
         [SerializeField] private TMP_Text timeInPhoneText;
 
         [SerializeField] private TMP_Text timeText;
@@ -26,6 +28,9 @@ namespace Manager
         private bool isSignalJammed = false;
         private Coroutine glitchRoutine;
 
+        /// <summary>แผงระดับแอปทั้งหมด — เปิดได้ทีละตัวเท่านั้น (ดู ChangeHomePanel)</summary>
+        private GameObject[] _homePanels;
+
         private void Awake()
         {
             _stateMap = new Dictionary<PhoneState, GameObject>
@@ -34,8 +39,11 @@ namespace Manager
                 { PhoneState.FriendList, friendListPanel },
                 { PhoneState.ChatView, chatPanel },
                 { PhoneState.FlashLight, flashLightObj },
-                { PhoneState.Clock , null} 
+                { PhoneState.Clock , null},
+                { PhoneState.RuleBook , null}
             };
+
+            _homePanels = new[] { homePanel, messagePanel, flashLightPanel, clockPanel, ruleBookPanel };
         }
         void OnEnable()
         {
@@ -70,37 +78,26 @@ namespace Manager
 
             ChangeHomePanel(state);
         }
+        /// <summary>
+        /// เปิดแผงของแอปที่กำลังใช้อยู่ แล้วปิดที่เหลือ
+        ///
+        /// เดิมเป็น switch ที่แต่ละ case ต้องไล่ SetActive(false) ให้แผงอื่นเองทุกตัว —
+        /// พอเพิ่มแอปกฎเข้ามาเป็นตัวที่ 5 วิธีนั้นต้องแก้ทุก case และลืมตัวใดตัวหนึ่งเมื่อไร
+        /// จะได้แผงซ้อนกันแบบหาสาเหตุยาก เลยเปลี่ยนเป็นบอกแค่ว่า "ตัวไหนควรเปิด" ตัวเดียว
+        /// </summary>
         private void ChangeHomePanel(PhoneState state)
         {
-            switch (state)
+            GameObject active = state switch
             {
-                case PhoneState.AppSelection:
-                    homePanel.SetActive(true);
-                    messagePanel.SetActive(false);
-                    flashLightPanel.SetActive(false);
-                    clockPanel.SetActive(false);
+                PhoneState.AppSelection                       => homePanel,
+                PhoneState.FriendList or PhoneState.ChatView  => messagePanel,
+                PhoneState.FlashLight                         => flashLightPanel,
+                PhoneState.RuleBook                           => ruleBookPanel,
+                _                                             => null,
+            };
 
-                    break;
-                case PhoneState.FriendList:
-                case PhoneState.ChatView:
-                    homePanel.SetActive(false);
-                    flashLightPanel.SetActive(false);
-                    clockPanel.SetActive(false);
-                    messagePanel.SetActive(true);
-                    break;
-                case PhoneState.FlashLight:
-                    homePanel.SetActive(false);
-                    messagePanel.SetActive(false);
-                    clockPanel.SetActive(false);
-                    flashLightPanel.SetActive(true);
-                    break;
-                case PhoneState.Clock:
-                    homePanel.SetActive(false);
-                    messagePanel.SetActive(false);
-                    flashLightPanel.SetActive(false);
-                    clockPanel.SetActive(true);
-                    break;
-            }
+            foreach (var panel in _homePanels)
+                if (panel != null) panel.SetActive(panel == active);
         }
 
         private void HideAll()

@@ -17,6 +17,28 @@ public class CutsceneManager : MonoBehaviour
 {
     public static CutsceneManager instance;
 
+    // ─────────────────────────── Cutscene Gate ───────────────────────────
+
+    /// <summary>
+    /// ตอนนี้ยังอยู่ในฉากเปิดอยู่ไหม — UI ที่ไม่ควรโผล่ทับฉากเปิดเช็กตัวนี้
+    ///
+    /// ต่างจาก _playing ตรงที่ตัวนั้นหมายถึง "ยังกด skip ได้อยู่" ซึ่งปิดไปตั้งแต่ต้น FinishRoutine
+    /// ทั้งที่บทพูดปิดฉากยังเล่นอยู่ ส่วนตัวนี้จะเป็น true จนถึงวินาทีที่คืนการควบคุมให้ผู้เล่นจริงๆ
+    /// และครอบคลุมทางลัด disableCutscene ด้วย (ซึ่งก็ยังมีช่วงที่ผู้เล่นขยับไม่ได้เหมือนกัน)
+    /// </summary>
+    public static bool IsPlaying { get; private set; }
+
+    /// <summary>ฉากเปิดเริ่ม (true) / จบแล้ว (false)</summary>
+    public static event Action<bool> OnPlayingChanged;
+
+    private static void SetPlaying(bool value)
+    {
+        if (IsPlaying == value) return;
+
+        IsPlaying = value;
+        OnPlayingChanged?.Invoke(value);
+    }
+
     // ─────────────────────────── Credit Entry ───────────────────────────
 
     [System.Serializable]
@@ -217,7 +239,21 @@ public class CutsceneManager : MonoBehaviour
 
     // ─────────────────────────── Lifecycle ───────────────────────────
 
-    private void Awake() => instance = this;
+    // ตั้งใน Awake ไม่ใช่ Start — Awake ของทุกตัวรันก่อน Start ของทุกตัว ตัวที่เช็กธงนี้ใน Start
+    // หรือ Update เฟรมแรกจะได้เห็นค่าที่ถูกต้องแน่นอน ไม่ขึ้นกับลำดับ script
+    private void Awake()
+    {
+        instance = this;
+        SetPlaying(true);
+    }
+
+    private void OnDestroy()
+    {
+        if (instance != this) return;
+
+        instance = null;
+        SetPlaying(false);   // โหลดซีนใหม่ระหว่างฉากเปิด ธง static ต้องไม่ค้าง
+    }
 
     private void Start()
     {
@@ -297,6 +333,7 @@ public class CutsceneManager : MonoBehaviour
 
         PlayerController.Instance.SetLook(true);
         TimeManager.instance.IsPauseTime(false);
+        SetPlaying(false);
         gameObject.SetActive(false);
     }
 
@@ -736,6 +773,7 @@ public class CutsceneManager : MonoBehaviour
 
         PlayerController.Instance.SetLook(true);
         TimeManager.instance.IsPauseTime(false);
+        SetPlaying(false);
         gameObject.SetActive(false);
     }
 

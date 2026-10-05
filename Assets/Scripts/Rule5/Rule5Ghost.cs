@@ -74,6 +74,12 @@ namespace Rule5
         [Tooltip("Distance at which the ghost catches the player and kills them (Approach / Chase only).")]
         [SerializeField] private float killDistance = 1.3f;
 
+        [Tooltip("Seconds at the start of a chase in which the ghost cannot catch the player, however close it already is.\n" +
+                 "The escort hands the chase over from wherever the ghost was trailing, which can be anywhere down to " +
+                 "escortKillDistance - well inside killDistance. Without this the player dies on the very frame they pray, " +
+                 "never having been given a chance to run.")]
+        [SerializeField] private float chaseGrace = 1.5f;
+
         [Tooltip("How fast the ghost turns to face the player while standing and waiting.")]
         [SerializeField] private float turnSpeed = 2f;
 
@@ -148,6 +154,7 @@ namespace Rule5
         private bool               _warnedNoNavMesh;
         private Renderer[]         _renderers;
         private float              _escortDistance;
+        private float              _chaseGraceTimer;
 
         public Rule5GhostMode Mode => _mode;
 
@@ -323,12 +330,28 @@ namespace Rule5
             SetAgentSpeed(approachSpeed);
         }
 
+        /// <summary>
+        /// ออกไล่ — ให้เวลาหนีก่อน chaseGrace วินาที ไม่ว่าตอนนี้จะยืนประชิดอยู่แค่ไหน
+        ///
+        /// โหมดตามหลัง (Escort) ส่งต่อมาจากระยะที่เหลืออยู่ตอนนั้น ซึ่งหดได้ถึง escortKillDistance
+        /// ซึ่งน้อยกว่า killDistance อยู่แล้ว — ถ้าเช็กจับทันทีจะตายในเฟรมที่กดสวดมนต์พอดี
+        /// โดยที่ผู้เล่นยังไม่ได้ก้าวเลยแม้แต่ก้าวเดียว
+        /// </summary>
         public void BeginChase()
         {
-            _mode        = Rule5GhostMode.Chase;
-            _repathTimer = 0f;
+            _mode            = Rule5GhostMode.Chase;
+            _repathTimer     = 0f;
+            _chaseGraceTimer = chaseGrace;
             SetAgentSpeed(chaseSpeed);
             AudioManager.instance.PlayRule5GhostChaseStart(transform.position);
+
+            if (_player == null) return;
+            float gap = Vector3.Distance(transform.position, _player.position);
+            if (gap > killDistance) return;
+
+            Debug.Log($"[Rule5] เริ่มไล่ตอนผีห่างแค่ {gap:0.0} ม. ซึ่งอยู่ในระยะฆ่า ({killDistance} ม.) อยู่แล้ว — " +
+                      $"ให้เวลาหนี {chaseGrace:0.0} วิ ก่อน ถ้าอยากให้ไล่กันจริงๆ ควรลด killDistance " +
+                      "ให้ไม่เกิน escortKillDistance", this);
         }
 
         public void Deactivate()
@@ -482,11 +505,15 @@ namespace Rule5
 
         private void UpdateChase()
         {
+            // ช่วงให้เวลาหนี — ผียังวิ่งไล่ตามปกติ แค่ยังไม่นับว่าจับได้
+            if (_chaseGraceTimer > 0f) _chaseGraceTimer -= Time.deltaTime;
+            bool canCatch = _chaseGraceTimer <= 0f;
+
             if (!AgentUsable)
             {
                 bool moved = FallbackMoveTowards(_player.position, chaseSpeed);
                 SetAnim(walk: false, run: moved);
-                CheckKill();
+                if (canCatch) CheckKill();
                 return;
             }
 
@@ -494,7 +521,7 @@ namespace Rule5
             SetMoving(true);
             SetAnim(walk: false, run: true);
             Repath(_player.position);
-            CheckKill();
+            if (canCatch) CheckKill();
         }
 
         private void CheckKill()
