@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.03.00">
-	<object class="AudioFile" id="{37bce2af-d8a6-46f0-a042-09e11203303e}">
+	<object class="AudioFile" id="{8fa0bd18-a190-4b4b-a9e9-d695d948f993}">
 		<property name="assetPath">
-			<value>Rule 5/Prey.mp3</value>
+			<value>Rule 5/PlayerPrey.mp3</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>48</value>
@@ -11,7 +11,7 @@
 			<value>2</value>
 		</property>
 		<property name="length">
-			<value>5.4720000000000004</value>
+			<value>6.2640000000000002</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{f291b90f-c9c6-4a6b-8814-509dcaf86871}</destination>
