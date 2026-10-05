@@ -574,33 +574,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 32664
---- !u!114 &-7330793895143314533
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Rule2/GhostLaugh
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Rule2/GhostLaugh
-  Guid:
-    Data1: -1722218891
-    Data2: 1211219690
-    Data3: -636522363
-    Data4: 810002744
-  Banks:
-  - {fileID: -1473899247595185401}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
 --- !u!114 &-7266681317762981110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -800,33 +773,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
---- !u!114 &-6750057916170381862
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Rule2/Eerie
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Rule2/Eerie
-  Guid:
-    Data1: 1584600060
-    Data2: 1113091195
-    Data3: 1438222741
-    Data4: -467006640
-  Banks:
-  - {fileID: -1473899247595185401}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
 --- !u!114 &-6713474727042979740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -896,7 +842,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/BoneBroken.bank
   Name: BoneBroken
   StudioPath: bank:/New Folder/BoneBroken
-  lastModified: 639258754188007212
+  lastModified: 639268130801731285
   FileSizes:
   - Name: Desktop
     Value: 7520
@@ -1598,7 +1544,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/WomanSound.bank
   Name: WomanSound
   StudioPath: bank:/WomanSound
-  lastModified: 639258754188525462
+  lastModified: 639268130801490968
   FileSizes:
   - Name: Desktop
     Value: 56096
@@ -2377,6 +2323,33 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-1699429075576650314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule5/Prey
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule5/Prey
+  Guid:
+    Data1: 1301911447
+    Data2: 1136816219
+    Data3: 1684827544
+    Data4: -1638501371
+  Banks:
+  - {fileID: 6285338211224124519}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &-1634055911570038326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2446,10 +2419,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule2.bank
   Name: Rule2
   StudioPath: bank:/Rule2
-  lastModified: 639258754188409186
+  lastModified: 639268138874577973
   FileSizes:
   - Name: Desktop
-    Value: 943392
+    Value: 1030912
   Exists: 1
 --- !u!114 &-1373342908035951458
 MonoBehaviour:
@@ -2786,8 +2759,8 @@ MonoBehaviour:
     Data3: -493498185
     Data4: 2133030281
   Banks:
-  - {fileID: 2037088329598349015}
   - {fileID: -4368771935535294408}
+  - {fileID: 2037088329598349015}
   IsStream: 0
   Is3D: 1
   IsOneShot: 0
@@ -2856,14 +2829,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
   Path: event:/Rule2/ForestFootsteps
   Guid:
-    Data1: 420271246
-    Data2: 1152147473
-    Data3: 1195737532
-    Data4: 413440027
+    Data1: 470580700
+    Data2: 1267920163
+    Data3: 1265423248
+    Data4: 1298069012
   Banks:
   - {fileID: -1473899247595185401}
   IsStream: 0
-  Is3D: 1
+  Is3D: 0
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
@@ -2993,7 +2966,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Radio.bank
   Name: Radio
   StudioPath: bank:/Radio
-  lastModified: 639258754188338919
+  lastModified: 639268130794257279
   FileSizes:
   - Name: Desktop
     Value: 5685888
@@ -3143,13 +3116,8 @@ MonoBehaviour:
   - {fileID: 8136306400732464416}
   - {fileID: -8216817987190661142}
   - {fileID: 6875365031847370564}
-  - {fileID: -7330793895143314533}
   - {fileID: -499538719652239615}
-  - {fileID: 7139442273801242621}
-  - {fileID: 9050943600008200953}
-  - {fileID: 2544926568927315725}
   - {fileID: -137404205197037683}
-  - {fileID: -6750057916170381862}
   - {fileID: 2494292679117803151}
   - {fileID: 343499979947184952}
   - {fileID: 1141995799947759428}
@@ -3201,13 +3169,14 @@ MonoBehaviour:
   - {fileID: 8802997137489455850}
   - {fileID: -7337443892343943424}
   - {fileID: -1201939683258929385}
+  - {fileID: -1699429075576650314}
   EditorParameters: []
   MasterBanks:
   - {fileID: 2037088329598349015}
   StringsBanks:
   - {fileID: 8790939570095508767}
   cacheVersion: 131858
-  cacheTime: 639258754188525462
+  cacheTime: 639268171327666366
   SerializableEventsDict:
   - key: event:/Notification
     index: 0
@@ -3229,122 +3198,114 @@ MonoBehaviour:
     index: 8
   - key: event:/Rule2/Rule2AmbienceBG
     index: 9
-  - key: event:/Rule2/GhostLaugh
-    index: 10
   - key: event:/Rule2/ForestFootsteps
-    index: 11
-  - key: event:/Rule2/DogHowl
-    index: 12
-  - key: event:/Rule2/BusApproach
-    index: 13
-  - key: event:/Rule2/Whisper
-    index: 14
+    index: 10
   - key: event:/Rule2/Rule2Ambience
-    index: 15
-  - key: event:/Rule2/Eerie
-    index: 16
+    index: 11
   - key: event:/Rule4/DollCall
-    index: 17
+    index: 12
   - key: event:/Rule4/GhostBreathHold
-    index: 18
+    index: 13
   - key: event:/Rule4/DollHum
-    index: 19
+    index: 14
   - key: event:/Rule4/GhostBreathRelease
-    index: 20
+    index: 15
   - key: event:/Rule4/DollLaugh
-    index: 21
+    index: 16
   - key: event:/Rule4/BreathRecover
-    index: 22
+    index: 17
   - key: event:/Rule4/DollCough
-    index: 23
+    index: 18
   - key: event:/Rule4/DollCry
-    index: 24
+    index: 19
   - key: event:/Rule4/GhostFootsteps
-    index: 25
+    index: 20
   - key: event:/Rule3/Rule3Death
-    index: 26
+    index: 21
   - key: event:/Rule2/GhostScream
-    index: 27
+    index: 22
   - key: event:/Rule2/GhostFalldown
-    index: 28
+    index: 23
   - key: event:/Rule3/BurnPaper
-    index: 29
+    index: 24
   - key: event:/Rule1/PhoneRinging
-    index: 30
+    index: 25
   - key: event:/Rule3/BuilUpFeel
-    index: 31
+    index: 26
   - key: event:/Rule3/Rule3HeartbeatIntro
-    index: 32
+    index: 27
   - key: event:/Rule2/SwitchLight
-    index: 33
+    index: 28
   - key: event:/Rule3/Rule3LightBulb
-    index: 34
+    index: 29
   - key: event:/Rule2/JumpScareSound
-    index: 35
+    index: 30
   - key: event:/Rule3/GhostWarning
-    index: 36
+    index: 31
   - key: event:/Rule3/Rule3Ambient
-    index: 37
+    index: 32
   - key: event:/Rule3/Rule3BuildUpTension
-    index: 38
+    index: 33
   - key: event:/Rule1/GhostHum
-    index: 39
+    index: 34
   - key: event:/Menu/CutsceneMusic
-    index: 40
+    index: 35
   - key: event:/Menu/CarSoundEvent
-    index: 41
+    index: 36
   - key: event:/Rule3/Breathing
-    index: 42
+    index: 37
   - key: event:/Menu/MainMenuBGM
-    index: 43
+    index: 38
   - key: event:/Rule3/BoneBroken
-    index: 44
+    index: 39
   - key: event:/Rule2/RadioNoise
-    index: 45
+    index: 40
   - key: event:/Rule4/Background Rule 4
-    index: 46
+    index: 41
   - key: event:/Rule4/Rule4Ambient
-    index: 47
+    index: 42
   - key: event:/Rule4/Background Ghost
-    index: 48
+    index: 43
   - key: event:/Rule4/Bones Crack
-    index: 49
+    index: 44
   - key: event:/Rule4/Crow Panic
-    index: 50
+    index: 45
   - key: event:/Rule4/Temple gong
-    index: 51
+    index: 46
   - key: event:/Rule2/RunningGhost
-    index: 52
+    index: 47
   - key: event:/Rule2/GhostWalk
-    index: 53
+    index: 48
   - key: event:/Rule4/Drop Doll
-    index: 54
+    index: 49
   - key: event:/Rule4/Pick up
-    index: 55
+    index: 50
   - key: event:/Rule4/Ghost Breathing
-    index: 56
+    index: 51
   - key: event:/Rule5/Ching
-    index: 57
+    index: 52
   - key: event:/Rule5/UntangleDone
-    index: 58
+    index: 53
   - key: event:/Rule5/GhostChaseStart
-    index: 59
+    index: 54
   - key: event:/Rule5/GrabThread
-    index: 60
+    index: 55
   - key: event:/Rule5/ReleaseThread
-    index: 61
+    index: 56
   - key: event:/Rule5/Untangle
-    index: 62
+    index: 57
   - key: event:/Rule5/Bell
-    index: 63
+    index: 58
   - key: event:/Rule5/HeartAttack
-    index: 64
+    index: 59
   - key: event:/Rule5/GhostChingChap
-    index: 65
+    index: 60
   - key: event:/Rule5/Background Rule 5
-    index: 66
+    index: 61
   - key: event:/Rule5/Jumpscare
-    index: 67
+    index: 62
+  - key: event:/Rule5/Prey
+    index: 63
 --- !u!114 &125022446526344972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3442,7 +3403,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule4.bank
   Name: Rule4
   StudioPath: bank:/Rule4
-  lastModified: 639258754188490396
+  lastModified: 639268131272739557
   FileSizes:
   - Name: Desktop
     Value: 1335072
@@ -4149,7 +4110,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639258754188012244
+  lastModified: 639268171325929975
   FileSizes:
   - Name: Desktop
     Value: 39392
@@ -4278,33 +4239,6 @@ MonoBehaviour:
   - {fileID: 2425014278828303125}
   IsStream: 0
   Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
---- !u!114 &2544926568927315725
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Rule2/Whisper
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Rule2/Whisper
-  Guid:
-    Data1: -11268906
-    Data2: 1304253395
-    Data3: -1231664744
-    Data4: 1274113312
-  Banks:
-  - {fileID: -1473899247595185401}
-  IsStream: 0
-  Is3D: 0
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
@@ -4884,7 +4818,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Action.bank
   Name: Action
   StudioPath: bank:/Action
-  lastModified: 639258754187818953
+  lastModified: 639268130790994965
   FileSizes:
   - Name: Desktop
     Value: 407488
@@ -4951,7 +4885,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/AmbienceBank.bank
   Name: AmbienceBank
   StudioPath: bank:/AmbienceBank
-  lastModified: 639258754187997191
+  lastModified: 639268131155540126
   FileSizes:
   - Name: Desktop
     Value: 3121504
@@ -5713,10 +5647,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule5.bank
   Name: Rule5
   StudioPath: bank:/Rule5
-  lastModified: 639258754188505426
+  lastModified: 639268171327666366
   FileSizes:
   - Name: Desktop
-    Value: 627296
+    Value: 684384
   Exists: 1
 --- !u!114 &6512950548796790981
 MonoBehaviour:
@@ -5998,33 +5932,6 @@ MonoBehaviour:
   - {fileID: 242708116425849655}
   IsStream: 0
   Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
---- !u!114 &7139442273801242621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Rule2/DogHowl
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Rule2/DogHowl
-  Guid:
-    Data1: 1195252163
-    Data2: 1075302817
-    Data3: -792255319
-    Data4: -1633918762
-  Banks:
-  - {fileID: -1473899247595185401}
-  IsStream: 0
-  Is3D: 0
   IsOneShot: 1
   Parameters: []
   MinDistance: 1
@@ -6522,10 +6429,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639258754188012244
+  lastModified: 639268171325935146
   FileSizes:
   - Name: Desktop
-    Value: 4496
+    Value: 4330
   Exists: 1
 --- !u!114 &8802997137489455850
 MonoBehaviour:
@@ -6623,7 +6530,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/RunningGhost.bank
   Name: RunningGhost
   StudioPath: bank:/RunningGhost
-  lastModified: 639258754188515460
+  lastModified: 639268130801176842
   FileSizes:
   - Name: Desktop
     Value: 84704
@@ -6682,33 +6589,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 21315
---- !u!114 &9050943600008200953
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Rule2/BusApproach
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Rule2/BusApproach
-  Guid:
-    Data1: -1875781676
-    Data2: 1179909141
-    Data3: 1273680528
-    Data4: 1227295402
-  Banks:
-  - {fileID: -1473899247595185401}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
 --- !u!114 &9189084323817974315
 MonoBehaviour:
   m_ObjectHideFlags: 0
