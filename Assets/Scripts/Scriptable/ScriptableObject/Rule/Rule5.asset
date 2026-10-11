@@ -1,0 +1,160 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41317668c27ad3e4eb2364064ad2ed14, type: 3}
+  m_Name: Rule5
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableObject.ConversationData
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  startNode: 14
+  nodes:
+  - message: You've come further than expected. Choose what you deserve
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 310.20392, y: 270.38068}
+  - message: 
+    isPlayer: 1
+    scriptedLine: 0
+    offersReward: 1
+    replies: []
+    nextNode: 2
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 610.2039, y: 270.38068}
+  - message: 'Not a bad idea at all. The next rule, Rule 5: You must pay even closer
+      attention to the sounds than before'
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 3
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 910.2039, y: 270.38068}
+  - message: 
+    isPlayer: 1
+    scriptedLine: 0
+    offersReward: 0
+    replies:
+    - replyText: I've followed every single thing you ordered. What more do you want
+        from me?
+      nextNode: 11
+    - replyText: Just tell me, what do I have to do this time to survive?
+      nextNode: 4
+    nextNode: -1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 1210.2039, y: 270.38068}
+  - message: Hold onto the sacred thread and keep walking. If you hear the sound
+      of the Ching (Thai cymbal), stop immediately
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 5
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 1496.6771, y: 400.2073}
+  - message: and only continue walking once it goes silent
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 6
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 1808.1057, y: 471.6359}
+  - message: Listen carefully to the bell sound as you walk and count it properly
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 7
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 2108.1057, y: 471.6359}
+  - message: The 3rd bell chime is the signal for you to return and sit at the pavilion
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 8
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 2408.1057, y: 471.6359}
+  - message: If you return too early or too late even once... you won't get to return
+      again
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 9
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 2708.1057, y: 471.6359}
+  - message: Do not let go of your hand for too long, and no matter what you hear
+      behind you, ignore it.
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 10
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 3008.1057, y: 471.6359}
+  - message: 23:00 - 23:40, listen carefully to distinguish which sound is real
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: -1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 3308.1057, y: 471.6359}
+  - message: That red thread is the only thing binding you here
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 12
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 1510.963, y: 212.35017}
+  - message: If you want to let go, then let go
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 13
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 1810.963, y: 212.35017}
+  - message: But don't expect anyone to wait for you to hold it again
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: -1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 2110.963, y: 211.63591}

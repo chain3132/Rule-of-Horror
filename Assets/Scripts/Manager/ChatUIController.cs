@@ -378,7 +378,12 @@ namespace Manager
             {
                 int index = i;
                 var btn   = Instantiate(replyButtonPrefab, replyRoot);
-                btn.GetComponentInChildren<TextMeshProUGUI>().text = replies[i].replyText;
+
+                // ปุ่มเลขที่ต้องกดคือ index + 1 — InputHandler ยิง 0 ตอนกดเลข 1
+                var view = btn.GetComponent<ReplyButtonView>();
+                if (view != null) view.Set(replies[i].replyText, index + 1);
+                else              btn.GetComponentInChildren<TextMeshProUGUI>().text = replies[i].replyText;
+
                 btn.GetComponent<Button>().onClick.AddListener(() => OnReplyClicked(index, replies[index]));
             }
         }

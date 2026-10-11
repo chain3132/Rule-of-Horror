@@ -21,28 +21,40 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
+  startNode: 10
   nodes:
   - message: Next rule, rule number 3
     isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 1
     recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
     recordsAsCooperative: 1
+    graphPosition: {x: 0, y: 0}
   - message: You have to find four pieces of paper with numbers on them
     isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 2
     recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
     recordsAsCooperative: 1
+    graphPosition: {x: 300, y: 0}
   - message: ' You have to stare at them until the numbers disappear, in ascending
       order'
     isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 3
     recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
     recordsAsCooperative: 1
+    graphPosition: {x: 600, y: 0}
   - message: Ahmm...
     isPlayer: 1
+    scriptedLine: 0
+    offersReward: 0
     replies:
     - replyText: I curse every one of you who created this!
       nextNode: 4
@@ -52,41 +64,78 @@ MonoBehaviour:
     nextNode: 0
     recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
     recordsAsCooperative: 1
+    graphPosition: {x: 900, y: 0}
   - message: Whatever you choose, in the end, it's your own choice.
     isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: -1
     recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
     recordsAsCooperative: 1
+    graphPosition: {x: 1200, y: 0}
   - message: Stay calm
     isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 6
     recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
     recordsAsCooperative: 1
+    graphPosition: {x: 1200, y: 130}
   - message: You just need to find the pieces of paper with numbers on them
     isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 7
     recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
     recordsAsCooperative: 1
+    graphPosition: {x: 1500, y: 0}
   - message: and look at them in ascending order, all four of them.
     isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 8
     recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
     recordsAsCooperative: 1
+    graphPosition: {x: 1800, y: 0}
   - message: But be careful, try to keep your eyes open. Do not close your eyes under
       any circumstances
     isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 9
     recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
     recordsAsCooperative: 1
+    graphPosition: {x: 2100, y: 0}
   - message: And if anything is watching you, do not move. 9:00 PM - 9:40 PM. This
       night is so long
     isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
     replies: []
-    nextNode: 10
+    nextNode: 12
     recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
     recordsAsCooperative: 1
+    graphPosition: {x: 2400, y: 0}
+  - message: You've come further than expected. Choose what you deserve
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 11
+    recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
+    recordsAsCooperative: 1
+    graphPosition: {x: -564.099, y: -9.9696045}
+  - message: 
+    isPlayer: 1
+    scriptedLine: 0
+    offersReward: 1
+    replies: []
+    nextNode: 0
+    recordsRule: {fileID: 11400000, guid: 5598f4d3ffb180f459b80781d12a3fa0, type: 2}
+    recordsAsCooperative: 1
+    graphPosition: {x: -277.28113, y: 2.1641846}

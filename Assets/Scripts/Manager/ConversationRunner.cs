@@ -65,8 +65,24 @@ public class ConversationRunner : MonoBehaviour
         CancelInvoke(nameof(DisplayNode));   // กัน auto-advance ค้างจาก conversation ก่อนหน้า
         CancelTyping();
         currentConversation = data;
-        currentIndex = 0;
+        currentIndex = ResolveStart(data);
         DisplayNode();
+    }
+
+    /// <summary>
+    /// node แรกที่จะเล่น — ไม่ใช่ 0 ตายตัวแล้ว คนเขียนบทเลือกได้ว่าจะเริ่มที่ตัวไหน
+    ///
+    /// ถ้าค่าที่ตั้งไว้หลุดช่วง (ลบ node ที่เป็นตัวเริ่มทิ้ง) ให้กลับไปเริ่มที่ 0 แล้วฟ้องดังๆ
+    /// ปล่อยให้หลุดช่วงจะได้แชทที่จบทันทีที่เปิด ซึ่งดูเหมือนข้อความหายไปเฉยๆ
+    /// </summary>
+    private static int ResolveStart(ConversationData data)
+    {
+        if (data == null || data.nodes == null || data.nodes.Count == 0) return 0;
+        if (data.startNode >= 0 && data.startNode < data.nodes.Count) return data.startNode;
+
+        Debug.LogError($"[Conversation] '{data.name}' ตั้ง Start Node ไว้ที่ {data.startNode} " +
+                       $"แต่มี node แค่ {data.nodes.Count} ตัว — เริ่มที่ 0 ให้ก่อน", data);
+        return 0;
     }
 
     /// <summary>เล่น conversation ต่อจาก index ที่ค้างไว้ (แสดง node ที่ index นั้นด้วย)</summary>
