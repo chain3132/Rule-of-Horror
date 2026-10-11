@@ -21,24 +21,30 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
+  startNode: 0
   nodes:
   - message: You still there? I just went and asked my uncle about it.
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 0, y: 0}
   - message: '[Voice Message 0:00 - Playback Failed]'
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 2
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 300, y: 0}
   - message: 
     isPlayer: 1
     scriptedLine: 0
+    offersReward: 0
     replies:
     - replyText: "I can't play it. Just text me\u2014what did your uncle say?"
       nextNode: 3
@@ -47,73 +53,94 @@ MonoBehaviour:
     nextNode: 0
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 600, y: 0}
   - message: Okay, hold on. Typing it out.
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 5
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 900, y: 0}
   - message: I'm not messing around. Just listen.
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 5
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 900, y: 130}
   - message: My uncle said years ago, a woman was waiting for the bus at that shed.
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 6
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 1200, y: 0}
   - message: There was another guy with her that night.
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 7
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 1500, y: 0}
   - message: But by morning, all they found was...
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 8
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 1800, y: 0}
   - message: '[This message was unsent]'
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 9
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 2100, y: 0}
   - message: DO NOT FOLLOW ANY OF THE RULES!!
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 10
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 2400, y: 0}
   - message: DO NOT FOLLOW ANY OF THE RULES!!
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 11
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 2700, y: 0}
   - message: DO NOT FOLLOW ANY OF THE RULES!!
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 12
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 3000, y: 0}
   - message: '[Sent 3 times automatically, then Ton went offline]'
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
-    nextNode: 0
+    nextNode: -1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 3300, y: 0}

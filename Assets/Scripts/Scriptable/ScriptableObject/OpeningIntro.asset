@@ -21,28 +21,54 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
+  startNode: 0
   nodes:
   - message: What would you like to eat today, dear?
     isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 0, y: 0}
   - message: I'll make it for you so you can eat as soon as you get home.
     isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 2
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 300, y: 0}
   - message: ahmm
     isPlayer: 1
+    scriptedLine: 0
+    offersReward: 0
     replies:
     - replyText: Pad Krapow
       nextNode: 3
     - replyText: Omelette Rice
       nextNode: 4
     nextNode: 0
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 600, y: 0}
   - message: Great! I just bought some pork
     isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: -1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 900, y: 0}
   - message: Great! Then I'll add some extra pork for you
     isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: -1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 900, y: 130}

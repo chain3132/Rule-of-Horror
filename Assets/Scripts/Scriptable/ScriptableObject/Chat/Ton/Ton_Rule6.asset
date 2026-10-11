@@ -252,7 +252,7 @@ MonoBehaviour:
     scriptedLine: 0
     offersReward: 0
     replies: []
-    nextNode: 0
+    nextNode: -1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 6300, y: 0}

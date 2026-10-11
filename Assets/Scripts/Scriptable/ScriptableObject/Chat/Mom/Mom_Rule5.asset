@@ -21,24 +21,30 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
+  startNode: 0
   nodes:
   - message: weetheart, Ton is driving out to get you now.
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 0, y: 0}
   - message: I told him to check the shed near the canal bridge.
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 2
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-  - message: 
+    graphPosition: {x: 300, y: 0}
+  - message: ...
     isPlayer: 1
     scriptedLine: 0
+    offersReward: 0
     replies:
     - replyText: "Really? Okay, Mom. I\u2019ll wait for him here."
       nextNode: 3
@@ -47,39 +53,50 @@ MonoBehaviour:
     nextNode: 0
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 600, y: 0}
   - message: Stay right there. Don't walk away.
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 5
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 900, y: 0}
   - message: It's too late, sweetie. He already drove off, and now I can't reach
       him at all.
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 5
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 900, y: 130}
   - message: I turned on the porch lights for you.
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 6
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 1200, y: 0}
   - message: Can you see the light?
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 7
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 1500, y: 0}
   - message: Can you see the light?
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
-    nextNode: 0
+    nextNode: -1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 1800, y: -1.3113403}

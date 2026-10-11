@@ -30,16 +30,16 @@ MonoBehaviour:
     offersReward: 0
     replies: []
     nextNode: 1
-    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 0, y: 0}
-  - message: 
+  - message: ...
     isPlayer: 1
     scriptedLine: 0
     offersReward: 1
     replies: []
     nextNode: 2
-    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 300, y: 0}
   - message: Rule number 2
@@ -48,7 +48,7 @@ MonoBehaviour:
     offersReward: 0
     replies: []
     nextNode: 3
-    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 600, y: 0}
   - message: When you're sitting at the pavilion and the only light that helps you
@@ -58,7 +58,7 @@ MonoBehaviour:
     offersReward: 0
     replies: []
     nextNode: 4
-    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 900, y: 0}
   - message: ou must get up and turn the light back on and return to your seat. Also,
@@ -68,7 +68,7 @@ MonoBehaviour:
     offersReward: 0
     replies: []
     nextNode: 5
-    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 1200, y: 0}
   - message: don't forget to turn on the radio. Then, once you have the light and
@@ -76,26 +76,18 @@ MonoBehaviour:
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
-    replies:
-    - replyText: 
-      nextNode: 6
-    - replyText: 
-      nextNode: 7
+    replies: []
     nextNode: 6
-    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 1500, y: 0}
   - message: return to your seat and wait for the radio to turn off."
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
-    replies:
-    - replyText: 
-      nextNode: 0
-    - replyText: 
-      nextNode: 0
+    replies: []
     nextNode: 7
-    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 1800, y: 0}
   - message: ahmm
@@ -108,7 +100,7 @@ MonoBehaviour:
     - replyText: Okay, I've read the rules. What are the other details?
       nextNode: 9
     nextNode: -1
-    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 2100, y: 0}
   - message: You can't escape this
@@ -118,7 +110,7 @@ MonoBehaviour:
     replies: []
     nextNode: -1
     recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
-    recordsAsCooperative: 1
+    recordsAsCooperative: 0
     graphPosition: {x: 2400, y: 0}
   - message: It's not difficult
     isPlayer: 0
@@ -126,7 +118,7 @@ MonoBehaviour:
     offersReward: 0
     replies: []
     nextNode: 10
-    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 2400, y: 130}
   - message: You just have to turn on the light and the radio and return to your
@@ -136,7 +128,7 @@ MonoBehaviour:
     offersReward: 0
     replies: []
     nextNode: 11
-    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 2700, y: 0}
   - message: Wait until the radio turns off. But the path isn't that simple, is it?
@@ -145,7 +137,7 @@ MonoBehaviour:
     offersReward: 0
     replies: []
     nextNode: 12
-    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
+    recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 3000, y: 0}
   - message: f the light doesn't come on, you have to fix it. Simple. As for the
@@ -155,7 +147,7 @@ MonoBehaviour:
     offersReward: 0
     replies: []
     nextNode: 13
-    recordsRule: {fileID: 0}
+    recordsRule: {fileID: 11400000, guid: ad833daa5dd75d04a9317ec396d46277, type: 2}
     recordsAsCooperative: 1
     graphPosition: {x: 3300, y: 0}
   - message: May you survive and be safe

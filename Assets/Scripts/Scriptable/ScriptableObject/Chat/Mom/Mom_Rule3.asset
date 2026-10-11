@@ -21,24 +21,30 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
+  startNode: 0
   nodes:
   - message: "Honey, dinner\u2019s getting cold. I already warmed it up for you."
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 0, y: 0}
   - message: Ton called me saying he couldn't reach you. Where are you?
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 2
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-  - message: 
+    graphPosition: {x: 300, y: 0}
+  - message: ...
     isPlayer: 1
     scriptedLine: 0
+    offersReward: 0
     replies:
     - replyText: "I\u2019m fine, Mom. The bus is running late, but I\u2019ll be home
         soon."
@@ -49,54 +55,69 @@ MonoBehaviour:
     nextNode: 0
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 600, y: 1.2035522}
   - message: Alright, I'll be waiting. Just don't sit out there by yourself for too
       long.
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 5
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 900, y: 0}
   - message: Which shed, sweetheart? Stay calm, and don't move from there.
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 5
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 900, y: 130}
   - message: If anyone texts you giving instructions, do NOT follow them.
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 6
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 1200, y: 0}
   - message: A few years back, the neighbor told me about this one shed...
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 7
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 1500, y: 0}
   - message: "[Message failed to send \u21BB]"
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 8
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 1800, y: 0}
   - message: "Honey, dinner\u2019s getting cold. Did you eat yet?"
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
     nextNode: 9
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 2100, y: 0}
   - message: "[Mom\u2019s first message repeated, as if she had never sent the previous
       message.]"
     isPlayer: 0
     scriptedLine: 0
+    offersReward: 0
     replies: []
-    nextNode: 0
+    nextNode: -1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
+    graphPosition: {x: 2400, y: 0}

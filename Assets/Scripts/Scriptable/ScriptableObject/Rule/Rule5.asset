@@ -21,7 +21,7 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  startNode: 14
+  startNode: 0
   nodes:
   - message: You've come further than expected. Choose what you deserve
     isPlayer: 0
@@ -32,7 +32,7 @@ MonoBehaviour:
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 310.20392, y: 270.38068}
-  - message: 
+  - message: ...
     isPlayer: 1
     scriptedLine: 0
     offersReward: 1
@@ -51,7 +51,7 @@ MonoBehaviour:
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 910.2039, y: 270.38068}
-  - message: 
+  - message: ...
     isPlayer: 1
     scriptedLine: 0
     offersReward: 0
@@ -64,7 +64,7 @@ MonoBehaviour:
     nextNode: -1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 1210.2039, y: 270.38068}
+    graphPosition: {x: 1206.0334, y: 272.46594}
   - message: Hold onto the sacred thread and keep walking. If you hear the sound
       of the Ching (Thai cymbal), stop immediately
     isPlayer: 0
@@ -128,7 +128,7 @@ MonoBehaviour:
     offersReward: 0
     replies: []
     nextNode: -1
-    recordsRule: {fileID: 0}
+    recordsRule: {fileID: 11400000, guid: 3f2171b571379a34083090e8449b7862, type: 2}
     recordsAsCooperative: 1
     graphPosition: {x: 3308.1057, y: 471.6359}
   - message: That red thread is the only thing binding you here
@@ -155,6 +155,6 @@ MonoBehaviour:
     offersReward: 0
     replies: []
     nextNode: -1
-    recordsRule: {fileID: 0}
-    recordsAsCooperative: 1
+    recordsRule: {fileID: 11400000, guid: 3f2171b571379a34083090e8449b7862, type: 2}
+    recordsAsCooperative: 0
     graphPosition: {x: 2110.963, y: 211.63591}

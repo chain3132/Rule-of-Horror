@@ -17044,8 +17044,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Rule1
   startHour: 0
   startMinute: 0
-  endHour: 0
-  endMinute: 0
+  endHour: 19
+  endMinute: 40
   ruleActive: 0
   phoneGroundObject: {fileID: 2105142480}
   playerResetPoint: {fileID: 365961811}
@@ -67602,7 +67602,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4da08494795a0745a4af586134812af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimeManager
-  realSecondsPerGameMinute: 1
+  realSecondsPerGameMinute: 6
   currentHour: 18
   currentMinute: 39
   logPauseChanges: 0

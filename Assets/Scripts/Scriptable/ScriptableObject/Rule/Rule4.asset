@@ -32,7 +32,7 @@ MonoBehaviour:
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 0, y: 0}
-  - message: 
+  - message: ...
     isPlayer: 1
     scriptedLine: 0
     offersReward: 1
@@ -59,7 +59,7 @@ MonoBehaviour:
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 900, y: 0}
-  - message: 
+  - message: ...
     isPlayer: 1
     scriptedLine: 0
     offersReward: 0
@@ -145,7 +145,7 @@ MonoBehaviour:
     offersReward: 0
     replies: []
     nextNode: -1
-    recordsRule: {fileID: 0}
+    recordsRule: {fileID: 11400000, guid: e56bbaa110637af4c955371d07fe991e, type: 2}
     recordsAsCooperative: 1
     graphPosition: {x: 3602.5, y: 90}
   - message: The shrine has been empty all night. The missing offerings are crying
@@ -174,6 +174,6 @@ MonoBehaviour:
     offersReward: 0
     replies: []
     nextNode: -1
-    recordsRule: {fileID: 0}
-    recordsAsCooperative: 1
+    recordsRule: {fileID: 11400000, guid: e56bbaa110637af4c955371d07fe991e, type: 2}
+    recordsAsCooperative: 0
     graphPosition: {x: 2115, y: -62.5}
