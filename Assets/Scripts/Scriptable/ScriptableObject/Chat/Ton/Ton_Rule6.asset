@@ -219,7 +219,7 @@ MonoBehaviour:
     nextNode: 20
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 5100, y: 0}
+    graphPosition: {x: 5097.706, y: 0}
   - message: "I\u2019ll wait right here until you get out."
     isPlayer: 0
     scriptedLine: 0

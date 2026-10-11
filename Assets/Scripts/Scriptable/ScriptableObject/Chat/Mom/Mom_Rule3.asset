@@ -107,17 +107,7 @@ MonoBehaviour:
     scriptedLine: 0
     offersReward: 0
     replies: []
-    nextNode: 9
-    recordsRule: {fileID: 0}
-    recordsAsCooperative: 1
-    graphPosition: {x: 2100, y: 0}
-  - message: "[Mom\u2019s first message repeated, as if she had never sent the previous
-      message.]"
-    isPlayer: 0
-    scriptedLine: 0
-    offersReward: 0
-    replies: []
     nextNode: -1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 2400, y: 0}
+    graphPosition: {x: 2100, y: 0}

@@ -98,7 +98,7 @@ MonoBehaviour:
     nextNode: 8
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 1800, y: 0}
+    graphPosition: {x: 1809.1216, y: -2.2803345}
   - message: '[This message was unsent]'
     isPlayer: 0
     scriptedLine: 0
@@ -131,16 +131,7 @@ MonoBehaviour:
     scriptedLine: 0
     offersReward: 0
     replies: []
-    nextNode: 12
-    recordsRule: {fileID: 0}
-    recordsAsCooperative: 1
-    graphPosition: {x: 3000, y: 0}
-  - message: '[Sent 3 times automatically, then Ton went offline]'
-    isPlayer: 0
-    scriptedLine: 0
-    offersReward: 0
-    replies: []
     nextNode: -1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 3300, y: 0}
+    graphPosition: {x: 3000, y: 0}

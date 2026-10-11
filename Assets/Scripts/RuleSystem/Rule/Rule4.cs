@@ -344,7 +344,17 @@ namespace RuleSystem.Rule
             if (!PrepareDollQueue()) return;
             SpawnNextDoll();
 
-            if (spiritHouse != null)
+            // ศาลเป็นของชิ้นเดียวที่ขาดแล้วกฎจบไม่ได้เลย — ไม่มีศาล = วางตุ๊กตาไม่ได้ = เล่นยังไงก็ไม่ผ่าน
+            //
+            // เดิมตรงนี้เป็น if (spiritHouse != null) เฉยๆ ช่องว่างใน Inspector จึงเงียบสนิท
+            // อาการที่เห็นคือ "เก็บตุ๊กตาแล้วศาลไม่โผล่มาให้วาง" ซึ่งไล่หาสาเหตุยากมาก
+            // เพราะตัวศาลยังตั้งอยู่ในซีนให้เห็นปกติ แค่ไม่มีใครสั่ง Setup ให้มัน
+            if (spiritHouse == null)
+            {
+                Debug.LogError("[Rule4] ช่อง Spirit House ว่าง — ลาก FixedShrine ในซีนมาใส่ " +
+                               "ไม่งั้นศาลจะไม่ย้ายที่ ไม่ขึ้นปุ่ม E และวางตุ๊กตาไม่ได้เลย", this);
+            }
+            else
             {
                 spiritHouse.Setup(this, inputHandler);   // ResetSlots ข้างใน — ต้องเรียกก่อนเปิดช่อง
 

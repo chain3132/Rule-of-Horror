@@ -6108,7 +6108,7 @@ MonoBehaviour:
     onGranted:
       m_PersistentCalls:
         m_Calls: []
-  forcedOffer: 0200000004000000
+  forcedOffer: 
 --- !u!1 &58809541
 GameObject:
   m_ObjectHideFlags: 0
