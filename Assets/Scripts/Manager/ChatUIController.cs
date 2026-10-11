@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using Enum;
 using ScriptableObject;
 using TMPro;
@@ -44,6 +46,28 @@ namespace Manager
         [Tooltip("Image รูปโปรไฟล์ contact บนหัวแชท")]
         [SerializeField] private Image headerAvatarImage;
 
+        // ─────────────────────────── ฟอง "กำลังพิมพ์" ───────────────────────────
+        // ข้อความของคนปริศนาไม่โผล่มาทันที มันจะขึ้นฟองนี้ค้างไว้ก่อน แล้วค่อยส่งมา
+        // (เวลาที่รอเป็นของ ConversationRunner ตัวนี้แค่วาดตามที่มันบอกผ่าน OnTypingChanged)
+        //
+        // ฟองนี้ไม่ถูกบันทึกลง timeline ของ contact — มันไม่ใช่ข้อความ เปิดแชทใหม่จะไม่เห็นมันซ้ำ
+
+        [Header("กำลังพิมพ์")]
+        [Tooltip("ฟอง \"กำลังพิมพ์\" — เว้นว่าง = ใช้ฟองข้อความฝั่งซ้ายอันเดิม ไม่ต้องทำ prefab ใหม่")]
+        [SerializeField] private GameObject typingBubblePrefab;
+
+        [Tooltip("คำที่โชว์ในฟอง — เว้นว่าง = มีแต่จุด")]
+        [SerializeField] private string typingLabel = "กำลังพิมพ์";
+
+        [Tooltip("ตัวที่ใช้เป็นจุด — ใช้ . เพราะฟอนต์ไทยมีแน่ ส่วน ● บางฟอนต์ไม่มีแล้วจะได้สี่เหลี่ยม")]
+        [SerializeField] private string typingDot = ".";
+
+        [Tooltip("จุดกี่ตัว")]
+        [SerializeField] private int typingDotCount = 3;
+
+        [Tooltip("จุดกระพริบเปลี่ยนตัวทุกกี่วินาที")]
+        [SerializeField] private float typingFrameInterval = 0.4f;
+
         [Header("Keyboard")]
         [Tooltip("ใส่ InputHandler — ใช้อ่านล้อเมาส์สำหรับเลื่อนแชท")]
         [SerializeField] private InputSystem.InputHandler inputHandler;
@@ -79,6 +103,9 @@ namespace Manager
 
         /// <summary>ตัวเลือกคำตอบที่ค้างอยู่บนจอตอนนี้ — กดเลข 1/2 แทนการคลิกได้</summary>
         private List<ReplyOption> _pendingReplies;
+
+        private GameObject _typingBubble;
+        private Coroutine  _typingAnim;
 
 
         // ─────────────────────────── Keyboard (จอโทรศัพท์คลิกไม่ได้) ───────────────────────────
@@ -121,6 +148,7 @@ namespace Manager
             runner.OnNodeDisplayed   += AddMessage;
             runner.OnReplyRequired   += ShowReplies;
             runner.OnConversationEnd += HandleConversationEnd;
+            runner.OnTypingChanged   += SetTyping;
         }
 
         private void OnDisable()
@@ -128,6 +156,7 @@ namespace Manager
             runner.OnNodeDisplayed   -= AddMessage;
             runner.OnReplyRequired   -= ShowReplies;
             runner.OnConversationEnd -= HandleConversationEnd;
+            runner.OnTypingChanged   -= SetTyping;
         }
 
         // ─────────────────────────── Per-Contact Chat (ระบบใหม่) ───────────────────────────
@@ -194,6 +223,10 @@ namespace Manager
 
         public void AddMessage(ChatNode node)
         {
+            // ข้อความมาถึงแล้ว ฟองพิมพ์ต้องหายก่อนฟองข้อความจะโผล่ — เก็บตรงนี้ด้วย
+            // ไม่ใช่รอแต่ OnTypingChanged(false) เผื่อมีทางที่ข้อความมาโดยไม่ผ่านการรอ
+            HideTyping();
+
             int index       = runner.CurrentIndex;
             var currentData = currentRunningData;
             var tupleEntry  = (currentData, index);
@@ -225,7 +258,10 @@ namespace Manager
         {
             var prefab = node.isPlayer ? rightBubblePrefab : leftBubblePrefab;
             var bubble = Instantiate(prefab, contentRoot);
-            bubble.GetComponentInChildren<TextMeshProUGUI>().text = node.message;
+
+            // FormatText แทน {reward} ด้วยชื่อรางวัลที่ผู้เล่นเพิ่งเลือก ข้อความที่ไม่มี
+            // placeholder จะถูกคืนกลับมาทั้งดุ้นโดยไม่ไปแตะ RewardSystem เลย
+            bubble.GetComponentInChildren<TextMeshProUGUI>().text = RewardSystem.FormatText(node.message);
 
             Canvas.ForceUpdateCanvases();
             scrollRect.verticalNormalizedPosition = 0f;
@@ -233,8 +269,101 @@ namespace Manager
 
         private void ClearChatDisplay()
         {
+            // ฟองพิมพ์เป็นลูกของ contentRoot เหมือนกัน ลบพร้อมกันไปแล้ว
+            // ต้องเคลียร์ตัวอ้างอิงด้วย ไม่งั้นรอบหน้าจะเห็นว่า "มีอยู่แล้ว" แล้วไม่สร้างใหม่
+            HideTyping();
+
             foreach (Transform child in contentRoot)
                 Destroy(child.gameObject);
+        }
+
+        // ─────────────────────────── กำลังพิมพ์ ───────────────────────────
+
+        private void SetTyping(bool typing)
+        {
+            if (typing) ShowTyping();
+            else        HideTyping();
+        }
+
+        private void ShowTyping()
+        {
+            if (_typingBubble != null || contentRoot == null) return;
+
+            var prefab = typingBubblePrefab != null ? typingBubblePrefab : leftBubblePrefab;
+            if (prefab == null) return;
+
+            _typingBubble = Instantiate(prefab, contentRoot);
+
+            var label = _typingBubble.GetComponentInChildren<TextMeshProUGUI>();
+            if (label != null) _typingAnim = StartCoroutine(AnimateTyping(label));
+
+            Canvas.ForceUpdateCanvases();
+            if (scrollRect != null) scrollRect.verticalNormalizedPosition = 0f;
+        }
+
+        private void HideTyping()
+        {
+            if (_typingAnim != null)
+            {
+                StopCoroutine(_typingAnim);
+                _typingAnim = null;
+            }
+
+            if (_typingBubble != null)
+            {
+                Destroy(_typingBubble);
+                _typingBubble = null;
+            }
+        }
+
+        private IEnumerator AnimateTyping(TMP_Text label)
+        {
+            var frames = BuildTypingFrames(label.richText);
+            int frame  = 0;
+
+            while (true)
+            {
+                label.text = frames[frame % frames.Length];
+                frame++;
+
+                // Realtime เพราะ GameModeController หรี่ timeScale ตอนกะพริบตา
+                yield return new WaitForSecondsRealtime(Mathf.Max(0.05f, typingFrameInterval));
+            }
+        }
+
+        /// <summary>
+        /// สร้างข้อความของแต่ละเฟรมไว้ล่วงหน้า
+        ///
+        /// มี rich text = จุดอยู่ครบทุกตัวทุกเฟรม สว่างทีละตัว → กระพริบอยู่กับที่ ฟองไม่ขยับ
+        /// ไม่มี rich text = จุดเพิ่มทีละตัว (ฟองจะกว้างขึ้นหน่อยถ้ามี ContentSizeFitter)
+        /// </summary>
+        private string[] BuildTypingFrames(bool richText)
+        {
+            int count   = Mathf.Max(1, typingDotCount);
+            var frames  = new string[count];
+            var builder = new StringBuilder();
+
+            for (int i = 0; i < count; i++)
+            {
+                builder.Clear();
+                builder.Append(typingLabel);
+
+                for (int dot = 0; dot < count; dot++)
+                {
+                    if (!richText)
+                    {
+                        if (dot <= i) builder.Append(typingDot);
+                        continue;
+                    }
+
+                    builder.Append(dot == i ? "<alpha=#ff>" : "<alpha=#40>").Append(typingDot);
+                }
+
+                if (richText) builder.Append("<alpha=#ff>");
+                frames[i] = builder.ToString();
+            }
+
+            return frames;
         }
 
         // ─────────────────────────── Replies ───────────────────────────
@@ -242,6 +371,8 @@ namespace Manager
         public void ShowReplies(List<ReplyOption> replies)
         {
             ClearReplies();
+            if (replies == null) return;   // เมธอดเป็น public ใครเรียกก็ได้ — อย่าให้ล้มที่ .Count
+
             _pendingReplies = replies;
             for (int i = 0; i < replies.Count; i++)
             {

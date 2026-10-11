@@ -69,6 +69,7 @@ namespace Rule5
         private float _regrabDistance;    // ผ้าแดงที่ต้องกลับมาจับ (หลังปล่อย)
         private bool  _hintShown;
         private bool  _grabHintEnabled = true;
+        private bool  _walkLocked;       // Rule5 ล็อกไว้ตอนกำลังสวดมนต์ลา
 
         private ThreadObstacle _blockedBy;       // Untangle ที่ขวางอยู่ตอนนี้
         private ThreadObstacle _pendingDetour;   // Detour ที่เพิ่งทำให้มือหลุด — จับใหม่ได้แล้วค่อยนับว่าผ่าน
@@ -122,6 +123,7 @@ namespace Rule5
             _untangling      = false;
             _hintShown       = false;
             _grabHintEnabled = true;
+            _walkLocked      = false;
 
             thread.ShowEndpointMarkers();
 
@@ -214,7 +216,7 @@ namespace Rule5
         private void UpdateWalk()
         {
             float input = inputHandler != null ? inputHandler.GetMoveInput().y : 0f;
-            bool  wantWalk = input > 0.1f && !_untangling;
+            bool  wantWalk = input > 0.1f && !_untangling && !_walkLocked;
 
             float step = wantWalk ? walkSpeed * Time.deltaTime : 0f;
             if (step > 0f) step = ClampStepByObstacles(step);
@@ -427,6 +429,7 @@ namespace Rule5
             _walking    = false;
             _blockedBy  = null;
             _untangling = false;
+            _walkLocked = false;   // ปล่อยมือกลางสวดมนต์ → ไม่ให้ล็อกค้างไว้กับรอบถัดไป
 
             // ผ้าแดงจุดปล่อย: ปล่อยเอง = ตรงที่ยืน / ชนสิ่งกีดขวาง = อีกฝั่งของมัน (เซ็ตไว้แล้ว)
             if (reason != ReleaseReason.Obstacle) _regrabDistance = _distance;
@@ -448,6 +451,22 @@ namespace Rule5
         /// เปิด/ปิดข้อความ "E จับสายสิญจน์" — Rule5 ปิดหลังผู้เล่นสวดมนต์ลา
         /// (ตอนนั้นเป้าหมายคือวิ่งกลับไปนั่ง ไม่ใช่กลับมาจับสายอีก ข้อความจะค้างเกะกะเปล่าๆ)
         /// </summary>
+        /// <summary>
+        /// ล็อก W ไว้ชั่วคราวทั้งที่ยังจับสายอยู่ — Rule5 ใช้ตอนกำลังพนมมือสวดลา
+        ///
+        /// ล็อกแค่การเดินตามสาย ไม่ได้ล็อกการมองหรือการกด E ปล่อยมือ
+        /// ปล่อยมือเมื่อไรก็ปลดล็อกให้เอง (Release) กันค้างกรณีปล่อยกลางคัน
+        /// </summary>
+        public void SetWalkLocked(bool locked)
+        {
+            _walkLocked = locked;
+            if (!locked || !_holding) return;
+
+            // หยุดเดี๋ยวนี้ ไม่ต้องรอเฟรมถัดไป ไม่งั้น anim เดินค้างหนึ่งเฟรม
+            _walking = false;
+            if (_player != null) _player.MoveExternal(Vector3.zero, false);
+        }
+
         public void SetGrabHintEnabled(bool on)
         {
             _grabHintEnabled = on;

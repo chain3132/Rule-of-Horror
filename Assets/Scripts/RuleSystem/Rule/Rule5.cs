@@ -496,7 +496,11 @@ namespace RuleSystem.Rule
             if (prayAnimator != null && !string.IsNullOrEmpty(prayTrigger)) prayAnimator.SetTrigger(prayTrigger);
             AudioManager.instance.PlayRule5Pray();
 
-            if (walker != null) walker.SetGrabHintEnabled(false);   // จากนี้คือวิ่งกลับไปนั่ง ไม่ใช่กลับมาจับสาย
+            if (walker != null)
+            {
+                walker.SetGrabHintEnabled(false);   // จากนี้คือวิ่งกลับไปนั่ง ไม่ใช่กลับมาจับสาย
+                walker.SetWalkLocked(true);         // พนมมืออยู่ เดินตามสายต่อไม่ได้ (ปลดตอนมือหลุด)
+            }
 
             if (!string.IsNullOrEmpty(prayHint) && PlayerDialogueUI.instance != null)
                 PlayerDialogueUI.instance.ShowLine(prayHint, 3f);
@@ -529,7 +533,12 @@ namespace RuleSystem.Rule
         /// <summary>สวดจบ — ปล่อยมือให้เอง (ไม่ต้องกด E ซ้ำ) แล้ว HandleReleased จะสั่งผีออกไล่</summary>
         void FinishPray()
         {
-            if (walker != null && walker.IsHolding) walker.ReleaseByPlayer();
+            // ปลดล็อกก่อนปล่อยมือ — จากนี้คือวิ่งกลับไปนั่ง ต้องเดินได้ทันทีที่มือหลุด
+            if (walker != null)
+            {
+                walker.SetWalkLocked(false);
+                if (walker.IsHolding) walker.ReleaseByPlayer();
+            }
 
             // กันเหนียว เผื่อปล่อยมือไม่สำเร็จด้วยเหตุใดก็ตาม
             if (_ghost != null && _ghost.Mode != Rule5GhostMode.Chase &&

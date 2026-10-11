@@ -366,7 +366,10 @@ public class GameModeController : MonoBehaviour
             globalVolume.profile = relaxProfile;
             bloodOverlay.SetActive(false);
             SetSaraModel(mode);
-            LightRandomCandle();
+            // เดิมตรงนี้ LightRandomCandle() — จุดเทียนให้เองทุกครั้งที่กลับเข้า Relax
+            // เอาออกแล้ว เทียนต้องมาจากการที่ผู้เล่นเลือกรางวัล "เทียน" ในแชทเท่านั้น (RewardSystem)
+            // ถ้าปล่อยไว้ รางวัลเทียนจะไม่มีความหมายเพราะเดี๋ยวมันก็ติดเองอยู่ดี
+            //
             // คืนแสงเทียนที่ติดอยู่แล้วให้กลับมาสว่าง
             foreach (var candle in candles)
                 candle.ShowLight();
@@ -403,15 +406,46 @@ public class GameModeController : MonoBehaviour
         }
         
     }
-    public void LightRandomCandle()
+    /// <summary>จุดเทียนที่ยังไม่ติดให้ครบทุกเล่ม — สำหรับต่อกับ UnityEvent ใน Inspector</summary>
+    public void LightAllCandles() => LightUnlitCandles();
+
+    /// <summary>
+    /// จุดเทียนที่ยังไม่ติดทั้งหมด — คืนจำนวนเล่มที่เพิ่งจุด (0 = ติดครบอยู่แล้ว)
+    ///
+    /// รางวัล "เทียน" จุดทีเดียวทั้งบ้าน เลือกได้ครั้งเดียว ไม่ใช่จุดทีละเล่มอีกแล้ว
+    /// RewardSystem ใช้ค่าที่คืนมาตัดสินว่ารางวัลนี้ให้ผลจริงไหม จะได้ไม่เสนอรางวัลที่กดไปแล้วไม่มีอะไรเกิดขึ้น
+    /// (แยกเมทอดที่คืนค่าออกจากตัว void เพราะเมทอดที่มีค่าคืนจะหายไปจากลิสต์ของ UnityEvent)
+    /// </summary>
+    public int LightUnlitCandles()
     {
-        foreach(var candle in candles)
+        int lit = 0;
+        foreach (var candle in candles)
         {
-            if(!candle.IsLit())
-            {
-                candle.LightCandle();
-                break;
-            }
+            if (candle == null || candle.IsLit()) continue;
+
+            candle.LightCandle();
+            lit++;
+        }
+        return lit;
+    }
+
+    /// <summary>ดับเทียนทุกเล่มและล้างสถานะว่าเคยจุด — เครื่องมือทดสอบ ไม่ได้ใช้ตอนเล่นจริง</summary>
+    public void ExtinguishAllCandles()
+    {
+        foreach (var candle in candles)
+            if (candle != null) candle.PutOutCandle();
+    }
+
+    /// <summary>เทียนที่ยังไม่ได้จุดเหลือกี่เล่ม</summary>
+    public int UnlitCandleCount
+    {
+        get
+        {
+            int count = 0;
+            foreach (var candle in candles)
+                if (candle != null && !candle.IsLit()) count++;
+
+            return count;
         }
     }
 }

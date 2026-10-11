@@ -678,7 +678,7 @@ public class AudioManager : MonoBehaviour
 
     /// <summary>ผู้เล่นสวดมนต์ (กด Space) บอกว่าจะกลับไปนั่งแล้ว</summary>
     public void PlayRule5Pray()
-        => SafeOneShot("event:/Rule5/Pray", ListenerPos);
+        => SafeOneShot("event:/Rule5/PlayerPrey", ListenerPos);
 
     /// <summary>จบกฎสำเร็จ</summary>
     public void PlayRule5Complete()

@@ -90,6 +90,9 @@ namespace PhoneSystem
                 case PhoneState.RuleBook:
                     ChangeState(PhoneState.AppSelection);
                     break;
+                case PhoneState.Snake:
+                    ChangeState(PhoneState.AppSelection);
+                    break;
 
                 case PhoneState.AppSelection:
                     LowerPhone();

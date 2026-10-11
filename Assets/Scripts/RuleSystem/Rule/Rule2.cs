@@ -197,7 +197,18 @@ namespace RuleSystem.Rule
             int count = Mathf.Min(2, pool.Count);
             for (int i = 0; i < count; i++)
             {
-                LightPanel panel = Instantiate(panelPrefab, pool[i].position, Quaternion.identity);
+                // ต้องใช้ rotation ของจุดเกิดด้วย ไม่ใช่ Quaternion.identity
+                //
+                // จุดเกิดทั้ง 4 ตั้งมุมหันไว้ไม่เหมือนกัน (0, 90, -90, 90 องศา) เพราะแต่ละจุดเอาตู้
+                // ไปแปะผนังคนละด้าน — เกิดด้วย identity คือโยนมุมพวกนั้นทิ้งทั้งหมด ตู้หันหน้าไปทาง
+                // +Z เสมอไม่ว่าจะไปอยู่จุดไหน จุดที่มุมเป็น 0 อยู่แล้วจึงถูก แต่อีก 3 จุดตู้จะหันผิดด้าน
+                //
+                // แล้ว puzzleViewAnchor เป็นลูกของตู้ ตำแหน่งกล้องตอนเล่น mini-game จึงเพี้ยนตามไปด้วย
+                // กล้องไปจอดผิดที่ (มุดอยู่ในผนังได้) คันโยกเลยอยู่นอกระยะ leverGrabDistance 3 ม.
+                // หรือมีผนังขวาง raycast อยู่ — จับคันโยกไม่ได้ กดปุ่มไม่ได้ ทั้งที่ตู้ยังโชว์อยู่
+                //
+                // และเพราะสุ่มใช้แค่ 2 จุดจาก 4 มันจึงเป็นบั๊กแบบสุ่มเจอ ไม่ใช่พังทุกรอบ
+                LightPanel panel = Instantiate(panelPrefab, pool[i].position, pool[i].rotation);
                 panel.SetActiveLight(false);
                 panel.SetRule(this, inputHandler);
                 activePanels.Add(panel);
@@ -637,6 +648,69 @@ namespace RuleSystem.Rule
                 yield return new WaitForSeconds(Random.Range(0.05f, 0.12f));
             }
             saraLight.enabled = true;
+        }
+
+        #endregion
+
+        #region Debug (RuleDevSkip)
+
+        /// <summary>เฟสที่กำลังเล่นอยู่ — RuleDevSkip เอาไปโชว์บน HUD</summary>
+        public Rule2State CurrentPhase    => currentState;
+
+        /// <summary>ตู้ไฟที่เกิดอยู่ตอนนี้กี่ตู้ (ปกติ 2)</summary>
+        public int        ActivePanelCount => activePanels.Count;
+
+        /// <summary>ซ่อมเสร็จไปแล้วกี่ตู้</summary>
+        public int        FixedPanelCount  => fixedPanels;
+
+        /// <summary>
+        /// ข้ามไปเฟสถัดไปทันที — ใช้เฉพาะตอนเทส
+        ///
+        /// เรียก ChangeState ตรงๆ เฟสที่เข้าไปใหม่จึงรัน Start* ของตัวเองครบ
+        /// แต่ผลข้างเคียงของเฟสที่ข้ามไปจะไม่เกิด (เช่นไฟไม่ได้ดับจริง วิทยุไม่ได้เปิด)
+        /// ยอมรับได้สำหรับการเทส แต่อย่าใช้วัดว่า flow จริงถูกหรือเปล่า
+        /// </summary>
+        public void DebugAdvancePhase()
+        {
+            Rule2State next = currentState switch
+            {
+                Rule2State.None                => Rule2State.FirstBlackout,
+                Rule2State.FirstBlackout       => Rule2State.FirstBlackoutReturn,
+                Rule2State.FirstBlackoutReturn => Rule2State.SecondBlackout,
+                Rule2State.SecondBlackout      => Rule2State.FixPanel,
+                Rule2State.FixPanel            => Rule2State.ReturnToSeat,
+                Rule2State.ReturnToSeat        => Rule2State.RadioWaiting,
+                _                              => Rule2State.Completed,
+            };
+
+            Debug.Log($"[Rule2] ข้ามเฟส {currentState} → {next} (dev)", this);
+            if (next == Rule2State.FixPanel) EnsurePanelsExist();
+            ChangeState(next);
+        }
+
+        /// <summary>กระโดดไปเฟสซ่อมตู้ไฟตรงๆ — เฟสที่ต้องเทสบ่อยที่สุด</summary>
+        public void DebugJumpToFixPanel()
+        {
+            if (currentState == Rule2State.FixPanel) return;
+
+            Debug.Log($"[Rule2] ข้ามไปซ่อมตู้ไฟ (จาก {currentState}) (dev)", this);
+            EnsurePanelsExist();
+            ChangeState(Rule2State.FixPanel);
+        }
+
+        /// <summary>
+        /// เกิดตู้ไฟให้ก่อนถ้ายังไม่มี
+        ///
+        /// ปกติ SpawnRandomPanels ถูกเรียกใน StartGameplay ซึ่งรอให้นั่ง+ตาเปิดก่อน
+        /// ข้ามเข้าเฟสซ่อมตู้ไฟก่อนถึงตอนนั้น activePanels จะยังว่าง แล้ว SpawnPanelShadows
+        /// อ่าน activePanels[0] ตรงๆ = IndexOutOfRange ทันที
+        /// </summary>
+        void EnsurePanelsExist()
+        {
+            if (activePanels.Count > 0) return;
+
+            Debug.Log("[Rule2] ยังไม่มีตู้ไฟ (ข้ามเฟสมาก่อน StartGameplay) — เกิดให้ก่อน (dev)", this);
+            SpawnRandomPanels();
         }
 
         #endregion

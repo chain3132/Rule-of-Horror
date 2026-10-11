@@ -86,8 +86,7 @@ public class KeyPromptBinder : MonoBehaviour
         Debug.LogError(
             $"[KeyPrompt] '{promptRoot.name}' มี {group.GetType().Name} ติดอยู่ — prompt จะไม่เกาะวัตถุ " +
             "เพราะ Layout Group ลากมันกลับไปเรียงในช่องของตัวเองทุกเฟรม\n" +
-            "Prompt Root ต้องเป็น RectTransform เปล่าๆ ที่ไม่มี Layout Group " +
-            "(ถ้าอยากได้แถบปุ่มเรียงมุมจอ อันนั้นเป็นหน้าที่ของ ContextPromptBar คนละตัวกัน)",
+            "Prompt Root ต้องเป็น RectTransform เปล่าๆ ที่ไม่มี Layout Group",
             promptRoot);
     }
 

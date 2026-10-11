@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41317668c27ad3e4eb2364064ad2ed14, type: 3}
+  m_Name: Ton_Rule4
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableObject.ConversationData
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  nodes:
+  - message: You still there? I just went and asked my uncle about it.
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: '[Voice Message 0:00 - Playback Failed]'
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 2
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: 
+    isPlayer: 1
+    scriptedLine: 0
+    replies:
+    - replyText: "I can't play it. Just text me\u2014what did your uncle say?"
+      nextNode: 3
+    - replyText: Can you not mess around right now? Just tell me!
+      nextNode: 4
+    nextNode: 0
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: Okay, hold on. Typing it out.
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 5
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: I'm not messing around. Just listen.
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 5
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: My uncle said years ago, a woman was waiting for the bus at that shed.
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 6
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: There was another guy with her that night.
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 7
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: But by morning, all they found was...
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 8
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: '[This message was unsent]'
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 9
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: DO NOT FOLLOW ANY OF THE RULES!!
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 10
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: DO NOT FOLLOW ANY OF THE RULES!!
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 11
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: DO NOT FOLLOW ANY OF THE RULES!!
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 12
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: '[Sent 3 times automatically, then Ton went offline]'
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 0
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1

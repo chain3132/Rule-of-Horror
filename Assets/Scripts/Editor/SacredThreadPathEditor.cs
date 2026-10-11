@@ -3,10 +3,10 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// เครื่องมือช่วยวางสายสิญจน์ใน Scene view
-///   - ลาก handle ที่จุดแต่ละจุดได้ตรงๆ โดยไม่ต้องคลิกเลือกลูกทีละตัว (มี Undo)
-///   - ป้ายเลขบอกลำดับจุด + ระยะสะสม
-///   - ปุ่มใน Inspector: Add waypoint at end / Subdivide every segment / Snap all waypoints to ground
+/// Scene-view authoring aid for the sacred thread path.
+///   - Drag a handle at every waypoint directly, without selecting each child first (undoable)
+///   - Labels show the waypoint order plus the distance along the thread
+///   - Inspector buttons: Add waypoint at end / Subdivide every segment / Snap all waypoints to ground
 /// </summary>
 [CustomEditor(typeof(SacredThreadPath))]
 public class SacredThreadPathEditor : Editor
@@ -92,7 +92,7 @@ public class SacredThreadPathEditor : Editor
         for (int i = 0; i < segs; i++)
             mids[i] = (root.GetChild(i).position + root.GetChild((i + 1) % n).position) * 0.5f;
 
-        // แทรกจากหลังมาหน้า sibling index จะได้ไม่เลื่อน
+        // Insert back to front so the sibling indices we still have to visit do not shift
         for (int i = segs - 1; i >= 0; i--)
         {
             var go = new GameObject("P");

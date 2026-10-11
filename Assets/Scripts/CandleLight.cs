@@ -29,6 +29,15 @@ public class CandleLight : MonoBehaviour
         return isLit;
     }
 
+    /// <summary>ดับและล้างสถานะว่าเคยจุด — ต่างจาก HideLight ที่ยังจำว่าติดอยู่ (เครื่องมือทดสอบ)</summary>
+    public void PutOutCandle()
+    {
+        isLit = false;
+
+        if (candleLight != null)
+            candleLight.enabled = false;
+    }
+
     /// <summary>ซ่อนแสงชั่วคราว (isLit ยังคงอยู่) — ใช้ตอนเข้า Tension mode</summary>
     public void HideLight()
     {

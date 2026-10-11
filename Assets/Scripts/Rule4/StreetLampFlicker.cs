@@ -73,6 +73,25 @@ namespace Rule4
             RestoreOriginals();
         }
 
+        /// <summary>
+        /// บอกค่าความสว่าง "เดิม" อันใหม่ของดวงนี้ — ใช้ตอนมีคนอื่นไปเปลี่ยนความสว่างระหว่างที่ยังกระพริบอยู่
+        /// (ผู้เล่นได้รางวัลเสาไฟกลางกฎ 4 หรือสลับโหมด) ไม่งั้น RestoreLook จะดึงกลับไปเป็นค่าก่อนหน้า
+        ///
+        /// ตอนไม่ได้กระพริบไม่ต้องทำอะไร เพราะ Play() อ่านค่าสดจาก Light เอาเองตอนเริ่ม
+        /// </summary>
+        public void SetBaseIntensity(Light lamp, float intensity)
+        {
+            if (_origIntensity == null || lamp == null || lamps == null) return;
+
+            for (int i = 0; i < lamps.Length && i < _origIntensity.Length; i++)
+            {
+                if (lamps[i] != lamp) continue;
+
+                _origIntensity[i] = intensity;
+                return;
+            }
+        }
+
         private void OnDisable() => Stop();
 
         // ─────────────────────────── Routine ───────────────────────────

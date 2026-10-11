@@ -19,6 +19,8 @@ namespace Manager
         [SerializeField] private GameObject clockPanel;
         [Tooltip("แอปกฎ (ปุ่ม 3) — ที่เก็บกฎที่คนปริศนาส่งมา")]
         [SerializeField] private GameObject ruleBookPanel;
+        [Tooltip("แอปมินิเกมงูกินหาง (ปุ่ม 4) — ตัว SnakeGameController อยู่บนแผงนี้")]
+        [SerializeField] private GameObject snakePanel;
         [SerializeField] private TMP_Text timeInPhoneText;
 
         [SerializeField] private TMP_Text timeText;
@@ -40,10 +42,11 @@ namespace Manager
                 { PhoneState.ChatView, chatPanel },
                 { PhoneState.FlashLight, flashLightObj },
                 { PhoneState.Clock , null},
-                { PhoneState.RuleBook , null}
+                { PhoneState.RuleBook , null},
+                { PhoneState.Snake , null}
             };
 
-            _homePanels = new[] { homePanel, messagePanel, flashLightPanel, clockPanel, ruleBookPanel };
+            _homePanels = new[] { homePanel, messagePanel, flashLightPanel, clockPanel, ruleBookPanel, snakePanel };
         }
         void OnEnable()
         {
@@ -93,6 +96,7 @@ namespace Manager
                 PhoneState.FriendList or PhoneState.ChatView  => messagePanel,
                 PhoneState.FlashLight                         => flashLightPanel,
                 PhoneState.RuleBook                           => ruleBookPanel,
+                PhoneState.Snake                              => snakePanel,
                 _                                             => null,
             };
 

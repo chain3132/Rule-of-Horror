@@ -20,6 +20,8 @@ namespace InputSystem
         private InputAction _moveAction,_lookAction,_phoneAction,_chatAction,_flashLightAction,_clockAction,_interactAction,_rightClickAction,_holdBreathAction;
         private InputAction _prayAction;   // ไม่บังคับต้องมีใน asset — ไม่มีก็อ่าน Space ตรงๆ
         private InputAction _rulePrevAction, _ruleNextAction;   // เหมือนกัน ไม่มีก็อ่าน A/D ตรงๆ
+        private InputAction _minigameAction;   // ปุ่ม 4 — ไม่มีก็อ่านเลข 4 ตรงๆ
+        private InputAction _throwAction;      // คลิกซ้าย — ไม่มีก็อ่านปุ่มซ้ายของเมาส์ตรงๆ
         public event Action OnPhoneToggle;
         public event Action OnSetTime;
         public event Action<int> OnAppKeyPressed;
@@ -46,6 +48,8 @@ namespace InputSystem
             _prayAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Pray");   // null ได้ ไม่ต้องมีก็ได้
             _rulePrevAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("RulePrev");
             _ruleNextAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("RuleNext");
+            _minigameAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Minigame");
+            _throwAction = UnityEngine.InputSystem.InputSystem.actions.FindAction("Throw");
         }
         private void OnEnable()
         {
@@ -77,6 +81,10 @@ namespace InputSystem
 
             playerController.Move(moveInput);
             playerController.Look(lookInput);
+
+            // ปุ่ม 1/2/3 มาเป็น event จาก action ที่ผูก binding ไว้แล้ว ปุ่ม 4 ยังไม่มี binding
+            // จึงต้องถามทุกเฟรมเอง — ดู WasMinigamePressed ว่าทำไมไม่ไปเพิ่มใน .inputactions
+            if (WasMinigamePressed()) OnAppKeyPressed?.Invoke(3);
 
             
         }
@@ -135,6 +143,47 @@ namespace InputSystem
         {
             if (_prayAction != null) return _prayAction.triggered;
             return Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+        }
+
+        /// <summary>
+        /// เฟรมนี้เพิ่งกดปุ่ม 4 — เปิดแอปมินิเกมงูกินหาง
+        ///
+        /// ใช้ action ชื่อ "Minigame" ถ้ามีใน asset ยังไม่มีก็อ่านเลข 4 จากคีย์บอร์ดตรงๆ
+        /// เหมือน Pray/RulePrev/RuleNext จะได้ไม่ต้องแก้ .inputactions ก่อนถึงจะเทสได้
+        /// (วันไหนเพิ่ม action ชื่อนี้เข้าไป มันจะสลับไปใช้ของใน asset เอง)
+        /// </summary>
+        public bool WasMinigamePressed()
+        {
+            if (_minigameAction != null) return _minigameAction.triggered;
+            return Keyboard.current != null && Keyboard.current.digit4Key.wasPressedThisFrame;
+        }
+
+        // ── ขว้างก้อนกระดาษ (มินิเกมปาขยะ) ──────────────────────────────
+        // คลิกซ้ายยังไม่มี action ใน .inputactions เลย (มีแต่ RightClick) เลยอ่านเมาส์ตรงๆ
+        // เหมือน Pray/Minigame — วันไหนเพิ่ม action ชื่อ "Throw" เข้าไป มันจะสลับไปใช้ของใน asset เอง
+        //
+        // คลิกซ้ายไม่ชนกับใครในเกมตอนนี้ (ไม่มีที่ไหนอ่าน leftButton) และ PaperBallThrower
+        // อ่านชุดนี้เฉพาะตอนมีก้อนอยู่ในมือและโทรศัพท์ไม่ได้ยกอยู่
+
+        /// <summary>เฟรมนี้เพิ่งกดคลิกซ้าย = เริ่มเล็งแรงขว้าง</summary>
+        public bool WasThrowPressed()
+        {
+            if (_throwAction != null) return _throwAction.WasPressedThisFrame();
+            return Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+        }
+
+        /// <summary>เฟรมนี้เพิ่งปล่อยคลิกซ้าย = ขว้างออกไป</summary>
+        public bool WasThrowReleased()
+        {
+            if (_throwAction != null) return _throwAction.WasReleasedThisFrame();
+            return Mouse.current != null && Mouse.current.leftButton.wasReleasedThisFrame;
+        }
+
+        /// <summary>true ตราบใดที่ยังกดคลิกซ้ายค้างอยู่</summary>
+        public bool IsThrowHeld()
+        {
+            if (_throwAction != null) return _throwAction.IsPressed();
+            return Mouse.current != null && Mouse.current.leftButton.isPressed;
         }
 
         /// <summary>true ตราบใดที่ยังกดปุ่มกลั้นหายใจค้างอยู่ (Left Shift — Rule 4)</summary>

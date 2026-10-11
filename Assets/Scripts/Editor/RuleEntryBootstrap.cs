@@ -4,19 +4,24 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// สร้าง RuleEntryData ของกฎ ๑-๕ จากเนื้อหาใน GDD (Rule_of_Horror_Phone_Rules_1-5)
+/// Creates the RuleEntryData assets for rules 1-5 from the GDD
+/// (Rule_of_Horror_Phone_Rules_1-5).
 ///
-/// ข้อความทั้งหมดพิมพ์ตามเอกสารเป๊ะๆ รวมทั้งเคส "ตอบหัวแข็ง" ที่ได้ข้อมูลไม่ครบ
-/// ซึ่งหลายข้อใช้ประโยคคนละประโยคกับเคสให้ความร่วมมือ ไม่ใช่แค่ตัดบรรทัดท้ายทิ้ง
+/// The rule text is copied from the document verbatim, including the "defiant answer" case
+/// where the player only gets partial information — several rules word that case differently
+/// rather than just dropping the last line, so the two arrays are not subsets of each other.
 ///
-/// รันซ้ำได้ ไฟล์ที่มีอยู่แล้วจะถูกอัปเดตทับ ไม่สร้างซ้ำ — แต่ถ้าแก้ข้อความในไฟล์เองไว้
-/// การรันซ้ำจะเขียนทับของที่แก้ ให้แก้ในสคริปต์นี้แทนถ้าอยากให้ติดถาวร
+/// Safe to re-run: existing assets are updated in place instead of duplicated. Note that
+/// re-running overwrites text edited directly on the assets, so edits meant to stick belong
+/// in this script.
+///
+/// The rule text itself stays in Thai — it is game content shown to the player, not editor UI.
 /// </summary>
 public static class RuleEntryBootstrap
 {
     private const string FolderPath = "Assets/Scriptable/Rules";
 
-    [MenuItem("Rule of Horror/Phone/สร้างข้อมูลกฎ ๑-๕ จาก GDD", false, 80)]
+    [MenuItem("Rule of Horror/Phone/Generate Rule Data 1-5 From GDD", false, 80)]
     private static void Generate()
     {
         EnsureFolder();
@@ -126,9 +131,9 @@ public static class RuleEntryBootstrap
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log($"[RuleEntryBootstrap] สร้าง/อัปเดตข้อมูลกฎ ๑-๕ เรียบร้อยที่ {FolderPath}\n" +
-                  "ขั้นต่อไป: ใส่ทั้ง 5 ตัวลงใน RuleBookController → rules แล้วไปติดธง recordsRule " +
-                  "ใน node ของแชทที่ขึ้นว่า \"บันทึกใน [3]\"");
+        Debug.Log($"[RuleEntryBootstrap] Created/updated rule data 1-5 in {FolderPath}\n" +
+                  "Next: drop all five into RuleBookController → rules, then tick recordsRule on the " +
+                  "chat nodes where the rule gets written into the phone");
     }
 
     // ─────────────────────────── Helpers ───────────────────────────

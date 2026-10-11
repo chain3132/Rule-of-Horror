@@ -179,6 +179,18 @@ public class Rule3 : RuleBase
 
     void StartGameplay()
     {
+        // ต้อง pause ซ้ำตรงนี้ — GameModeController.BlinkRoutine สั่ง IsPauseTime(false)
+        // ทุกครั้งที่ตาเปิดสุด ค่าที่ RuleFlow ตั้งไว้ตอนต้นจึงถูกล้างไปแล้วพอดีตอนที่ถึงบรรทัดนี้
+        // (RuleFlow รอ WaitUntil(PlayerEyesOpened) ซึ่ง pass ในเฟรมเดียวกับที่ BlinkRoutine ปล่อยนาฬิกา)
+        //
+        // ปล่อยไว้แบบนั้น = นาฬิกาเดินตลอดช่วงเล่น แล้ว RuleManager.CheckRules จะสั่ง EndRule()
+        // ทันทีที่ถึง endHour:endMinute (21:40) ทั้งที่ยังเรียงกระดาษไม่ครบ — กฎจบไปเฉยๆ
+        // ด้วย realSecondsPerGameMinute = 1 หน้าต่าง 40 นาทีเกมคือ 40 วินาทีจริงเท่านั้น
+        //
+        // กฎ 3 ไม่ได้ใช้เวลาเป็นตัวจับจังหวะเลย (ไม่มี CheckTime ที่ไหน) กฎจบเมื่อเรียงกระดาษครบ
+        // หรือตายเท่านั้น — เหตุผลเดียวกับที่ Rule4.StartGameplay ต้อง pause ซ้ำ
+        TimeManager.instance.IsPauseTime(true);
+
         _isRuleActive        = true;
         _isEnding            = false;
         currentIndex         = 0;

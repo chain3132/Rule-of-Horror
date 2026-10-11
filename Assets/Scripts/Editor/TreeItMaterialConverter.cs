@@ -3,24 +3,26 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// แปลง material ที่ TreeIt export มา (ชี้ shader Standard ของ built-in → เป็นสีชมพูใน URP)
-/// ให้ใช้ "Rule of Horror/TreeIt Wind" พร้อมหา texture ข้างๆ มาใส่ให้อัตโนมัติ:
+/// Converts materials exported by TreeIt (they point at the built-in Standard shader,
+/// which renders magenta under URP) over to "Rule of Horror/TreeIt Wind", picking up the
+/// sibling textures automatically:
 ///     xxx.png              → Base Map
 ///     xxx_Normal.png       → Normal Map
 ///     xxx_Transmission.png → Transmission Map
-/// เลือก material (หรือโฟลเดอร์) ใน Project แล้วกดเมนู
+/// Select the materials (or a folder) in the Project window, then run the menu item.
 /// </summary>
 public static class TreeItMaterialConverter
 {
     private const string ShaderName = "Rule of Horror/TreeIt Wind";
 
-    [MenuItem("Rule of Horror/TreeIt/แปลง Material ที่เลือกเป็น TreeIt Wind")]
+    [MenuItem("Rule of Horror/TreeIt/Convert Selected Materials To TreeIt Wind")]
     private static void ConvertSelected()
     {
         Shader shader = Shader.Find(ShaderName);
         if (shader == null)
         {
-            Debug.LogError($"[TreeIt] หา shader '{ShaderName}' ไม่เจอ — ตรวจว่า Assets/Shaders/TreeIt_Wind.shader compile ผ่านไหม");
+            Debug.LogError($"[TreeIt] Shader '{ShaderName}' not found — check that " +
+                           "Assets/Shaders/TreeIt_Wind.shader compiles");
             return;
         }
 
@@ -42,17 +44,18 @@ public static class TreeItMaterialConverter
         }
 
         AssetDatabase.SaveAssets();
-        Debug.Log($"[TreeIt] แปลงแล้ว {count} material → {ShaderName}");
+        Debug.Log($"[TreeIt] Converted {count} material(s) → {ShaderName}");
     }
 
-    [MenuItem("Rule of Horror/TreeIt/แปลง Material ที่เลือกเป็น TreeIt Wind", true)]
+    [MenuItem("Rule of Horror/TreeIt/Convert Selected Materials To TreeIt Wind", true)]
     private static bool ConvertSelectedValidate() => Selection.objects.Length > 0;
 
     private static bool Convert(Material mat, Shader shader)
     {
         if (mat == null) return false;
 
-        // เก็บ texture เดิมไว้ก่อนเปลี่ยน shader (property จะหายถ้าชื่อไม่ตรง)
+        // Grab the existing textures before swapping the shader — a property whose name
+        // does not exist on the new shader is dropped on assignment
         Texture baseMap = mat.HasProperty("_BaseMap") ? mat.GetTexture("_BaseMap")
                         : mat.HasProperty("_MainTex") ? mat.GetTexture("_MainTex") : null;
         Texture bump    = mat.HasProperty("_BumpMap") ? mat.GetTexture("_BumpMap") : null;
@@ -62,7 +65,7 @@ public static class TreeItMaterialConverter
 
         if (baseMap != null) mat.SetTexture("_BaseMap", baseMap);
 
-        // หา texture คู่กันจากชื่อไฟล์ base map
+        // Find the companion textures from the base map's file name
         if (baseMap != null)
         {
             string basePath = AssetDatabase.GetAssetPath(baseMap);
@@ -76,7 +79,7 @@ public static class TreeItMaterialConverter
             if (bump != null)         mat.SetTexture("_BumpMap", bump);
             if (transmission != null) mat.SetTexture("_TransmissionMap", transmission);
 
-            // ใบต้องอ่าน alpha จาก png — TreeIt export มาโดยไม่ได้ติ๊ก Alpha Is Transparency
+            // Leaves have to read alpha from the png — TreeIt exports without Alpha Is Transparency set
             if (AssetImporter.GetAtPath(basePath) is TextureImporter imp && !imp.alphaIsTransparency)
             {
                 imp.alphaIsTransparency = true;
@@ -84,13 +87,13 @@ public static class TreeItMaterialConverter
             }
         }
 
-        // ใบเรนเดอร์สองด้าน + cutout
+        // Leaves render double sided, with cutout transparency
         mat.SetFloat("_Cull", 0);
         mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
 
-        // ต้องเปิด GPU Instancing เสมอ — Terrain วาดต้นไม้ด้วย DrawMeshInstanced
-        // ถ้า material ไม่ติ๊กไว้ จะกลายเป็น 1 draw call ต่อ 1 ต้นต่อ 1 submesh
-        // (paint ไปสองสามพันต้น = Batches หลายหมื่นทันที)
+        // GPU Instancing must always be on — the Terrain draws trees through DrawMeshInstanced,
+        // so a material without it costs one draw call per tree per submesh
+        // (a few thousand painted trees turn into tens of thousands of batches immediately)
         mat.enableInstancing = true;
         EditorUtility.SetDirty(mat);
         return true;

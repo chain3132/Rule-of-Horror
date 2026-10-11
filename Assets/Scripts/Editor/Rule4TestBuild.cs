@@ -9,16 +9,19 @@ using UnityEngine;
 namespace Rule4.EditorTools
 {
     /// <summary>
-    /// สร้างไฟล์ build สำหรับ "ให้เพื่อนเทส Rule 4 โดยเฉพาะ"
+    /// Makes a build meant purely for playtesting Rule 4.
     ///
-    /// ปัญหาเดิม: Rule4DevSkip ครอบด้วย #if UNITY_EDITOR || DEVELOPMENT_BUILD
-    /// ไฟล์ build ปกติจึงไม่มีโค้ดส่วนนั้นอยู่เลย กด F4 ไปก็ไม่มีอะไรเกิดขึ้น
+    /// The problem this solves: Rule4DevSkip is wrapped in
+    /// #if UNITY_EDITOR || DEVELOPMENT_BUILD, so a normal build does not contain that code
+    /// at all and pressing F4 does nothing.
     ///
-    /// เมนูนี้จะใส่ define RULE4_TEST_BUILD ให้ชั่วคราวก่อน build แล้วถอดคืนทันทีที่เสร็จ
-    /// (ถอดใน finally ด้วย ต่อให้ build ล้มหรือถูกยกเลิกกลางคัน define ก็ไม่ค้าง)
+    /// This menu item adds the RULE4_TEST_BUILD define just for the build, then takes it
+    /// straight back out. The removal lives in a finally block so the define cannot stick
+    /// around if the build fails or is cancelled halfway.
     ///
-    /// ผลลัพธ์: ไฟล์ build ที่กด F4 ข้ามเข้า Rule 4 ได้ + มี HUD บอกปุ่มบนหน้าจอ
-    /// ส่วนไฟล์ build ที่ส่งจริงให้ build ด้วยปุ่มปกติใน Build Settings เหมือนเดิม ปุ่มลัดจะหายไปเอง
+    /// Result: a build where F4 skips into Rule 4 and an on-screen HUD lists the keys.
+    /// Builds meant for real players still go through the normal Build Settings button,
+    /// where the cheat keys compile out by themselves.
     /// </summary>
     public static class Rule4TestBuild
     {
@@ -26,7 +29,7 @@ namespace Rule4.EditorTools
         private const string ExeName     = "RuleOfHorror_Rule4Test.exe";
         private const string PrefsKeyDir = "Rule4TestBuild.LastDir";
 
-        [MenuItem("Rule of Horror/Build ไฟล์เทส Rule 4 (Windows x64)", false, 0)]
+        [MenuItem("Rule of Horror/Build Rule 4 Test Build (Windows x64)", false, 0)]
         public static void BuildWindows64()
         {
             string[] scenes = EditorBuildSettings.scenes
@@ -36,13 +39,13 @@ namespace Rule4.EditorTools
 
             if (scenes.Length == 0)
             {
-                EditorUtility.DisplayDialog("Build ไม่ได้",
-                    "ยังไม่มี scene ที่เปิดใช้งานใน Build Settings", "ตกลง");
+                EditorUtility.DisplayDialog("Cannot Build",
+                    "No scene is enabled in Build Settings.", "OK");
                 return;
             }
 
             string lastDir = EditorPrefs.GetString(PrefsKeyDir, "");
-            string dir     = EditorUtility.SaveFolderPanel("เลือกโฟลเดอร์ที่จะวางไฟล์ build", lastDir, "");
+            string dir     = EditorUtility.SaveFolderPanel("Choose a folder for the build", lastDir, "");
             if (string.IsNullOrEmpty(dir)) return;
 
             EditorPrefs.SetString(PrefsKeyDir, dir);
@@ -61,8 +64,9 @@ namespace Rule4.EditorTools
                     target           = BuildTarget.StandaloneWindows64,
                     targetGroup      = BuildTargetGroup.Standalone,
 
-                    // Development เพื่อให้มี Player.log เก็บ Debug.Log ไว้ให้เพื่อนส่งกลับมาได้
-                    // (อยู่ที่ %USERPROFILE%\AppData\LocalLow\<Company>\<Product>\Player.log)
+                    // Development so the build writes Player.log, which keeps the Debug.Log
+                    // output a tester can send back
+                    // (at %USERPROFILE%\AppData\LocalLow\<Company>\<Product>\Player.log)
                     options          = BuildOptions.Development
                 };
 
@@ -71,12 +75,13 @@ namespace Rule4.EditorTools
             }
             finally
             {
-                // ต้องคืนค่าเสมอ ไม่งั้น define ค้างแล้วไฟล์ build ที่ส่งจริงจะมีปุ่มโกงติดไปด้วย
+                // Always restore, otherwise the define sticks and a real release build
+                // ships with the cheat keys in it
                 PlayerSettings.SetScriptingDefineSymbols(target, original);
             }
         }
 
-        [MenuItem("Rule of Horror/เปิดโฟลเดอร์ Player.log ของเครื่องนี้", false, 20)]
+        [MenuItem("Rule of Horror/Open Player.log Folder For This Machine", false, 20)]
         public static void OpenLogFolder()
         {
             string path = Path.Combine(
@@ -84,8 +89,8 @@ namespace Rule4.EditorTools
                 "AppData", "LocalLow", PlayerSettings.companyName, PlayerSettings.productName);
 
             if (Directory.Exists(path)) EditorUtility.RevealInFinder(path);
-            else EditorUtility.DisplayDialog("ยังไม่มีโฟลเดอร์",
-                     $"ยังไม่เคยรันไฟล์ build บนเครื่องนี้\n\n{path}", "ตกลง");
+            else EditorUtility.DisplayDialog("Folder Does Not Exist Yet",
+                     $"No build has been run on this machine yet.\n\n{path}", "OK");
         }
 
         // ─────────────────────────── helpers ───────────────────────────
@@ -103,23 +108,23 @@ namespace Rule4.EditorTools
 
             if (summary.result == BuildResult.Succeeded)
             {
-                Debug.Log($"[Rule4TestBuild] build เสร็จแล้ว ({summary.totalSize / (1024UL * 1024UL)} MB) → {dir}");
+                Debug.Log($"[Rule4TestBuild] Build finished ({summary.totalSize / (1024UL * 1024UL)} MB) → {dir}");
 
-                if (EditorUtility.DisplayDialog("Build เสร็จแล้ว",
-                        $"ไฟล์อยู่ที่:\n{dir}\n\n" +
-                        "บอกเพื่อนว่า:\n" +
-                        "  • กด F4 = ข้ามเข้า Rule 4 ทันที\n" +
-                        "  • กด F5 = โชว์ป้ายชี้ตำแหน่งตุ๊กตา/ผี\n" +
-                        "  • มุมซ้ายบนมีข้อความบอกปุ่มอยู่แล้ว",
-                        "เปิดโฟลเดอร์", "ปิด"))
+                if (EditorUtility.DisplayDialog("Build Finished",
+                        $"The build is at:\n{dir}\n\n" +
+                        "Tell the tester:\n" +
+                        "  • F4 = skip straight into Rule 4\n" +
+                        "  • F5 = show markers on the doll and the ghost\n" +
+                        "  • The top-left corner already lists the keys",
+                        "Open Folder", "Close"))
                 {
                     EditorUtility.RevealInFinder(Path.Combine(dir, ExeName));
                 }
             }
             else
             {
-                Debug.LogError($"[Rule4TestBuild] build ไม่สำเร็จ: {summary.result} " +
-                               $"(error {summary.totalErrors}) — ดูรายละเอียดใน Console");
+                Debug.LogError($"[Rule4TestBuild] Build failed: {summary.result} " +
+                               $"({summary.totalErrors} error(s)) — see the Console for details");
             }
         }
     }

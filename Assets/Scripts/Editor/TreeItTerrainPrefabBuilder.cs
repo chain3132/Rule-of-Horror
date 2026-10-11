@@ -4,24 +4,29 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// Terrain ของ Unity วาดต้นไม้ที่ไม่ใช่ SpeedTree/TreeCreator ได้แค่ "Renderer ตัวแรก" ของ prefab
-/// TreeIt export มา 2 mesh (ลำต้น + ใบ) แยกกัน → ลง Terrain แล้วเห็นแต่ลำต้น
+/// Unity's Terrain only draws the first Renderer of a prefab for trees that are not SpeedTree or
+/// TreeCreator. TreeIt exports two separate meshes (trunk + leaves), so painting one straight onto
+/// a Terrain shows the trunk only.
 ///
-/// tool นี้รวม mesh ทุกชิ้นของ FBX เป็น mesh เดียว (แยก submesh ตาม material) แล้วสร้าง prefab
-/// ที่มี MeshRenderer อยู่ที่ root + LODGroup จากไฟล์ <ชื่อ>_LOD1..N.fbx ข้างๆ (ถ้ามี)
-/// เลือกไฟล์ FBX หลัก (เช่น BananaTree.fbx) ใน Project แล้วกดเมนู → ได้ prefab ไปใส่ Terrain ได้เลย
+/// This tool merges every mesh in the FBX into a single mesh (one submesh per material) and builds
+/// a prefab with the MeshRenderer on the root, plus an LODGroup assembled from the sibling
+/// &lt;name&gt;_LOD1..N.fbx files when they exist.
+/// Select the main FBX (BananaTree.fbx, say) in the Project window and run the menu — the prefab
+/// that comes out can go straight onto a Terrain.
 /// </summary>
 public static class TreeItTerrainPrefabBuilder
 {
-    // สัดส่วนหน้าจอที่ LOD0 หมดอายุ — ระดับถัดไปหารครึ่งไปเรื่อยๆ (0.35 → 0.175 → 0.0875 …) cull ต่ำสุด 1%
-    // ต้องลดลงเสมอ ไม่งั้น SetLODs จะ error แล้ว LOD Group ว่างเปล่า → Terrain วาดไม่ได้เลย
+    // Screen-height fraction where LOD0 gives up — each level after it halves (0.35 → 0.175 →
+    // 0.0875 …) with a 1% floor. It has to keep decreasing, otherwise SetLODs errors out and
+    // leaves the LOD Group empty, and the Terrain then draws nothing at all.
     private const float FirstLodTransition = 0.35f;
 
-    // สัดส่วนหน้าจอที่ LOD สุดท้ายหายไป — ต่ำไว้เพื่อให้ยังเห็นต้นไม้ที่อยู่ไกล
-    // (Terrain คุมระยะด้วย Tree Distance อยู่แล้ว ปล่อยให้ค่านี้เป็นตัว cull จะตัดเร็วเกินไป)
+    // Screen-height fraction where the last LOD disappears — kept low so distant trees stay
+    // visible. (The Terrain already limits range with Tree Distance; letting this value do the
+    // culling cuts them off far too early.)
     private const float LastLodCull = 0.002f;
 
-    [MenuItem("Rule of Horror/TreeIt/สร้าง Prefab ต้นไม้สำหรับ Terrain (จาก FBX ที่เลือก)")]
+    [MenuItem("Rule of Horror/TreeIt/Build Terrain Tree Prefab (from selected FBX)")]
     private static void Build()
     {
         foreach (Object obj in Selection.objects)
@@ -33,24 +38,26 @@ public static class TreeItTerrainPrefabBuilder
         AssetDatabase.SaveAssets();
     }
 
-    [MenuItem("Rule of Horror/TreeIt/สร้าง Prefab ต้นไม้สำหรับ Terrain (จาก FBX ที่เลือก)", true)]
+    [MenuItem("Rule of Horror/TreeIt/Build Terrain Tree Prefab (from selected FBX)", true)]
     private static bool BuildValidate() => Selection.activeObject is GameObject go && AssetDatabase.GetAssetPath(go).ToLower().EndsWith(".fbx");
 
     private static void BuildFor(GameObject lod0Model, string lod0Path)
     {
-        // AssetDatabase ต้องการ "/" เสมอ — Path.* บน Windows คืน "\\" แล้ว LoadAssetAtPath จะได้ null เงียบๆ
+        // AssetDatabase always wants "/" — Path.* returns "\\" on Windows and LoadAssetAtPath
+        // then silently returns null
         string dir    = Path.GetDirectoryName(lod0Path).Replace('\\', '/');
         string name   = Path.GetFileNameWithoutExtension(lod0Path);
         string outDir = $"{dir}/{name}_Terrain";
         if (!AssetDatabase.IsValidFolder(outDir)) AssetDatabase.CreateFolder(dir, name + "_Terrain");
 
-        // เก็บ FBX ทุกระดับ: ตัวหลัก + _LOD1, _LOD2, ... ที่มีอยู่ข้างๆ
+        // Collect every level: the main FBX plus whichever _LOD1, _LOD2, … sit next to it
         var models = new List<GameObject> { lod0Model };
         for (int i = 1; i < 16; i++)
         {
             var lod = AssetDatabase.LoadAssetAtPath<GameObject>($"{dir}/{name}_LOD{i}.fbx");
             if (lod == null) break;
-            // Imposter (billboard) ใช้ texture คนละชุด — ข้าม ให้ LOD ก่อนหน้า cull แทน
+            // The imposter (billboard) uses a different texture set — skip it and let the previous
+            // LOD do the culling instead
             var firstMesh = lod.GetComponentInChildren<MeshFilter>()?.sharedMesh;
             if (firstMesh == null || firstMesh.name.ToLower().Contains("imposter") || firstMesh.vertexCount <= 8) break;
             models.Add(lod);
@@ -59,24 +66,25 @@ public static class TreeItTerrainPrefabBuilder
         var root = new GameObject(name + "_Terrain");
         var lods = new List<LOD>();
 
-        // material ของ LOD0 — ใช้เป็นตัวอ้างอิงให้ LOD อื่นทั้งหมด
-        // ไฟล์ _LOD1..N.fbx มี material ฝังอยู่ในตัวเอง (URP/Lit ที่ Unity สร้างให้ตอน import)
-        // ถ้าปล่อยไว้ LOD ไกลๆ จะไม่ใช่ shader ต้นไม้ → ไม่มีลม ไม่ instanced (SRP Batcher กินไปแทน)
-        // แล้วจะงงมาก เพราะ LOD0 ที่เห็นใกล้ๆ ดูถูกต้องทุกอย่าง
+        // LOD0's materials, used as the reference for every other level.
+        // The _LOD1..N.fbx files carry their own embedded materials (the URP/Lit ones Unity creates
+        // on import). Left alone, the distant LODs are not on the tree shader — no wind, no
+        // instancing (the SRP Batcher takes over instead) — and it is baffling to debug, because
+        // LOD0, the one you see up close, looks completely correct.
         Material[] lod0Materials = null;
 
         for (int i = 0; i < models.Count; i++)
         {
             if (!TryCombine(models[i], out Mesh mesh, out Material[] mats))
             {
-                Debug.LogWarning($"[TreeIt] {models[i].name} ไม่มี mesh — ข้าม");
+                Debug.LogWarning($"[TreeIt] {models[i].name} has no mesh — skipped");
                 continue;
             }
 
             mesh.name = $"{name}_LOD{i}";
             AssetDatabase.CreateAsset(mesh, $"{outDir}/{mesh.name}.asset");
 
-            // LOD0 อยู่ที่ root (Terrain อ่าน renderer ตัวแรก) LOD อื่นเป็นลูก
+            // LOD0 lives on the root (the Terrain reads the first renderer); the rest are children
             GameObject go = i == 0 ? root : new GameObject($"LOD{i}");
             if (i != 0) go.transform.SetParent(root.transform, false);
 
@@ -87,8 +95,8 @@ public static class TreeItTerrainPrefabBuilder
             var mr = go.AddComponent<MeshRenderer>();
             mr.sharedMaterials = mats;
 
-            // LOD สุดท้ายต้อง cull ที่ค่าต่ำมาก ไม่งั้นต้นไม้จะหายไปทั้งที่ยังอยู่ในระยะ Tree Distance
-            // (กรณีมี LOD เดียว ค่านี้คือจุด cull จุดเดียวของทั้งต้น)
+            // The last LOD has to cull at a very low value, otherwise trees vanish while still
+            // inside Tree Distance. (With a single LOD this is the one and only cull point.)
             bool  isLast = i == models.Count - 1;
             float h = isLast
                 ? LastLodCull
@@ -96,12 +104,13 @@ public static class TreeItTerrainPrefabBuilder
             lods.Add(new LOD(h, new Renderer[] { mr }));
         }
 
-        // ต้องมี LODGroup "เสมอ" แม้จะมี LOD เดียว
-        // Terrain: prototype ที่ไม่มี LODGroup จะถูกส่งเข้า "default impostor system"
-        //          (Unity เตือนเองใน Inspector ของ Paint Trees)
-        //          พอเลย Tree Billboard Distance มันจะเลิกวาด mesh แล้ววาด billboard ที่สร้างเอง
-        //          ซึ่งรองรับแค่ shader ตระกูล Nature/Soft Occlusion — เจอ shader อื่นแล้วได้ภาพมั่วเป็นจุดสี
-        // มี LODGroup = Terrain วาด mesh ตามปกติทุกระยะ ไม่แตะระบบ impostor เลย
+        // There must ALWAYS be an LODGroup, even with a single LOD.
+        // Terrain: a prototype without one goes through the default impostor system (Unity says so
+        //          itself in the Paint Trees inspector). Past Tree Billboard Distance it stops
+        //          drawing the mesh and draws a billboard it generates, which only supports the
+        //          Nature/Soft Occlusion shader family — anything else turns into colored speckles.
+        // With an LODGroup the Terrain draws the mesh normally at every distance and never touches
+        // the impostor system.
         if (lods.Count > 0)
         {
             var group = root.AddComponent<LODGroup>();
@@ -114,15 +123,17 @@ public static class TreeItTerrainPrefabBuilder
         Object.DestroyImmediate(root);
 
         if (lods.Count <= 1)
-            Debug.LogWarning($"[TreeIt] หาไฟล์ {name}_LOD1.fbx ข้างๆ ไม่เจอ — ได้ prefab แบบไม่มี LOD");
+            Debug.LogWarning($"[TreeIt] No {name}_LOD1.fbx found next to it — the prefab has no LODs");
 
-        Debug.Log($"[TreeIt] สร้าง {prefabPath} ({lods.Count} LOD) — ลากใส่ Terrain ▸ Paint Trees ▸ Edit Trees ได้เลย",
+        Debug.Log($"[TreeIt] Built {prefabPath} ({lods.Count} LOD(s)) — drag it into " +
+                  "Terrain ▸ Paint Trees ▸ Edit Trees",
                   AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath));
     }
 
     /// <summary>
-    /// จับ material ของ LOD ให้ตรงกับของ LOD0 — จับคู่ด้วยชื่อก่อน ถ้าไม่เจอค่อยใช้ลำดับ submesh
-    /// (material ฝังใน FBX ของ LOD ชื่อเดียวกับตัวที่แยกไฟล์ไว้ของ LOD0 เสมอ เพราะมาจากโมเดลเดียวกัน)
+    /// Matches an LOD's materials to LOD0's — by name first, falling back to submesh order.
+    /// (A material embedded in an LOD's FBX always has the same name as LOD0's standalone one,
+    /// since both come from the same model.)
     /// </summary>
     private static Material[] RemapToLod0(Material[] lodMats, Material[] lod0Mats, string lodName)
     {
@@ -139,20 +150,21 @@ public static class TreeItTerrainPrefabBuilder
                 foreach (var m in lod0Mats)
                     if (m != null && m.name == wanted) { match = m; break; }
 
-            if (match == null && i < lod0Mats.Length) match = lod0Mats[i];   // ชื่อไม่ตรง → ใช้ลำดับ
+            if (match == null && i < lod0Mats.Length) match = lod0Mats[i];   // no name match → go by order
 
             if (match == null)
             {
                 result[i] = lodMats[i];
-                Debug.LogWarning($"[TreeIt] {lodName}: หา material คู่ของ '{wanted}' ใน LOD0 ไม่เจอ — " +
-                                 "LOD นี้จะใช้ material ที่ฝังมากับ FBX (คนละ shader กับ LOD0)");
+                Debug.LogWarning($"[TreeIt] {lodName}: no counterpart for material '{wanted}' in LOD0 — " +
+                                 "this LOD keeps the material embedded in the FBX (a different shader from LOD0)");
             }
             else result[i] = match;
         }
         return result;
     }
 
-    /// <summary>รวม MeshFilter ทุกตัวใน model เป็น mesh เดียว — 1 submesh ต่อ 1 material (bake transform ลูกเข้าไป)</summary>
+    /// <summary>Merges every MeshFilter in the model into one mesh — one submesh per material,
+    /// with the child transforms baked in.</summary>
     private static bool TryCombine(GameObject model, out Mesh combined, out Material[] materials)
     {
         combined = null; materials = null;
@@ -191,7 +203,7 @@ public static class TreeItTerrainPrefabBuilder
             }
             if (order.Count == 0) return false;
 
-            // ขั้น 1: รวมชิ้นที่ material เดียวกันเป็นก้อนเดียว
+            // Pass 1: merge all the pieces that share a material into one lump
             var perMaterial = new List<CombineInstance>();
             foreach (var mat in order)
             {
@@ -200,7 +212,8 @@ public static class TreeItTerrainPrefabBuilder
                 perMaterial.Add(new CombineInstance { mesh = m, transform = Matrix4x4.identity });
             }
 
-            // ขั้น 2: ต่อเป็น submesh ตามลำดับ material — vertex color / tangent / uv ติดมาด้วยครบ
+            // Pass 2: chain those into submeshes in material order — vertex colors, tangents and
+            // UVs all come along
             combined = new Mesh { indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
             combined.CombineMeshes(perMaterial.ToArray(), mergeSubMeshes: false, useMatrices: false);
             combined.RecalculateBounds();

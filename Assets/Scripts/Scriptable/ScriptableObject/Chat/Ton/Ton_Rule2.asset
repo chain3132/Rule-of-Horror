@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41317668c27ad3e4eb2364064ad2ed14, type: 3}
+  m_Name: Ton_Rule2
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableObject.ConversationData
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  nodes:
+  - message: "Where the hell are you? Thought you said you\u2019d be home by 7"
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: Your mom even texted me asking where you are.
+    isPlayer: 0
+    scriptedLine: 0
+    replies:
+    - replyText: Still waiting for the bus. The usual shed got wrecked by the storm,
+        so I had to move to another one
+      nextNode: 2
+    - replyText: "Ton, I\u2019m stuck at this waiting shed. Someone\u2019s sending
+        me weird texts"
+      nextNode: 3
+    nextNode: 2
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: 
+    isPlayer: 1
+    scriptedLine: 0
+    replies:
+    - replyText: Still waiting for the bus. The usual shed got wrecked by the storm,
+        so I had to move to another one.
+      nextNode: 3
+    - replyText: "Ton, I\u2019m stuck at this waiting shed. Someone\u2019s sending
+        me weird texts"
+      nextNode: 4
+    nextNode: 0
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: '"Another one"? Which one do you mean?'
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 5
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: What texts? Calm down. Which shed are you at?
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 5
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: "The rundown-looking one. It\u2019s about a kilometer down from the
+      usual stop."
+    isPlayer: 1
+    scriptedLine: 1
+    replies: []
+    nextNode: 6
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: Wait a second...
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 7
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: Is it that shed from the stories?
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 8
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: Don't tell me you're...
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 9
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: '[Disconnected / No further messages]'
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 0
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1

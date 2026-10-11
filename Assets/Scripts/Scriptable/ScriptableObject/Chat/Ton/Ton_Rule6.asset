@@ -1,0 +1,209 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41317668c27ad3e4eb2364064ad2ed14, type: 3}
+  m_Name: Ton_Rule6
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableObject.ConversationData
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  nodes:
+  - message: I'm at the shed.
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: Where are you?
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 2
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: 
+    isPlayer: 1
+    scriptedLine: 0
+    replies:
+    - replyText: "I\u2019m sitting inside on the bench. You're here already?"
+      nextNode: 3
+    - replyText: "No way. I\u2019m looking around right now, and there\u2019s no
+        one."
+      nextNode: 4
+    nextNode: 0
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: "I\u2019m standing right in front of that bench. There\u2019s no one
+      here."
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 5
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: I don't see you either. The shed is completely empty. Just a single
+      light.
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 5
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: Listen, let me finish what my uncle told me.
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 6
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: "That woman was named Paeng. Years ago, she was waiting for a bus at
+      this shed when she got sent a set of rules\u2014just like you did."
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 7
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: A stranger was there with her that night. They both followed the rules
+      together and almost made it to the end.
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 8
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: But the last bus could only take one person.
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 9
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: By morning, the shed was empty. Paeng vanished, and while the guy made
+      it home... no one ever saw him again.
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 10
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: My grandma said ever since then, anyone who wanders into that shed receives
+      texts from an unknown number.
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 11
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: Bro...
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 12
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: The person texting you... my uncle thinks it might be the guy who survived
+      that night
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 13
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: "He\u2019s not trying to help you. He\u2019s trying to find someone
+      to take his place."
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 14
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: My uncle said Paeng never actually killed anyone.
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 15
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: Everyone who died there was consumed by their own fear.
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 16
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: 
+    isPlayer: 1
+    scriptedLine: 0
+    replies:
+    - replyText: So what am I supposed to do now?!
+      nextNode: 17
+    - replyText: "Wait... so I\u2019ve been following his orders this whole time?"
+      nextNode: 18
+    nextNode: 0
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: I don't know. My uncle only said...
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 19
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: "Yeah. But it\u2019s not too late. My uncle said..."
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 19
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: '"DO NOT get on the bus he tells you to get on."'
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 20
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: "I\u2019ll wait right here until you get out."
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 21
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: '[Ton went offline]'
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 22
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: '[A few seconds later, a chat from an unknown sender popped up]'
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 23
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+  - message: "[Unknown: Your friend talks too much.]\t"
+    isPlayer: 0
+    scriptedLine: 0
+    replies: []
+    nextNode: 0
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
