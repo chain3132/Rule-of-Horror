@@ -17385,7 +17385,7 @@ MonoBehaviour:
   startCount: 6
   infinite: 1
   maxLiveBalls: 6
-  reachDistance: 1.2
+  reachDistance: 2.2
   lookAngle: 40
   hideInTension: 1
   visualRoot: {fileID: 794590007}
@@ -25971,7 +25971,7 @@ MonoBehaviour:
   inputHandler: {fileID: 1279262527}
   breathSystem: {fileID: 1250149978}
   stareSystem: {fileID: 348324494}
-  spiritHouse: {fileID: 0}
+  spiritHouse: {fileID: 3710731380420230380}
   dollPrefab: {fileID: 8655874666656552497, guid: 313b1fcf41a81814f966fe99f0fe3b0a, type: 3}
   dollVariants:
   - name: Boriwan
@@ -98674,6 +98674,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 58344818853908999, guid: 47236051dfceec84887c5c7294ddf445, type: 3}
   m_PrefabInstance: {fileID: 925185868}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3710731380420230380 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7392375023550639299, guid: 47236051dfceec84887c5c7294ddf445, type: 3}
+  m_PrefabInstance: {fileID: 925185868}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9facc4823c4d0b845bb7b2b693e7959f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rule4.SpiritHouse
 --- !u!1 &6639279748421409830
 GameObject:
   m_ObjectHideFlags: 0
