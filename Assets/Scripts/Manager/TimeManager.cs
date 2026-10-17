@@ -32,6 +32,18 @@ namespace Manager
                 Destroy(gameObject);
             }
         }
+        /// <summary>
+        /// เวลาที่เอาไปโชว์ให้ผู้เล่นอ่าน — "00:10" ไม่ใช่ "24:10"
+        ///
+        /// นาฬิกาในนี้เดินเป็นเส้นตรงไม่วนรอบ (currentHour++ ไปเรื่อยๆ) โดยตั้งใจ: RuleManager
+        /// กับ ScheduledMessage เทียบเวลาด้วย hour*60+minute ถ้าให้ชั่วโมงวนกลับเป็น 0 ตอน
+        /// เที่ยงคืน กฎข้อ 6 (24:00-24:40) จะกลายเป็นเวลาที่ "น้อยกว่า" ทุกอย่างในคืนเดียวกัน
+        /// แล้วลำดับทั้งคืนจะพัง
+        ///
+        /// ฝั่งที่ต้องวนรอบคือฝั่งแสดงผลเท่านั้น จึงแก้ที่นี่ที่เดียวแล้วให้ทุก UI เรียกผ่าน
+        /// </summary>
+        public static string Format(int hour, int minute) => $"{hour % 24:00}:{minute:00}";
+
         public void SetTime(int hour, int minute)
         {
             currentHour = hour;

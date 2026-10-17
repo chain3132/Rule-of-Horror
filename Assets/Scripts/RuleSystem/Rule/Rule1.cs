@@ -129,6 +129,21 @@ public class Rule1 : RuleBase
         TimeManager.instance.SetTime(19, 39);
     }
 
+    /// <summary>
+    /// คืนใหม่จากบทจบวนลูปของกฎข้อ 6 — ปลดล็อกให้กฎ 1 เล่นได้อีกครั้ง
+    ///
+    /// กฎ 1 เป็นข้อเดียวที่กันเล่นซ้ำด้วยธงของตัวเอง (_hasCompleted) เพราะมันไม่ได้ trigger
+    /// ตามเวลา ถ้าไม่ล้างตรงนี้ คืนรอบสองจะข้ามกฎ 1 ไปทั้งข้อ: อ่านแชทกฎจบแล้วโทรศัพท์
+    /// ก็ไม่หาย ไม่มีอะไรเกิดขึ้น แล้วรอเฉยๆ ถึง 20:00
+    /// </summary>
+    public override void ResetForNewLoop()
+    {
+        _hasCompleted = false;
+        _isDying      = false;
+        _state        = Rule1State.None;
+        _dieTimer     = outsideDeathTime;
+    }
+
     protected override void UpdateRule()
     {
         HeartbeatSystem.instance.CheckPlayerInsideZone();
@@ -334,13 +349,33 @@ public class Rule1 : RuleBase
         // 1. กล้องล้ม (fall animation)
         yield return StartCoroutine(PlayerController.Instance.PlayDeathFallRoutine());
 
+        // รอบสอง (ขึ้นรถคันที่ 4 ของกฎ 6 มาแล้ว): ตายรอบเดียวจบ ไม่ฟื้นขึ้นมาอีก
+        // กฎ 1 ไม่ย้อนเวลาเหมือนกฎอื่น มันแค่ teleport กลับจุดเริ่ม — ตัวที่ต้องตัดคือการฟื้น
+        if (RuleSystem.PermanentDeath.Claim(this)) yield break;
+
         // 2. Blink ปิดตา → reset ขณะมืด → ลืมตา
-        GameModeController.instance.DirectBlinkToMode(GameMode.Relax, ResetAfterDeath);
+        //
+        //    กลับเข้า Tension ไม่ใช่ Relax — ตายแล้วกฎ 1 ยังไม่จบ ผู้เล่นต้องไปเก็บโทรศัพท์
+        //    ใหม่ในกฎเดิม เดิมสั่ง Relax ทำให้ฟื้นมาเจอบรรยากาศโหมดพักทั้งที่ยังเล่นกฎอยู่
+        //    (โทรศัพท์ยังถูกล็อก, ยังนับถอยหลังตายถ้าออกนอกเขต)
+        GameModeController.instance.DirectBlinkToMode(GameMode.Tension, ResetAfterDeath);
 
         // 3. รอตาเปิดสนิท
         yield return new WaitUntil(() => GameModeController.instance.IsEyesOpen);
 
-        // 4. คืนการควบคุมให้ผู้เล่น
+        // 4. สั่งหยุดนาฬิกาซ้ำ — BlinkRoutine ปล่อยนาฬิกาทุกครั้งที่ตาเปิดสุด
+        //
+        //    กฎ 1 ไม่ได้อยู่ใน RuleManager.rules (ถูก trigger จาก FriendListController ตอนอ่าน
+        //    แชทกฎจบ) จึงไม่มีใครมาสั่ง EndRule ให้ตอน 19:40 — แต่กฎอื่น "อยู่" ในลิสต์
+        //    ถ้าปล่อยนาฬิกาเดินต่อหลังตาย มันจะไต่จาก 19:0x ไปถึง 20:00 แล้ว RuleManager
+        //    จะเริ่มกฎ 2 ทับกฎ 1 ที่ยังไม่จบ (ที่ 6 วินาที/นาทีเกม = ตายค้างไว้ราว 6 นาทีจริง)
+        //
+        //    กฎ 2-5 ไม่เจอปัญหานี้เพราะ GameOverRoutine ของแต่ละกฎ rewind เวลากลับไปก่อน
+        //    ชั่วโมงเริ่มของตัวเองแล้วให้ RuleManager retrigger กฎเดิม — กฎ 1 เริ่มเองไม่ได้
+        //    จึงต้องหยุดนาฬิกาค้างไว้แทน
+        TimeManager.instance.IsPauseTime(true);
+
+        // 5. คืนการควบคุมให้ผู้เล่น
         PlayerController.Instance.ResetCameraAfterDeath();
         PlayerController.Instance.SetMovement(true);
 

@@ -98,7 +98,8 @@ namespace Manager
 
         private void HandleClock(int hour, int minute)
         {
-            string text = $"{hour:00}:{minute:00}";
+            // ผ่าน TimeManager.Format เพราะนาฬิกาเดินเลย 24:00 ไปตอนกฎข้อ 6 — ดูคำอธิบายที่นั่น
+            string text = TimeManager.Format(hour, minute);
             if (statusClockText != null) statusClockText.text = text;
             if (bigClockText    != null) bigClockText.text    = text;
 

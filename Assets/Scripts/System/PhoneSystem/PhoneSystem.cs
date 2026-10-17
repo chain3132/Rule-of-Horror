@@ -138,12 +138,22 @@ namespace PhoneSystem
             appController.OpenAppByIndex(index);
         }
 
+        /// <summary>
+        /// ยกโทรศัพท์แล้วล็อกตัว/กล้อง แต่ "ไม่" ปล่อยเมาส์ออกมา
+        ///
+        /// จอโทรศัพท์ถ่ายลง RenderTexture เมาส์จึง raycast โดนปุ่มในจอไม่ได้อยู่แล้ว ทุกอย่าง
+        /// บนโทรศัพท์เป็นปุ่มคีย์บอร์ดทั้งหมด (เลขสลับแอป / Backspace ถอยกลับ) ลูกศรเมาส์ที่
+        /// โผล่มาจึงไม่มีอะไรให้กด มีแต่ลอยทับจอแล้วทำให้หลุดจากเกม
+        ///
+        /// ปล่อย lockState = Locked ไว้ด้วย ไม่ใช่แค่ visible = false — ถ้าแค่ซ่อนแต่ไม่ล็อก
+        /// เมาส์จริงยังไหลออกนอกหน้าต่างได้ กลับมาคลิกอีกทีอาจไปโดนจอที่สองหรือ taskbar
+        /// </summary>
         private void LockPlayer()
         {
             playerController.SetMovement(false);
             playerController.SetLook(false);
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
 
         public void LowerPhone()

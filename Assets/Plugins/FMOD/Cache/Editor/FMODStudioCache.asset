@@ -1659,6 +1659,30 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 624
+--- !u!114 &-3911991158597228257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/RadioPrayer/RadioPray
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
+  Name: RadioPray
+  StudioPath: 
+  Min: 0
+  Max: 1
+  Default: 0
+  ID:
+    data1: 1722985137
+    data2: 451790285
+  Type: 0
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
 --- !u!114 &-3851960140972824607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1869,33 +1893,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 42984
---- !u!114 &-3109325417328186618
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/RadioSound
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/RadioSound
-  Guid:
-    Data1: -1206020835
-    Data2: 1211875516
-    Data3: 1405782459
-    Data4: -449151876
-  Banks:
-  - {fileID: -373375487617714072}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 0
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 141505
 --- !u!114 &-2880079369023629864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2299,7 +2296,7 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 2136
---- !u!114 &-2044076233471683431
+--- !u!114 &-1767619590777333730
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2308,21 +2305,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
-  m_Name: parameter:/RadioPrayer/RadioPray
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorParamRef
-  Name: RadioPray
-  StudioPath: 
-  Min: 0
-  Max: 1
-  Default: 0
-  ID:
-    data1: 1722985137
-    data2: 451790285
-  Type: 0
-  IsGlobal: 0
-  Labels: []
-  Exists: 1
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Radio/RadioSound
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Radio/RadioSound
+  Guid:
+    Data1: -1206020835
+    Data2: 1211875516
+    Data3: 1405782459
+    Data4: -449151876
+  Banks:
+  - {fileID: -373375487617714072}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 141505
 --- !u!114 &-1634055911570038326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2713,6 +2713,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 4728
+--- !u!114 &-677866589681844877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Radio/Release Radio
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Radio/Release Radio
+  Guid:
+    Data1: 1978424407
+    Data2: 1230274569
+    Data3: 348081569
+    Data4: -1830415446
+  Banks:
+  - {fileID: -373375487617714072}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 60048
 --- !u!114 &-638983607646702874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2732,8 +2759,8 @@ MonoBehaviour:
     Data3: -493498185
     Data4: 2133030281
   Banks:
-  - {fileID: 2037088329598349015}
   - {fileID: -4368771935535294408}
+  - {fileID: 2037088329598349015}
   IsStream: 0
   Is3D: 1
   IsOneShot: 0
@@ -2939,10 +2966,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Radio.bank
   Name: Radio
   StudioPath: bank:/Radio
-  lastModified: 639258754188338919
+  lastModified: 639278857779805244
   FileSizes:
   - Name: Desktop
-    Value: 5685888
+    Value: 6797408
   Exists: 1
 --- !u!114 &-252490073037744945
 MonoBehaviour:
@@ -3084,9 +3111,6 @@ MonoBehaviour:
   - {fileID: -6453456610885165133}
   - {fileID: 3082294391978685858}
   - {fileID: -638983607646702874}
-  - {fileID: 3897015808658072014}
-  - {fileID: -3109325417328186618}
-  - {fileID: 8136306400732464416}
   - {fileID: -8216817987190661142}
   - {fileID: 6875365031847370564}
   - {fileID: -499538719652239615}
@@ -3143,13 +3167,18 @@ MonoBehaviour:
   - {fileID: -7337443892343943424}
   - {fileID: -1201939683258929385}
   - {fileID: 7552379192722985875}
+  - {fileID: 3675039192536417329}
+  - {fileID: -1767619590777333730}
+  - {fileID: -677866589681844877}
+  - {fileID: 5727829971138432132}
+  - {fileID: 2645332907658593063}
   EditorParameters: []
   MasterBanks:
   - {fileID: 2037088329598349015}
   StringsBanks:
   - {fileID: 8790939570095508767}
   cacheVersion: 131858
-  cacheTime: 639268179165091047
+  cacheTime: 639278857779805244
   SerializableEventsDict:
   - key: event:/Notification
     index: 0
@@ -3161,124 +3190,128 @@ MonoBehaviour:
     index: 3
   - key: event:/WomanScream
     index: 4
-  - key: event:/RadioOpen
-    index: 5
-  - key: event:/RadioSound
-    index: 6
-  - key: event:/RadioPrayer
-    index: 7
   - key: event:/Rule2/Wail
-    index: 8
+    index: 5
   - key: event:/Rule2/Rule2AmbienceBG
-    index: 9
+    index: 6
   - key: event:/Rule2/ForestFootsteps
-    index: 10
+    index: 7
   - key: event:/Rule2/Rule2Ambience
-    index: 11
+    index: 8
   - key: event:/Rule4/DollCall
-    index: 12
+    index: 9
   - key: event:/Rule4/GhostBreathHold
-    index: 13
+    index: 10
   - key: event:/Rule4/DollHum
-    index: 14
+    index: 11
   - key: event:/Rule4/GhostBreathRelease
-    index: 15
+    index: 12
   - key: event:/Rule4/DollLaugh
-    index: 16
+    index: 13
   - key: event:/Rule4/BreathRecover
-    index: 17
+    index: 14
   - key: event:/Rule4/DollCough
-    index: 18
+    index: 15
   - key: event:/Rule4/DollCry
-    index: 19
+    index: 16
   - key: event:/Rule4/GhostFootsteps
-    index: 20
+    index: 17
   - key: event:/Rule3/Rule3Death
-    index: 21
+    index: 18
   - key: event:/Rule2/GhostScream
-    index: 22
+    index: 19
   - key: event:/Rule2/GhostFalldown
-    index: 23
+    index: 20
   - key: event:/Rule3/BurnPaper
-    index: 24
+    index: 21
   - key: event:/Rule1/PhoneRinging
-    index: 25
+    index: 22
   - key: event:/Rule3/BuilUpFeel
-    index: 26
+    index: 23
   - key: event:/Rule3/Rule3HeartbeatIntro
-    index: 27
+    index: 24
   - key: event:/Rule2/SwitchLight
-    index: 28
+    index: 25
   - key: event:/Rule3/Rule3LightBulb
-    index: 29
+    index: 26
   - key: event:/Rule2/JumpScareSound
-    index: 30
+    index: 27
   - key: event:/Rule3/GhostWarning
-    index: 31
+    index: 28
   - key: event:/Rule3/Rule3Ambient
-    index: 32
+    index: 29
   - key: event:/Rule3/Rule3BuildUpTension
-    index: 33
+    index: 30
   - key: event:/Rule1/GhostHum
-    index: 34
+    index: 31
   - key: event:/Menu/CutsceneMusic
-    index: 35
+    index: 32
   - key: event:/Menu/CarSoundEvent
-    index: 36
+    index: 33
   - key: event:/Rule3/Breathing
-    index: 37
+    index: 34
   - key: event:/Menu/MainMenuBGM
-    index: 38
+    index: 35
   - key: event:/Rule3/BoneBroken
-    index: 39
+    index: 36
   - key: event:/Rule2/RadioNoise
-    index: 40
+    index: 37
   - key: event:/Rule4/Background Rule 4
-    index: 41
+    index: 38
   - key: event:/Rule4/Rule4Ambient
-    index: 42
+    index: 39
   - key: event:/Rule4/Background Ghost
-    index: 43
+    index: 40
   - key: event:/Rule4/Bones Crack
-    index: 44
+    index: 41
   - key: event:/Rule4/Crow Panic
-    index: 45
+    index: 42
   - key: event:/Rule4/Temple gong
-    index: 46
+    index: 43
   - key: event:/Rule2/RunningGhost
-    index: 47
+    index: 44
   - key: event:/Rule2/GhostWalk
-    index: 48
+    index: 45
   - key: event:/Rule4/Drop Doll
-    index: 49
+    index: 46
   - key: event:/Rule4/Pick up
-    index: 50
+    index: 47
   - key: event:/Rule4/Ghost Breathing
-    index: 51
+    index: 48
   - key: event:/Rule5/Ching
-    index: 52
+    index: 49
   - key: event:/Rule5/UntangleDone
-    index: 53
+    index: 50
   - key: event:/Rule5/GhostChaseStart
-    index: 54
+    index: 51
   - key: event:/Rule5/GrabThread
-    index: 55
+    index: 52
   - key: event:/Rule5/ReleaseThread
-    index: 56
+    index: 53
   - key: event:/Rule5/Untangle
-    index: 57
+    index: 54
   - key: event:/Rule5/Bell
-    index: 58
+    index: 55
   - key: event:/Rule5/HeartAttack
-    index: 59
+    index: 56
   - key: event:/Rule5/GhostChingChap
-    index: 60
+    index: 57
   - key: event:/Rule5/Background Rule 5
-    index: 61
+    index: 58
   - key: event:/Rule5/Jumpscare
+    index: 59
+  - key: event:/Rule5/PlayerPrey
+    index: 60
+  - key: event:/Radio/RadioOpen
+    index: 61
+  - key: event:/Radio/RadioSound
     index: 62
-  - key: event:/Rule5/Prey
+  - key: event:/Radio/Release Radio
     index: 63
+  - key: event:/Radio/Tension Radio
+    index: 64
+  - key: event:/Radio/RadioPrayer
+    index: 65
 --- !u!114 &125022446526344972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4217,6 +4250,34 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
+--- !u!114 &2645332907658593063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Radio/RadioPrayer
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Radio/RadioPrayer
+  Guid:
+    Data1: -1167723351
+    Data2: 1320141492
+    Data3: -342298958
+    Data4: 1666040673
+  Banks:
+  - {fileID: -373375487617714072}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 1
+  Parameters:
+  - {fileID: -3911991158597228257}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 287167
 --- !u!114 &2779868168589817346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4566,6 +4627,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
+--- !u!114 &3675039192536417329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Radio/RadioOpen
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Radio/RadioOpen
+  Guid:
+    Data1: 1212656388
+    Data2: 1324280321
+    Data3: -1065967447
+    Data4: -374815401
+  Banks:
+  - {fileID: -373375487617714072}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &3781571237246516747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4647,33 +4735,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 2136
---- !u!114 &3897015808658072014
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/RadioOpen
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/RadioOpen
-  Guid:
-    Data1: 1212656388
-    Data2: 1324280321
-    Data3: -1065967447
-    Data4: -374815401
-  Banks:
-  - {fileID: -373375487617714072}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0
 --- !u!114 &4007694900862675636
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5416,6 +5477,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 20056
+--- !u!114 &5727829971138432132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Radio/Tension Radio
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Radio/Tension Radio
+  Guid:
+    Data1: 2067908519
+    Data2: 1130689570
+    Data3: 1135966386
+    Data4: -1772409906
+  Banks:
+  - {fileID: -373375487617714072}
+  IsStream: 1
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 30000
 --- !u!114 &5741210175097861924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6258,34 +6346,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
---- !u!114 &8136306400732464416
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/RadioPrayer
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/RadioPrayer
-  Guid:
-    Data1: -1167723351
-    Data2: 1320141492
-    Data3: -342298958
-    Data4: 1666040673
-  Banks:
-  - {fileID: -373375487617714072}
-  IsStream: 1
-  Is3D: 1
-  IsOneShot: 1
-  Parameters:
-  - {fileID: -2044076233471683431}
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 287167
 --- !u!114 &8386244012909772103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6429,10 +6489,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639268179164925404
+  lastModified: 639278857779472839
   FileSizes:
   - Name: Desktop
-    Value: 4336
+    Value: 4454
   Exists: 1
 --- !u!114 &8802997137489455850
 MonoBehaviour:

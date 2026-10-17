@@ -53,6 +53,14 @@ public class ConversationRunner : MonoBehaviour
     private Coroutine _typingRoutine;
 
     /// <summary>
+    /// ข้อความถัดไปต้องโผล่มาทันที ไม่ต้องรอ "กำลังพิมพ์"
+    ///
+    /// ตั้ง true ทุกครั้งที่ผู้เล่นเพิ่งเปิดแชท (StartConversation / ResumeFrom) แล้วใช้ครั้งเดียว
+    /// ข้อความถัดๆ ไปรอพิมพ์ตามปกติ
+    /// </summary>
+    private bool _showNextInstantly;
+
+    /// <summary>
     /// ตัวเลือกที่ค้างอยู่บนจอจริงๆ ตอนนี้ — อาจไม่ใช่ node.replies ถ้าถูกสร้างตอนเล่น
     ///
     /// ต้องเก็บไว้ ไม่งั้น SelectReply จะไปอ่าน node.replies (ซึ่งว่างเปล่าสำหรับ node
@@ -66,6 +74,7 @@ public class ConversationRunner : MonoBehaviour
         CancelTyping();
         currentConversation = data;
         currentIndex = ResolveStart(data);
+        _showNextInstantly = true;   // แจ้งเตือนเด้งไปแล้ว ข้อความแรกต้องรออยู่ในแชทแล้ว
         DisplayNode();
     }
 
@@ -92,6 +101,7 @@ public class ConversationRunner : MonoBehaviour
         CancelTyping();
         currentConversation = data;
         currentIndex = index;
+        _showNextInstantly = true;   // กลับมาเปิดอ่านต่อ ข้อความที่ค้างไว้ก็ต้องมาถึงแล้วเหมือนกัน
         DisplayNode();
     }
 
@@ -102,7 +112,8 @@ public class ConversationRunner : MonoBehaviour
         CancelTyping();
         currentConversation = null;
         currentIndex = 0;
-        _activeReplies = null;   // สลับ contact ทิ้งตัวเลือกที่ค้างไว้ด้วย ไม่งั้นมันข้ามแชทไปได้
+        _activeReplies = null;      // สลับ contact ทิ้งตัวเลือกที่ค้างไว้ด้วย ไม่งั้นมันข้ามแชทไปได้
+        _showNextInstantly = false; // กันสิทธิ์ "ข้ามคิวพิมพ์" ค้างไปโผล่ใช้กลางแชทอื่น
     }
 
     private void DisplayNode()
@@ -124,7 +135,14 @@ public class ConversationRunner : MonoBehaviour
         // และปุ่มตัวเลือกจะเด้งขึ้น ก่อนที่ข้อความจะมาถึงจอ
         //
         // บทพูดของผู้เล่นไม่ต้องรอ — ผู้เล่นเป็นคนพิมพ์เอง ไม่ใช่คนที่เรากำลังรอ
-        if (showTyping && !node.isPlayer && _typingRoutine == null)
+        //
+        // ข้อความแรกหลังเปิดแชทก็ไม่ต้องรอ: บทสนทนาเริ่มเล่นตอนผู้เล่นกดเข้ามาอ่าน ไม่ใช่
+        // ตอนแจ้งเตือนเด้ง เดิมจึงเห็นฟอง "กำลังพิมพ์" เป็นอย่างแรกหลังจากที่โทรศัพท์
+        // เพิ่งบอกว่ามีข้อความเข้า — เหมือนคนปริศนารอให้เราเปิดอ่านก่อนแล้วค่อยเริ่มพิมพ์
+        bool instant = _showNextInstantly;
+        _showNextInstantly = false;   // ใช้ได้ครั้งเดียวต่อการเปิดแชท
+
+        if (showTyping && !instant && !node.isPlayer && _typingRoutine == null)
         {
             _typingRoutine = StartCoroutine(TypeThenShow(node));
             return;

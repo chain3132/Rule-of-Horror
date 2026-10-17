@@ -39,7 +39,9 @@ namespace ScriptableObject
         public int endMinute = 40;
 
         [Header("สิ่งที่รู้")]
-        [Tooltip("จำนวนบรรทัดที่การ์ดจองไว้ ที่ยังไม่รู้จะเติม — ให้เอง")]
+        [Tooltip("จำนวนบรรทัดขั้นต่ำที่การ์ดจองไว้\n" +
+                 "ปกติไม่ต้องแตะ — ช่องว่างนับจากฝั่งที่รู้มากกว่าให้เองแล้ว " +
+                 "ค่านี้เป็นแค่พื้นขั้นต่ำเผื่ออยากจองที่ไว้มากกว่านั้น")]
         [Range(1, 8)]
         public int factSlots = 4;
 
@@ -55,12 +57,29 @@ namespace ScriptableObject
         [Tooltip("ปุ่มทั้งหมดของกฎข้อนี้ เหมือนกันทั้งสองเคสการตอบ — ปุ่มคือสิ่งที่ผู้เล่นมี ไม่ใช่สิ่งที่ผีให้")]
         public RuleKeyHint[] hands;
 
+        /// <summary>
+        /// จำนวนรายละเอียดสูงสุดที่กฎข้อนี้มีให้รู้ได้ — ฝั่งที่รู้มากกว่าเป็นตัวตั้ง
+        ///
+        /// ใช้นับว่า "หายไปกี่ข้อ" ตอนผู้เล่นตอบหัวแข็ง: ข้อ ๔ ฝั่งร่วมมือมี 5 ฝั่งหัวแข็งมี 1
+        /// เท่ากับมีขีดขาว 4 เส้น และเลขนี้ขยับตามเองเวลาเพิ่ม/ลดข้อในลิสต์
+        /// ไม่ต้องไปตามแก้ factSlots ให้ตรงด้วยมือ
+        /// </summary>
+        public int MaxFactCount =>
+            Mathf.Max(factsIfCooperative?.Length ?? 0, factsIfDefiant?.Length ?? 0);
+
         /// <summary>เลขไทยของกฎข้อนี้ สำหรับแถบ ๑ ๒ ๓ ๔ ๕ ด้านบน</summary>
         public string ThaiNumeral =>
             ruleNumber >= 0 && ruleNumber < ThaiDigits.Length ? ThaiDigits[ruleNumber].ToString() : "·";
 
-        /// <summary>"19:00 – 19:40" — ใช้เมื่อผู้เล่นรู้เวลา</summary>
-        public string ScheduleText => $"{startHour:00}:{startMinute:00} – {endHour:00}:{endMinute:00}";
+        /// <summary>
+        /// "19:00 – 19:40" — ใช้เมื่อผู้เล่นรู้เวลา
+        ///
+        /// ผ่าน TimeManager.Format เพราะกฎข้อ 6 ใช้ชั่วโมง 24 (นาฬิกาในเกมเดินเป็นเส้นตรง
+        /// ไม่วนรอบ เพื่อให้ลำดับกฎทั้งคืนเทียบกันได้) การ์ดจึงต้องโชว์ 00:00 – 00:40
+        /// </summary>
+        public string ScheduleText =>
+            $"{Manager.TimeManager.Format(startHour, startMinute)} – " +
+            $"{Manager.TimeManager.Format(endHour, endMinute)}";
 
         /// <summary>true = เวลาตอนนี้อยู่ในช่วงของกฎข้อนี้ (ใช้ไฮไลต์กฎที่กำลังมีผล)</summary>
         public bool IsWithin(int hour, int minute)

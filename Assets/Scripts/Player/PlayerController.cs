@@ -56,6 +56,7 @@ namespace Player
         private Vector2 _externalLookForce;
         private Vector3 _beforeSitPosition;
         private Quaternion _beforeSitRotation;
+        private bool _hasSatOnce;
 
         // จำกัดมุมหัน (yaw) รอบทิศที่กำหนด — Rule 5 ใช้ล็อกให้มองได้แค่ 180° ตอนจับสายสิญจน์
         private bool  _yawLimitActive;
@@ -63,6 +64,28 @@ namespace Player
         private float _yawLimitHalf;
 
         public bool IsSitting() => _isSitting;
+
+        /// <summary>
+        /// ผู้เล่นคุมตัวเองได้อยู่ไหม — ระบบที่พาตัวผู้เล่นต้องเช็คก่อนแตะ SetLook/SetMovement
+        ///
+        /// ถ้ามีคนอื่นยึดการควบคุมไว้แล้ว (โทรศัพท์ / puzzle ตู้ไฟ / กะพริบตา / ฉากตาย)
+        /// แล้วเราไปสั่ง SetLook(true) ตอนจบงานของเรา จะเป็นการปลดล็อกแทนเจ้าของจริง
+        /// </summary>
+        public bool CanMove => _canMove;
+        public bool CanLook => _canLook;
+
+        /// <summary>
+        /// true เมื่อผู้เล่นเคยนั่งลงอย่างน้อยหนึ่งครั้งในรอบนี้ — BeforeSitPosition จึงเชื่อถือได้
+        /// ถ้ายังไม่เคยนั่ง (เช่นข้าม intro มาด้วย dev skip) ค่ายังเป็น Vector3.zero
+        /// </summary>
+        public bool       HasSatOnce        => _hasSatOnce;
+
+        /// <summary>
+        /// จุดที่ผู้เล่นยืนอยู่ก่อนนั่งลงครั้งล่าสุด — หน้าม้านั่งในศาลา
+        /// StandUpRoutine ส่งผู้เล่นกลับที่นี่อยู่แล้วตอนลุกปกติ จึงการันตีว่ายืนได้จริง
+        /// </summary>
+        public Vector3    BeforeSitPosition => _beforeSitPosition;
+        public Quaternion BeforeSitRotation => _beforeSitRotation;
 
 
         #endregion
@@ -98,11 +121,39 @@ namespace Player
         #region Methods
         
 
+        /// <summary>
+        /// ย้ายจุดที่จะกลับไปยืนตอนลุก มาเป็นจุดที่นั่งอยู่ตอนนี้
+        ///
+        /// StandUpRoutine จบด้วย transform.position = _beforeSitPosition เสมอ คือ "ลุกแล้ว
+        /// กลับไปยืนที่เดิมก่อนนั่ง" ซึ่งถูกสำหรับม้านั่งที่อยู่กับที่ แต่พังทันทีถ้าที่นั่งนั้น
+        /// เคลื่อนที่: ผู้เล่นนั่งในรถที่ปลายถนน รถพามาจอดหน้าศาลา พอลุกจะถูกดีดกลับไปยืน
+        /// อยู่ปลายถนนที่เดิม ห่างจากรถเป็นสิบเมตร
+        ///
+        /// ใครที่พาผู้เล่นนั่งไปกับของที่เคลื่อนที่ต้องเรียกตัวนี้ก่อนปล่อยให้ลุก (BusRide ทำให้แล้ว)
+        /// </summary>
+        public void RebaseStandUpPosition() => RebaseStandUpPosition(transform.position);
+
+        /// <summary>
+        /// เหมือนตัวบน แต่กำหนดจุดที่จะไปยืนเองได้
+        ///
+        /// ที่นั่งในรถมีเบาะและพนักล้อมอยู่ ถ้าลุกตรงจุดที่นั่งพอดี แคปซูลของ CharacterController
+        /// (สูง 2.5) จะไปโผล่ซ้อนกับเบาะแล้วผู้เล่นจะขยับไม่ได้เลย — ต้องให้ลุกออกไปที่ทางเดิน
+        ///
+        /// ใส่แค่ตำแหน่ง ไม่มีการหมุน เพราะ StandUpRoutine ไม่ได้เขียน rotation ตอนจบ
+        /// (ผู้เล่นหันหน้าไว้ทางไหนตอนนั่ง ก็ยืนหันทางนั้น ซึ่งถูกแล้ว)
+        /// </summary>
+        public void RebaseStandUpPosition(Vector3 worldPosition)
+        {
+            _beforeSitPosition = worldPosition;
+            _beforeSitRotation = transform.rotation;
+        }
+
         public void StartSittingSequence(Transform target)
         {
             if (_isSitting || _isTransitioning) return;
             _beforeSitPosition = transform.position;
             _beforeSitRotation = transform.rotation;
+            _hasSatOnce        = true;
             StartCoroutine(SitRoutine(target));
         }
 
@@ -178,11 +229,25 @@ namespace Player
             float duration = 0.6f; // ระยะเวลาการลุก
             float elapsed = 0f;
 
+            // ย้ายตัวไปจุดยืนพร้อมกับที่กล้องยืดขึ้น ไม่ใช่กระโดดไปทีเดียวตอนจบ
+            //
+            // SitRoutine เลื่อนเข้าเบาะใน 0.7 วิ แต่ตอนลุกของเดิมเขียนตำแหน่งทีเดียวในเฟรมสุดท้าย
+            // ที่ม้านั่งศาลามองไม่ออกเพราะสองจุดห่างกันไม่ถึงเมตร แต่ที่นั่งในรถ จุดยืนอยู่ทางเดินข้างเบาะ (Stand Pose)
+            // กล้องจะยืดขึ้นตรงเบาะแล้วกระตุกไปข้างๆ หนึ่งเฟรม
+            //
+            // ปิด CharacterController ตลอดช่วงนี้เหมือน SitRoutine — ต้องให้ตัวผ่านพนักเบาะออกมาได้
+            // ถ้าชนมันจะค้างอยู่ในเบาะ ซึ่งเป็นอาการเดิมที่กำลังแก้
+            Vector3 standTarget = _beforeSitPosition;
+            Vector3 startPos    = transform.position;
+            _characterController.enabled = false;
+
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
                 float t = elapsed / duration;
                 float curve = Mathf.SmoothStep(0, 1, t);
+
+                transform.position = Vector3.Lerp(startPos, standTarget, curve);
 
                 // 2. ค่อยๆ ยืดความสูงกล้อง (CameraRoot) กลับไปที่ 2.55
                 if (cameraPivot != null)
@@ -195,6 +260,9 @@ namespace Player
                 yield return null;
             }
 
+            transform.position = standTarget;
+            _characterController.enabled = true;
+
             // Lock ค่าสุดท้ายให้เป๊ะ
             if (cameraPivot != null)
             {
@@ -206,17 +274,14 @@ namespace Player
             _isSitting = false;
             _sittingYaw = 0f;
             SetSittingPhysics(false); // เปลี่ยน layer หลัง transition จบ
-            SnapToGround();           // snap ไปยืนบนพื้นจริงก่อน gravity เริ่ม
-            _verticalVelocity = 0f;   // reset velocity หลัง snap
+
+            // snap หลังย้ายตัวเสร็จแล้ว ไม่ใช่ก่อน — ของเดิม snap ตอนยังนั่งอยู่ที่เบาะ
+            // แล้วค่อยย้าย พื้นที่ไปเกาะจึงเป็นพื้นใต้เบาะ ไม่ใช่พื้นตรงที่ยืนจริง
+            SnapToGround();
+            _verticalVelocity = -2f;   // ให้ gravity เกาะพื้นทันที ไม่ลอยค้างหนึ่งเฟรม
             SetMovement(true); // ปลดล็อกให้เดินได้
             SetLook(true);     // ปลดล็อกให้หันหน้าได้ปกติ
             _isTransitioning = false;
-            
-            _characterController.enabled = false;
-
-            transform.position = _beforeSitPosition;
-            _characterController.enabled = true;
-            _verticalVelocity = -2f;
         }
         public void ForceGroundSnap()
         {
@@ -247,6 +312,40 @@ namespace Player
                 transform.position = hit.point;   // วางเท้าบนพื้น
                 _characterController.enabled = true;
             }
+        }
+
+        /// <summary>
+        /// ย้ายผู้เล่นไปตำแหน่งใหม่ทันที — ใช้ตอนจอดำ (กฎจบ / ตาย) ไม่ใช่ขณะเล่น
+        ///
+        /// ต้องปิด CharacterController ก่อนเขียน transform.position ไม่งั้น CC จะถือว่าเป็นการ
+        /// เดินทะลุ collider แล้วดึงกลับที่เดิมในเฟรมถัดไป — เขียนตำแหน่งตรงๆ จึงไม่พอ
+        ///
+        /// snap ลงพื้นหลังย้ายด้วย เพราะจุดเป้าหมายเป็นค่าที่เก็บไว้ตอนไหนก็ไม่รู้
+        /// ถ้าพื้นตรงนั้นสูงกว่าเดิมจะจมอยู่ใต้ mesh, ถ้าต่ำกว่าจะลอยแล้วร่วงลงมา
+        /// </summary>
+        public void TeleportTo(Vector3 position, Quaternion rotation)
+        {
+            _characterController.enabled = false;
+            transform.position = position;
+            transform.rotation = rotation;
+            _characterController.enabled = true;
+
+            SnapToGround();
+            _verticalVelocity = -2f;   // ให้ gravity เกาะพื้นทันที ไม่ลอยค้างหนึ่งเฟรม
+        }
+
+        /// <summary>
+        /// ดันตัวผู้เล่นไปตาม delta ที่ให้มา (world space) โดยไม่สนว่า input สั่งอะไร
+        ///
+        /// ผ่าน CharacterController.Move ไม่ใช่เขียน transform.position ตรงๆ เพราะต้องให้มันชน
+        /// กำแพง/ชนพื้นตามปกติ — ขอบเขตแผนที่ดันกลับเข้ามาแล้วทะลุเข้าไปในก้อนหินไม่ได้
+        ///
+        /// ไม่เช็ค _canMove ด้วย: ตอนที่ต้องดันผู้เล่นกลับที่มักเป็นตอนที่เพิ่งล็อกการเดินไว้
+        /// </summary>
+        public void NudgeBy(Vector3 worldDelta)
+        {
+            if (!_characterController.enabled) return;
+            _characterController.Move(worldDelta);
         }
 
         public void Move(Vector2 moveInput)
@@ -454,6 +553,15 @@ namespace Player
         /// writes _xRotation / body yaw, so restoring the pivot's saved rotation stays consistent.
         /// </summary>
         public Transform CameraPivot => cameraPivot;
+
+        /// <summary>
+        /// ความสูงกล้องตอนนั่ง (local Y ของ cameraPivot) — ระดับตาของคนนั่ง
+        ///
+        /// เปิดออกมาให้ gizmo ของจุดนั่งวาดระดับตาได้ตรงกับของจริง จุดนั่งทุกที่ในเกมเป็นการ
+        /// วาง "ราก" ของตัวละคร ไม่ใช่วางสะโพก (SitRoutine เขียน transform.position = target
+        /// .position เป๊ะๆ) ซึ่งมองไม่ออกเลยใน Scene view ว่าสูงเท่าไรจึงจะไม่ลอย
+        /// </summary>
+        public float SittingCameraHeight => sittingCameraHeight;
 
         // ─────────────── Rule 3 Death ───────────────
 

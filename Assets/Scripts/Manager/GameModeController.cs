@@ -140,9 +140,13 @@ public class GameModeController : MonoBehaviour
         BlinkToMode(GameMode.Tension);
 
     }
-    public void BlinkToMode(GameMode targetMode = GameMode.Relax)
+    /// <param name="onEyesClosed">
+    /// Callback ที่ยิงตอนตาปิดสนิท (จอดำ) — ใช้ย้ายตัวผู้เล่น/รีเซ็ตกล้องโดยที่ผู้เล่นมองไม่เห็น
+    /// ยิงหลัง ResetFaintEffects() เพื่อให้ค่าที่ callback ตั้งไม่ถูกล้างตามไป
+    /// </param>
+    public void BlinkToMode(GameMode targetMode = GameMode.Relax, System.Action onEyesClosed = null)
     {
-        StartCoroutine(FaintThenBlinkRoutine(targetMode));
+        StartCoroutine(FaintThenBlinkRoutine(targetMode, onEyesClosed));
     }
 
     /// <summary>
@@ -163,7 +167,7 @@ public class GameModeController : MonoBehaviour
             onEyesClosed?.Invoke();
         }));
     }
-    IEnumerator FaintThenBlinkRoutine(GameMode targetMode)
+    IEnumerator FaintThenBlinkRoutine(GameMode targetMode, System.Action onEyesClosed = null)
     {
         float duration = 1f;
         float t = 0;
@@ -217,7 +221,11 @@ public class GameModeController : MonoBehaviour
         // ResetFaintEffects() ถูกส่งเป็น onEyesClosed callback
         // เพื่อให้ reset เกิดขณะหน้าจอดำ (ผู้เล่นมองไม่เห็น) ไม่ใช่ก่อนปิดตา
         // ซึ่งเป็นสาเหตุที่ทำให้เห็นภาพสว่างปกติแว๊บนึงก่อนตาหลับ
-        yield return StartCoroutine(BlinkRoutine(targetMode, -1f, ResetFaintEffects));
+        yield return StartCoroutine(BlinkRoutine(targetMode, -1f, () =>
+        {
+            ResetFaintEffects();
+            onEyesClosed?.Invoke();
+        }));
     }
 
     /// <summary>Reset ทุกค่าที่ SetFaintEffect แก้ไว้กลับเป็นค่ากลาง

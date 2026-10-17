@@ -26,11 +26,21 @@ namespace Manager
             public readonly RuleEntryData  Rule;
             public readonly bool           Unlocked;
             public readonly bool           KnowsSchedule;   // false = ตอบหัวแข็ง เวลาเป็น --:--
-            public readonly IReadOnlyList<string> Facts;    // เติม "—" ให้ครบ factSlots แล้ว
+            public readonly IReadOnlyList<string> Facts;    // เฉพาะข้อที่รู้จริง ไม่มีตัวเติม
 
-            public RuleView(RuleEntryData rule, bool unlocked, bool knowsSchedule, IReadOnlyList<string> facts)
+            /// <summary>
+            /// รู้ไม่ครบกี่ข้อ — ฝั่งที่รู้มากกว่าลบด้วยที่รู้อยู่
+            ///
+            /// UI เอาไปวาดเป็นขีดขาวยาวๆ ต่อท้ายข้อที่รู้ ผู้เล่นจะได้เห็นว่า "มีอีกแต่ไม่ได้บอก"
+            /// ไม่ใช่เข้าใจว่ากฎข้อนี้มีรายละเอียดแค่นี้
+            /// </summary>
+            public readonly int MissingFacts;
+
+            public RuleView(RuleEntryData rule, bool unlocked, bool knowsSchedule,
+                            IReadOnlyList<string> facts, int missingFacts)
             {
-                Rule = rule; Unlocked = unlocked; KnowsSchedule = knowsSchedule; Facts = facts;
+                Rule = rule; Unlocked = unlocked; KnowsSchedule = knowsSchedule;
+                Facts = facts; MissingFacts = missingFacts;
             }
 
             public string ScheduleText => !Unlocked || !KnowsSchedule ? UnknownSchedule : Rule.ScheduleText;
@@ -44,8 +54,15 @@ namespace Manager
         }
 
         public const string UnknownSchedule = "--:-- – --:--";
-        public const string EmptyFact       = "—";
         public const string LockedNumeral   = "·";
+
+        /// <summary>
+        /// ตัวแทนช่องว่างสำหรับ UI ที่วาดเป็นตัวหนังสือล้วน
+        ///
+        /// แผงจริงใช้ prefab ขีดขาวแทน — ตัวนี้ไว้ให้ทางเลือก "ทำแถวไว้แล้วเป็น TMP_Text"
+        /// ใน RuleBookPanelBinder ซึ่งไม่มีที่ให้วาดภาพ
+        /// </summary>
+        public const string EmptyFact       = "————————";
 
         // ─────────────────────────── Inspector ───────────────────────────
 
@@ -122,14 +139,21 @@ namespace Manager
                        : knows     ? rule.factsIfCooperative
                                    : rule.factsIfDefiant;
 
-            // เติม "—" จนครบจำนวนช่อง — ช่องว่างคือข้อมูลอย่างหนึ่ง มันบอกว่ายังมีที่ไม่รู้
-            int   slots = Mathf.Max(rule.factSlots, source?.Length ?? 0);
-            var   facts = new string[slots];
-            for (int i = 0; i < slots; i++)
-                facts[i] = source != null && i < source.Length && !string.IsNullOrWhiteSpace(source[i])
-                         ? source[i] : EmptyFact;
+            // เก็บเฉพาะข้อที่มีข้อความจริง ไม่เติมตัวแทนแล้ว
+            //
+            // เดิมเติม "—" จนครบ factSlots แล้วส่งเป็น fact ปกติ ฝั่ง UI จึงแยกไม่ออกว่าบรรทัดไหน
+            // เป็นเนื้อหาบรรทัดไหนเป็นช่องว่าง วาดให้ต่างกันไม่ได้ และ factSlots ก็เป็นเลขที่ต้อง
+            // ตามแก้ด้วยมือทุกครั้งที่เพิ่มข้อ — ตอนนี้แยกจำนวนที่ขาดออกมาเป็นตัวเลขของตัวเอง
+            var facts = new List<string>(source?.Length ?? 0);
+            if (source != null)
+                foreach (var fact in source)
+                    if (!string.IsNullOrWhiteSpace(fact)) facts.Add(fact);
 
-            return new RuleView(rule, unlocked, knows, facts);
+            // ฝั่งที่รู้มากกว่าเป็นตัวตั้ง (factSlots เหลือเป็นแค่พื้นขั้นต่ำ)
+            int total   = Mathf.Max(rule.factSlots, rule.MaxFactCount);
+            int missing = unlocked ? Mathf.Max(0, total - facts.Count) : 0;
+
+            return new RuleView(rule, unlocked, knows, facts, missing);
         }
 
         public bool IsUnlocked(RuleEntryData rule) => rule != null && _records.ContainsKey(rule);
