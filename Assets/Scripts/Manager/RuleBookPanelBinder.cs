@@ -36,6 +36,9 @@ namespace Manager
         [Header("สิ่งที่รู้")]
         [SerializeField] private Transform factRoot;
         [SerializeField] private GameObject factRowPrefab;
+        [Tooltip("แถวขีดขาวยาวๆ สำหรับข้อที่ผู้เล่นรู้ไม่ครบ — เว้นว่าง = ไม่โชว์ช่องว่างเลย\n" +
+                 "สร้างด้วย Rule of Horror ▸ Phone ▸ Upgrade Rule Book Fact Rows")]
+        [SerializeField] private GameObject factMissingRowPrefab;
         [Tooltip("ถ้าทำแถวไว้แล้ว ใส่ตรงนี้แทน prefab — แถวที่เกินจะถูกซ่อน")]
         [SerializeField] private TMP_Text[] factRows;
 
@@ -95,37 +98,58 @@ namespace Manager
                 summaryText.text = show ? view.Rule.summary : string.Empty;
 
             ClearSpawned();
-            FillFacts(show ? view.Facts : null);
+            FillFacts(show ? view.Facts : null, show ? view.MissingFacts : 0);
             FillHands(show ? view.Hands : null);
         }
 
         // ─────────────────────────── Rows ───────────────────────────
 
-        private void FillFacts(IReadOnlyList<string> facts)
+        /// <summary>
+        /// วาดรายละเอียดที่รู้ แล้วต่อด้วยขีดขาวหนึ่งเส้นต่อหนึ่งข้อที่รู้ไม่ครบ
+        ///
+        /// ขีดขาวต้องเป็นแถวของตัวเองไม่ใช่ตัวหนังสือในแถวเดิม เพราะมันไม่ใช่เนื้อหา —
+        /// มันคือที่ว่างที่ควรมีอะไรอยู่ ผู้เล่นจะได้นับออกว่าตอบหัวแข็งแล้วเสียอะไรไปกี่ข้อ
+        /// </summary>
+        private void FillFacts(IReadOnlyList<string> facts, int missing)
         {
             int count = facts?.Count ?? 0;
 
+            // ── ทางเลือก: แถว TMP_Text ที่ทำไว้ล่วงหน้า ──────────────────
+            // ไม่มีที่ให้วาดภาพ ช่องว่างจึงเป็นเส้นประยาวๆ เป็นตัวหนังสือแทน
             if (factRows != null && factRows.Length > 0)
             {
                 for (int i = 0; i < factRows.Length; i++)
                 {
                     if (factRows[i] == null) continue;
-                    bool used = i < count;
-                    factRows[i].gameObject.SetActive(used);
-                    if (used) factRows[i].text = facts[i];
+
+                    bool isFact    = i < count;
+                    bool isMissing = !isFact && i < count + missing;
+
+                    factRows[i].gameObject.SetActive(isFact || isMissing);
+                    if (isFact)         factRows[i].text = facts[i];
+                    else if (isMissing) factRows[i].text = RuleBookController.EmptyFact;
                 }
                 return;
             }
 
-            if (factRoot == null || factRowPrefab == null) return;
+            if (factRoot == null) return;
 
-            for (int i = 0; i < count; i++)
+            // ── ทางหลัก: สร้างแถวจาก prefab ──────────────────────────────
+            if (factRowPrefab != null)
             {
-                var row  = Instantiate(factRowPrefab, factRoot);
-                var text = row.GetComponentInChildren<TMP_Text>();
-                if (text != null) text.text = facts[i];
-                _spawned.Add(row);
+                for (int i = 0; i < count; i++)
+                {
+                    var row  = Instantiate(factRowPrefab, factRoot);
+                    var text = row.GetComponentInChildren<TMP_Text>();
+                    if (text != null) text.text = facts[i];
+                    _spawned.Add(row);
+                }
             }
+
+            if (factMissingRowPrefab == null) return;
+
+            for (int i = 0; i < missing; i++)
+                _spawned.Add(Instantiate(factMissingRowPrefab, factRoot));
         }
 
         private void FillHands(IReadOnlyList<RuleKeyHint> hands)

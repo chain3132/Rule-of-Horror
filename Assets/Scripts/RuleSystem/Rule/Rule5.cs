@@ -805,6 +805,10 @@ namespace RuleSystem.Rule
             player.isBlockStanding = false;
             AudioManager.instance.SilenceHeartbeat();
 
+            // รอบสอง (ขึ้นรถคันที่ 4 ของกฎ 6 มาแล้ว): ตายรอบเดียวจบ ไม่ย้อนเวลาให้เล่นใหม่
+            // ถามหลัง cleanup ของกฎทำงานเสร็จ แต่ก่อนปล่อยนาฬิกา ไม่งั้นเวลาจะเดินต่อใต้จอ game over
+            if (PermanentDeath.Claim(this)) yield break;
+
             GameModeController.instance.DirectBlinkToMode(
                 GameMode.Relax,
                 onEyesClosed: () =>

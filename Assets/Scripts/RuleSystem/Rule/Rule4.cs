@@ -309,7 +309,7 @@ namespace RuleSystem.Rule
             PlayerController.Instance.isBlockStanding = false;
             TimeManager.instance.SetTime(22, 39);
             TimeManager.instance.IsPauseTime(false);
-            GameModeController.instance.BlinkToMode(GameMode.Relax);
+            GameModeController.instance.BlinkToMode(GameMode.Relax, ReturnPlayerToPavilion);
 
             base.EndRule();
         }
@@ -779,6 +779,10 @@ namespace RuleSystem.Rule
             PlayerController.Instance.isBlockStanding = false;
             AudioManager.instance.ResetHeartbeatLevel();
 
+            // รอบสอง (ขึ้นรถคันที่ 4 ของกฎ 6 มาแล้ว): ตายรอบเดียวจบ ไม่ย้อนเวลาให้เล่นใหม่
+            // ถามหลัง cleanup ของกฎทำงานเสร็จ แต่ก่อนปล่อยนาฬิกา ไม่งั้นเวลาจะเดินต่อใต้จอ game over
+            if (PermanentDeath.Claim(this)) yield break;
+
             // ── blink กลับ Relax แล้ว reset กล้องตอนจอดำ ──
             GameModeController.instance.DirectBlinkToMode(
                 GameMode.Relax,
@@ -786,6 +790,7 @@ namespace RuleSystem.Rule
                 {
                     PlayerController.Instance.ResetCameraAfterDeath();
                     PlayerController.Instance.SetMovement(true);
+                    ReturnPlayerToPavilion();   // ตายกลางทุ่งก็ต้องกลับศาลา กฎจะ retrigger ที่ 22:00
                 });
 
             yield return new WaitUntil(() => GameModeController.instance.IsEyesOpen);
@@ -843,6 +848,33 @@ namespace RuleSystem.Rule
             _dolls.Clear();
             _carriedDoll = null;
             _dollsSpawned = 0;
+        }
+
+        /// <summary>
+        /// ส่งผู้เล่นกลับศาลาตอนตาปิด
+        ///
+        /// กฎ 4 เป็นกฎเดียวที่จบห่างจากศาลา — ศาลสุ่มตำแหน่งจาก ShrineSpawnPoints และตุ๊กตา
+        /// ตัวสุดท้ายอยู่ไหนก็ได้ ผู้เล่นจึงวางครบแล้วยืนค้างอยู่กลางทุ่ง ห่างศาลาเป็นสิบเมตร
+        /// แล้วต้องเดินกลับมานั่งเองเพื่อให้กฎ 5 เริ่ม (RuleFlow รอ WaitUntil(PlayerIsSitting))
+        ///
+        /// ใช้จุดที่ผู้เล่นยืนก่อนนั่งครั้งล่าสุดเป็นเป้า ไม่ใช่ช่อง Inspector ใหม่ เพราะเป็นจุด
+        /// เดียวกับที่ StandUpRoutine ส่งกลับอยู่แล้วตอนลุกปกติ — การันตีว่ายืนได้จริงบนพื้น
+        /// ที่มี collider และไม่ต้องมีใครมาคอยอัปเดตตำแหน่งถ้าย้ายศาลาในซีน
+        /// </summary>
+        void ReturnPlayerToPavilion()
+        {
+            var pc = PlayerController.Instance;
+            if (pc == null) return;
+
+            if (!pc.HasSatOnce)
+            {
+                // ข้าม intro มาด้วย dev skip → ไม่เคยนั่ง → ไม่รู้ว่าศาลาอยู่ไหน
+                // ย้ายไป Vector3.zero จะแย่กว่าปล่อยไว้ที่เดิมมาก
+                Debug.LogWarning("[Rule4] ผู้เล่นยังไม่เคยนั่งในรอบนี้ — ไม่รู้ตำแหน่งศาลา จึงไม่ย้ายกลับ", this);
+                return;
+            }
+
+            pc.TeleportTo(pc.BeforeSitPosition, pc.BeforeSitRotation);
         }
 
         // กันค่า/เสียงค้างตอนกด Stop ใน Editor กลางคัน

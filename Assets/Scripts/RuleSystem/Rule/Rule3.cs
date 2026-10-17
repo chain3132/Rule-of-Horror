@@ -565,6 +565,10 @@ public class Rule3 : RuleBase
         // Release standing lock before the blink (safe – player is already sitting)
         PlayerController.Instance.isBlockStanding = false;
 
+        // รอบสอง (ขึ้นรถคันที่ 4 ของกฎ 6 มาแล้ว): ตายรอบเดียวจบ ไม่ย้อนเวลาให้เล่นใหม่
+        // ถามหลัง cleanup ของกฎทำงานเสร็จ แต่ก่อนปล่อยนาฬิกา
+        if (RuleSystem.PermanentDeath.Claim(this)) yield break;
+
         // ④ Blink back to Relax mode — use DirectBlink to skip the faint effect
         //    onEyesClosed callback resets camera while screen is BLACK → player never sees the snap
         GameModeController.instance.DirectBlinkToMode(GameMode.Relax,
@@ -577,7 +581,7 @@ public class Rule3 : RuleBase
         yield return null;
 
         // ⑧ Rewind time to 20:40 – RuleManager will restart Rule 3 when time reaches its start hour
-        TimeManager.instance.SetTime(20, 40);
+        TimeManager.instance.SetTime(20, 55);
         TimeManager.instance.IsPauseTime(false);
 
         // ⑨ Reset internal guards so Rule 3 can run again cleanly

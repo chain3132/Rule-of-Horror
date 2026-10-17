@@ -454,7 +454,17 @@ namespace RuleSystem.Rule
             }
         }
 
-        void UpdateFixPanel() { /* รอ OnPanelFixed() callbacks */ }
+        void UpdateFixPanel()
+        {
+            // รอ OnPanelFixed() เป็นคนบอกว่าซ่อมเสร็จ — แต่ต้องขับ lerp เสียงหัวใจที่นี่
+            //
+            // เดิม LeverPuzzleController.Update() เป็นคนขับ แต่มันออกตั้งแต่บรรทัดแรกตอน
+            // _busy (ช่วงไฟแดงหลังตอบผิด) และตอนยืนยันครบ 4 คันแล้ว ค่าจริงจึงหยุดไต่
+            // ค้างอยู่ระดับเดิม เสียงหัวใจที่ดังขึ้นเพราะตอบผิดเลยไม่เคยเบาลง
+            //
+            // ย้ายมาอยู่ที่เฟสแทน เสียงจึงไต่ลงต่อเนื่องทั้งตอนเดินไปตู้ถัดไปและตอนไฟแดง
+            AudioManager.instance.UpdateHeartbeat();
+        }
 
         /// <summary>
         /// เรียกโดย LeverPuzzleController เมื่อผู้เล่นแก้ puzzle ผิด
@@ -501,7 +511,7 @@ namespace RuleSystem.Rule
             // ── Reset player state ───────────────────────────────────
             PlayerController.Instance.SetMovement(true);
             PlayerController.Instance.isBlockStanding = false;
-            AudioManager.instance.ResetHeartbeatLevel();
+            AudioManager.instance.SilenceHeartbeat();   // เหตุผลเดียวกับใน OnPanelFixed()
 
             // ── Blink กลับ Relax — reset camera ขณะตาปิด ───────────
             GameModeController.instance.DirectBlinkToMode(
@@ -523,6 +533,10 @@ namespace RuleSystem.Rule
 
             currentState = Rule2State.None;
             ResetRuntime();
+
+            // รอบสอง (ขึ้นรถคันที่ 4 ของกฎ 6 มาแล้ว): ตายรอบเดียวจบ ไม่ย้อนเวลาให้เล่นใหม่
+            // ถามหลัง cleanup ของกฎทำงานเสร็จ แต่ก่อนปล่อยนาฬิกา ไม่งั้นเวลาจะเดินต่อใต้จอ game over
+            if (PermanentDeath.Claim(this)) yield break;
 
             // ── Rewind เวลาก่อน First Blackout ───────────────────────
             TimeManager.instance.SetTime(gameOverResetHour, gameOverResetMinute);
@@ -547,6 +561,12 @@ namespace RuleSystem.Rule
             }
 
             // ซ่อมเสร็จทั้งหมด → หยุด sounds + คืนไฟ
+            //
+            // ดับเสียงหัวใจให้สนิทตรงนี้ ไม่ใช่แค่ ResetHeartbeatLevel() เพราะ ResetHeartbeatLevel
+            // ตั้งได้แค่ "เป้าหมาย" แล้วรอ UpdateHeartbeat() มาไต่ลงให้ — ซึ่งมีแต่ UpdateFixPanel()
+            // เป็นคนเรียก พอหลุดจากเฟสนี้ไปก็ไม่มีใครเรียกอีก เสียงจะค้างดังข้ามไปทั้งกฎ
+            AudioManager.instance.SilenceHeartbeat();
+
             if (_randomSoundCoroutine      != null) StopCoroutine(_randomSoundCoroutine);
             if (_flashlightFlickerCoroutine != null) StopCoroutine(_flashlightFlickerCoroutine);
             flashlight.enabled = true;
@@ -614,9 +634,9 @@ namespace RuleSystem.Rule
         {
             yield return new WaitForSeconds(Random.Range(2f, 4f));
 
-            // 50% โอกาสเห็นร่างผีในศาลา
-            if (Random.value < 0.5f)
-                yield return StartCoroutine(PavilionGhostSightingRoutine());
+            // ร่างผีในศาลาคือฉากปิดกฎ 2 — เดิมสุ่ม 50% บางรอบจึงไม่มีอะไรเกิดขึ้นเลย
+            // แล้วกฎก็จบไปเงียบๆ ตอนนี้โผล่ทุกรอบ สุ่มแค่จังหวะที่โผล่ (2–4 วิ) เท่านั้น
+            yield return StartCoroutine(PavilionGhostSightingRoutine());
 
             // รอนิดนึงหลังเหตุการณ์ → จบ Rule
             yield return new WaitForSeconds(2f);
@@ -630,11 +650,20 @@ namespace RuleSystem.Rule
             saraLight.enabled = false;
             yield return new WaitForSeconds(0.08f);
 
+            // ถ้าช่องใดช่องหนึ่งว่าง ฉากนี้จะเหลือแค่ไฟกระพริบโดยไม่มีผี และเดิมไม่มีอะไรฟ้อง
+            // ซึ่งหน้าตาเหมือนกับ "สุ่มไม่ติด" เป๊ะ — ต้องแยกสองอาการนี้ออกจากกันให้ได้
             GameObject ghost = null;
-            if (pavilionGhostPrefab != null && pavilionGhostPoint != null)
+            if (pavilionGhostPrefab == null || pavilionGhostPoint == null)
+            {
+                Debug.LogError("[Rule2] Pavilion Ghost Prefab หรือ Pavilion Ghost Point ว่าง — " +
+                               "ฉากปิดกฎจะไม่มีผีโผล่มาเลย", this);
+            }
+            else
+            {
                 ghost = Instantiate(pavilionGhostPrefab,
                                     pavilionGhostPoint.position,
                                     pavilionGhostPoint.rotation);
+            }
 
             saraLight.enabled = true;
             yield return new WaitForSeconds(2f);

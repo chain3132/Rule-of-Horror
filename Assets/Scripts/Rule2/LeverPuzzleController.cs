@@ -10,11 +10,11 @@ namespace Rule2
     /// ควบคุม mini-game ตู้ไฟ 2 Phase, คันโยก 4 ตัว
     ///
     /// Input:
-    ///   คลิกซ้ายที่คันโยก active  → Grab (จับ)
-    ///   คลิกซ้ายอีกครั้ง          → Release (ปล่อย)
-    ///   เลื่อนเมาส์ขึ้น/ลง         → ปรับคันโยกขณะจับ
-    ///   กด E ที่ปุ่มเขียว          → ConfirmCurrentLever()
-    ///   กด E ที่ปุ่มแดง            → ResetPhase()
+    ///   กดคลิกซ้ายค้างที่คันโยก active → Grab (จับ) และขยับได้ตามเมาส์
+    ///   ปล่อยคลิกซ้าย                  → Release (ปล่อยทันที)
+    ///   เลื่อนเมาส์ขึ้น/ลง              → ปรับคันโยกขณะกดค้าง
+    ///   คลิกปุ่มเขียว                  → ConfirmCurrentLever()
+    ///   คลิกปุ่มแดง                    → ResetPhase()
     ///
     /// Order Display:
     ///   orderObjects[i] = object แสดงเลขของ lever i (i=0→ก, 1→ข, 2→ค, 3→ง)
@@ -184,8 +184,8 @@ namespace Rule2
             if (aim == AimState.None) return;
 
             string hint = aim == AimState.CanGrab
-                ? "[ คลิกซ้าย: จับ ]"
-                : "[ คลิกซ้าย: ปล่อย ]";
+                ? "[ กดคลิกซ้ายค้าง: ขยับคันโยก ]"
+                : "[ ปล่อยเมาส์: วางคันโยก ]";
             Color color = aim == AimState.CanGrab
                 ? Color.yellow
                 : new Color(1f, 0.55f, 0f);   // orange
@@ -232,25 +232,29 @@ namespace Rule2
 
             int idx = _order[_step];
 
-            // ── Toggle Grab (ข้ามถ้า click ถูก consume โดย PuzzleButton แล้ว) ──
-            if (!clickConsumed && Mouse.current.leftButton.wasPressedThisFrame)
+            // ── Hold to Grab ────────────────────────────────────────
+            // กดค้าง = จับ, ปล่อยปุ่ม = ปล่อยคันโยกทันที (ไม่ใช่คลิกสลับแบบเดิม)
+            //
+            // เช็คการปล่อยด้วย !isPressed ไม่ใช่ wasReleasedThisFrame เพราะถ้าเฟรมที่ปล่อย
+            // หลุดหายไป (สลับหน้าต่าง / โฟกัสหาย / เกมค้างหนึ่งเฟรม) คันโยกจะติดมือค้างอยู่
+            // ตลอด แล้วไม่มีทางปล่อยได้อีก — เช็คสถานะปุ่มแทน event จึงกู้ตัวเองได้เสมอ
+            if (!_isGrabbed)
             {
-                if (!_isGrabbed)
+                // ต้องเป็นการกดลงใหม่ขณะเล็งโดนเท่านั้น ปุ่มที่ค้างมาจากก่อนหน้าไม่นับ
+                // ไม่งั้นกดค้างแล้วลากเคอร์เซอร์ผ่านคันโยกจะคว้าติดมือเองโดยไม่ได้ตั้งใจ
+                if (!clickConsumed && Mouse.current.leftButton.wasPressedThisFrame
+                    && IsLookingAtLever(idx))
                 {
-                    if (IsLookingAtLever(idx))
-                    {
-                        _isGrabbed = true;
-                        levers[idx].Grab();
-                    }
+                    _isGrabbed = true;
+                    levers[idx].Grab();
                 }
-                else
-                {
-                    // ปล่อย
-                    _isGrabbed = false;
-                    levers[idx].Release();
-                    if (_phase == 2)
-                        levers[idx].StartDrift();   // Phase 2: drift เริ่มหลังปล่อยทันที
-                }
+            }
+            else if (!Mouse.current.leftButton.isPressed)
+            {
+                _isGrabbed = false;
+                levers[idx].Release();
+                if (_phase == 2)
+                    levers[idx].StartDrift();   // Phase 2: ไหลลงทันทีที่ปล่อยมือ
             }
 
             // ── Move Lever (เฉพาะขณะจับ) ────────────────────────────
@@ -261,8 +265,8 @@ namespace Rule2
                     levers[idx].SetValue(levers[idx].Value + deltaY * mouseSensitivity);
             }
 
-            // ── Drive Heartbeat lerp ──────────────────────────────────
-            AudioManager.instance?.UpdateHeartbeat();
+            // เสียงหัวใจย้ายไปขับที่ Rule2.UpdateFixPanel() — Update() ตัวนี้ออกตั้งแต่
+            // บรรทัดแรกตอน _busy / ยืนยันครบ 4 คัน ค่าจึงหยุดไต่แล้วค้างดังอยู่อย่างนั้น
         }
 
         // ─────────────────────────── Raycast ───────────────────────────

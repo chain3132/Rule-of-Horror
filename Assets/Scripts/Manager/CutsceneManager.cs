@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using FMOD.Studio;
 using FMODUnity;
+using InputSystem;
 using Manager;
 using Player;
 using TMPro;
@@ -13,6 +14,24 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 
+/// <summary>
+/// ฉากเปิดเกม — รถประจำทางพาผู้เล่นมาถึงศาลา
+///
+/// ลำดับ:
+///   ① ผู้เล่นนั่งอยู่ในรถตั้งแต่เฟรมแรก รถอยู่ที่ปลายถนน (Bus Start Point)
+///   ② รถค่อยๆ วิ่งเข้ามาจอดที่ศาลา — ช่วงนี้เป็นกล้องหนัง ตัด shot ตามวินาที + ขึ้นเครดิต
+///   ③ รถจอด → ตัดกล้องมาเป็นมุมมองผู้เล่นที่นั่งอยู่ในรถ = จุดที่ผู้เล่นคุมตัวเองได้แล้ว
+///   ④ กด E ลุกจากเบาะ เดินลงจากรถ
+///   ⑤ นาฬิกาเดินต่อ (จะได้ถึง 18:40 ที่ข้อความแรกเข้า) แล้วรถค่อยๆ ขับออกไป
+///
+/// ฉากนี้คือฉากเดียวกับบทจบวนลูปของกฎข้อ 6 — คันที่ 4 พาผู้เล่นกลับมาถึงศาลาที่ 18:40
+/// ด้วยลำดับเดียวกันทุกบีต นั่นคือตัวมุก: คืนที่สองไม่ใช่คืนใหม่ที่คล้ายคืนก่อน มันคือคืนเดิม
+/// ซ้ำ ทั้งสองฝั่งจึงเรียก BusRide ตัวเดียวกัน (ขับ / พาผู้เล่นไปกับรถ / นั่ง / ลงจากรถ)
+/// ถ้าจะแก้จังหวะของฉากนี้ ให้ไปแก้ค่าในกฎ 6 ให้ตรงกันด้วย
+///
+/// สิ่งที่ถอดออกจากเวอร์ชันก่อน: ผู้เล่นเดินตาม waypoints มานั่งที่ม้านั่งศาลา และรถอีกคัน
+/// ที่วิ่งผ่านระหว่าง shot — ตอนนี้รถที่ผู้เล่นนั่งมาเป็นทั้งพาหนะและของที่วิ่งอยู่ในเฟรมแล้ว
+/// </summary>
 public class CutsceneManager : MonoBehaviour
 {
     public static CutsceneManager instance;
@@ -22,7 +41,7 @@ public class CutsceneManager : MonoBehaviour
     /// <summary>
     /// ตอนนี้ยังอยู่ในฉากเปิดอยู่ไหม — UI ที่ไม่ควรโผล่ทับฉากเปิดเช็กตัวนี้
     ///
-    /// ต่างจาก _playing ตรงที่ตัวนั้นหมายถึง "ยังกด skip ได้อยู่" ซึ่งปิดไปตั้งแต่ต้น FinishRoutine
+    /// ต่างจาก _playing ตรงที่ตัวนั้นหมายถึง "ยังกด skip ได้อยู่" ซึ่งปิดไปตั้งแต่ต้น HandOverRoutine
     /// ทั้งที่บทพูดปิดฉากยังเล่นอยู่ ส่วนตัวนี้จะเป็น true จนถึงวินาทีที่คืนการควบคุมให้ผู้เล่นจริงๆ
     /// และครอบคลุมทางลัด disableCutscene ด้วย (ซึ่งก็ยังมีช่วงที่ผู้เล่นขยับไม่ได้เหมือนกัน)
     /// </summary>
@@ -70,15 +89,19 @@ public class CutsceneManager : MonoBehaviour
                  "ปิด GameObject ไว้ก่อน script จะเปิด/ปิดเอง")]
         public CinemachineCamera vcam;
 
-        [Tooltip("เปิด shot นี้เมื่อผู้เล่นเดินถึง waypoint index นี้\n" +
-                 "0 = เปิดตั้งแต่ต้น, 1 = เปิดตอนถึง waypoint[1] เป็นต้น")]
-        public int activateAtWaypoint = 0;
+        [Tooltip("ตัดมา shot นี้ตอนรถวิ่งมาแล้วกี่วินาที (นับจากรถเริ่มออกตัว)\n" +
+                 "0 = เปิดตั้งแต่ต้น · ใส่ได้เกิน Arrive Seconds ไม่ได้ (จะไม่ได้เล่น)\n\n" +
+                 "เรียงลำดับเองไม่ต้องกังวล — ตัวที่ \"ถึงคิวแล้วและคิวช้าสุด\" จะถูกเปิด\n" +
+                 "ถ้าใส่เวลาซ้ำกัน ตัวที่อยู่ล่างกว่าในลิสต์ชนะ")]
+        public float activateAtSecond = 0f;
 
         [Tooltip("✓ = ตัดมา shot นี้ทันที (Cut)  ✗ = ค่อยๆ blend ตาม Blend Time ที่ตั้งไว้")]
         public bool instantCut = false;
 
         [Header("Track Player (หันมองผู้เล่นโดยไม่ขยับกล้อง)")]
-        [Tooltip("กล้องจะค่อยๆ หันตามผู้เล่นขณะเดิน (กล้องไม่ขยับ แค่หมุน)")]
+        [Tooltip("กล้องจะค่อยๆ หันตามผู้เล่น (กล้องไม่ขยับ แค่หมุน)\n" +
+                 "ผู้เล่นนั่งอยู่ในรถตลอดฉากนี้ ตัวนี้จึงเท่ากับ \"หันตามรถ\" — ใช้ทำ shot แบบ\n" +
+                 "กล้องตั้งไว้ข้างถนนแล้วกวาดตามรถที่วิ่งผ่านไป")]
         public bool trackPlayer = false;
 
         [Tooltip("ความเร็วในการหัน (องศา/วินาที ประมาณ) — ค่าต่ำ = ค่อยๆ หัน")]
@@ -104,36 +127,13 @@ public class CutsceneManager : MonoBehaviour
         [Tooltip("เพิ่ม element ได้เรื่อยๆ — แสดงตามลำดับ fade in → hold → fade out\n" +
                  "ทิ้งว่างถ้า shot นี้ไม่มี credit")]
         public CreditEntry[] credits;
-
-        [Header("Car — รถวิ่งผ่านระหว่าง shot นี้")]
-        [Tooltip("GameObject รถ — วางไว้ใน scene แล้วปิดไว้ก่อน\n" +
-                 "script จะเปิดตอน shot นี้เริ่ม และปิดเมื่อเปลี่ยน shot")]
-        public GameObject carObject;
-
-        [Tooltip("Waypoints ที่รถจะวิ่งผ่าน (เรียงตามลำดับ)\n" +
-                 "รถจะ teleport ไป [0] แล้วเดินไปถึง waypoint สุดท้าย")]
-        public Transform[] carWaypoints;
-
-        [Tooltip("ความเร็วรถ (units/วินาที)")]
-        public float carSpeed = 20f;
-
-        [Tooltip("✓ = รถหันหน้าตามทิศทางที่วิ่ง")]
-        public bool carFaceDirection = true;
-
-        [Tooltip("หมุน Y เพิ่มเติมบน model (องศา) — ปรับตาม pivot ของ model\n" +
-                 "ถ้ารถหันผิดทาง ลองเปลี่ยนเป็น 90 หรือ -90 หรือ 180")]
-        public float carRotationOffset = -90f;
-
-        [Header("Car Sound — เสียง 3D ติดตามตำแหน่งรถ")]
-        [Tooltip("FMOD Event path ของเสียงรถ เช่น event:/SFX/CarEngine\n" +
-                 "เว้นว่างถ้าไม่ต้องการเสียง")]
-        public string carSoundEvent = "";
     }
 
     // ─────────────────────────── Inspector ───────────────────────────
 
     [Header("Debug")]
-    [Tooltip("✓ = ข้าม cutscene ทั้งหมด → นั่งที่เก้าอี้ทันที")]
+    [Tooltip("✓ = ข้าม cutscene ทั้งหมด → ไปเริ่มที่ \"นั่งอยู่ในรถที่จอดหน้าศาลาแล้ว\" ทันที\n" +
+             "ยังต้องกด E ลงจากรถเหมือนเดิม เพราะช่วงนั้นคือ gameplay ไม่ใช่ cutscene")]
     [SerializeField] private bool disableCutscene = false;
 
     [Header("Cameras")]
@@ -147,23 +147,48 @@ public class CutsceneManager : MonoBehaviour
     [SerializeField] private Camera playerCamera;
 
     [Header("Shots — เรียงตามลำดับที่อยากให้เล่น")]
-    [Tooltip("แต่ละ shot มี CinemachineCamera + เงื่อนไขการ activate\n" +
+    [Tooltip("แต่ละ shot มี CinemachineCamera + วินาทีที่จะตัดมา\n" +
              "วาง CinemachineCamera GameObject ไว้ใน scene แล้วปิด GameObject ไว้")]
     [SerializeField] private CutsceneShot[] shots;
 
-    [Header("Path — ตัวละครเดินตาม waypoints")]
-    [Tooltip("Waypoint[0] = จุดเริ่มต้น, Waypoint สุดท้าย = หน้าเก้าอี้")]
-    [SerializeField] private Transform[] waypoints;
+    [Header("รถที่พาผู้เล่นมาถึง")]
+    [Tooltip("InputHandler — ต้องรับปุ่ม E เองตอนผู้เล่นนั่งอยู่ในรถ\n" +
+             "เบาะรถไม่มี SittingPoint (ตัวนั้นเป็นของม้านั่งศาลา) ถ้าไม่ใส่จะลุกไม่ได้เลย")]
+    [SerializeField] private InputHandler inputHandler;
 
-    [Header("Seat")]
-    [SerializeField] private Transform seatTarget;
+    [Tooltip("รถที่ผู้เล่นนั่งมา — ใช้ component Rule6Bus ตัวเดียวกับรถของกฎข้อ 6 เพื่อให้ได้\n" +
+             "ช่อง Seat / Sit Pose พร้อม gizmo ท่านั่งมาด้วย (จะได้ไม่ต้องเดาว่าตัวจะลอยไหม)\n\n" +
+             "ต้องเป็นคันของตัวเอง ห้ามใช้คันเดียวกับที่อยู่ในช่อง Buses ของกฎ 6")]
+    [SerializeField] private Rule6.Rule6Bus introBus;
 
-    [Header("Walk")]
-    [SerializeField] private float walkSpeed   = 2f;
-    [SerializeField] private float rotateSpeed = 8f;
+    [Tooltip("จุดที่รถเริ่มวิ่งเข้ามา — ใช้จุดเดียวกับ Approach ของกฎข้อ 6 ได้เลย")]
+    [SerializeField] private Transform busStartPoint;
 
-    [Tooltip("หน่วงก่อนนั่ง (วินาที)")]
-    [SerializeField] private float pauseBeforeSit = 0.5f;
+    [Tooltip("จุดจอดหน้าศาลา — ต้องเป็นจุดเดียวกับ Stop ของกฎข้อ 6\n" +
+             "เพราะบทจบวนลูปของกฎ 6 คือฉากนี้ซ้ำ ถ้าคนละจุดมุกจะพัง")]
+    [SerializeField] private Transform busStopPoint;
+
+    [Tooltip("จุดที่รถวิ่งหายไปหลังผู้เล่นลงแล้ว — ใช้จุดเดียวกับ Depart ของกฎข้อ 6 ได้เลย")]
+    [SerializeField] private Transform busDepartPoint;
+
+    [Tooltip("รถวิ่งจาก Start มาจอดที่ Stop นานเท่านี้ (วินาที) — ช้าๆ ได้ ช่วงนี้คือทั้งฉากเปิด\n" +
+             "เวลาของ shot ทุกตัวนับอยู่ในช่วงนี้")]
+    [SerializeField] private float arriveSeconds = 14f;
+
+    [Tooltip("นิ่งอยู่กับกล้องหนังอีกเท่านี้หลังรถจอดสนิท ก่อนตัดไปเป็นมุมมองผู้เล่น (วินาที)")]
+    [SerializeField] private float holdAtStop = 1f;
+
+    [Tooltip("รถค่อยๆ ขับออกไปนานเท่านี้ (วินาที) — เกิดหลังผู้เล่นลงจากรถแล้ว")]
+    [SerializeField] private float departSeconds = 4f;
+
+    [Tooltip("ข้อความ hint ตอนนั่งอยู่ในรถที่จอดแล้ว")]
+    [SerializeField] private string getOffHint = "E   ลงจากรถ";
+
+    [Tooltip("ยืนห่างจากเบาะเท่านี้ (เมตร) = ลงจากรถแล้ว รถจึงออกได้")]
+    [SerializeField] private float offBusDistance = 4.5f;
+
+    [Tooltip("หลังผู้เล่นลงจากรถแล้ว รออีกเท่านี้รถจึงค่อยๆ ขับออกไป (วินาที)")]
+    [SerializeField] private float busDepartDelay = 2f;
 
     [Header("Blend")]
     [Tooltip("เวลา blend ระหว่าง shot (วินาที) — 0 = ตัดทันที")]
@@ -197,11 +222,11 @@ public class CutsceneManager : MonoBehaviour
     [SerializeField] private string cutsceneMusicEvent = "";
 
     [Header("Ending Dialogue")]
-    [Tooltip("บทพูดผู้เล่นที่แสดงหลังนั่งเก้าอี้ตอน cutscene จบ\n" +
+    [Tooltip("บทพูดผู้เล่นตอนตัดกล้องมาเป็นมุมมองตัวเอง — นั่งอยู่ในรถที่จอดแล้ว ก่อนลงจากรถ\n" +
              "ต้องมี PlayerDialogueUI ใน scene ด้วย")]
     [SerializeField] private DialogueLine[] endingDialogue;
 
-    [Tooltip("หน่วงก่อนแสดงบทพูด (วินาที) เพื่อให้ animation นั่งเสร็จก่อน")]
+    [Tooltip("หน่วงก่อนแสดงบทพูด (วินาที) — ให้ผู้เล่นได้มองรอบตัวในรถก่อนสักพัก")]
     [SerializeField] private float endingDialogueDelay = 0.6f;
 
     [Header("Phone Hint (2 สเต็ป)")]
@@ -212,12 +237,9 @@ public class CutsceneManager : MonoBehaviour
     [SerializeField] private string phoneHintAfterOpen = "1      เปิดแชท\n2      ไฟฉาย";
 
     [Header("Skip")]
-    [Tooltip("กด Spacebar เพื่อข้าม intro cutscene (ยังต้องนั่งอยู่)")]
+    [Tooltip("กด Spacebar เพื่อข้าม intro cutscene — รถจะกระโดดไปจอดที่ป้ายทันที\n" +
+             "(ยังต้องกด E ลงจากรถเหมือนเดิม ส่วนนั้นเป็น gameplay แล้ว)")]
     [SerializeField] private bool allowSkip = true;
-
-    [Tooltip("Waypoint index ที่จะ snap ไปเมื่อกด skip เช่น 7 = W_7\n" +
-             "ถ้าค่าเกินจำนวน waypoint จะใช้ waypoint สุดท้ายแทน")]
-    [SerializeField] private int skipToWaypointIndex = 7;
 
     [Tooltip("ข้อความบอกปุ่ม skip ที่ต้องซ่อนเมื่อจบ cutscene หรือกด skip")]
     [SerializeField] private GameObject skipText;
@@ -233,9 +255,16 @@ public class CutsceneManager : MonoBehaviour
     private Coroutine _barCoroutine;
     private Coroutine _creditCoroutine;
     private Coroutine _creditFadeCoroutine;
-    private Coroutine _carCoroutine;
-    private EventInstance _carSoundInstance;
+    private Coroutine _shotCoroutine;
     private EventInstance _cutsceneMusicInstance;
+
+    /// <summary>
+    /// ตัวขับรถ + ตัวพาผู้เล่นไปกับรถ — ตัวเดียวกับที่กฎข้อ 6 ใช้
+    ///
+    /// ฉากเปิดนี้กับบทจบวนลูปของกฎ 6 เป็นฉากเดียวกัน (รถพาเรามาจอดที่ศาลาตอน 18:40 แล้วเรา
+    /// ลงจากรถ) เลยต้องเป็นโค้ดชุดเดียวกัน ไม่ใช่สองชุดที่พยายามทำให้เหมือนกัน
+    /// </summary>
+    private readonly Rule6.BusRide _ride = new Rule6.BusRide();
 
     // ─────────────────────────── Lifecycle ───────────────────────────
 
@@ -276,6 +305,13 @@ public class CutsceneManager : MonoBehaviour
 
     // ─────────────────────────── Skip Mode ───────────────────────────
 
+    /// <summary>
+    /// กด Spacebar = ข้ามช่วงกล้องหนัง
+    ///
+    /// ไม่ teleport ผู้เล่นเองแล้ว — ผู้เล่นนั่งอยู่ในรถ จึงย้ายรถไปจุดจอดแล้วให้ตัวพาผู้เล่น
+    /// ลากตามไป (BusRide.Drive เห็นธงนี้แล้วกระโดดไปปลายทางพร้อม Step() ให้เลย)
+    /// ถ้า teleport ผู้เล่นแยกจากรถ ผู้เล่นจะไปยืนอยู่กลางถนนและรถจะวิ่งทับผ่านไป
+    /// </summary>
     private void RequestSkip()
     {
         if (_skipRequested) return;
@@ -283,7 +319,6 @@ public class CutsceneManager : MonoBehaviour
         _skipRequested = true;
         HideCreditsImmediate(stopCoroutines: true);
         HideSkipTextImmediate();
-        TeleportPlayer(GetSkipWaypoint());
     }
 
     private bool IsSkipKeyPressedThisFrame()
@@ -301,6 +336,12 @@ public class CutsceneManager : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// ทางลัดตอนติ๊ก Disable Cutscene — เริ่มที่สภาพ "รถจอดหน้าศาลาแล้ว เรานั่งอยู่ในนั้น"
+    ///
+    /// ไม่ใช่การข้ามไปนั่งที่ม้านั่งศาลาเหมือนเวอร์ชันก่อน เพราะช่วงลงจากรถเป็น gameplay
+    /// ไม่ใช่ cutscene — ถ้าข้ามส่วนนั้นไปด้วย เวลาเทสกฎข้ออื่นสภาพเริ่มเกมจะไม่เหมือนจริง
+    /// </summary>
     private IEnumerator SkipToGameplayRoutine()
     {
         yield return null; // รอ 1 frame ให้ singleton พร้อม
@@ -310,31 +351,13 @@ public class CutsceneManager : MonoBehaviour
         TimeManager.instance.IsPauseTime(true);
         PlayerController.Instance.isBlockStanding = true;
 
-
         HideSkipTextImmediate();
 
         if (cutsceneCameraGO != null) cutsceneCameraGO.SetActive(false);
         if (playerCamera     != null) playerCamera.enabled = true;
 
-        if (seatTarget != null)
-        {
-            TeleportPlayer(seatTarget);
-            PlayerController.Instance.StartSittingSequence(seatTarget);
-        }
-
-        yield return new WaitUntil(() => PlayerController.Instance.IsSitting());
-        yield return new WaitForSeconds(0.3f);
-
-        
-
-        // แสดง hint โทรศัพท์ — ซ่อนเองเมื่อผู้เล่นกดปุ่มแชท หรือเมื่อ Rule1 เริ่ม
-        if (GameHintUI.instance != null)
-            GameHintUI.instance.ShowPhoneOnboarding(phoneHintBeforeOpen, phoneHintAfterOpen);
-
-        PlayerController.Instance.SetLook(true);
-        TimeManager.instance.IsPauseTime(false);
-        SetPlaying(false);
-        gameObject.SetActive(false);
+        yield return BoardBusAt(busStopPoint);
+        yield return HandOverRoutine(playDialogue: false);
     }
 
     // ─────────────────────────── Start Cutscene ───────────────────────────
@@ -346,13 +369,11 @@ public class CutsceneManager : MonoBehaviour
 
         PlayerController.Instance.SetMovement(false);
         PlayerController.Instance.SetLook(false);
+        PlayerController.Instance.isBlockStanding = true;
         TimeManager.instance.IsPauseTime(true);
 
-        // teleport ผู้เล่นไป waypoint[0] ก่อน
-        if (waypoints != null && waypoints.Length > 0)
-            TeleportPlayer(waypoints[0]);
-
-        // เปิด cutscene camera ระบบ
+        // เปิด cutscene camera ก่อนทำอย่างอื่น — ช่วงถัดไปมีการ teleport ผู้เล่นเข้าไปในรถ
+        // ซึ่งต้องไม่ถูกเห็นผ่านกล้องของผู้เล่นเอง
         if (playerCamera     != null) playerCamera.enabled = false;
         if (cutsceneCameraGO != null) cutsceneCameraGO.SetActive(true);
 
@@ -370,40 +391,139 @@ public class CutsceneManager : MonoBehaviour
         SetBarsImmediate(0f);
         _barCoroutine = StartCoroutine(AnimateBars(0f, barHeight, barAnimDuration));
 
-        // เปิด shot แรก (activateAtWaypoint == 0)
-        ActivateShotForWaypoint(0);
+        WarnIfShotsUntimed();
 
-        StartCoroutine(WalkRoutine());
+        StartCoroutine(IntroRoutine());
+    }
+
+    /// <summary>
+    /// เตือนถ้า shot ทุกตัวยังอยู่ที่วินาที 0
+    ///
+    /// มีเพราะช่องนี้เคยเป็น "เปิดตอนถึง waypoint ที่เท่าไหร่" (int) แล้วเปลี่ยนเป็นวินาที (float)
+    /// ตอนฉากเปิดเปลี่ยนจากเดินมาเป็นนั่งรถมา — Unity แปลงค่าเก่าให้ไม่ได้ ของเดิมจึงกลายเป็น
+    /// 0 ทั้งหมด ซึ่งอ่านเป็น "ตัดมา shot สุดท้ายตั้งแต่วินาทีแรก" แล้ว shot อื่นจะไม่ได้เล่นเลย
+    /// อาการนี้เหมือนกล้องพังมากกว่าเหมือนค่าที่หายไป เลยต้องมีบรรทัดบอก
+    /// </summary>
+    private void WarnIfShotsUntimed()
+    {
+        if (shots == null || shots.Length < 2) return;
+
+        foreach (var shot in shots)
+            if (shot.vcam != null && shot.activateAtSecond > 0f) return;
+
+        Debug.LogWarning($"[Cutscene] shot ทั้ง {shots.Length} ตัวตั้งไว้ที่วินาที 0 — จะได้เห็นแค่ตัว" +
+                         "ล่างสุดในลิสต์ตัวเดียวทั้งฉาก ใส่ Activate At Second ของแต่ละตัวให้กระจาย " +
+                         $"อยู่ในช่วง 0 ถึง {arriveSeconds:0.#} วินาที (ช่องนี้เคยเป็นเลข waypoint " +
+                         "ตอนฉากเปิดยังเป็นการเดิน ค่าเก่าจึงใช้ต่อไม่ได้)", this);
+    }
+
+    // ─────────────────────────── Intro Ride ───────────────────────────
+
+    /// <summary>
+    /// วางรถที่จุดที่กำหนด แล้วพาผู้เล่นไปนั่งในรถคันนั้น
+    ///
+    /// ต้อง teleport ผู้เล่นไปที่ท่านั่งก่อนเรียกให้นั่ง เพราะ SitRoutine lerp จากตำแหน่งเดิม
+    /// ไปที่เบาะใน 0.7 วินาที — ถ้าผู้เล่นเกิดที่จุด spawn เดิม เขาจะไถลข้ามแผนที่เข้ามา
+    /// </summary>
+    private IEnumerator BoardBusAt(Transform point)
+    {
+        if (introBus == null || point == null)
+        {
+            Debug.LogError("[Cutscene] ยังไม่ได้ใส่ Intro Bus หรือจุดของเส้นทาง — " +
+                           "ฉากเปิดจะไม่มีรถ ผู้เล่นจะเริ่มเกมที่จุด spawn เฉยๆ " +
+                           "(รัน Rule of Horror ▸ Rule 6 ▸ Build Bus Stop เพื่อสร้างและต่อให้)", this);
+            yield break;
+        }
+
+        introBus.transform.SetPositionAndRotation(point.position, point.rotation);
+        introBus.Appear();
+
+        TeleportPlayer(introBus.SitPose);
+
+        bool failed = false;
+        yield return _ride.Sit(introBus, 0f, this, onFailed: () => failed = true);
+
+        // พาไปนั่งไม่สำเร็จแล้วยังพาไปกับรถ = ผู้เล่นจะยืนลอยไปตามรถทั้งคัน ปล่อยให้ยืนอยู่
+        // กับที่ดีกว่า แล้วรถจะวิ่งผ่านตัวไปจอด (อ่านเป็นบั๊กเหมือนกัน แต่หาต้นเหตุได้จาก log)
+        if (!failed) _ride.BeginCarry(introBus.transform);
+    }
+
+    /// <summary>
+    /// ช่วงกล้องหนัง: รถวิ่งจากปลายถนนเข้ามาจอดที่ศาลา พร้อมผู้เล่นที่นั่งอยู่ในนั้น
+    ///
+    /// decelerate = true เพราะนี่คือรถที่กำลัง "เข้าจอด" ไม่ใช่รถที่วิ่งผ่าน — ต้องช้าลง
+    /// ท้ายทางจนหยุดนิ่ง ไม่ใช่ถึงจุดแล้วดับไปเฉยๆ
+    /// </summary>
+    private IEnumerator IntroRoutine()
+    {
+        // เปิด shot แรกก่อนพาผู้เล่นขึ้นรถ — ระหว่างอนิเมชั่นนั่ง (0.7 วิ) ถ้ายังไม่มี vcam ตัวไหน
+        // เปิดอยู่ CinemachineBrain จะไม่มีกล้องให้คุม แล้วเฟรมแรกของเกมจะเป็นจอว่าง
+        ActivateShotForTime(0f);
+
+        yield return BoardBusAt(busStartPoint);
+
+        _shotCoroutine = StartCoroutine(ShotScheduleRoutine());
+
+        yield return _ride.Drive(introBus != null ? introBus.transform : null,
+                                 busStartPoint, busStopPoint,
+                                 arriveSeconds, decelerate: true, carryPlayer: true,
+                                 stopEarly: () => _skipRequested);
+
+        if (!_skipRequested && holdAtStop > 0f)
+            yield return new WaitForSeconds(holdAtStop);
+
+        yield return HandOverRoutine(playDialogue: true);
+    }
+
+    /// <summary>
+    /// ตัด shot ตามเวลา — เดินนาฬิกาของตัวเองขนานไปกับรถที่กำลังวิ่ง
+    ///
+    /// เช็กทุกเฟรมแทนที่จะไล่ตามลำดับในลิสต์ เพื่อให้ไม่ต้องเรียง shots เองใน Inspector
+    /// (ลิสต์ที่ต้องเรียงเองคือลิสต์ที่จะไม่เรียงในวันที่เพิ่ม shot ทีหลัง)
+    /// </summary>
+    private IEnumerator ShotScheduleRoutine()
+    {
+        float elapsed = 0f;
+
+        while (true)
+        {
+            ActivateShotForTime(elapsed);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
     }
 
     // ─────────────────────────── Shot Control ───────────────────────────
 
-    /// <summary>เปิด shot ที่ activateAtWaypoint ตรงกับ waypointIndex — ปิดของเก่า</summary>
-    private void ActivateShotForWaypoint(int waypointIndex)
+    /// <summary>เปิด shot ที่ถึงคิวแล้วและคิวช้าสุด — ตัวเดิมอยู่แล้วก็ไม่ทำอะไร</summary>
+    private void ActivateShotForTime(float seconds)
     {
+        if (shots == null) return;
+
+        int   best   = -1;
+        float bestAt = float.NegativeInfinity;
+
         for (int i = 0; i < shots.Length; i++)
         {
             var shot = shots[i];
-            if (shot.vcam == null) continue;
+            if (shot.vcam == null || shot.activateAtSecond > seconds) continue;
 
-            if (shot.activateAtWaypoint == waypointIndex)
-            {
-                ActivateShot(i);
-                return;
-            }
+            // >= เพื่อให้ตัวที่อยู่ล่างกว่าในลิสต์ชนะเมื่อใส่เวลาซ้ำกัน
+            if (shot.activateAtSecond >= bestAt) { bestAt = shot.activateAtSecond; best = i; }
         }
+
+        if (best >= 0) ActivateShot(best);
     }
 
     private void ActivateShot(int index)
     {
         if (index == _currentShotIndex) return;
 
-        // ปิด shot เก่า + ซ่อนรถของ shot เก่า
+        // ปิด shot เก่า
         if (_currentShotIndex >= 0 && _currentShotIndex < shots.Length)
         {
             var prev = shots[_currentShotIndex];
             if (prev.vcam != null) prev.vcam.gameObject.SetActive(false);
-            if (prev.carObject != null) prev.carObject.SetActive(false);
         }
 
         // หยุด coroutine เก่า
@@ -411,8 +531,7 @@ public class CutsceneManager : MonoBehaviour
         if (_trackCoroutine  != null) { StopCoroutine(_trackCoroutine);  _trackCoroutine  = null; }
         if (_creditCoroutine != null) { StopCoroutine(_creditCoroutine); _creditCoroutine = null; }
         if (_creditFadeCoroutine != null) { StopCoroutine(_creditFadeCoroutine); _creditFadeCoroutine = null; }
-        if (_carCoroutine    != null) { StopCoroutine(_carCoroutine);    _carCoroutine    = null; }
-        StopCarSound();
+
         // ซ่อน credit ทันทีเมื่อเปลี่ยน shot
         HideCreditsImmediate(stopCoroutines: false);
 
@@ -442,10 +561,6 @@ public class CutsceneManager : MonoBehaviour
         // เริ่ม credit ถ้ามีรายการ
         if (current.credits != null && current.credits.Length > 0 && creditGroup != null)
             _creditCoroutine = StartCoroutine(CreditRoutine(current));
-
-        // เริ่มรถถ้า shot นี้มีรถ
-        if (current.carObject != null && current.carWaypoints != null && current.carWaypoints.Length >= 2)
-            _carCoroutine = StartCoroutine(CarRoutine(current));
     }
 
     // ─────────────────────────── Credit Coroutine ───────────────────────────
@@ -579,185 +694,58 @@ public class CutsceneManager : MonoBehaviour
         }
     }
 
-    // ─────────────────────────── Car Coroutine ───────────────────────────
+    // ─────────────────────────── Hand Over ───────────────────────────
 
     /// <summary>
-    /// teleport รถไป waypoint[0] แล้ววิ่งไปตาม waypoints ด้วยความเร็ว carSpeed
-    /// เมื่อถึงปลายทางแล้ว ซ่อนรถทันที
+    /// รถจอดแล้ว → ส่งเกมคืนให้ผู้เล่น
+    ///
+    /// ลำดับของการ "ตัดกล้อง" คือสลับกล้องก่อน แล้วค่อยเก็บแถบดำ ไม่ใช่กลับกัน — วินาทีที่
+    /// เปลี่ยนจากหนังเป็นเกมคือวินาทีที่มุมกล้องเปลี่ยน ถ้าเก็บแถบก่อนผู้เล่นจะได้ดูกล้องหนัง
+    /// แบบเต็มจอค้างอยู่ 0.6 วินาที ซึ่งอ่านเป็นฉากจบแล้วค้าง
+    ///
+    /// ปล่อยนาฬิกาตอนผู้เล่นลงจากรถเสร็จ ไม่ใช่ตอนรถขับออกไปหมด: รถออกไปเป็นฉากหลังให้
+    /// ผู้เล่นดูเล่นๆ ถ้าไปรอมันก่อนจะปล่อยเวลา ผู้เล่นจะคุมตัวเองได้แต่เวลาค้างอยู่เฉยๆ
+    /// 4 วินาที แล้วข้อความแรกจะมาช้ากว่าที่ควร
     /// </summary>
-    private IEnumerator CarRoutine(CutsceneShot shot)
+    private IEnumerator HandOverRoutine(bool playDialogue)
     {
-        if (shot.carObject == null || shot.carWaypoints == null || shot.carWaypoints.Length < 2)
-            yield break;
-
-        Transform carT = shot.carObject.transform;
-
-        // teleport ไป waypoint แรก
-        carT.position = shot.carWaypoints[0].position;
-        carT.rotation = shot.carWaypoints[0].rotation;
-
-        shot.carObject.SetActive(true);
-
-        // ── เริ่มเสียง 3D ──
-        bool hasSound = !string.IsNullOrWhiteSpace(shot.carSoundEvent);
-        if (hasSound)
-        {
-            _carSoundInstance = RuntimeManager.CreateInstance(shot.carSoundEvent);
-            // Attach กับ transform รถ → FMOD อัปเดต 3D position/velocity อัตโนมัติทุก frame
-            RuntimeManager.AttachInstanceToGameObject(_carSoundInstance, carT);
-            _carSoundInstance.start();
-        }
-
-        // วิ่งผ่านทุก waypoint
-        for (int i = 1; i < shot.carWaypoints.Length; i++)
-        {
-            Transform target = shot.carWaypoints[i];
-
-            while (Vector3.Distance(carT.position, target.position) > 0.05f)
-            {
-                carT.position = Vector3.MoveTowards(
-                    carT.position, target.position, shot.carSpeed * Time.deltaTime);
-
-                if (shot.carFaceDirection)
-                {
-                    Vector3 dir = (target.position - carT.position);
-                    dir.y = 0f;
-                    if (dir != Vector3.zero)
-                        carT.rotation = Quaternion.LookRotation(dir) * Quaternion.Euler(0f, shot.carRotationOffset, 0f);
-                }
-
-                yield return null;
-            }
-
-            carT.position = target.position;
-        }
-
-        // ถึงปลายทาง → หยุดเสียง + ซ่อนรถ
-        StopCarSound();
-        shot.carObject.SetActive(false);
-        _carCoroutine = null;
-    }
-
-    /// <summary>หยุดและ release FMOD instance เสียงรถ (safe to call ซ้ำ)</summary>
-    private void StopCarSound()
-    {
-        if (_carSoundInstance.isValid())
-        {
-            _carSoundInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
-            _carSoundInstance.release();
-            _carSoundInstance = default;
-        }
-    }
-
-    // ─────────────────────────── Walk Coroutine ───────────────────────────
-
-    private IEnumerator WalkRoutine()
-    {
-        var cc       = PlayerController.Instance.GetComponent<CharacterController>();
-        var animator = PlayerController.Instance.GetComponentInChildren<Animator>();
-
-        if (cc != null) cc.enabled = false;
-
-        // เริ่ม animation เดิน
-        if (animator != null) animator.SetBool("walk", true);
-
-        for (int i = 1; i < waypoints.Length; i++)
-        {
-            if (_skipRequested) break;
-
-            // ตรวจว่ามี shot ที่ต้องเปิดตอนถึง waypoint นี้
-            ActivateShotForWaypoint(i);
-
-            Transform wp = waypoints[i];
-
-            while (!_skipRequested &&
-                   Vector3.Distance(_playerTransform.position, wp.position) > 0.05f)
-            {
-                _playerTransform.position = Vector3.MoveTowards(
-                    _playerTransform.position, wp.position, walkSpeed * Time.deltaTime);
-
-                Vector3 dir = (wp.position - _playerTransform.position).normalized;
-                dir.y = 0f;
-                if (dir != Vector3.zero)
-                {
-                    _playerTransform.rotation = Quaternion.Slerp(
-                        _playerTransform.rotation,
-                        Quaternion.LookRotation(dir),
-                        rotateSpeed * Time.deltaTime);
-                }
-
-                yield return null;
-            }
-
-            if (!_skipRequested)
-                _playerTransform.position = wp.position;
-        }
-
-        // หยุด animation เดิน
-        if (animator != null) animator.SetBool("walk", false);
-
-        if (cc != null) cc.enabled = true;
-
-        if (!_skipRequested && pauseBeforeSit > 0f)
-            yield return new WaitForSeconds(pauseBeforeSit);
-
-        yield return StartCoroutine(FinishRoutine());
-    }
-
-    // ─────────────────────────── Finish ───────────────────────────
-
-    private IEnumerator FinishRoutine()
-    {
-        PlayerController.Instance.isBlockStanding = true;
         _playing = false;
         HideSkipTextImmediate();
 
-        // หยุด coroutine ทั้งหมด
+        // หยุด coroutine ของช่วงหนังทั้งหมด
         if (_tiltCoroutine   != null) { StopCoroutine(_tiltCoroutine);   _tiltCoroutine   = null; }
         if (_trackCoroutine  != null) { StopCoroutine(_trackCoroutine);  _trackCoroutine  = null; }
         if (_barCoroutine    != null) { StopCoroutine(_barCoroutine);    _barCoroutine    = null; }
+        if (_shotCoroutine   != null) { StopCoroutine(_shotCoroutine);   _shotCoroutine   = null; }
         if (_creditCoroutine != null) { StopCoroutine(_creditCoroutine); _creditCoroutine = null; }
         if (_creditFadeCoroutine != null) { StopCoroutine(_creditFadeCoroutine); _creditFadeCoroutine = null; }
-        if (_carCoroutine    != null) { StopCoroutine(_carCoroutine);    _carCoroutine    = null; }
-        StopCarSound();
 
-        // หยุดเสียง cutscene
-        if (_cutsceneMusicInstance.isValid())
-        {
-            _cutsceneMusicInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
-            _cutsceneMusicInstance.release();
-            _cutsceneMusicInstance = default;
-        }
-
-        // ซ่อนรถและ credit ทันที
-        if (_currentShotIndex >= 0 && _currentShotIndex < shots.Length)
-        {
-            var last = shots[_currentShotIndex];
-            if (last.carObject != null) last.carObject.SetActive(false);
-        }
+        StopCutsceneMusic();
         HideCreditsImmediate(stopCoroutines: false);
 
-        // slide bars ออก แล้วรอเสร็จก่อนสลับกล้อง
-        yield return StartCoroutine(AnimateBars(barHeight, 0f, barAnimDuration));
+        // ── ตัดกล้องมาเป็นมุมมองผู้เล่นที่นั่งอยู่ในรถ ──
+        if (shots != null)
+            foreach (var shot in shots)
+                if (shot.vcam != null) shot.vcam.gameObject.SetActive(false);
 
-        // ปิด shot ทั้งหมด
-        foreach (var shot in shots)
-            if (shot.vcam != null) shot.vcam.gameObject.SetActive(false);
-
-        // สลับกล้องกลับ
         if (cutsceneCameraGO != null) cutsceneCameraGO.SetActive(false);
         if (playerCamera     != null) playerCamera.enabled = true;
 
-        if (seatTarget != null) TeleportPlayer(seatTarget);
-        if (seatTarget != null) PlayerController.Instance.StartSittingSequence(seatTarget);
+        // หันหน้าได้แล้ว (ยังลุกไม่ได้ — isBlockStanding ปลดใน LeaveBus ตอนขึ้น hint)
+        PlayerController.Instance.SetLook(true);
 
-        yield return new WaitUntil(() => PlayerController.Instance.IsSitting());
-        yield return new WaitForSeconds(0.4f);
+        // ฉากเปิดจบที่วินาทีนี้ ไม่ใช่ตอนรถขับออกไป — ตัวนี้คือธงที่ UI อย่าง key prompt ใช้
+        // เช็กว่า "ยังดูหนังอยู่ไหม" ถ้าค้างไว้จนรถออก ปุ่มที่ต้องกดจะถูกซ่อนตอนที่ต้องกดจริง
+        SetPlaying(false);
 
-        // แสดงบทพูดผู้เล่นหลังนั่งเก้าอี้
-        if (endingDialogue != null && endingDialogue.Length > 0 && PlayerDialogueUI.instance != null)
+        yield return StartCoroutine(AnimateBars(CurrentBarHeight(), 0f, barAnimDuration));
+
+        // ── บทพูดตอนนั่งอยู่ในรถที่จอดแล้ว ──
+        if (playDialogue && endingDialogue != null && endingDialogue.Length > 0 &&
+            PlayerDialogueUI.instance != null)
         {
             yield return new WaitForSeconds(endingDialogueDelay);
+
             bool dialogueDone = false;
             Action onDone = () => dialogueDone = true;
             PlayerDialogueUI.instance.OnSequenceComplete += onDone;
@@ -766,25 +754,46 @@ public class CutsceneManager : MonoBehaviour
             PlayerDialogueUI.instance.OnSequenceComplete -= onDone;
         }
 
+        // ── กด E ลุกจากเบาะ แล้วเดินลงจากรถ ──
+        if (introBus != null)
+            yield return _ride.LeaveBus(introBus, inputHandler, getOffHint,
+                                        offBusDistance, busDepartDelay);
+        else
+            PlayerController.Instance.isBlockStanding = false;
 
+        // ── คืนเกมให้ผู้เล่นเต็มตัว ──
         // แสดง hint โทรศัพท์ — ซ่อนเองเมื่อผู้เล่นกดปุ่มแชท หรือเมื่อ Rule1 เริ่ม
         if (GameHintUI.instance != null)
             GameHintUI.instance.ShowPhoneOnboarding(phoneHintBeforeOpen, phoneHintAfterOpen);
 
-        PlayerController.Instance.SetLook(true);
         TimeManager.instance.IsPauseTime(false);
-        SetPlaying(false);
+
+        // ── รถค่อยๆ ขับออกไป ──
+        // ห้ามปิด GameObject ก่อนบรรทัดนี้จบ — coroutine ของเราตายไปพร้อมกับมัน แล้วรถจะ
+        // ค้างอยู่หน้าศาลาตลอดคืน บังป้ายรถที่กฎข้อ 6 ต้องใช้ตอน 24:00
+        if (introBus != null && busStopPoint != null && busDepartPoint != null)
+        {
+            yield return _ride.Drive(introBus.transform, busStopPoint, busDepartPoint,
+                                     departSeconds, decelerate: false);
+            introBus.Hide();
+        }
+
         gameObject.SetActive(false);
     }
 
     // ─────────────────────────── Helper ───────────────────────────
 
-    private Transform GetSkipWaypoint()
-    {
-        if (waypoints == null || waypoints.Length == 0) return null;
+    /// <summary>ความสูงแถบดำตอนนี้ — เก็บแถบจากค่าจริง ไม่ใช่จาก barHeight ที่อาจยังไม่ถึง</summary>
+    private float CurrentBarHeight() => topBar != null ? topBar.sizeDelta.y : barHeight;
 
-        int targetIndex = Mathf.Clamp(skipToWaypointIndex, 0, waypoints.Length - 1);
-        return waypoints[targetIndex];
+    /// <summary>หยุดและ release เพลง cutscene (เรียกซ้ำได้)</summary>
+    private void StopCutsceneMusic()
+    {
+        if (!_cutsceneMusicInstance.isValid()) return;
+
+        _cutsceneMusicInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+        _cutsceneMusicInstance.release();
+        _cutsceneMusicInstance = default;
     }
 
     private void HideCreditsImmediate(bool stopCoroutines)

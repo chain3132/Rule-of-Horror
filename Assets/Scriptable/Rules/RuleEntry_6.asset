@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d45dcf287c33007408283061f0a39fc8, type: 3}
+  m_Name: RuleEntry_6
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableObject.RuleEntryData
+  ruleNumber: 6
+  title: The Bus
+  summary: A bus will stop in front of the pavilion. Read it before you stand up
+    - you only get on one
+  startHour: 24
+  startMinute: 0
+  endHour: 24
+  endMinute: 40
+  factSlots: 4
+  factsIfCooperative:
+  - Stay seated. A bus will come to you
+  - Get up to check a bus and it will wait as long as you like
+  - Sit back down and it moves on to the next one
+  - Take the one with people in it. An empty bus at this hour is not a bus
+  factsIfDefiant:
+  - Get on a bus
+  hands: []

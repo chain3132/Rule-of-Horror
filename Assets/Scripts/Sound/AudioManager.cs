@@ -50,6 +50,12 @@ public class AudioManager : MonoBehaviour
     private EventInstance rule5Untangle;   // loop ตอนกด E ค้างแก้สายพัน
     private bool _rule5BackgroundOk, _rule5ChingOk, _rule5UntangleOk;
 
+    // ── Rule 6 sounds ──
+    // เสียงเครื่องยนต์ของรถแต่ละคันไม่ได้อยู่ที่นี่ — Rule6Bus ถือ instance ของตัวเองเพื่อให้
+    // เสียงเกาะตัวรถตอนมันวิ่งเข้า/ออก และเพื่อให้คันที่ 4 "เงียบ" ได้ด้วยการเว้นช่อง event ว่าง
+    private EventInstance rule6Background; // เพลงพื้นหลังตลอดกฎ (หยุดตอนขึ้นรถ)
+    private bool _rule6BackgroundOk;
+
     Coroutine radioCoroutine;
     
     [SerializeField] private Transform radioTransform;
@@ -125,6 +131,8 @@ public class AudioManager : MonoBehaviour
         _rule5ChingOk      = TryCreate("event:/Rule5/Ching",             out rule5Ching);
         _rule5UntangleOk   = TryCreate("event:/Rule5/Untangle",          out rule5Untangle);
 
+        _rule6BackgroundOk = TryCreate("event:/Rule6/Background Rule 6", out rule6Background);
+
         // event พวกนี้โค้ดเรียกด้วย PlayOneShot — ถ้าใน FMOD ทำเป็น loop ไว้จะเสียงทับกันไม่หยุด
         foreach (string oneShotPath in new[]
                  {
@@ -148,6 +156,10 @@ public class AudioManager : MonoBehaviour
                      "event:/Rule5/Jumpscare",
                      "event:/Rule5/HeartAttack",
                      "event:/Rule5/Complete",
+                     "event:/Rule6/BusArrive",
+                     "event:/Rule6/BusDepart",
+                     "event:/Rule6/Board",
+                     "event:/Rule6/PhoneRing",
                  })
         {
             WarnIfLooping(oneShotPath);
@@ -693,6 +705,45 @@ public class AudioManager : MonoBehaviour
         SilenceHeartbeat();   // เสียงหัวใจเป็นของกลาง ถ้าไม่ดับตรงนี้จะค้างดังยาวข้ามโหมด
     }
 
+    // ─────────── Rule 6 Sounds (รถประจำทาง) ───────────
+
+    public void StartRule6Background()
+    {
+        if (!_rule6BackgroundOk) return;
+        rule6Background.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        rule6Background.start();
+    }
+
+    public void StopRule6Background()
+    {
+        if (!_rule6BackgroundOk) return;
+        rule6Background.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+    }
+
+    /// <summary>รถคันถัดไปเริ่มวิ่งเข้ามา — ยิงที่จุด approach ไม่ใช่ที่ผู้เล่น ให้เสียงมาจากหลังโค้ง</summary>
+    public void PlayRule6BusArrive(Vector3 position)
+        => SafeOneShot("event:/Rule6/BusArrive", position);
+
+    public void PlayRule6BusDepart(Vector3 position)
+        => SafeOneShot("event:/Rule6/BusDepart", position);
+
+    // ไม่มี DoorOpen / DoorClose — รถของกฎนี้ไม่มีประตู ผู้เล่นเดินขึ้นได้เลย
+
+    /// <summary>ผู้เล่นก้าวขึ้นรถ — เสียงสุดท้ายก่อนบทจบ</summary>
+    public void PlayRule6Board(Vector3 position)
+        => SafeOneShot("event:/Rule6/Board", position);
+
+    /// <summary>สายเข้าจากคนส่งข้อความ ตอนผู้เล่นขึ้นรถคันที่ 2 (ทางรอด) — ดังจากกระเป๋าผู้เล่น</summary>
+    public void PlayRule6PhoneRing()
+        => SafeOneShot("event:/Rule6/PhoneRing", ListenerPos);
+
+    /// <summary>เคลียร์เสียงทุกอย่างของ Rule 6 — เรียกตอนบทจบ / ถูกปิดกลางคัน</summary>
+    public void StopAllRule6Sounds()
+    {
+        StopRule6Background();
+        SilenceHeartbeat();   // เหตุผลเดียวกับ StopAllRule5Sounds
+    }
+
     // ─────────── Rule 2 Sounds ───────────
 
     private Vector3 ListenerPos =>
@@ -723,6 +774,10 @@ public class AudioManager : MonoBehaviour
         // หยุดเสียงวิทยุที่ Rule 2 ใช้
         StopRadio();
         StopPlayRadioPrayer();
+
+        // เสียงหัวใจเป็นของกลาง ถ้าไม่ดับตรงนี้จะค้างดังยาวข้ามโหมด
+        // (เหมือน StopAllRule5Sounds — Rule 2 ลืมบรรทัดนี้ไปตั้งแต่แรก)
+        SilenceHeartbeat();
     }
 
     /// <summary>เสียงโหยหวน (one-shot)</summary>
