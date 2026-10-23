@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Plugins/Sirenix/Odin Inspector/Modules/Unity.Addressables/manifest.txt.meta
 guid: d0cfc61a75590da4194ac26d5a51461e
 TextScriptImporter:
+========
+guid: 723e224036b227249a0f4a32c54942a6
+PrefabImporter:
+>>>>>>>> origin/main:Assets/Bus2&4/Bus2/BUS2.prefab.meta
   externalObjects: {}
   userData: 
   assetBundleName: 
