@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-String-Tables-Thai
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Localization-String-Tables-Thai
+  m_GUID: 31aef35d69e0ead4181febd03aad6276
+  m_SerializeEntries:
+  - m_GUID: 2e9d27811d991a447a175fee39ec8c21
+    m_Address: Dialogue_th
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-th
+    - Preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7a32f06db837a7741938a367466ec25b
+    m_Address: Rules_th
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-th
+    - Preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b132cdf3b73277e47a56ad0c7b889c5b
+    m_Address: UI_th
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-th
+    - Preload
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df6de23bcc10cf9468211f2e4a22b0f6
+    m_Address: Chat_th
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-th
+    - Preload
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 98c10b930902b174cb2e44032c3c0387, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 16337bc86c1df01479b65281b061642d, type: 2}
+    - {fileID: 11400000, guid: 6e7d500f0dfb08046828753e3dcdff0c, type: 2}

@@ -11,6 +11,13 @@ public class DialogueLine
     public string text;
     [Tooltip("วินาทีที่แสดงหลังพิมพ์ครบ ใช้ -1 ให้ระบบคำนวณอัตโนมัติจากความยาวข้อความ")]
     public float holdDuration = -1f;
+
+    /// <summary>
+    /// true = ข้อความนี้แปลมาแล้ว อย่าแปลซ้ำ — ใช้กับข้อความที่ต้องแปลก่อนแทนค่า เช่น
+    /// "ฟังเสียงระฆังให้ครบ {0} ครั้ง" ที่ผู้เรียกแทน {0} เองแล้วค่อยส่งมา
+    /// NonSerialized เพราะเป็นเรื่องของโค้ดที่เรียก ไม่ใช่ช่องที่คนเขียนบทต้องเห็นใน Inspector
+    /// </summary>
+    [NonSerialized] public bool alreadyTranslated;
 }
 
 /// <summary>
@@ -59,10 +66,14 @@ public class PlayerDialogueUI : MonoBehaviour
 
     #region Public API
 
-    /// <summary>แสดงบทพูดบรรทัดเดียว</summary>
-    public void ShowLine(string text, float holdDuration = -1f)
+    /// <summary>
+    /// แสดงบทพูดบรรทัดเดียว — ข้อความจะถูกแปลเป็นภาษาที่เลือกอยู่ให้เอง
+    /// alreadyTranslated = true ถ้าผู้เรียกแปลและแทนค่า {0} ไปแล้ว (ดู DialogueLine.alreadyTranslated)
+    /// </summary>
+    public void ShowLine(string text, float holdDuration = -1f, bool alreadyTranslated = false)
     {
-        ShowSequence(new[] { new DialogueLine { text = text, holdDuration = holdDuration } });
+        ShowSequence(new[] { new DialogueLine { text = text, holdDuration = holdDuration,
+                                                alreadyTranslated = alreadyTranslated } });
     }
 
     /// <summary>แสดงบทพูดหลายบรรทัดตามลำดับ จบแล้ว fire OnSequenceComplete</summary>
@@ -108,15 +119,24 @@ public class PlayerDialogueUI : MonoBehaviour
     {
         yield return FadeInRoutine();
 
+        // แปลตอนจะพิมพ์ ไม่ใช่ตอนเข้าคิว — บทพูดที่ต่อคิวไว้หลายบรรทัดแล้วผู้เล่นเปลี่ยนภาษากลางทาง
+        // บรรทัดที่ยังไม่ขึ้นจะออกมาเป็นภาษาใหม่
+        string text = line.alreadyTranslated ? line.text : L10n.T(line.text);
+        if (text == null) text = string.Empty;
+
         dialogueText.text = string.Empty;
-        foreach (char c in line.text)
+        foreach (char c in text)
         {
             dialogueText.text += c;
+
+            // U+200B คือจุดตัดคำของภาษาไทย มองไม่เห็น — ถ้ารอทุกตัวเหมือนตัวอักษร ประโยคไทย
+            // จะพิมพ์ช้าลงเป็นจังหวะกระตุกๆ ตามจำนวนคำ
+            if (c == '\u200B') continue;
             yield return new WaitForSeconds(typingSpeed);
         }
 
         float hold = line.holdDuration < 0
-            ? Mathf.Max(minHoldDuration, line.text.Length * durationPerChar)
+            ? Mathf.Max(minHoldDuration, text.Length * durationPerChar)
             : line.holdDuration;
         yield return new WaitForSeconds(hold);
 

@@ -575,8 +575,9 @@ public class CutsceneManager : MonoBehaviour
             if (_skipRequested) break;
 
             // ── ตั้งข้อความ ──
-            if (creditTextTop    != null) creditTextTop.text    = entry.line1;
-            if (creditTextBottom != null) creditTextBottom.text = entry.line2;
+            // ชื่อคนอยู่ในตารางแปลเป็นตัวเดิมทั้งสองภาษา — แปลเฉพาะตำแหน่ง/ชื่อทีม
+            if (creditTextTop    != null) creditTextTop.text    = L10n.T(entry.line1);
+            if (creditTextBottom != null) creditTextBottom.text = L10n.T(entry.line2);
 
             // ซ่อน bottom text ถ้าว่าง
             if (creditTextBottom != null)

@@ -130,7 +130,7 @@ namespace Rule2
                 interactionText.gameObject.SetActive(false);
             else
             {
-                interactionText.text = msg;
+                interactionText.text = L10n.T(msg);
                 interactionText.gameObject.SetActive(true);
             }
         }

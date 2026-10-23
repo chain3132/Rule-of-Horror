@@ -77,8 +77,15 @@ namespace Manager
             if (TimeManager.instance != null)
                 HandleClock(TimeManager.instance.currentHour, TimeManager.instance.currentMinute);
 
-            if (dayLabelText != null) dayLabelText.text = dayLabel;
+            if (dayLabelText != null) dayLabelText.text = L10n.T(dayLabel);
 
+            L10n.Changed += HandleLanguageChanged;
+            RefreshNotifications();
+        }
+
+        private void HandleLanguageChanged()
+        {
+            if (dayLabelText != null) dayLabelText.text = L10n.T(dayLabel);
             RefreshNotifications();
         }
 
@@ -92,6 +99,7 @@ namespace Manager
             }
 
             if (notifications != null) notifications.OnNotificationsChanged -= RefreshNotifications;
+            L10n.Changed -= HandleLanguageChanged;
         }
 
         // ─────────────────────────── Status Bar ───────────────────────────
@@ -147,8 +155,8 @@ namespace Manager
                 {
                     var card  = Instantiate(notificationCardPrefab, notificationRoot);
                     var texts = card.GetComponentsInChildren<TMP_Text>();
-                    if (texts.Length > 0) texts[0].text = items[i].title;
-                    if (texts.Length > 1) texts[1].text = items[i].body;
+                    if (texts.Length > 0) texts[0].text = items[i].DisplayTitle;
+                    if (texts.Length > 1) texts[1].text = items[i].DisplayBody;
                     if (texts.Length > 2) texts[2].text = notifications.TimeLabel(items[i]);
                     _spawned.Add(card);
                 }
@@ -159,8 +167,8 @@ namespace Manager
 
         private void FillSingleCard(PhoneNotification item)
         {
-            if (notificationTitleText != null) notificationTitleText.text = item.title;
-            if (notificationBodyText  != null) notificationBodyText.text  = item.body;
+            if (notificationTitleText != null) notificationTitleText.text = item.DisplayTitle;
+            if (notificationBodyText  != null) notificationBodyText.text  = item.DisplayBody;
             if (notificationTimeText  != null) notificationTimeText.text  = notifications.TimeLabel(item);
 
             if (notificationIcon == null || item.icon == null) return;

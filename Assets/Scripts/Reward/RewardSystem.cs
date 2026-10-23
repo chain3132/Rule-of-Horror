@@ -433,6 +433,8 @@ public class RewardSystem : MonoBehaviour
         var self = instance;
         if (self == null || string.IsNullOrEmpty(self.rewardPlaceholder)) return message;
 
-        return message.Replace(self.rewardPlaceholder, self._lastGrantedLabel);
+        // ชื่อรางวัลแปลตอนแทน ไม่ใช่ตอนเลือก — เก็บไว้เป็นต้นฉบับ ประวัติแชทที่วาดใหม่หลังเปลี่ยน
+        // ภาษาจะได้ชื่อรางวัลเป็นภาษาใหม่ด้วย
+        return message.Replace(self.rewardPlaceholder, L10n.T(self._lastGrantedLabel));
     }
 }

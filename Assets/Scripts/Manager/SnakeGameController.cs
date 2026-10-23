@@ -383,15 +383,15 @@ namespace Manager
 
         private void RefreshLabels()
         {
-            if (scoreText != null) scoreText.text = string.Format(scoreFormat, _score, _best);
+            if (scoreText != null) scoreText.text = L10n.Format(scoreFormat, _score, _best);
 
             if (bannerText == null) return;
 
             string banner = _phase switch
             {
-                Phase.Ready  => readyBanner,
-                Phase.Paused => pausedBanner,
-                Phase.Dead   => string.Format(deadBanner, _score),
+                Phase.Ready  => L10n.T(readyBanner),
+                Phase.Paused => L10n.T(pausedBanner),
+                Phase.Dead   => L10n.Format(deadBanner, _score),
                 _            => string.Empty,
             };
 

@@ -62,6 +62,13 @@ namespace Rule6
                  "เว้นว่าง = ลุกตรงจุดที่นั่ง (ติดเบาะ)")]
         [SerializeField] private Transform standPose;
 
+        [Tooltip("กล่องห้องโดยสาร — ใช้ตัดสินว่าผู้เล่น \"ลงจากรถแล้วจริงๆ\" รถจึงออกได้\n\n" +
+                 "ขนาดกล่องคือ Scale ของ Transform นี้ (1 = 1 เมตร) — ใช้ Scale tool ใน Scene view\n" +
+                 "ลากให้กล่องส้มคลุมห้องโดยสารของโมเดลพอดี ไม่ต้องมี collider\n\n" +
+                 "จำเป็นกับรถที่ผู้เล่นลงจากรถ = คันที่ 4 กับรถของฉากเปิด\n" +
+                 "เว้นว่าง = ใช้ระยะจากเบาะแทน ซึ่งรถยาว 10 เมตรเดินไปท้ายรถก็นับว่าลงแล้ว")]
+        [SerializeField] private Transform cabinBounds;
+
         [Tooltip("ระยะจากเบาะที่กด E นั่งได้ (เมตร)")]
         [SerializeField] private float seatRadius = 1.5f;
 
@@ -142,6 +149,31 @@ namespace Rule6
         /// แต่ตอนยืนมันกลับมาชนทุกอย่างตามปกติ
         /// </summary>
         public Transform StandPose => standPose;
+
+        /// <summary>มีกล่องห้องโดยสารให้เช็กไหม (ไม่มี = ผู้เรียกต้องใช้วิธีอื่นตัดสินว่าลงรถแล้ว)</summary>
+        public bool HasCabin => cabinBounds != null;
+
+        /// <summary>
+        /// จุดนี้อยู่ในห้องโดยสารไหม — margin (เมตร) ขยายกล่องออกทุกด้าน
+        ///
+        /// ใช้กล่องแทนระยะจากเบาะ เพราะรถยาวสิบเมตรแต่กว้างแค่สองเมตรครึ่ง ระยะจากเบาะเป็น
+        /// วงกลม วงที่ใหญ่พอจะพ้นประตูด้านข้าง ก็ยังอยู่ในรถถ้าเดินไปทางท้ายรถ — รถจึงออกไป
+        /// พร้อมผู้เล่นที่ยืนอยู่ท้ายรถ
+        ///
+        /// แปลงจุดเข้าไปในพิกัดของกล่อง แล้วกล่องคือ ±0.5 ทุกแกน (ขนาดจริงอยู่ใน scale)
+        /// margin เป็นเมตรจึงต้องหารด้วย scale ของแต่ละแกนก่อนบวก
+        /// </summary>
+        public bool IsInsideCabin(Vector3 worldPoint, float margin = 0f)
+        {
+            if (cabinBounds == null) return false;
+
+            Vector3 p = cabinBounds.InverseTransformPoint(worldPoint);
+            Vector3 s = cabinBounds.lossyScale;
+
+            return Mathf.Abs(p.x) <= 0.5f + margin / Mathf.Max(0.001f, Mathf.Abs(s.x))
+                && Mathf.Abs(p.y) <= 0.5f + margin / Mathf.Max(0.001f, Mathf.Abs(s.y))
+                && Mathf.Abs(p.z) <= 0.5f + margin / Mathf.Max(0.001f, Mathf.Abs(s.z));
+        }
 
         // ─────────────────────────── Setup ───────────────────────────
 
@@ -375,6 +407,7 @@ namespace Rule6
 
             DrawSeatedPlayer();
             DrawStandingPlayer();
+            // กล่องห้องโดยสารวาดตัวเองอยู่แล้ว (BusCabinBounds) — ไม่วาดซ้ำที่นี่
         }
 
         /// <summary>

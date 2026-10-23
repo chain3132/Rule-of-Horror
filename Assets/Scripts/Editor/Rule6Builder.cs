@@ -69,6 +69,9 @@ public static class Rule6Builder
     // inside the seat mesh, and the player cannot move at all - so every bus the player stands
     // up in needs this, and the fifth decimal of it is eyeballed against the real model.
     private const float AisleStep = 0.9f;
+
+    // Roof height of the passenger cabin box, from the bus origin at road level.
+    private const float CabinHeight = 3.2f;
     private static readonly Vector3 InteriorOffset = new Vector3(0f, 2.2f, 0f);
     private static readonly Vector3 HeadLightLeft  = new Vector3(-0.9f, 0.9f, BusLength * 0.5f);
     private static readonly Vector3 HeadLightRight = new Vector3(0.9f, 0.9f, BusLength * 0.5f);
@@ -229,6 +232,7 @@ public static class Rule6Builder
         // get one so nobody has to work out which bus was supposed to have it.
         Transform standPose = EnsureChild(bus, "Stand Pose",
             sitPose.position + bus.right * AisleStep, seat.rotation);
+        Transform cabin = EnsureCabin(bus);
 
         Transform interior  = EnsureChild(bus, "Interior Light", bus.TransformPoint(InteriorOffset), bus.rotation);
         Transform headLeft  = EnsureChild(bus, "Head Light L",   bus.TransformPoint(HeadLightLeft),  bus.rotation);
@@ -245,6 +249,7 @@ public static class Rule6Builder
         so.FindProperty("seat").objectReferenceValue    = seat;
         so.FindProperty("sitPose").objectReferenceValue   = sitPose;
         so.FindProperty("standPose").objectReferenceValue = standPose;
+        so.FindProperty("cabinBounds").objectReferenceValue = cabin;
 
         SetArray(so.FindProperty("headLights"), new Object[] { headL, headR });
 
@@ -564,6 +569,7 @@ public static class Rule6Builder
             seat.position - Vector3.up * SeatCushionHeight, seat.rotation);
         Transform standPose = EnsureChild(bus, "Stand Pose",
             sitPose.position + bus.right * AisleStep, seat.rotation);
+        Transform cabin = EnsureCabin(bus);
 
         Transform headLeft  = EnsureChild(bus, "Head Light L", bus.TransformPoint(HeadLightLeft),  bus.rotation);
         Transform headRight = EnsureChild(bus, "Head Light R", bus.TransformPoint(HeadLightRight), bus.rotation);
@@ -579,6 +585,7 @@ public static class Rule6Builder
         so.FindProperty("seat").objectReferenceValue      = seat;
         so.FindProperty("sitPose").objectReferenceValue   = sitPose;
         so.FindProperty("standPose").objectReferenceValue = standPose;
+        so.FindProperty("cabinBounds").objectReferenceValue = cabin;
         so.FindProperty("engineEvent").stringValue        = "event:/Rule6/BusEngine";
         so.FindProperty("flickerInterior").boolValue    = false;
         so.FindProperty("headLightsOff").boolValue      = false;
@@ -634,7 +641,9 @@ public static class Rule6Builder
                           "into the aisle until it clears the seat and the seat back - that capsule is " +
                           "the real collider the player stands up into, and one left on the seat leaves " +
                           "them stuck inside it. Bus 4 and the Intro Bus are the two that matter; they " +
-                          "are the only buses the player stands up in");
+                          "are the only buses the player stands up in. Those two also need their " +
+                          "Cabin Bounds (orange box) scaled to the real passenger cabin - the bus " +
+                          "only leaves once the player is outside that box");
         report.AppendLine("   5. Paeng needs an Animator trigger or a Pointing Visual - she is the only " +
                           "clue which bus is the way out");
         report.AppendLine("   6. Write the four Ending Object screens on Rule6 and the dialogue lines " +
@@ -677,6 +686,32 @@ public static class Rule6Builder
         go.transform.SetPositionAndRotation(position, rotation);
 
         return go.transform;
+    }
+
+    /// <summary>
+    /// The passenger cabin as a box: its SCALE is its size in metres, so it is resized with the
+    /// Scale tool rather than by typing numbers. No collider - it only answers "is the player
+    /// still aboard", and a trigger on a moving bus would fire every zone script it touches.
+    ///
+    /// Size is only applied when the box is created, like every other holder here, so
+    /// re-running the tool never undoes a box fitted to the real model.
+    /// </summary>
+    private static Transform EnsureCabin(Transform bus)
+    {
+        Transform cabin = bus.Find("Cabin Bounds");
+        if (cabin == null)
+        {
+            cabin = EnsureChild(bus, "Cabin Bounds",
+                bus.TransformPoint(new Vector3(0f, CabinHeight * 0.5f, 0f)), bus.rotation);
+            cabin.localScale = new Vector3(BusWidth, CabinHeight, BusLength);
+        }
+
+        // Outside the "already exists" branch on purpose: boxes built before this component
+        // existed are empty objects with nothing to see, and they need it just as much
+        if (cabin.GetComponent<BusCabinBounds>() == null)
+            Undo.AddComponent<BusCabinBounds>(cabin.gameObject);
+
+        return cabin;
     }
 
     private static Light EnsureLight(Transform owner, LightType type)

@@ -98,7 +98,7 @@ namespace Manager
 
             int elapsed = TimeManager.instance.CurrentTotalMinutes - notification.TotalMinutes;
             return elapsed >= 0 && elapsed <= recentMinutes
-                 ? recentLabel
+                 ? L10n.T(recentLabel)
                  : $"{notification.hour:00}:{notification.minute:00}";
         }
     }

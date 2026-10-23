@@ -137,7 +137,7 @@ public class FriendListController : MonoBehaviour
 
             // เซ็ตชื่อ + รูปโปรไฟล์บนปุ่มจากข้อมูล contact
             if (contact.buttonNameText != null)
-                contact.buttonNameText.text = contact.contactName;
+                contact.buttonNameText.text = L10n.T(contact.contactName);
             if (contact.buttonAvatarImage != null && contact.avatar != null)
                 contact.buttonAvatarImage.sprite = contact.avatar;
 
@@ -151,6 +151,15 @@ public class FriendListController : MonoBehaviour
         TimeManager.OnTimeChanged += CheckNotifications;
         if (chatUI != null)
             chatUI.OnContactConversationEnd += HandleConversationEnd;
+        L10n.Changed += RefreshContactNames;
+    }
+
+    /// <summary>ชื่อบนปุ่ม contact ถูกเซ็ตครั้งเดียวตอน Awake — เปลี่ยนภาษาแล้วต้องเซ็ตใหม่</summary>
+    private void RefreshContactNames()
+    {
+        foreach (var contact in contacts)
+            if (contact.buttonNameText != null)
+                contact.buttonNameText.text = L10n.T(contact.contactName);
     }
 
     private void OnDisable()
@@ -158,6 +167,7 @@ public class FriendListController : MonoBehaviour
         TimeManager.OnTimeChanged -= CheckNotifications;
         if (chatUI != null)
             chatUI.OnContactConversationEnd -= HandleConversationEnd;
+        L10n.Changed -= RefreshContactNames;
     }
 
     // ─────────────────────────── Notification ───────────────────────────
@@ -206,9 +216,19 @@ public class FriendListController : MonoBehaviour
 
         // การ์ดบนหน้าโฮม — ผู้เล่นที่ยังไม่เปิดโทรศัพท์จะได้เห็นว่ามีอะไรรออยู่ตอนเปิดมา
         if (notificationCenter != null)
-            notificationCenter.Push(contact.contactName,
-                                    string.Format(newMessageBody, UnreadCount(contact)),
-                                    contact.avatar, messageAppIndex, contact);
+        {
+            int unread = UnreadCount(contact);
+            notificationCenter.Push(new PhoneNotification
+            {
+                title      = contact.contactName,
+                body       = string.Format(newMessageBody, unread),
+                bodyFormat = newMessageBody,   // แปลตอนวาด — ดู PhoneNotification.DisplayBody
+                bodyArg    = unread,
+                icon       = contact.avatar,
+                appIndex   = messageAppIndex,
+                source     = contact
+            });
+        }
 
         if (isFirstFromThisContact) RebuildNavigation();
 

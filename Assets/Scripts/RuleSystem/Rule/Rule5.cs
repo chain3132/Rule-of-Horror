@@ -323,7 +323,9 @@ namespace RuleSystem.Rule
             AudioManager.instance.StartRule5Background();
 
             if (PlayerDialogueUI.instance != null)
-                PlayerDialogueUI.instance.ShowLine(introHint.Replace("{0}", requiredBells.ToString()), introHintDuration);
+                // แปลก่อนแทน {0} — ข้อความที่แทนเลขไปแล้วไม่ตรงกับคำไหนในตารางแปล
+                PlayerDialogueUI.instance.ShowLine(L10n.T(introHint).Replace("{0}", requiredBells.ToString()),
+                                                   introHintDuration, alreadyTranslated: true);
         }
 
         /// <summary>ลุกออกจากศาลาแล้วกลับมานั่ง = ตัดสินผล</summary>

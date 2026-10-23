@@ -1,0 +1,296 @@
+# Rule of Horror - translation import file
+# Columns: source <TAB> english <TAB> thai <TAB> context
+# "source" is the text exactly as it appears in the game data; it is what the key is made from.
+# Escapes: \n newline, \t tab, \\ backslash. Thai contains invisible U+200B word breaks.
+# Importing only fills EMPTY table cells - edits made in the Localization Tables window win.
+Honey, dinner’s getting cold. I already warmed it up for you.	Honey, dinner’s getting cold. I already warmed it up for you.	ลูก กับข้าว​จะ​เย็น​หมด​แล้ว​นะ แม่​อุ่น​ไว้​ให้​แล้ว	Chat/Mom_Rule3#0
+Ton called me saying he couldn't reach you. Where are you?	Ton called me saying he couldn't reach you. Where are you?	ต้น​โทร​มา​บอก​แม่​ว่า​ติดต่อ​ลูก​ไม่ได้ ตอนนี้​อยู่​ที่​ไหน	Chat/Mom_Rule3#1
+...	...	...	Chat/Mom_Rule3#2 | Chat/Mom_Rule5#2 | Chat/Ton_Rule2#2 (+6)
+Alright, I'll be waiting. Just don't sit out there by yourself for too long.	Alright, I'll be waiting. Just don't sit out there by yourself for too long.	จ้ะ แม่​รอ​อยู่​นะ แต่​อย่า​นั่ง​อยู่​ข้าง​นอก​คน​เดียว​นาน​นัก​ล่ะ	Chat/Mom_Rule3#3
+Which shed, sweetheart? Stay calm, and don't move from there.	Which shed, sweetheart? Stay calm, and don't move from there.	ศาลา​ไหน​ลูก ใจ​เย็นๆ นะ อยู่​ตรง​นั้น​อย่า​ไป​ไหน	Chat/Mom_Rule3#4
+If anyone texts you giving instructions, do NOT follow them.	If anyone texts you giving instructions, do NOT follow them.	ถ้า​มี​ใคร​ส่ง​ข้อความ​มา​สั่ง​ให้​ทำ​อะไร ห้าม​ทำ​ตาม​เด็ดขาด​นะ	Chat/Mom_Rule3#5
+A few years back, the neighbor told me about this one shed...	A few years back, the neighbor told me about this one shed...	เมื่อ​หลาย​ปี​ก่อน ข้าง​บ้าน​เคย​เล่า​ให้​แม่​ฟัง​เรื่อง​ศาลา​หลัง​หนึ่ง...	Chat/Mom_Rule3#6
+[Message failed to send ↻]	[Message failed to send ↻]	[ส่ง​ข้อความ​ไม่​สำเร็จ ↻]	Chat/Mom_Rule3#7
+Honey, dinner’s getting cold. Did you eat yet?	Honey, dinner’s getting cold. Did you eat yet?	ลูก กับ​ข้าว​เย็น​หมด​แล้ว กิน​อะไร​หรือ​ยัง	Chat/Mom_Rule3#8
+I’m fine, Mom. The bus is running late, but I’ll be home soon.	I’m fine, Mom. The bus is running late, but I’ll be home soon.	ผม​ไม่​เป็นไร​ครับ​แม่ รถเมล์​มา​ช้า เดี๋ยว​ก็​ถึง​บ้าน​แล้ว	Chat/Mom_Rule3/reply#0
+Mom, I’m stuck at a roadside shed. Things feel really off here.	Mom, I’m stuck at a roadside shed. Things feel really off here.	แม่ ผม​ติด​อยู่​ที่​ศาลา​ริม​ทาง ที่นี่​มัน​แปลกๆ มาก​เลย	Chat/Mom_Rule3/reply#1
+weetheart, Ton is driving out to get you now.	weetheart, Ton is driving out to get you now.	ลูก ต้น​กำลัง​ขับ​รถ​ไป​รับ​แล้ว​นะ	Chat/Mom_Rule5#0
+I told him to check the shed near the canal bridge.	I told him to check the shed near the canal bridge.	แม่​บอก​ให้​เขา​ไป​ดู​ที่​ศาลา​ใกล้​สะพาน​ข้าม​คลอง	Chat/Mom_Rule5#1
+Stay right there. Don't walk away.	Stay right there. Don't walk away.	อยู่​ตรง​นั้น​นะ อย่า​เดิน​ไป​ไหน	Chat/Mom_Rule5#3
+It's too late, sweetie. He already drove off, and now I can't reach him at all.	It's too late, sweetie. He already drove off, and now I can't reach him at all.	ไม่​ทัน​แล้ว​ลูก เขา​ขับ​ออกไป​แล้ว ตอนนี้​แม่​ติดต่อ​เขา​ไม่ได้​เลย	Chat/Mom_Rule5#4
+I turned on the porch lights for you.	I turned on the porch lights for you.	แม่​เปิด​ไฟ​หน้า​บ้าน​รอ​ไว้​ให้​แล้ว​นะ	Chat/Mom_Rule5#5
+Can you see the light?	Can you see the light?	ลูก​เห็น​แสง​ไฟ​ไหม	Chat/Mom_Rule5#6 | Chat/Mom_Rule5#7
+Really? Okay, Mom. I’ll wait for him here.	Really? Okay, Mom. I’ll wait for him here.	จริง​เหรอ​ครับ โอเค​แม่ ผม​จะ​รอ​เขา​อยู่​ตรง​นี้	Chat/Mom_Rule5/reply#0
+Tell him not to come, Mom! It’s not safe here!	Tell him not to come, Mom! It’s not safe here!	แม่​บอก​เขา​ว่า​ไม่​ต้อง​มา! ที่นี่​ไม่​ปลอดภัย!	Chat/Mom_Rule5/reply#1
+Where the hell are you? Thought you said you’d be home by 7	Where the hell are you? Thought you said you’d be home by 7	มึง​อยู่​ไหน​วะ ไหน​บอก​ว่า​จะ​ถึง​บ้าน​ก่อน​หนึ่ง​ทุ่ม​ไง	Chat/Ton_Rule2#0
+Your mom even texted me asking where you are.	Your mom even texted me asking where you are.	แม่​มึง​ยัง​ทัก​มา​ถาม​กู​เลย​ว่า​มึง​อยู่​ไหน	Chat/Ton_Rule2#1
+"Another one"? Which one do you mean?	"Another one"? Which one do you mean?	"อีก​หลัง" เหรอ หลัง​ไหน​วะ	Chat/Ton_Rule2#3
+What texts? Calm down. Which shed are you at?	What texts? Calm down. Which shed are you at?	ข้อความ​อะไร ใจ​เย็นๆ ก่อน มึง​อยู่​ศาลา​ไหน	Chat/Ton_Rule2#4
+The rundown-looking one. It’s about a kilometer down from the usual stop.	The rundown-looking one. It’s about a kilometer down from the usual stop.	หลัง​ที่​ดู​โทรมๆ อยู่​เลย​ป้าย​ประจำ​ไป​ประมาณ​กิโล​นึง	Chat/Ton_Rule2#5
+Wait a second...	Wait a second...	เดี๋ยว​นะ...	Chat/Ton_Rule2#6
+Is it that shed from the stories?	Is it that shed from the stories?	ศาลา​หลัง​ที่​เขา​เล่าลือ​กัน​รึเป​ล่า​วะ	Chat/Ton_Rule2#7
+Don't tell me you're...	Don't tell me you're...	อย่า​บอก​นะ​ว่า​มึง...	Chat/Ton_Rule2#8
+[Disconnected / No further messages]	[Disconnected / No further messages]	[การ​เชื่อม​ต่อ​ขาด​หาย / ไม่​มี​ข้อความ​เพิ่ม​เติม]	Chat/Ton_Rule2#9
+Still waiting for the bus. The usual shed got wrecked by the storm, so I had to move to another one	Still waiting for the bus. The usual shed got wrecked by the storm, so I had to move to another one	ยัง​รอ​รถเมล์​อยู่​เลย ศาลา​ประจำ​โดน​พายุ​พัง​ไป​แล้ว เลย​ต้อง​ย้าย​มา​รอ​อีก​หลัง	Chat/Ton_Rule2/reply#0
+Ton, I’m stuck at this waiting shed. Someone’s sending me weird texts	Ton, I’m stuck at this waiting shed. Someone’s sending me weird texts	ต้น กู​ติด​อยู่​ที่​ศาลา​รอ​รถ มี​ใคร​ไม่​รู้​ส่ง​ข้อความ​แปลกๆ มา​หา​กู	Chat/Ton_Rule2/reply#1 | Chat/Ton_Rule2/reply#3
+Still waiting for the bus. The usual shed got wrecked by the storm, so I had to move to another one.	Still waiting for the bus. The usual shed got wrecked by the storm, so I had to move to another one.	ยัง​รอ​รถเมล์​อยู่​เลย ศาลา​ประจำ​โดน​พายุ​พัง​ไป​แล้ว เลย​ต้อง​ย้าย​มา​รอ​อีก​หลัง	Chat/Ton_Rule2/reply#2
+You still there? I just went and asked my uncle about it.	You still there? I just went and asked my uncle about it.	ยัง​อยู่​ไหม​วะ กู​เพิ่ง​ไป​ถาม​ลุง​มา	Chat/Ton_Rule4#0
+[Voice Message 0:00 - Playback Failed]	[Voice Message 0:00 - Playback Failed]	[ข้อความ​เสียง 0:00 - เล่น​ไม่​สำเร็จ]	Chat/Ton_Rule4#1
+Okay, hold on. Typing it out.	Okay, hold on. Typing it out.	โอเค รอ​แป๊บ กู​พิมพ์​ให้	Chat/Ton_Rule4#3
+I'm not messing around. Just listen.	I'm not messing around. Just listen.	กู​ไม่ได้​ล้อเล่น ฟัง​กู​ก่อน	Chat/Ton_Rule4#4
+My uncle said years ago, a woman was waiting for the bus at that shed.	My uncle said years ago, a woman was waiting for the bus at that shed.	ลุง​บอก​ว่า​เมื่อ​หลาย​ปี​ก่อน มี​ผู้หญิง​คน​หนึ่ง​นั่ง​รอ​รถเมล์​อยู่​ที่​ศาลา​นั้น	Chat/Ton_Rule4#5
+There was another guy with her that night.	There was another guy with her that night.	คืน​นั้น​มี​ผู้ชาย​อีก​คน​อยู่​กับ​เธอ​ด้วย	Chat/Ton_Rule4#6
+But by morning, all they found was...	But by morning, all they found was...	แต่​พอ​เช้า​มา สิ่ง​เดียว​ที่​เขา​เจอ​คือ...	Chat/Ton_Rule4#7
+[This message was unsent]	[This message was unsent]	[ข้อความ​นี้​ถูก​ยกเลิก​การ​ส่ง]	Chat/Ton_Rule4#8
+DO NOT FOLLOW ANY OF THE RULES!!	DO NOT FOLLOW ANY OF THE RULES!!	อย่า​ทำ​ตาม​กฎ​ข้อ​ไหน​ทั้งนั้น!!	Chat/Ton_Rule4#9 | Chat/Ton_Rule4#10 | Chat/Ton_Rule4#11
+I can't play it. Just text me—what did your uncle say?	I can't play it. Just text me—what did your uncle say?	เปิด​ฟัง​ไม่ได้​ว่ะ พิมพ์​มา​เลย ลุง​มึง​ว่า​ไง​บ้าง	Chat/Ton_Rule4/reply#0
+Can you not mess around right now? Just tell me!	Can you not mess around right now? Just tell me!	อย่า​เพิ่ง​เล่น​ได้​ไหม​วะ บอก​มา​เลย!	Chat/Ton_Rule4/reply#1
+I'm at the shed.	I'm at the shed.	กู​ถึง​ศาลา​แล้ว	Chat/Ton_Rule6#0
+Where are you?	Where are you?	มึง​อยู่​ไหน	Chat/Ton_Rule6#1
+I’m standing right in front of that bench. There’s no one here.	I’m standing right in front of that bench. There’s no one here.	กู​ยืน​อยู่​หน้า​ม้า​นั่ง​นั่น​เลย ไม่​เห็น​มี​ใคร​สัก​คน	Chat/Ton_Rule6#3
+I don't see you either. The shed is completely empty. Just a single light.	I don't see you either. The shed is completely empty. Just a single light.	กู​ก็​ไม่​เห็น​มึง​เหมือนกัน ศาลา​ว่าง​เปล่า มี​แค่​ไฟ​ดวง​เดียว	Chat/Ton_Rule6#4
+Listen, let me finish what my uncle told me.	Listen, let me finish what my uncle told me.	ฟัง​นะ ให้​กู​เล่า​เรื่อง​ที่​ลุง​บอก​ให้​จบ​ก่อน	Chat/Ton_Rule6#5
+That woman was named Paeng. Years ago, she was waiting for a bus at this shed when she got sent a set of rules—just like you did.	That woman was named Paeng. Years ago, she was waiting for a bus at this shed when she got sent a set of rules—just like you did.	ผู้หญิง​คน​นั้น​ชื่อ​แป้ง เมื่อ​หลาย​ปี​ก่อน​เธอ​นั่ง​รอ​รถเมล์​อยู่​ที่​ศาลา​นี้ แล้ว​ก็​มี​คน​ส่ง​กฎ​มา​ให้​เธอ—เหมือน​ที่​มึง​โดน​เลย	Chat/Ton_Rule6#6
+A stranger was there with her that night. They both followed the rules together and almost made it to the end.	A stranger was there with her that night. They both followed the rules together and almost made it to the end.	คืน​นั้น​มี​คน​แปลก​หน้า​อยู่​กับ​เธอ​ด้วย สอง​คน​ทำ​ตาม​กฎ​ด้วยกัน​จน​เกือบ​รอด​ถึง​ตอน​จบ	Chat/Ton_Rule6#7
+But the last bus could only take one person.	But the last bus could only take one person.	แต่​รถเมล์​คัน​สุดท้าย​รับ​ได้​แค่​คน​เดียว	Chat/Ton_Rule6#8
+By morning, the shed was empty. Paeng vanished, and while the guy made it home... no one ever saw him again.	By morning, the shed was empty. Paeng vanished, and while the guy made it home... no one ever saw him again.	พอ​เช้า​มา​ศาลา​ก็​ว่าง​เปล่า แป้ง​หาย​ตัว​ไป ส่วน​ผู้ชาย​คน​นั้น​ถึง​จะ​กลับ​ถึง​บ้าน... แต่​ก็​ไม่​มี​ใคร​เห็น​เขา​อีก​เลย	Chat/Ton_Rule6#9
+My grandma said ever since then, anyone who wanders into that shed receives texts from an unknown number.	My grandma said ever since then, anyone who wanders into that shed receives texts from an unknown number.	ยาย​กู​บอก​ว่า​ตั้งแต่​นั้น​มา ใคร​หลง​เข้า​ไป​ใน​ศาลา​นั้น​จะ​ได้​ข้อความ​จาก​เบอร์​แปลก	Chat/Ton_Rule6#10
+Bro...	Bro...	เพื่อน...	Chat/Ton_Rule6#11
+The person texting you... my uncle thinks it might be the guy who survived that night	The person texting you... my uncle thinks it might be the guy who survived that night	คน​ที่​ส่ง​ข้อความ​หา​มึง... ลุง​คิด​ว่า​อาจ​เป็น​ผู้ชาย​ที่​รอด​คืน​นั้น	Chat/Ton_Rule6#12
+He’s not trying to help you. He’s trying to find someone to take his place.	He’s not trying to help you. He’s trying to find someone to take his place.	เขา​ไม่ได้​จะ​ช่วย​มึง เขา​กำลัง​หา​คน​มา​แทนที่​ตัวเอง	Chat/Ton_Rule6#13
+My uncle said Paeng never actually killed anyone.	My uncle said Paeng never actually killed anyone.	ลุง​บอก​ว่า​แป้ง​ไม่​เคย​ฆ่า​ใคร​เลย​สัก​คน	Chat/Ton_Rule6#14
+Everyone who died there was consumed by their own fear.	Everyone who died there was consumed by their own fear.	ทุก​คน​ที่​ตาย​ที่​นั่น ถูก​ความ​กลัว​ของ​ตัวเอง​กลืน​กิน​ไป​หมด	Chat/Ton_Rule6#15
+I don't know. My uncle only said...	I don't know. My uncle only said...	กู​ไม่​รู้ ลุง​บอก​แค่​ว่า...	Chat/Ton_Rule6#17
+Yeah. But it’s not too late. My uncle said...	Yeah. But it’s not too late. My uncle said...	ใช่ แต่​ยัง​ไม่​สาย​เกินไป ลุง​บอก​ว่า...	Chat/Ton_Rule6#18
+"DO NOT get on the bus he tells you to get on."	"DO NOT get on the bus he tells you to get on."	"อย่า​ขึ้น​รถ​คัน​ที่​เขา​บอก​ให้​ขึ้น​เด็ดขาด"	Chat/Ton_Rule6#19
+I’ll wait right here until you get out.	I’ll wait right here until you get out.	กู​จะ​รอ​อยู่​ตรง​นี้​จนกว่า​มึง​จะ​ออก​มา	Chat/Ton_Rule6#20
+[Ton went offline]	[Ton went offline]	[ต้น​ออฟไลน์​แล้ว]	Chat/Ton_Rule6#21
+[A few seconds later, a chat from an unknown sender popped up]	[A few seconds later, a chat from an unknown sender popped up]	[ไม่กี่​วินาที​ต่อมา มี​แชท​จาก​ผู้​ส่ง​ที่​ไม่​รู้จัก​เด้ง​ขึ้นมา]	Chat/Ton_Rule6#22
+[Unknown: Your friend talks too much.]\t	[Unknown: Your friend talks too much.]\t	[ไม่​ทราบ​ชื่อ: เพื่อน​คุณ​พูด​มาก​เกินไป​นะ]	Chat/Ton_Rule6#23
+I’m sitting inside on the bench. You're here already?	I’m sitting inside on the bench. You're here already?	กู​นั่ง​อยู่​บน​ม้า​นั่ง​ใน​ศาลา​เนี่ย มึง​มา​ถึง​แล้ว​เหรอ	Chat/Ton_Rule6/reply#0
+No way. I’m looking around right now, and there’s no one.	No way. I’m looking around right now, and there’s no one.	ไม่​จริง​น่า กู​มอง​รอบๆ อยู่​เนี่ย ไม่​มี​ใคร​เลย	Chat/Ton_Rule6/reply#1
+So what am I supposed to do now?!	So what am I supposed to do now?!	แล้ว​กู​ต้อง​ทำ​ยังไง​วะ?!	Chat/Ton_Rule6/reply#2
+Wait... so I’ve been following his orders this whole time?	Wait... so I’ve been following his orders this whole time?	เดี๋ยว​นะ... งั้น​ที่​ผ่าน​มา​กู​ทำ​ตาม​คำ​สั่ง​เขา​มา​ตลอด​เลย​เหรอ	Chat/Ton_Rule6/reply#3
+What would you like to eat today, dear?	What would you like to eat today, dear?	วันนี้​อยาก​กิน​อะไร​จ๊ะ​ลูก	Chat/OpeningIntro#0
+I'll make it for you so you can eat as soon as you get home.	I'll make it for you so you can eat as soon as you get home.	เดี๋ยว​แม่​ทำ​ไว้​ให้ กลับ​ถึง​บ้าน​จะ​ได้​กิน​เลย	Chat/OpeningIntro#1
+ahmm	ahmm	อืมม	Chat/OpeningIntro#2 | Chat/OpeningRule1#5 | Chat/Rule2#7
+Great! I just bought some pork	Great! I just bought some pork	ดี​เลย! แม่​เพิ่ง​ซื้อ​หมู​มา​พอดี	Chat/OpeningIntro#3
+Great! Then I'll add some extra pork for you	Great! Then I'll add some extra pork for you	ดี​เลย! งั้น​แม่​ใส่​หมู​เพิ่ม​ให้​นะ	Chat/OpeningIntro#4
+Pad Krapow	Pad Krapow	ผัด​กะเพรา	Chat/OpeningIntro/reply#0
+Omelette Rice	Omelette Rice	ข้าว​ไข่​เจียว	Chat/OpeningIntro/reply#1
+Do you believe in an afterlife? Some people do	Do you believe in an afterlife? Some people do	คุณ​เชื่อ​เรื่อง​ชีวิต​หลัง​ความ​ตาย​ไหม บาง​คน​ก็​เชื่อ	Chat/OpeningRule1#0
+ but some don't. And if we die, where do we go next?	 but some don't. And if we die, where do we go next?	แต่​บาง​คน​ก็​ไม่​เชื่อ แล้ว​ถ้า​เรา​ตาย เรา​จะ​ไป​ที่​ไหน​ต่อ	Chat/OpeningRule1#1
+Or is it just pitch black, like switching off the lights?	Or is it just pitch black, like switching off the lights?	หรือ​มัน​ก็​แค่​มืด​สนิท เหมือน​ปิด​ไฟ	Chat/OpeningRule1#2
+It depends on whether you're ready to bear the burden that follows	It depends on whether you're ready to bear the burden that follows	ขึ้นอยู่​กับ​ว่า​คุณ​พร้อม​จะ​แบก​รับ​สิ่ง​ที่​ตาม​มา​หรือ​เปล่า	Chat/OpeningRule1#3
+If you want to survive this situation, first, you must not go any further	If you want to survive this situation, first, you must not go any further	ถ้า​อยาก​รอด​จาก​เรื่อง​นี้ ข้อ​แรก คุณ​ห้าม​ไป​ไกล​กว่า​นี้	Chat/OpeningRule1#4
+Good luck	Good luck	โชค​ดี	Chat/OpeningRule1#6
+Just follow the rules and wait until the time comes. First, 19:00 - 19:40. Good luck	Just follow the rules and wait until the time comes. First, 19:00 - 19:40. Good luck	แค่​ทำ​ตาม​กฎ​แล้ว​รอ​จนกว่า​จะ​ถึง​เวลา ข้อ​แรก 19:00 - 19:40 โชค​ดี	Chat/OpeningRule1#7
+Don't be ridiculous. I don't believe in children's fairy tales	Don't be ridiculous. I don't believe in children's fairy tales	ตลก​แล้ว ผม​ไม่​เชื่อ​นิทาน​หลอก​เด็ก​หรอก	Chat/OpeningRule1/reply#0
+And what do I have to do?	And what do I have to do?	แล้ว​ผม​ต้อง​ทำ​อะไร	Chat/OpeningRule1/reply#1
+The night is still long. Having something to ease your mind would be better, wouldn't it?	The night is still long. Having something to ease your mind would be better, wouldn't it?	คืน​นี้​ยัง​อีก​ยาว​ไกล มี​อะไร​ไว้​ให้​สบาย​ใจ​หน่อย​ก็​ดี​กว่า​ไม่ใช่​เหรอ	Chat/Rule2#0
+Rule number 2	Rule number 2	กฎ​ข้อ​ที่ 2	Chat/Rule2#2
+When you're sitting at the pavilion and the only light that helps you see goes out	When you're sitting at the pavilion and the only light that helps you see goes out	เมื่อ​คุณ​นั่ง​อยู่​ใน​ศาลา แล้ว​ไฟ​ดวง​เดียว​ที่​ช่วย​ให้​มอง​เห็น​ดับ​ลง	Chat/Rule2#3
+ou must get up and turn the light back on and return to your seat. Also, before you sit back down	ou must get up and turn the light back on and return to your seat. Also, before you sit back down	คุณ​ต้อง​ลุก​ไป​เปิด​ไฟ​ให้​ติด​อีก​ครั้ง​แล้ว​กลับมา​ที่​นั่ง และ​ก่อน​จะ​นั่ง​ลง	Chat/Rule2#4
+don't forget to turn on the radio. Then, once you have the light and radio on	don't forget to turn on the radio. Then, once you have the light and radio on	อย่า​ลืม​เปิด​วิทยุ​ด้วย จากนั้น​เมื่อ​ไฟ​กับ​วิทยุ​เปิด​แล้ว	Chat/Rule2#5
+return to your seat and wait for the radio to turn off."	return to your seat and wait for the radio to turn off."	ให้​กลับไป​ที่​นั่ง​แล้ว​รอ​จนกว่า​วิทยุ​จะ​ดับ	Chat/Rule2#6
+You can't escape this	You can't escape this	คุณ​หนี​เรื่อง​นี้​ไม่​พ้น​หรอก	Chat/Rule2#8
+It's not difficult	It's not difficult	มัน​ไม่​ยาก​หรอก	Chat/Rule2#9
+You just have to turn on the light and the radio and return to your seat	You just have to turn on the light and the radio and return to your seat	คุณ​แค่​ต้อง​เปิด​ไฟ เปิด​วิทยุ แล้ว​กลับมา​ที่​นั่ง	Chat/Rule2#10
+Wait until the radio turns off. But the path isn't that simple, is it?	Wait until the radio turns off. But the path isn't that simple, is it?	รอ​จน​วิทยุ​ดับ แต่​ทาง​ไป​มัน​ไม่​ง่าย​ขนาด​นั้น​หรอก​ใช่​ไหม	Chat/Rule2#11
+f the light doesn't come on, you have to fix it. Simple. As for the time, 20:00 - 20:40	f the light doesn't come on, you have to fix it. Simple. As for the time, 20:00 - 20:40	ถ้า​ไฟ​ไม่​ติด คุณ​ก็​ต้อง​ซ่อม​เอง ง่ายๆ ส่วน​เวลา​คือ 20:00 - 20:40	Chat/Rule2#12
+May you survive and be safe	May you survive and be safe	ขอ​ให้​รอด​ปลอดภัย	Chat/Rule2#13
+That's enough, I don't want to play anymore. Go die somewhere!	That's enough, I don't want to play anymore. Go die somewhere!	พอ​ได้​แล้ว ผม​ไม่​อยาก​เล่น​แล้ว ไป​ตาย​ซะ!	Chat/Rule2/reply#0
+Okay, I've read the rules. What are the other details?	Okay, I've read the rules. What are the other details?	โอเค อ่าน​กฎ​แล้ว มี​รายละเอียด​อะไร​อีก	Chat/Rule2/reply#1
+Next rule, rule number 3	Next rule, rule number 3	กฎ​ข้อ​ต่อไป ข้อ​ที่ 3	Chat/Rule3#0
+You have to find four pieces of paper with numbers on them	You have to find four pieces of paper with numbers on them	คุณ​ต้อง​หา​กระดาษ​ที่​มี​ตัวเลข​เขียน​อยู่​ให้​ครบ​สี่​แผ่น	Chat/Rule3#1
+ You have to stare at them until the numbers disappear, in ascending order	 You have to stare at them until the numbers disappear, in ascending order	แล้ว​จ้อง​มอง​จนกว่า​ตัวเลข​จะ​หายไป เรียง​จาก​น้อย​ไป​มาก	Chat/Rule3#2
+Ahmm...	Ahmm...	อืมม...	Chat/Rule3#3
+Whatever you choose, in the end, it's your own choice.	Whatever you choose, in the end, it's your own choice.	ไม่​ว่า​คุณ​จะ​เลือก​อะไร สุดท้าย​มัน​ก็​คือ​ทางเลือก​ของ​คุณ​เอง	Chat/Rule3#4
+Stay calm	Stay calm	ใจ​เย็นๆ	Chat/Rule3#5
+You just need to find the pieces of paper with numbers on them	You just need to find the pieces of paper with numbers on them	คุณ​แค่​ต้อง​หา​กระดาษ​ที่​มี​ตัวเลข	Chat/Rule3#6
+and look at them in ascending order, all four of them.	and look at them in ascending order, all four of them.	แล้ว​มอง​มัน​เรียง​จาก​น้อย​ไป​มาก ให้​ครบ​ทั้ง​สี่​แผ่น	Chat/Rule3#7
+But be careful, try to keep your eyes open. Do not close your eyes under any circumstances	But be careful, try to keep your eyes open. Do not close your eyes under any circumstances	แต่​ระวัง​ด้วย พยายาม​ลืม​ตา​ไว้ ไม่​ว่า​จะ​เกิด​อะไร​ขึ้น​ก็​ห้าม​หลับตา​เด็ดขาด	Chat/Rule3#8
+And if anything is watching you, do not move. 9:00 PM - 9:40 PM. This night is so long	And if anything is watching you, do not move. 9:00 PM - 9:40 PM. This night is so long	และ​ถ้า​มี​อะไร​จ้อง​มอง​คุณ​อยู่ ห้าม​ขยับ 21:00 - 21:40 คืน​นี้​ช่าง​ยาว​นาน​เหลือเกิน	Chat/Rule3#9
+You've come further than expected. Choose what you deserve	You've come further than expected. Choose what you deserve	คุณ​มา​ได้​ไกล​กว่า​ที่​คิด เลือก​สิ่ง​ที่​คุณ​สมควร​ได้รับ​สิ	Chat/Rule3#10 | Chat/Rule4#0 | Chat/Rule5#0
+I curse every one of you who created this!	I curse every one of you who created this!	ผม​ขอ​สาป​แช่ง​พวก​แก​ทุก​คน​ที่​สร้าง​เรื่อง​บ้าๆ นี่​ขึ้นมา!	Chat/Rule3/reply#0
+ I don't want to play anymore. I can't take it anymore. I can't bear this anymore.	 I don't want to play anymore. I can't take it anymore. I can't bear this anymore.	ผม​ไม่​อยาก​เล่น​แล้ว ผม​ทน​ไม่​ไหว​แล้ว ผม​รับ​มัน​ไม่​ไหว​อีก​แล้ว	Chat/Rule3/reply#1
+Not a bad idea at all. The next rule	Not a bad idea at all. The next rule	ไม่​เลว​เลย​นี่ กฎ​ข้อ​ต่อไป	Chat/Rule4#2
+ule 4: You must find the dolls and put them back at the original shrine	ule 4: You must find the dolls and put them back at the original shrine	กฎ​ข้อ​ที่ 4: คุณ​ต้อง​ตาม​หา​ตุ๊กตา​แล้ว​นำ​กลับไป​วาง​ที่​ศาล​เดิม	Chat/Rule4#3
+Very good, then listen closely	Very good, then listen closely	ดี​มาก งั้น​ฟัง​ให้​ดี	Chat/Rule4#5
+Those dolls didn't go anywhere; they are just waiting for someone to bring them back	Those dolls didn't go anywhere; they are just waiting for someone to bring them back	ตุ๊กตา​พวก​นั้น​ไม่ได้​หายไป​ไหน มัน​แค่​รอ​ให้​ใคร​สัก​คน​พา​กลับไป	Chat/Rule4#6
+Some are crying, some are laughing, and some are calling out to you	Some are crying, some are laughing, and some are calling out to you	บาง​ตัว​ร้องไห้ บาง​ตัว​หัวเราะ และ​บาง​ตัว​กำลัง​เรียก​หา​คุณ	Chat/Rule4#7
+The closer you get, the clearer the sound becomes. Collect all 6 of them and put them back on the shrine	The closer you get, the clearer the sound becomes. Collect all 6 of them and put them back on the shrine	ยิ่ง​เข้า​ใกล้ เสียง​จะ​ยิ่ง​ชัด เก็บ​ให้​ครบ​ทั้ง 6 ตัว​แล้ว​วาง​คืน​บน​ศาล	Chat/Rule4#8
+But don't think the shrine will wait for you in the same spot forever	But don't think the shrine will wait for you in the same spot forever	แต่​อย่า​คิด​ว่า​ศาล​จะ​รอ​คุณ​อยู่​ที่​เดิม​ตลอดไป	Chat/Rule4#9
+And whenever the person hanging there disappears, do not let it hear your breath	And whenever the person hanging there disappears, do not let it hear your breath	และ​เมื่อไหร่​ที่​คน​ที่​แขวน​คอ​อยู่​ตรง​นั้น​หายไป อย่า​ให้​มัน​ได้​ยิน​เสียง​ลม​หายใจ​ของ​คุณ	Chat/Rule4#10
+If it finds you, do not turn away—stare directly at it, even if it doesn't stop	If it finds you, do not turn away—stare directly at it, even if it doesn't stop	ถ้า​มัน​เจอ​คุณ อย่า​หัน​หนี—จ้อง​มัน​ตรงๆ แม้ว่า​มัน​จะ​ไม่​หยุด​ก็​ตาม	Chat/Rule4#11
+22:00 - 22:40, may your breath last long enough	22:00 - 22:40, may your breath last long enough	22:00 - 22:40 ขอ​ให้​ลม​หายใจ​ของ​คุณ​ยาว​พอ	Chat/Rule4#12
+The shrine has been empty all night. The missing offerings are crying out around you	The shrine has been empty all night. The missing offerings are crying out around you	ศาล​ว่าง​เปล่า​มา​ทั้ง​คืน ของ​เซ่น​ไหว้​ที่​หายไป​กำลัง​ร่ำไห้​อยู่​รอบตัว​คุณ	Chat/Rule4#13
+Listen carefully, bring them all back, and remember that your breathing is louder than you think.	Listen carefully, bring them all back, and remember that your breathing is louder than you think.	ฟัง​ให้​ดี พา​พวก​มัน​กลับมา​ให้​ครบ และ​จำ​ไว้​ว่า​เสียง​หายใจ​ของ​คุณ​ดัง​กว่า​ที่​คิด	Chat/Rule4#14
+22:00 - 22:40	22:00 - 22:40	22:00 - 22:40	Chat/Rule4#15
+What do you want? Just let me out of this hellhole already.	What do you want? Just let me out of this hellhole already.	แก​ต้องการ​อะไร ปล่อย​ผม​ออกไป​จาก​นรก​นี่​สัก​ที​เถอะ	Chat/Rule4/reply#0
+Whatever it is, bring it on. I'm always ready to handle it.	Whatever it is, bring it on. I'm always ready to handle it.	จะ​เป็น​อะไร​ก็​เอา​มา​เลย ผม​พร้อม​รับมือ​เสมอ	Chat/Rule4/reply#1
+Not a bad idea at all. The next rule, Rule 5: You must pay even closer attention to the sounds than before	Not a bad idea at all. The next rule, Rule 5: You must pay even closer attention to the sounds than before	ไม่​เลว​เลย​นี่ กฎ​ข้อ​ต่อไป ข้อ​ที่ 5: คุณ​ต้อง​ตั้งใจ​ฟัง​เสียง​ให้​มาก​กว่าเดิม	Chat/Rule5#2
+Hold onto the sacred thread and keep walking. If you hear the sound of the Ching (Thai cymbal), stop immediately	Hold onto the sacred thread and keep walking. If you hear the sound of the Ching (Thai cymbal), stop immediately	จับ​สายสิญจน์​ไว้​แล้ว​เดิน​ต่อไป ถ้า​ได้​ยิน​เสียง​ฉิ่ง ให้​หยุด​ทันที	Chat/Rule5#4
+and only continue walking once it goes silent	and only continue walking once it goes silent	และ​เดิน​ต่อ​ได้​ก็​ต่อเมื่อ​เสียง​เงียบ​ลง​แล้ว​เท่านั้น	Chat/Rule5#5
+Listen carefully to the bell sound as you walk and count it properly	Listen carefully to the bell sound as you walk and count it properly	ระหว่าง​เดิน​ให้​ตั้งใจ​ฟัง​เสียง​ระฆัง แล้ว​นับ​ให้​ดี	Chat/Rule5#6
+The 3rd bell chime is the signal for you to return and sit at the pavilion	The 3rd bell chime is the signal for you to return and sit at the pavilion	เสียง​ระฆัง​ครั้ง​ที่ 3 คือ​สัญญาณ​ให้​คุณ​กลับไป​นั่ง​ที่​ศาลา	Chat/Rule5#7
+If you return too early or too late even once... you won't get to return again	If you return too early or too late even once... you won't get to return again	ถ้า​กลับ​เร็ว​หรือ​ช้า​ไป​แม้แต่​ครั้ง​เดียว... คุณ​จะ​ไม่ได้​กลับมา​อีก	Chat/Rule5#8
+Do not let go of your hand for too long, and no matter what you hear behind you, ignore it.	Do not let go of your hand for too long, and no matter what you hear behind you, ignore it.	อย่า​ปล่อย​มือ​นาน​เกินไป และ​ไม่​ว่า​จะ​ได้​ยิน​อะไร​จาก​ข้าง​หลัง อย่า​ไป​สนใจ	Chat/Rule5#9
+23:00 - 23:40, listen carefully to distinguish which sound is real	23:00 - 23:40, listen carefully to distinguish which sound is real	23:00 - 23:40 ฟัง​ให้​ดี​ว่า​เสียง​ไหน​คือ​ของ​จริง	Chat/Rule5#10
+That red thread is the only thing binding you here	That red thread is the only thing binding you here	ด้าย​แดง​เส้น​นั้น​คือ​สิ่ง​เดียว​ที่​ยึด​คุณ​ไว้​ที่นี่	Chat/Rule5#11
+If you want to let go, then let go	If you want to let go, then let go	ถ้า​อยาก​ปล่อย​ก็​ปล่อย​ไป	Chat/Rule5#12
+But don't expect anyone to wait for you to hold it again	But don't expect anyone to wait for you to hold it again	แต่​อย่า​หวัง​ว่า​จะ​มี​ใคร​รอ​ให้​คุณ​กลับมา​จับ​มัน​อีก	Chat/Rule5#13
+I've followed every single thing you ordered. What more do you want from me?	I've followed every single thing you ordered. What more do you want from me?	ผม​ทำ​ตาม​ที่​แก​สั่ง​ทุก​อย่าง​แล้ว แก​ยัง​ต้องการ​อะไร​จาก​ผม​อีก	Chat/Rule5/reply#0
+Just tell me, what do I have to do this time to survive?	Just tell me, what do I have to do this time to survive?	บอก​มา​เลย รอบ​นี้​ผม​ต้อง​ทำ​ยังไง​ถึง​จะ​รอด	Chat/Rule5/reply#1
+Don't go further than this	Don't go further than this	ห้าม​ไป​ไกล​กว่า​นี้	Rules/RuleEntry_1/title
+Do not go further than this	Do not go further than this	อย่า​ไป​ไกล​กว่า​นี้	Rules/RuleEntry_1/summary
+Walk	Walk	เดิน	Rules/RuleEntry_1/action
+Pick Up	Pick Up	หยิบ	Rules/RuleEntry_1/action
+Pick a phone	Pick a phone	เก็บ​โทรศัพท์	Rules/RuleEntry_1/action
+Flashlight	Flashlight	ไฟ​ฉาย	Rules/RuleEntry_1/action | Rules/RuleEntry_2/action
+Stay close to the pavilion. Do not go far away	Stay close to the pavilion. Do not go far away	อยู่​ใกล้​ศาลา​ไว้ อย่า​ไป​ไกล	Rules/RuleEntry_1/factsIfCooperative | Rules/RuleEntry_1/factsIfDefiant
+Follow the rules and wait until the time comes   	Follow the rules and wait until the time comes   	ทำ​ตาม​กฎ​แล้ว​รอ​จนกว่า​จะ​ถึง​เวลา	Rules/RuleEntry_1/factsIfCooperative
+Blackout	Blackout	ไฟดับ	Rules/RuleEntry_2/title
+The power is out. Get up to turn the light back on, turn on the radio before returning, and sit in your original seat until the radio stops	The power is out. Get up to turn the light back on, turn on the radio before returning, and sit in your original seat until the radio stops	ไฟดับ ลุก​ไป​เปิด​ไฟ​ให้​ติด เปิด​วิทยุ​ก่อน​กลับมา แล้ว​นั่ง​ที่​เดิม​จนกว่า​วิทยุ​จะ​หยุด	Rules/RuleEntry_2/summary
+Turn on light / Turn on radio / Open fuse box	Turn on light / Turn on radio / Open fuse box	เปิด​ไฟ / เปิด​วิทยุ / เปิด​ตู้​ไฟ	Rules/RuleEntry_2/action
+Pull lever in fuse box	Pull lever in fuse box	ดึง​คันโยก​ใน​ตู้​ไฟ	Rules/RuleEntry_2/action
+Turn on the light, then turn on the radio	Turn on the light, then turn on the radio	เปิด​ไฟ แล้ว​เปิด​วิทยุ	Rules/RuleEntry_2/factsIfCooperative | Rules/RuleEntry_2/factsIfDefiant
+Return to your original seat and wait until the radio turns off	Return to your original seat and wait until the radio turns off	กลับไป​นั่ง​ที่​เดิม​แล้ว​รอ​จน​วิทยุ​ดับ	Rules/RuleEntry_2/factsIfCooperative | Rules/RuleEntry_2/factsIfDefiant
+If the light doesn't turn on, you must go fix it yourself	If the light doesn't turn on, you must go fix it yourself	ถ้า​ไฟ​ไม่​ติด ต้อง​ไป​ซ่อม​เอง	Rules/RuleEntry_2/factsIfCooperative
+Stare at Numbers	Stare at Numbers	จ้อง​ตัวเลข	Rules/RuleEntry_3/title
+Find 4 number papers, then stare at them until they disappear, ordered from lowest to highest number	Find 4 number papers, then stare at them until they disappear, ordered from lowest to highest number	หา​กระดาษ​ตัวเลข 4 แผ่น แล้ว​จ้อง​จนกว่า​จะ​หายไป เรียง​จาก​เลข​น้อย​ไป​มาก	Rules/RuleEntry_3/summary
+Stare at paper	Stare at paper	จ้อง​กระดาษ	Rules/RuleEntry_3/action
+Stay still	Stay still	อยู่​นิ่งๆ	Rules/RuleEntry_3/action
+Stare at each paper one by one, from lowest to highest, until you complete all 4 papers	Stare at each paper one by one, from lowest to highest, until you complete all 4 papers	จ้อง​กระดาษ​ที​ละ​แผ่น จาก​น้อย​ไป​มาก จน​ครบ​ทั้ง 4 แผ่น	Rules/RuleEntry_3/factsIfCooperative | Rules/RuleEntry_3/factsIfDefiant
+Keep your eyes wide open. Do not blink at all	Keep your eyes wide open. Do not blink at all	ลืม​ตา​ไว้​ตลอด ห้าม​กะพริบ​ตา​เด็ดขาด	Rules/RuleEntry_3/factsIfCooperative
+If something is watching, do not move	If something is watching, do not move	ถ้า​มี​อะไร​จ้อง​มอง​อยู่ ห้าม​ขยับ	Rules/RuleEntry_3/factsIfCooperative
+Offering	Offering	ของ​เซ่น​ไหว้	Rules/RuleEntry_4/title
+Find the dolls, then place them on the pavilion	Find the dolls, then place them on the pavilion	ตาม​หา​ตุ๊กตา​แล้ว​นำ​ไป​วาง​ที่​ศาล	Rules/RuleEntry_4/summary
+Pick up / Place doll	Pick up / Place doll	เก็บ / วาง​ตุ๊กตา	Rules/RuleEntry_4/action
+Stare	Stare	จ้อง	Rules/RuleEntry_4/action
+Hold breath	Hold breath	กลั้น​หายใจ	Rules/RuleEntry_4/action
+Search for dolls by sound. The closer you are, the clearer it gets	Search for dolls by sound. The closer you are, the clearer it gets	ตาม​หา​ตุ๊กตา​จาก​เสียง ยิ่ง​ใกล้​ยิ่ง​ชัด	Rules/RuleEntry_4/factsIfCooperative
+You must place a total of 6 dolls	You must place a total of 6 dolls	ต้อง​วาง​ตุ๊กตา​ให้​ครบ 6 ตัว	Rules/RuleEntry_4/factsIfCooperative
+The pavilion is not always in the same place	The pavilion is not always in the same place	ศาล​ไม่ได้​อยู่​ที่​เดิม​เสมอ​ไป	Rules/RuleEntry_4/factsIfCooperative
+If the hanged person disappears, do not let them hear you holding your breath	If the hanged person disappears, do not let them hear you holding your breath	ถ้า​คน​ที่​แขวน​คอ​อยู่​หายไป กลั้น​หายใจ​ไว้ อย่า​ให้​มัน​ได้​ยิน	Rules/RuleEntry_4/factsIfCooperative
+If it finds you, do not run. Stare at it	If it finds you, do not run. Stare at it	ถ้า​มัน​เจอ​คุณ อย่า​วิ่ง​หนี จ้อง​มัน​ไว้	Rules/RuleEntry_4/factsIfCooperative
+Dolls must be returned to the pavilion	Dolls must be returned to the pavilion	ตุ๊กตา​ต้อง​ถูก​นำ​กลับไป​ที่​ศาล	Rules/RuleEntry_4/factsIfDefiant
+Sacred Thread	Sacred Thread	สายสิญจน์	Rules/RuleEntry_5/title
+When the sacred thread surrounds the pavilion, grab it and walk along the path until the bell calls you back	When the sacred thread surrounds the pavilion, grab it and walk along the path until the bell calls you back	เมื่อ​สายสิญจน์​ล้อม​รอบ​ศาลา ให้​จับ​ไว้​แล้ว​เดิน​ตาม​ทาง​จนกว่า​ระฆัง​จะ​เรียก​ให้​กลับ	Rules/RuleEntry_5/summary
+Grab / Release sacred thread	Grab / Release sacred thread	จับ / ปล่อย​สายสิญจน์	Rules/RuleEntry_5/action
+Follow the thread	Follow the thread	เดิน​ตาม​สายสิญจน์	Rules/RuleEntry_5/action
+Pray	Pray	ไหว้	Rules/RuleEntry_5/action
+If you hear a crying sound, stop walking, stay quiet, then continue walking	If you hear a crying sound, stop walking, stay quiet, then continue walking	ถ้า​ได้​ยิน​เสียง​ร้องไห้ ให้​หยุด​เดิน อยู่​เงียบๆ แล้ว​ค่อย​เดิน​ต่อ	Rules/RuleEntry_5/factsIfCooperative
+When the bell rings for the 3rd time, return to sit at the pavilion	When the bell rings for the 3rd time, return to sit at the pavilion	เมื่อ​ระฆัง​ดัง​ครั้ง​ที่ 3 ให้​กลับไป​นั่ง​ที่​ศาลา	Rules/RuleEntry_5/factsIfCooperative
+Do not let go of your hand for too long   	Do not let go of your hand for too long   	อย่า​ปล่อย​มือ​นาน​เกินไป	Rules/RuleEntry_5/factsIfCooperative
+Ignore the sounds behind you	Ignore the sounds behind you	อย่า​สนใจ​เสียง​ข้าง​หลัง	Rules/RuleEntry_5/factsIfCooperative
+Do not let go of the sacred thread	Do not let go of the sacred thread	ห้าม​ปล่อย​สายสิญจน์	Rules/RuleEntry_5/factsIfDefiant
+The Bus	The Bus	รถ​ประจำ​ทาง	Rules/RuleEntry_6/title
+A bus will stop in front of the pavilion. Read it before you stand up - you only get on one	A bus will stop in front of the pavilion. Read it before you stand up - you only get on one	จะ​มี​รถเมล์​มา​จอด​หน้า​ศาลา ดู​ให้​ดี​ก่อน​ลุก​ขึ้น - ขึ้น​ได้​แค่​คัน​เดียว	Rules/RuleEntry_6/summary
+Stay seated. A bus will come to you	Stay seated. A bus will come to you	นั่ง​รอ​ไว้ แล้ว​รถ​จะ​มา​หา​คุณ​เอง	Rules/RuleEntry_6/factsIfCooperative
+Get up to check a bus and it will wait as long as you like	Get up to check a bus and it will wait as long as you like	ลุก​ไป​ดู​รถ​เมื่อไหร่ มัน​จะ​รอ​นาน​เท่าที่​คุณ​ต้องการ	Rules/RuleEntry_6/factsIfCooperative
+Sit back down and it moves on to the next one	Sit back down and it moves on to the next one	กลับมา​นั่ง แล้ว​รถ​จะ​ออกไป​ให้​คัน​ต่อไป​มา​แทน	Rules/RuleEntry_6/factsIfCooperative
+Take the one with people in it. An empty bus at this hour is not a bus	Take the one with people in it. An empty bus at this hour is not a bus	ขึ้น​คัน​ที่​มี​คน​นั่ง รถ​ว่างๆ ใน​เวลา​นี้​ไม่ใช่​รถเมล์	Rules/RuleEntry_6/factsIfCooperative
+Get on a bus	Get on a bus	ขึ้น​รถ​สัก​คัน	Rules/RuleEntry_6/factsIfDefiant
+Whew, took long enough! If the usual waiting spot hadn't been wrecked in the storm, I would have reached home to see my mom ages ago	Whew, took long enough! If the usual waiting spot hadn't been wrecked in the storm, I would have reached home to see my mom ages ago	เฮ้อ กว่า​จะ​ถึง! ถ้า​ที่​รอ​รถ​ประจำ​ไม่​โดน​พายุ​พัง​ซะ​ก่อน ป่านนี้​คง​ถึง​บ้าน​ไป​หา​แม่​นาน​แล้ว	Line/Rule4.unity
+Ehh What’s happening? Something feels weird here	Ehh What’s happening? Something feels weird here	เอ๊ะ เกิด​อะไร​ขึ้น ที่นี่​มัน​แปลกๆ	Line/Rule4.unity
+Wait... Where's my phone !!	Wait... Where's my phone !!	เดี๋ยว​นะ... โทรศัพท์​ไป​ไหน!!	Line/Rule4.unity
+and What the hell was that message about?	and What the hell was that message about?	แล้ว​ข้อความ​เมื่อกี้​มัน​อะไร​กัน​วะ	Line/Rule4.unity
+I have to find my phone first	I have to find my phone first	ต้อง​หา​โทรศัพท์​ให้​เจอ​ก่อน	Line/Rule4.unity
+Rule Book	Rule Book	สมุด​กฎ	Label/Rule4.unity
+E - Open	E - Open	E - เปิด	Label/Rule4.unity | Label/Rule4.unity | Label/MainMenu.unity (+1)
+Nang Len Klong 6 Presents	Nang Len Klong 6 Presents	นั่งเล่น​คลอง 6 ภูมิใจ​เสนอ	Label/Rule4.unity | Field/Rule4.unity/line1
+Your Hand	Your Hand	ใน​มือ	Label/Rule4.unity
+Tuesday night	Tuesday night	คืน​วัน​อังคาร	Label/Rule4.unity | Field/Rule4.unity/dayLabel
+Press "Space" to skip	Press "Space" to skip	กด "Space" เพื่อ​ข้าม	Label/Rule4.unity
+Right Click to Inspect	Right Click to Inspect	คลิก​ขวา​เพื่อ​ดู	Label/Rule4.unity
+E - Pick up	E - Pick up	E - หยิบ	Label/Rule4.unity
+You Dead	You Dead	คุณ​ตาย​แล้ว	Label/Rule4.unity
+E - Sit	E - Sit	E - นั่ง	Label/Rule4.unity | Label/MainMenu.unity
+Mom	Mom	แม่	Field/Rule4.unity/contactName
+Unknow	Unknow	ไม่​ทราบ​ชื่อ	Field/Rule4.unity/contactName
+Ton	Ton	ต้น	Field/Rule4.unity/contactName
+You died - Enter to Restart 	You died - Enter to Restart 	ตาย​แล้ว - กด Enter เพื่อ​เริ่ม​ใหม่	Field/Rule4.unity/deadBanner
+Candle	Candle	เทียน	Field/Rule4.unity/displayName
+Street Lamp	Street Lamp	เสา​ไฟ	Field/Rule4.unity/displayName
+Radio	Radio	วิทยุ	Field/Rule4.unity/displayName
+Firefly	Firefly	หิ่งห้อย	Field/Rule4.unity/displayName
+Incense	Incense	ธูป	Field/Rule4.unity/displayName
+End of the thread...	End of the thread...	สุด​สาย​แล้ว...	Field/Rule4.unity/endOfThreadHint
+E   Get up	E   Get up	E   ลุก​ขึ้น	Field/Rule4.unity/getOffHint | Field/Rule4.unity/standHintText
+E   get up	E   get up	E   ลุก​ขึ้น	Field/Rule4.unity/getOffHint
+E Grab sacred thread	E Grab sacred thread	E   จับ​สายสิญจน์	Field/Rule4.unity/grabHint
+The spirit house is empty…\r\nFind the six figurines and place them all back.	The spirit house is empty…\r\nFind the six figurines and place them all back.	ศาล​พระ​ภูมิ​ว่าง​เปล่า…\nตาม​หา​ตุ๊กตา​ทั้ง​หก​ตัว​แล้ว​วาง​กลับ​ให้​ครบ	Field/Rule4.unity/introHint
+Hold the sacred thread and walk forward... Listen to the bell ring {0} times, then return and sit down	Hold the sacred thread and walk forward... Listen to the bell ring {0} times, then return and sit down	จับ​สายสิญจน์​แล้ว​เดิน​ไป​ข้างหน้า... ฟัง​เสียง​ระฆัง​ให้​ครบ {0} ครั้ง แล้ว​กลับมา​นั่ง	Field/Rule4.unity/introHint
+Pornpisit Rattanasiripakdee 	Pornpisit Rattanasiripakdee 	Pornpisit Rattanasiripakdee 	Field/Rule4.unity/line1 (same in both languages)
+Patipong Saetan 	Patipong Saetan 	Patipong Saetan 	Field/Rule4.unity/line1 (same in both languages)
+Songkrod Tongkoy 	Songkrod Tongkoy 	Songkrod Tongkoy 	Field/Rule4.unity/line1 (same in both languages)
+Chaowanut Mukkhunthod	Chaowanut Mukkhunthod	Chaowanut Mukkhunthod	Field/Rule4.unity/line1 (same in both languages)
+Project Manager	Project Manager	ผู้จัดการ​โปรเจกต์	Field/Rule4.unity/line2
+Game Designer	Game Designer	นัก​ออกแบบ​เกม	Field/Rule4.unity/line2
+Level Designer	Level Designer	นัก​ออกแบบ​ด่าน	Field/Rule4.unity/line2
+Game Developer	Game Developer	นักพัฒนา​เกม	Field/Rule4.unity/line2
+new message {0} message	new message {0} message	ข้อความ​ใหม่ {0} ข้อความ	Field/Rule4.unity/newMessageBody
+Pause	Pause	พัก​เกม	Field/Rule4.unity/pausedBanner
+1      open chat\n 2      flashlight\n 3      Rulebook\n 4 Snake game	1      open chat\n 2      flashlight\n 3      Rulebook\n 4 Snake game	1      เปิด​แชท\n2      ไฟ​ฉาย\n3      สมุด​กฎ\n4      เกม​งู	Field/Rule4.unity/phoneHintAfterOpen
+TAB  pick up the phone	TAB  pick up the phone	TAB  หยิบ​โทรศัพท์	Field/Rule4.unity/phoneHintBeforeOpen
+Spacebar to Prey	Spacebar to Prey	Spacebar เพื่อ​ไหว้	Field/Rule4.unity/prayHint
+pick up	pick up	หยิบ	Field/Rule4.unity/promptAction
+The Tail-Eating Snake - Enter to Play	The Tail-Eating Snake - Enter to Play	งูกินหาง - กด Enter เพื่อ​เล่น	Field/Rule4.unity/readyBanner
+Now	Now	ตอนนี้	Field/Rule4.unity/recentLabel
+Point {0}   Hightest {1}	Point {0}   Hightest {1}	แต้ม {0}   สูง​สุด {1}	Field/Rule4.unity/scoreFormat
+E   Sit	E   Sit	E   นั่ง	Field/Rule4.unity/sitHint | Field/Rule4.unity/sitHint | Field/Rule4.unity/sitHint
+E   นั่ง	E   Sit	E   นั่ง	Field/Rule4.unity/sitHint | Field/Rule4.unity/sitHint
+Rule {0} — {1}	Rule {0} — {1}	ข้อ {0} — {1}	Field/Rule4.unity/titleFormat
+Typing...	Typing...	กำลัง​พิมพ์...	Field/Rule4.unity/typingLabel
+The thread is tangled... Hold E to untangle	The thread is tangled... Hold E to untangle	สาย​พัน​กัน... กด E ค้าง​เพื่อ​แก้	Field/Rule4.unity/untangleHint
+You must go back and grab the left-behind red cloth.	You must go back and grab the left-behind red cloth.	ต้อง​กลับไป​จับ​ตรง​ผ้า​แดง​ที่​ทิ้ง​ไว้	Field/Rule4.unity/wrongSpotHint
+{0}%	{0}%	{0}%	Field/Rule4.unity/batteryFormat (same in both languages)
+- Start -	- Start -	- เริ่ม -	Label/MainMenu.unity
+'Rule of Horror	'Rule of Horror	'Rule of Horror	Label/MainMenu.unity (same in both languages)
+- Quite -	- Quite -	- ออก -	Label/MainMenu.unity
+you have 1  message !	you have 1  message !	คุณ​มี 1 ข้อความ!	Label/ChatBox.prefab
+E - Fix	E - Fix	E - ซ่อม	Label/Electric Box.prefab | Label/ReElectirc.prefab
+E  Fix Light Panel	E  Fix Light Panel	E  ซ่อม​ตู้​ไฟ	Field/ReElectirc.prefab/textBeforePuzzle
+E   pick up	E   pick up	E   เก็บ	Field/Doll.prefab/interactHint
+you don't have a doll.	you don't have a doll.	ยัง​ไม่​มี​ตุ๊กตา​ใน​มือ	Field/FixedShrine.prefab/emptyHandHint
+E   Place the doll.	E   Place the doll.	E   วาง​ตุ๊กตา	Field/FixedShrine.prefab/placeHint
+กำลังพิมพ์	Typing	กำลัง​พิมพ์	Code/ChatUIController.typingLabel
+ข้อความใหม่ {0} ข้อความ	{0} new messages	ข้อความ​ใหม่ {0} ข้อความ	Code/FriendListController.newMessageBody
+คืนวันอังคาร	Tuesday night	คืน​วัน​อังคาร	Code/PhoneHomeBinder.dayLabel
+ตอนนี้	Now	ตอนนี้	Code/PhoneNotificationCenter.recentLabel
+ข้อ {0} — {1}	Rule {0} — {1}	ข้อ {0} — {1}	Code/RuleBookPanelBinder.titleFormat
+แต้ม {0}   สูงสุด {1}	Score {0}   Best {1}	แต้ม {0}   สูง​สุด {1}	Code/SnakeGameController.scoreFormat
+งูกินหาง\n\n<size=70%>Enter เริ่มเล่น\nWASD บังคับ</size>	The Tail-Eating Snake\n\n<size=70%>Enter to play\nWASD to steer</size>	งูกินหาง\n\n<size=70%>Enter เริ่ม​เล่น\nWASD บังคับ</size>	Code/SnakeGameController.readyBanner
+พักอยู่\n\n<size=70%>Enter เล่นต่อ</size>	Paused\n\n<size=70%>Enter to continue</size>	พัก​อยู่\n\n<size=70%>Enter เล่น​ต่อ</size>	Code/SnakeGameController.pausedBanner
+ตายแล้ว\n\n<size=70%>ได้ {0} แต้ม\nEnter เล่นอีกครั้ง</size>	You died\n\n<size=70%>{0} points\nEnter to play again</size>	ตาย​แล้ว\n\n<size=70%>ได้ {0} แต้ม\nEnter เล่น​อีก​ครั้ง</size>	Code/SnakeGameController.deadBanner
+หยิบกระดาษขยำ	Take a paper ball	หยิบ​กระดาษ​ขยำ	Code/PaperBallBox.promptAction
+เก็บก้อนกระดาษ	Pick up the paper ball	เก็บ​ก้อน​กระดาษ	Code/PaperBallThrower.takeBallPromptAction
+คลิกซ้าย ค้าง	Hold Left Click	คลิก​ซ้าย ค้าง	Code/PaperBallThrower.throwPromptKey
+ขว้าง	Throw	ขว้าง	Code/PaperBallThrower.throwPromptAction
+เก็บคืนลัง	Put it back in the box	เก็บ​คืน​ลัง	Code/PaperBallThrower.stashPromptAction
+ลงถัง {0} ลูก (สูงสุด {1})	In the bin: {0} (best {1})	ลง​ถัง {0} ลูก (สูง​สุด {1})	Code/TrashBin.scoreFormat
+ไปไกลกว่านี้ไม่ได้	I can't go any further	ไป​ไกล​กว่า​นี้​ไม่ได้	Code/PlayAreaBoundary.line
+E  ซ่อมตู้ไฟ	E  Fix Light Panel	E  ซ่อม​ตู้​ไฟ	Code/LightPanel.textBeforePuzzle
+E   เก็บตุ๊กตา	E   Pick up the doll	E   เก็บ​ตุ๊กตา	Code/Doll.interactHint
+E   วางตุ๊กตาที่ศาล	E   Place the doll at the shrine	E   วาง​ตุ๊กตา​ที่​ศาล	Code/SpiritHouse.placeHint
+ยังไม่มีตุ๊กตาในมือ	You don't have a doll.	ยัง​ไม่​มี​ตุ๊กตา​ใน​มือ	Code/SpiritHouse.emptyHandHint
+E   จับสายสิญจน์	E   Grab the sacred thread	E   จับ​สายสิญจน์	Code/SacredThreadWalker.grabHint
+ต้องกลับไปจับตรงผ้าแดงที่ปล่อยไว้	You must go back and grab the left-behind red cloth.	ต้อง​กลับไป​จับ​ตรง​ผ้า​แดง​ที่​ปล่อย​ไว้	Code/SacredThreadWalker.wrongSpotHint
+สายพันกัน… กด E ค้างเพื่อแก้	The thread is tangled… Hold E to untangle	สาย​พัน​กัน… กด E ค้าง​เพื่อ​แก้	Code/SacredThreadWalker.untangleHint
+มีอะไรขวางอยู่… กด E ปล่อยมือแล้วเดินอ้อม	Something is in the way… Press E to let go and walk around	มี​อะไร​ขวาง​อยู่… กด E ปล่อย​มือ​แล้ว​เดิน​อ้อม	Code/SacredThreadWalker.detourHint
+สุดสาย…	End of the thread…	สุด​สาย…	Code/SacredThreadWalker.endOfThreadHint
+มีอะไรขวางอยู่… ต้องปล่อยมือแล้วเดินอ้อม	Something is in the way… you have to let go and walk around	มี​อะไร​ขวาง​อยู่… ต้อง​ปล่อย​มือ​แล้ว​เดิน​อ้อม	Code/ThreadObstacle.hint
+E    ลุกขึ้น	E    Get up	E    ลุก​ขึ้น	Code/Rule1.standHintText
+ศาลพระภูมิว่างเปล่า…\nหาตุ๊กตา {0} ตัวกลับมาวางให้ครบ	The spirit house is empty…\nBring back all {0} dolls	ศาล​พระ​ภูมิ​ว่าง​เปล่า…\nหา​ตุ๊กตา {0} ตัว​กลับมา​วาง​ให้​ครบ	Code/Rule4.introHint
+หยุดเดิน… มีอะไรขยับเข้ามาใกล้ข้างหลัง	Stop walking… something is moving closer behind you	หยุด​เดิน… มี​อะไร​ขยับ​เข้า​มา​ใกล้​ข้าง​หลัง	Code/Rule5.chingWarnHint
+…ขอลาแล้วนะ	…I am taking my leave now	…ขอ​ลา​แล้ว​นะ	Code/Rule5.prayHint
+ต้องจับสายสิญจน์อยู่ถึงจะพนมมือไหว้ได้	You have to be holding the sacred thread to pray	ต้อง​จับ​สายสิญจน์​อยู่​ถึง​จะ​พนม​มือ​ไหว้​ได้	Code/Rule5.prayNotHoldingHint
+E   ลงจากรถ	E   Get off the bus	E   ลง​จาก​รถ	Code/Rule6.getOffHint + CutsceneManager.getOffHint
+TAB  หยิบโทรศัพท์	TAB  Pick up the phone	TAB  หยิบ​โทรศัพท์	Code/CutsceneManager.phoneHintBeforeOpen
+1      เปิดแชท\n2      ไฟฉาย	1      Open chat\n2      Flashlight	1      เปิด​แชท\n2      ไฟ​ฉาย	Code/CutsceneManager.phoneHintAfterOpen
+เทียน	Candle	เทียน	Code/RewardSystem.displayName
+เสาไฟ	Street Lamp	เสา​ไฟ	Code/RewardSystem.displayName
+วิทยุ	Radio	วิทยุ	Code/RewardSystem.displayName
+หิ่งห้อย	Firefly	หิ่งห้อย	Code/RewardSystem.displayName
+ธูป	Incense	ธูป	Code/RewardSystem.displayName

@@ -119,7 +119,8 @@ public class KeyPromptManager : MonoBehaviour
         bool taught = seen >= fullDisplayCount;
         if (taught && hideCompletely) return;
 
-        var prompt = new Prompt(id, key, taught ? string.Empty : action, taught, anchor);
+        // แปลตอนสร้าง prompt — "คลิกซ้าย ค้าง" เป็นทั้งชื่อปุ่มและข้อความ จึงแปลทั้งสองช่อง
+        var prompt = new Prompt(id, L10n.T(key), taught ? string.Empty : L10n.T(action), taught, anchor);
         _active[id] = prompt;
 
         if (logPrompts)

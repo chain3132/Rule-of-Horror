@@ -62,6 +62,7 @@ namespace Manager
 
             ruleBook.OnRuleBookChanged    += Refresh;
             ruleBook.OnSelectedRuleChanged += HandleSelectionChanged;
+            L10n.Changed                   += Refresh;
             Refresh();
         }
 
@@ -71,6 +72,7 @@ namespace Manager
 
             ruleBook.OnRuleBookChanged    -= Refresh;
             ruleBook.OnSelectedRuleChanged -= HandleSelectionChanged;
+            L10n.Changed                   -= Refresh;
         }
 
         private void HandleSelectionChanged(int _) => Refresh();
@@ -89,13 +91,13 @@ namespace Manager
             bool show = hasAny && view.Rule != null && view.Unlocked;
 
             if (titleText != null)
-                titleText.text = show ? string.Format(titleFormat, view.Rule.ThaiNumeral, view.Rule.title) : string.Empty;
+                titleText.text = show ? L10n.Format(titleFormat, view.Rule.ThaiNumeral, L10n.T(view.Rule.title)) : string.Empty;
 
             if (scheduleText != null)
                 scheduleText.text = show ? view.ScheduleText : RuleBookController.UnknownSchedule;
 
             if (summaryText != null)
-                summaryText.text = show ? view.Rule.summary : string.Empty;
+                summaryText.text = show ? L10n.T(view.Rule.summary) : string.Empty;
 
             ClearSpawned();
             FillFacts(show ? view.Facts : null, show ? view.MissingFacts : 0);
@@ -126,7 +128,7 @@ namespace Manager
                     bool isMissing = !isFact && i < count + missing;
 
                     factRows[i].gameObject.SetActive(isFact || isMissing);
-                    if (isFact)         factRows[i].text = facts[i];
+                    if (isFact)         factRows[i].text = L10n.T(facts[i]);
                     else if (isMissing) factRows[i].text = RuleBookController.EmptyFact;
                 }
                 return;
@@ -141,7 +143,7 @@ namespace Manager
                 {
                     var row  = Instantiate(factRowPrefab, factRoot);
                     var text = row.GetComponentInChildren<TMP_Text>();
-                    if (text != null) text.text = facts[i];
+                    if (text != null) text.text = L10n.T(facts[i]);
                     _spawned.Add(row);
                 }
             }
@@ -171,7 +173,7 @@ namespace Manager
                     if (handActionTexts != null && i < handActionTexts.Length && handActionTexts[i] != null)
                     {
                         handActionTexts[i].gameObject.SetActive(used);
-                        if (used) handActionTexts[i].text = hands[i].action;
+                        if (used) handActionTexts[i].text = L10n.T(hands[i].action);
                     }
                 }
                 return;
@@ -184,7 +186,7 @@ namespace Manager
                 var row = Instantiate(handRowPrefab, handRoot);
 
                 // Apply เลือกให้เองว่าแถวนี้วาดเป็นภาพปุ่มหรือตัวหนังสือ ตามที่ prefab มี component อะไร
-                KeyCapView.Apply(row, hands[i].key, hands[i].action);
+                KeyCapView.Apply(row, hands[i].key, L10n.T(hands[i].action));
                 _spawned.Add(row);
             }
         }

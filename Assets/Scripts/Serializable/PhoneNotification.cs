@@ -27,4 +27,19 @@ public class PhoneNotification
     public object source;
 
     public int TotalMinutes => hour * 60 + minute;
+
+    // ─────────────────────────── สองภาษา ───────────────────────────
+    // การ์ดอยู่บนหน้าโฮมได้นานหลายชั่วโมงในเกม ถ้าเก็บแต่ตัวหนังสือที่จัดรูปแล้ว ผู้เล่นที่เปลี่ยน
+    // ภาษาทีหลังจะเห็นการ์ดเก่าค้างเป็นภาษาเดิม — เก็บต้นฉบับกับตัวเลขไว้ แล้วแปลตอนวาด
+
+    /// <summary>ต้นฉบับของ body ที่ยังไม่แทนตัวเลข เช่น "new message {0} message" — ว่าง = ใช้ body ตรงๆ</summary>
+    public string bodyFormat;
+
+    /// <summary>ตัวเลขที่แทน {0} ใน bodyFormat</summary>
+    public int bodyArg;
+
+    public string DisplayTitle => L10n.T(title);
+
+    public string DisplayBody => string.IsNullOrEmpty(bodyFormat) ? L10n.T(body)
+                                                                   : L10n.Format(bodyFormat, bodyArg);
 }

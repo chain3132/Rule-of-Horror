@@ -389,8 +389,9 @@ namespace RuleSystem.Rule
                 // เพราะข้อความที่พิมพ์เอง อาจมี { } หลุดมาแล้ว Format จะ throw
                 // PlayerDialogueUI fade เองเมื่อ hold ครบ — ไม่ต้องมี coroutine คอยซ่อน
                 // (ถ้ามี จะไปลบ hint ของตุ๊กตาที่เดินไปเจอภายใน introHintDuration ทิ้ง)
-                PlayerDialogueUI.instance.ShowLine(introHint.Replace("{0}", dollCount.ToString()),
-                                                   introHintDuration);
+                // แปลก่อนแทน {0} — ข้อความที่แทนเลขไปแล้วไม่ตรงกับคำไหนในตารางแปล
+                PlayerDialogueUI.instance.ShowLine(L10n.T(introHint).Replace("{0}", dollCount.ToString()),
+                                                   introHintDuration, alreadyTranslated: true);
             }
         }
 

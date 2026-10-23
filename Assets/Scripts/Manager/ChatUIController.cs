@@ -149,6 +149,7 @@ namespace Manager
             runner.OnReplyRequired   += ShowReplies;
             runner.OnConversationEnd += HandleConversationEnd;
             runner.OnTypingChanged   += SetTyping;
+            L10n.Changed             += RedrawForLanguage;
         }
 
         private void OnDisable()
@@ -157,6 +158,40 @@ namespace Manager
             runner.OnReplyRequired   -= ShowReplies;
             runner.OnConversationEnd -= HandleConversationEnd;
             runner.OnTypingChanged   -= SetTyping;
+            L10n.Changed             -= RedrawForLanguage;
+        }
+
+        /// <summary>
+        /// ผู้เล่นเปลี่ยนภาษาจากเมนู Esc ขณะแชทเปิดค้างอยู่ — วาดฟองทั้งหมดใหม่เป็นภาษาใหม่
+        ///
+        /// ทำได้เพราะประวัติแชทเก็บเป็น "ต้นฉบับ" (node + index / ข้อความตอบของผู้เล่น) ไม่ได้เก็บ
+        /// ตัวหนังสือที่ขึ้นจอไปแล้ว — ไม่แตะ runner เลย บทสนทนาที่กำลังเล่นอยู่เล่นต่อจากจุดเดิม
+        /// </summary>
+        private void RedrawForLanguage()
+        {
+            if (_currentContact == null) return;
+
+            if (headerNameText != null)
+                headerNameText.text = L10n.T(_currentContact.contactName);
+
+            ClearChatDisplay();
+            RenderHistory(_currentContact);
+
+            // ปุ่มตัวเลือกที่รอให้ตอบอยู่ก็ต้องเปลี่ยนภาษาด้วย — สร้างใหม่จากชุดเดิม
+            if (AwaitingReply) ShowReplies(_pendingReplies);
+        }
+
+        private void RenderHistory(FriendListController.ContactEntry contact)
+        {
+            if (!_contactTimelines.TryGetValue(contact, out var contactTimeline)) return;
+
+            foreach (var entry in contactTimeline)
+            {
+                if (entry.data != null)
+                    InstantiateBubble(entry.data.nodes[entry.nodeIndex]);
+                else
+                    InstantiatePlayerReplyBubble(entry.playerReplyText);
+            }
         }
 
         // ─────────────────────────── Per-Contact Chat (ระบบใหม่) ───────────────────────────
@@ -180,23 +215,14 @@ namespace Manager
 
             // หัวแชท: ชื่อ + รูปโปรไฟล์ของ contact นี้
             if (headerNameText != null)
-                headerNameText.text = contact.contactName;
+                headerNameText.text = L10n.T(contact.contactName);
             if (headerAvatarImage != null && contact.avatar != null)
                 headerAvatarImage.sprite = contact.avatar;
 
             ClearChatDisplay();
 
             // render history ของ contact นี้เท่านั้น
-            if (_contactTimelines.TryGetValue(contact, out var contactTimeline))
-            {
-                foreach (var entry in contactTimeline)
-                {
-                    if (entry.data != null)
-                        InstantiateBubble(entry.data.nodes[entry.nodeIndex]);
-                    else
-                        InstantiatePlayerReplyBubble(entry.playerReplyText);
-                }
-            }
+            RenderHistory(contact);
 
             // หาชุดถัดไปที่ส่งถึงแล้วแต่ยังอ่านไม่จบ — เล่นต่อถ้าค้างไว้ ไม่งั้นเริ่มใหม่
             //
@@ -261,7 +287,8 @@ namespace Manager
 
             // FormatText แทน {reward} ด้วยชื่อรางวัลที่ผู้เล่นเพิ่งเลือก ข้อความที่ไม่มี
             // placeholder จะถูกคืนกลับมาทั้งดุ้นโดยไม่ไปแตะ RewardSystem เลย
-            bubble.GetComponentInChildren<TextMeshProUGUI>().text = RewardSystem.FormatText(node.message);
+            // แปลก่อน แล้วค่อยแทน {reward} — ข้อความที่แทนชื่อรางวัลไปแล้วไม่ตรงกับคำไหนในตาราง
+            bubble.GetComponentInChildren<TextMeshProUGUI>().text = RewardSystem.FormatText(L10n.T(node.message));
 
             Canvas.ForceUpdateCanvases();
             scrollRect.verticalNormalizedPosition = 0f;
@@ -346,7 +373,7 @@ namespace Manager
             for (int i = 0; i < count; i++)
             {
                 builder.Clear();
-                builder.Append(typingLabel);
+                builder.Append(L10n.T(typingLabel));
 
                 for (int dot = 0; dot < count; dot++)
                 {
@@ -381,8 +408,9 @@ namespace Manager
 
                 // ปุ่มเลขที่ต้องกดคือ index + 1 — InputHandler ยิง 0 ตอนกดเลข 1
                 var view = btn.GetComponent<ReplyButtonView>();
-                if (view != null) view.Set(replies[i].replyText, index + 1);
-                else              btn.GetComponentInChildren<TextMeshProUGUI>().text = replies[i].replyText;
+                string label = L10n.T(replies[i].replyText);
+                if (view != null) view.Set(label, index + 1);
+                else              btn.GetComponentInChildren<TextMeshProUGUI>().text = label;
 
                 btn.GetComponent<Button>().onClick.AddListener(() => OnReplyClicked(index, replies[index]));
             }
@@ -407,7 +435,7 @@ namespace Manager
         private void InstantiatePlayerReplyBubble(string message)
         {
             var bubble = Instantiate(rightBubblePrefab, contentRoot);
-            bubble.GetComponentInChildren<TextMeshProUGUI>().text = message;
+            bubble.GetComponentInChildren<TextMeshProUGUI>().text = L10n.T(message);
             Canvas.ForceUpdateCanvases();
             scrollRect.verticalNormalizedPosition = 0f;
         }

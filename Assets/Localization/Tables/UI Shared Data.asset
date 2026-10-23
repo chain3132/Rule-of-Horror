@@ -1,0 +1,920 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: UI Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: UI
+  m_TableCollectionNameGuidString: 167e5e399a00460469b2a29063a068eb
+  m_Entries:
+  - m_Id: 1819971584
+    m_Key: rule-book_838b902c
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549352
+  - m_Id: 1840943104
+    m_Key: e-open_a09cb6f9
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549353
+  - m_Id: 1840943105
+    m_Key: nang-len-klong-6-presents_6562236f
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549354
+  - m_Id: 1840943106
+    m_Key: your-hand_24ba7f03
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549355
+  - m_Id: 1840943107
+    m_Key: tuesday-night_98ee5d36
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549356
+  - m_Id: 1840943108
+    m_Key: press-space-to-skip_49d89d6e
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549357
+  - m_Id: 1840943109
+    m_Key: right-click-to-inspect_6e50b93e
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549358
+  - m_Id: 1840943110
+    m_Key: e-pick-up_df1acca5
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549359
+  - m_Id: 1840943111
+    m_Key: you-dead_d321be4a
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549360
+  - m_Id: 1840943112
+    m_Key: e-sit_47220e4f
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549361
+  - m_Id: 1840943113
+    m_Key: mom_4ba37e28
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549362
+  - m_Id: 1840943114
+    m_Key: unknow_4674538d
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549363
+  - m_Id: 1840943115
+    m_Key: ton_ff9b641e
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549364
+  - m_Id: 1840943116
+    m_Key: you-died-enter-to-restart_053e007f
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549365
+  - m_Id: 1840943117
+    m_Key: candle_fba1c3b8
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549366
+  - m_Id: 1840943118
+    m_Key: street-lamp_aa08a564
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549367
+  - m_Id: 1840943119
+    m_Key: radio_5675f954
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549368
+  - m_Id: 1840943120
+    m_Key: firefly_1e7b623e
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549369
+  - m_Id: 1840943121
+    m_Key: incense_a4f0ec3c
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549370
+  - m_Id: 1840943122
+    m_Key: end-of-the-thread_492c38ca
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549371
+  - m_Id: 1840943123
+    m_Key: e-get-up_59f16459
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549372
+  - m_Id: 1840943124
+    m_Key: e-get-up_49c70a79
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549373
+  - m_Id: 1840943125
+    m_Key: e-grab-sacred-thread_a8ca4322
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549374
+  - m_Id: 1840943126
+    m_Key: the-spirit-house-is-empty_9df06a04
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549375
+  - m_Id: 1840943127
+    m_Key: hold-the-sacred-thread-and_df7c5c44
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549376
+  - m_Id: 1840943128
+    m_Key: pornpisit-rattanasiripakdee_52eb06e3
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549377
+  - m_Id: 1840943129
+    m_Key: patipong-saetan_331fbe23
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549378
+  - m_Id: 1840943130
+    m_Key: songkrod-tongkoy_a5a2683d
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549379
+  - m_Id: 1840943131
+    m_Key: chaowanut-mukkhunthod_1b16dae1
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549380
+  - m_Id: 1840943132
+    m_Key: project-manager_55136741
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549381
+  - m_Id: 1840943133
+    m_Key: game-designer_e1adb9e4
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549382
+  - m_Id: 1840943134
+    m_Key: level-designer_00092d46
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549383
+  - m_Id: 1840943135
+    m_Key: game-developer_0999fa2d
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549384
+  - m_Id: 1840943136
+    m_Key: new-message-0-message_0ab7cc17
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549385
+  - m_Id: 1840943137
+    m_Key: pause_44f9bf2d
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549386
+  - m_Id: 1840943138
+    m_Key: 1-open-chat-2-flashlight_11e26ace
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549387
+  - m_Id: 1840943139
+    m_Key: tab-pick-up-the-phone_c90f6665
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549388
+  - m_Id: 1840943140
+    m_Key: spacebar-to-prey_0788f269
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549389
+  - m_Id: 1840943141
+    m_Key: pick-up_b9d08f15
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549390
+  - m_Id: 1840943142
+    m_Key: the-tail-eating-snake-enter_1234ab1f
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549391
+  - m_Id: 1840943143
+    m_Key: now_8b3dc597
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549392
+  - m_Id: 1840943144
+    m_Key: point-0-hightest-1_1cd19e6e
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549393
+  - m_Id: 1840943145
+    m_Key: e-sit_9b8ec3fc
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549394
+  - m_Id: 1840943146
+    m_Key: e_4060b45f
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549395
+  - m_Id: 1840943147
+    m_Key: rule-0-1_e32701ca
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549396
+  - m_Id: 1840943148
+    m_Key: typing_77f07484
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549397
+  - m_Id: 1840943149
+    m_Key: the-thread-is-tangled-hold_2dfdf35e
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549398
+  - m_Id: 1840943150
+    m_Key: you-must-go-back-and_2cf1320d
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549399
+  - m_Id: 1840943151
+    m_Key: 0_6a76a5b4
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549400
+  - m_Id: 1840943152
+    m_Key: start_54f01ea3
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549401
+  - m_Id: 1840943153
+    m_Key: rule-of-horror_ed5786b3
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549402
+  - m_Id: 1840943154
+    m_Key: quite_18aee0fd
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549403
+  - m_Id: 1840943155
+    m_Key: you-have-1-message_1287ba39
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549404
+  - m_Id: 1840943156
+    m_Key: e-fix_d0ac9408
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549405
+  - m_Id: 1840943157
+    m_Key: e-fix-light-panel_93e3c4a1
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549406
+  - m_Id: 1840943158
+    m_Key: e-pick-up_b996d16e
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549407
+  - m_Id: 1840943159
+    m_Key: you-dont-have-a-doll_b5d97b72
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549408
+  - m_Id: 1840943160
+    m_Key: e-place-the-doll_f11ff79d
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549409
+  - m_Id: 1840943161
+    m_Key: th_8847894f
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549410
+  - m_Id: 1840943162
+    m_Key: 0_63186a42
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549411
+  - m_Id: 1840943163
+    m_Key: th_873aef40
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549412
+  - m_Id: 1840943164
+    m_Key: th_2a998117
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549413
+  - m_Id: 1840943165
+    m_Key: 0-1_c185ea02
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549414
+  - m_Id: 1840943166
+    m_Key: 0-1_c2aaa76a
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549415
+  - m_Id: 1840943167
+    m_Key: size-70-enter-wasd-size_9a482019
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549416
+  - m_Id: 1840943168
+    m_Key: size-70-enter-size_e45518a5
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549417
+  - m_Id: 1840943169
+    m_Key: size-70-0-enter-size_2d135e70
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549418
+  - m_Id: 1840943170
+    m_Key: th_6bece6b8
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549419
+  - m_Id: 1840943171
+    m_Key: th_b39b67f2
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549420
+  - m_Id: 1840943172
+    m_Key: th_0f9fb2b3
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549421
+  - m_Id: 1840943173
+    m_Key: th_72b8500e
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549422
+  - m_Id: 1840943174
+    m_Key: th_bed40cf8
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549423
+  - m_Id: 1840943175
+    m_Key: 0-1_d7da1ed0
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549424
+  - m_Id: 1840943176
+    m_Key: th_009cf6e5
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549425
+  - m_Id: 1840943177
+    m_Key: e_6f6c6ecf
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549426
+  - m_Id: 1840943178
+    m_Key: e_72f40be5
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549427
+  - m_Id: 1840943179
+    m_Key: e_7b64e610
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549428
+  - m_Id: 1840943180
+    m_Key: th_f47a13e2
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549429
+  - m_Id: 1840943181
+    m_Key: e_47302ef5
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549430
+  - m_Id: 1840943182
+    m_Key: th_10dd011d
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549431
+  - m_Id: 1840943183
+    m_Key: e_fab1761d
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549432
+  - m_Id: 1840943184
+    m_Key: e_30446128
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549433
+  - m_Id: 1840943185
+    m_Key: th_8caa05d5
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549434
+  - m_Id: 1840943186
+    m_Key: th_ea802cd2
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549435
+  - m_Id: 1840943187
+    m_Key: e_b086805a
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549436
+  - m_Id: 1840943188
+    m_Key: 0_7faf1a18
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549437
+  - m_Id: 1840943189
+    m_Key: th_fa252c32
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549438
+  - m_Id: 1840943190
+    m_Key: th_af9ff50c
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549439
+  - m_Id: 1840943191
+    m_Key: th_7dd08902
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549440
+  - m_Id: 1840943192
+    m_Key: e_ef644ebc
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549441
+  - m_Id: 1840943193
+    m_Key: tab_3c92c547
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549442
+  - m_Id: 1840943194
+    m_Key: 1-2_c5971b97
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549443
+  - m_Id: 1840943195
+    m_Key: th_52085f42
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549444
+  - m_Id: 1840943196
+    m_Key: th_7c7efc32
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549445
+  - m_Id: 1840943197
+    m_Key: th_a21f5f21
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549446
+  - m_Id: 1840943198
+    m_Key: th_ebb8bf18
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549447
+  - m_Id: 1840943199
+    m_Key: th_cd0f67b3
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549448
+  - m_Id: 1840943200
+    m_Key: language_9a73db9b
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549449
+  - m_Id: 1840943201
+    m_Key: resume_454d1d8a
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549450
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 3244670351061549158
+  references:
+    version: 2
+    RefIds:
+    - rid: 3244670351061549158
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1792798356114
+    - rid: 3244670351061549352
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/Rule4.unity
+    - rid: 3244670351061549353
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/Rule4.unity | Label/Rule4.unity | Label/MainMenu.unity
+          (+1)
+    - rid: 3244670351061549354
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/Rule4.unity | Field/Rule4.unity/line1
+    - rid: 3244670351061549355
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/Rule4.unity
+    - rid: 3244670351061549356
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/Rule4.unity | Field/Rule4.unity/dayLabel
+    - rid: 3244670351061549357
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/Rule4.unity
+    - rid: 3244670351061549358
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/Rule4.unity
+    - rid: 3244670351061549359
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/Rule4.unity
+    - rid: 3244670351061549360
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/Rule4.unity
+    - rid: 3244670351061549361
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/Rule4.unity | Label/MainMenu.unity
+    - rid: 3244670351061549362
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/contactName
+    - rid: 3244670351061549363
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/contactName
+    - rid: 3244670351061549364
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/contactName
+    - rid: 3244670351061549365
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/deadBanner
+    - rid: 3244670351061549366
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/displayName
+    - rid: 3244670351061549367
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/displayName
+    - rid: 3244670351061549368
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/displayName
+    - rid: 3244670351061549369
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/displayName
+    - rid: 3244670351061549370
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/displayName
+    - rid: 3244670351061549371
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/endOfThreadHint
+    - rid: 3244670351061549372
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/getOffHint | Field/Rule4.unity/standHintText
+    - rid: 3244670351061549373
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/getOffHint
+    - rid: 3244670351061549374
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/grabHint
+    - rid: 3244670351061549375
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/introHint
+    - rid: 3244670351061549376
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/introHint
+    - rid: 3244670351061549377
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/line1 (same in both languages)
+    - rid: 3244670351061549378
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/line1 (same in both languages)
+    - rid: 3244670351061549379
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/line1 (same in both languages)
+    - rid: 3244670351061549380
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/line1 (same in both languages)
+    - rid: 3244670351061549381
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/line2
+    - rid: 3244670351061549382
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/line2
+    - rid: 3244670351061549383
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/line2
+    - rid: 3244670351061549384
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/line2
+    - rid: 3244670351061549385
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/newMessageBody
+    - rid: 3244670351061549386
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/pausedBanner
+    - rid: 3244670351061549387
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/phoneHintAfterOpen
+    - rid: 3244670351061549388
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/phoneHintBeforeOpen
+    - rid: 3244670351061549389
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/prayHint
+    - rid: 3244670351061549390
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/promptAction
+    - rid: 3244670351061549391
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/readyBanner
+    - rid: 3244670351061549392
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/recentLabel
+    - rid: 3244670351061549393
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/scoreFormat
+    - rid: 3244670351061549394
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/sitHint | Field/Rule4.unity/sitHint | Field/Rule4.unity/sitHint
+    - rid: 3244670351061549395
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/sitHint | Field/Rule4.unity/sitHint
+    - rid: 3244670351061549396
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/titleFormat
+    - rid: 3244670351061549397
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/typingLabel
+    - rid: 3244670351061549398
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/untangleHint
+    - rid: 3244670351061549399
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/wrongSpotHint
+    - rid: 3244670351061549400
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/batteryFormat (same in both languages)
+    - rid: 3244670351061549401
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/MainMenu.unity
+    - rid: 3244670351061549402
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/MainMenu.unity (same in both languages)
+    - rid: 3244670351061549403
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/MainMenu.unity
+    - rid: 3244670351061549404
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/ChatBox.prefab
+    - rid: 3244670351061549405
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Label/Electric Box.prefab | Label/ReElectirc.prefab
+    - rid: 3244670351061549406
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/ReElectirc.prefab/textBeforePuzzle
+    - rid: 3244670351061549407
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Doll.prefab/interactHint
+    - rid: 3244670351061549408
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/FixedShrine.prefab/emptyHandHint
+    - rid: 3244670351061549409
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/FixedShrine.prefab/placeHint
+    - rid: 3244670351061549410
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/ChatUIController.typingLabel
+    - rid: 3244670351061549411
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/FriendListController.newMessageBody
+    - rid: 3244670351061549412
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/PhoneHomeBinder.dayLabel
+    - rid: 3244670351061549413
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/PhoneNotificationCenter.recentLabel
+    - rid: 3244670351061549414
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/RuleBookPanelBinder.titleFormat
+    - rid: 3244670351061549415
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/SnakeGameController.scoreFormat
+    - rid: 3244670351061549416
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/SnakeGameController.readyBanner
+    - rid: 3244670351061549417
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/SnakeGameController.pausedBanner
+    - rid: 3244670351061549418
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/SnakeGameController.deadBanner
+    - rid: 3244670351061549419
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/PaperBallBox.promptAction
+    - rid: 3244670351061549420
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/PaperBallThrower.takeBallPromptAction
+    - rid: 3244670351061549421
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/PaperBallThrower.throwPromptKey
+    - rid: 3244670351061549422
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/PaperBallThrower.throwPromptAction
+    - rid: 3244670351061549423
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/PaperBallThrower.stashPromptAction
+    - rid: 3244670351061549424
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/TrashBin.scoreFormat
+    - rid: 3244670351061549425
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/PlayAreaBoundary.line
+    - rid: 3244670351061549426
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/LightPanel.textBeforePuzzle
+    - rid: 3244670351061549427
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/Doll.interactHint
+    - rid: 3244670351061549428
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/SpiritHouse.placeHint
+    - rid: 3244670351061549429
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/SpiritHouse.emptyHandHint
+    - rid: 3244670351061549430
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/SacredThreadWalker.grabHint
+    - rid: 3244670351061549431
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/SacredThreadWalker.wrongSpotHint
+    - rid: 3244670351061549432
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/SacredThreadWalker.untangleHint
+    - rid: 3244670351061549433
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/SacredThreadWalker.detourHint
+    - rid: 3244670351061549434
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/SacredThreadWalker.endOfThreadHint
+    - rid: 3244670351061549435
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/ThreadObstacle.hint
+    - rid: 3244670351061549436
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/Rule1.standHintText
+    - rid: 3244670351061549437
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/Rule4.introHint
+    - rid: 3244670351061549438
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/Rule5.chingWarnHint
+    - rid: 3244670351061549439
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/Rule5.prayHint
+    - rid: 3244670351061549440
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/Rule5.prayNotHoldingHint
+    - rid: 3244670351061549441
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/Rule6.getOffHint + CutsceneManager.getOffHint
+    - rid: 3244670351061549442
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/CutsceneManager.phoneHintBeforeOpen
+    - rid: 3244670351061549443
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/CutsceneManager.phoneHintAfterOpen
+    - rid: 3244670351061549444
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/RewardSystem.displayName
+    - rid: 3244670351061549445
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/RewardSystem.displayName
+    - rid: 3244670351061549446
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/RewardSystem.displayName
+    - rid: 3244670351061549447
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/RewardSystem.displayName
+    - rid: 3244670351061549448
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/RewardSystem.displayName
+    - rid: 3244670351061549449
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: UI/Language menu title
+    - rid: 3244670351061549450
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: UI/Language menu button

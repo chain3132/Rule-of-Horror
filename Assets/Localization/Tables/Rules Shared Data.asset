@@ -1,0 +1,478 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Rules Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Rules
+  m_TableCollectionNameGuidString: f94bf4ba3599b304ab81f801afdba579
+  m_Entries:
+  - m_Id: 393908224
+    m_Key: dont-go-further-than-this_da2cb9c2
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549163
+  - m_Id: 406491136
+    m_Key: do-not-go-further-than_5ebce552
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549164
+  - m_Id: 406491137
+    m_Key: walk_22ccd730
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549165
+  - m_Id: 406491138
+    m_Key: pick-up_5b627e15
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549166
+  - m_Id: 406491139
+    m_Key: pick-a-phone_2c0e768b
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549167
+  - m_Id: 406491140
+    m_Key: flashlight_d184fa33
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549168
+  - m_Id: 406491141
+    m_Key: stay-close-to-the-pavilion_b73d3a67
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549169
+  - m_Id: 406491142
+    m_Key: follow-the-rules-and-wait_97d1e2f3
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549170
+  - m_Id: 406491143
+    m_Key: blackout_c5a0fa68
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549171
+  - m_Id: 406491144
+    m_Key: the-power-is-out-get_cb0c3758
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549172
+  - m_Id: 406491145
+    m_Key: turn-on-light-turn-on_701f135c
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549173
+  - m_Id: 406491146
+    m_Key: pull-lever-in-fuse-box_7d8230a7
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549174
+  - m_Id: 406491147
+    m_Key: turn-on-the-light-then_1995032b
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549175
+  - m_Id: 406491148
+    m_Key: return-to-your-original-seat_b3b5479a
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549176
+  - m_Id: 406491149
+    m_Key: if-the-light-doesnt-turn_fc2e7b7e
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549177
+  - m_Id: 406491150
+    m_Key: stare-at-numbers_231384f3
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549178
+  - m_Id: 406491151
+    m_Key: find-4-number-papers-then_2202a333
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549179
+  - m_Id: 406491152
+    m_Key: stare-at-paper_7e15297f
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549180
+  - m_Id: 406491153
+    m_Key: stay-still_a719855a
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549181
+  - m_Id: 406491154
+    m_Key: stare-at-each-paper-one_11b76cfa
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549182
+  - m_Id: 406491155
+    m_Key: keep-your-eyes-wide-open_a45ff920
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549183
+  - m_Id: 406491156
+    m_Key: if-something-is-watching-do_fabf47c0
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549184
+  - m_Id: 406491157
+    m_Key: offering_10f05a23
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549185
+  - m_Id: 406491158
+    m_Key: find-the-dolls-then-place_2d8b2c11
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549186
+  - m_Id: 406491159
+    m_Key: pick-up-place-doll_91fd5aa0
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549187
+  - m_Id: 406491160
+    m_Key: stare_19e8211c
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549188
+  - m_Id: 406491161
+    m_Key: hold-breath_050e440a
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549189
+  - m_Id: 406491162
+    m_Key: search-for-dolls-by-sound_c4b5d235
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549190
+  - m_Id: 406491163
+    m_Key: you-must-place-a-total_02a21134
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549191
+  - m_Id: 406491164
+    m_Key: the-pavilion-is-not-always_6ecc07a7
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549192
+  - m_Id: 406491165
+    m_Key: if-the-hanged-person-disappears_551defd3
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549193
+  - m_Id: 406491166
+    m_Key: if-it-finds-you-do_cdbc0c00
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549194
+  - m_Id: 406491167
+    m_Key: dolls-must-be-returned-to_a327cf88
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549195
+  - m_Id: 406491168
+    m_Key: sacred-thread_28832eaf
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549196
+  - m_Id: 406491169
+    m_Key: when-the-sacred-thread-surrounds_579da7ff
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549197
+  - m_Id: 406491170
+    m_Key: grab-release-sacred-thread_0d4746f3
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549198
+  - m_Id: 406491171
+    m_Key: follow-the-thread_1dbdf7f5
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549199
+  - m_Id: 406491172
+    m_Key: pray_3d192731
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549200
+  - m_Id: 406491173
+    m_Key: if-you-hear-a-crying_e206a764
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549201
+  - m_Id: 406491174
+    m_Key: when-the-bell-rings-for_4e515b61
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549202
+  - m_Id: 406491175
+    m_Key: do-not-let-go-of_fbd52e78
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549203
+  - m_Id: 406491176
+    m_Key: ignore-the-sounds-behind-you_4cc07b53
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549204
+  - m_Id: 406491177
+    m_Key: do-not-let-go-of_a3189478
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549205
+  - m_Id: 406491178
+    m_Key: the-bus_c5dbbeb2
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549206
+  - m_Id: 406491179
+    m_Key: a-bus-will-stop-in_d75b0809
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549207
+  - m_Id: 406491180
+    m_Key: stay-seated-a-bus-will_40c348f3
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549208
+  - m_Id: 406491181
+    m_Key: get-up-to-check-a_7cf7cebb
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549209
+  - m_Id: 406491182
+    m_Key: sit-back-down-and-it_0bb27e48
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549210
+  - m_Id: 406491183
+    m_Key: take-the-one-with-people_8bdcb609
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549211
+  - m_Id: 406491184
+    m_Key: get-on-a-bus_b439296d
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549212
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 3244670351061549162
+  references:
+    version: 2
+    RefIds:
+    - rid: 3244670351061549162
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1792798356447
+    - rid: 3244670351061549163
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_1/title
+    - rid: 3244670351061549164
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_1/summary
+    - rid: 3244670351061549165
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_1/action
+    - rid: 3244670351061549166
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_1/action
+    - rid: 3244670351061549167
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_1/action
+    - rid: 3244670351061549168
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_1/action | Rules/RuleEntry_2/action
+    - rid: 3244670351061549169
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_1/factsIfCooperative | Rules/RuleEntry_1/factsIfDefiant
+    - rid: 3244670351061549170
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_1/factsIfCooperative
+    - rid: 3244670351061549171
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_2/title
+    - rid: 3244670351061549172
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_2/summary
+    - rid: 3244670351061549173
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_2/action
+    - rid: 3244670351061549174
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_2/action
+    - rid: 3244670351061549175
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_2/factsIfCooperative | Rules/RuleEntry_2/factsIfDefiant
+    - rid: 3244670351061549176
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_2/factsIfCooperative | Rules/RuleEntry_2/factsIfDefiant
+    - rid: 3244670351061549177
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_2/factsIfCooperative
+    - rid: 3244670351061549178
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_3/title
+    - rid: 3244670351061549179
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_3/summary
+    - rid: 3244670351061549180
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_3/action
+    - rid: 3244670351061549181
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_3/action
+    - rid: 3244670351061549182
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_3/factsIfCooperative | Rules/RuleEntry_3/factsIfDefiant
+    - rid: 3244670351061549183
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_3/factsIfCooperative
+    - rid: 3244670351061549184
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_3/factsIfCooperative
+    - rid: 3244670351061549185
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_4/title
+    - rid: 3244670351061549186
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_4/summary
+    - rid: 3244670351061549187
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_4/action
+    - rid: 3244670351061549188
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_4/action
+    - rid: 3244670351061549189
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_4/action
+    - rid: 3244670351061549190
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_4/factsIfCooperative
+    - rid: 3244670351061549191
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_4/factsIfCooperative
+    - rid: 3244670351061549192
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_4/factsIfCooperative
+    - rid: 3244670351061549193
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_4/factsIfCooperative
+    - rid: 3244670351061549194
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_4/factsIfCooperative
+    - rid: 3244670351061549195
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_4/factsIfDefiant
+    - rid: 3244670351061549196
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_5/title
+    - rid: 3244670351061549197
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_5/summary
+    - rid: 3244670351061549198
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_5/action
+    - rid: 3244670351061549199
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_5/action
+    - rid: 3244670351061549200
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_5/action
+    - rid: 3244670351061549201
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_5/factsIfCooperative
+    - rid: 3244670351061549202
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_5/factsIfCooperative
+    - rid: 3244670351061549203
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_5/factsIfCooperative
+    - rid: 3244670351061549204
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_5/factsIfCooperative
+    - rid: 3244670351061549205
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_5/factsIfDefiant
+    - rid: 3244670351061549206
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_6/title
+    - rid: 3244670351061549207
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_6/summary
+    - rid: 3244670351061549208
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_6/factsIfCooperative
+    - rid: 3244670351061549209
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_6/factsIfCooperative
+    - rid: 3244670351061549210
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_6/factsIfCooperative
+    - rid: 3244670351061549211
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_6/factsIfCooperative
+    - rid: 3244670351061549212
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Rules/RuleEntry_6/factsIfDefiant

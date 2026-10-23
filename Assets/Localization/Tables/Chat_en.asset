@@ -1,0 +1,625 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Chat_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: ff0fd90b13deee541b2a9f08b82d6bde, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 612012032
+    m_Localized: "Honey, dinner\u2019s getting cold. I already warmed it up for you."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 653955072
+    m_Localized: Ton called me saying he couldn't reach you. Where are you?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 653955073
+    m_Localized: ...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 653955074
+    m_Localized: Alright, I'll be waiting. Just don't sit out there by yourself for
+      too long.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149376
+    m_Localized: Which shed, sweetheart? Stay calm, and don't move from there.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149377
+    m_Localized: If anyone texts you giving instructions, do NOT follow them.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149378
+    m_Localized: A few years back, the neighbor told me about this one shed...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149379
+    m_Localized: "[Message failed to send \u21BB]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149380
+    m_Localized: "Honey, dinner\u2019s getting cold. Did you eat yet?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149381
+    m_Localized: "I\u2019m fine, Mom. The bus is running late, but I\u2019ll be home
+      soon."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149382
+    m_Localized: "Mom, I\u2019m stuck at a roadside shed. Things feel really off
+      here."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149383
+    m_Localized: weetheart, Ton is driving out to get you now.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149384
+    m_Localized: I told him to check the shed near the canal bridge.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149385
+    m_Localized: Stay right there. Don't walk away.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149386
+    m_Localized: It's too late, sweetie. He already drove off, and now I can't reach
+      him at all.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149387
+    m_Localized: I turned on the porch lights for you.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149388
+    m_Localized: Can you see the light?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149389
+    m_Localized: "Really? Okay, Mom. I\u2019ll wait for him here."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149390
+    m_Localized: "Tell him not to come, Mom! It\u2019s not safe here!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149391
+    m_Localized: "Where the hell are you? Thought you said you\u2019d be home by
+      7"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149392
+    m_Localized: Your mom even texted me asking where you are.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149393
+    m_Localized: '"Another one"? Which one do you mean?'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149394
+    m_Localized: What texts? Calm down. Which shed are you at?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149395
+    m_Localized: "The rundown-looking one. It\u2019s about a kilometer down from
+      the usual stop."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149396
+    m_Localized: Wait a second...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149397
+    m_Localized: Is it that shed from the stories?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149398
+    m_Localized: Don't tell me you're...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149399
+    m_Localized: '[Disconnected / No further messages]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149400
+    m_Localized: Still waiting for the bus. The usual shed got wrecked by the storm,
+      so I had to move to another one
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149401
+    m_Localized: "Ton, I\u2019m stuck at this waiting shed. Someone\u2019s sending
+      me weird texts"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149402
+    m_Localized: Still waiting for the bus. The usual shed got wrecked by the storm,
+      so I had to move to another one.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149403
+    m_Localized: You still there? I just went and asked my uncle about it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149404
+    m_Localized: '[Voice Message 0:00 - Playback Failed]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149405
+    m_Localized: Okay, hold on. Typing it out.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149406
+    m_Localized: I'm not messing around. Just listen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149407
+    m_Localized: My uncle said years ago, a woman was waiting for the bus at that
+      shed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149408
+    m_Localized: There was another guy with her that night.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149409
+    m_Localized: But by morning, all they found was...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149410
+    m_Localized: '[This message was unsent]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149411
+    m_Localized: DO NOT FOLLOW ANY OF THE RULES!!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149412
+    m_Localized: "I can't play it. Just text me\u2014what did your uncle say?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149413
+    m_Localized: Can you not mess around right now? Just tell me!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149414
+    m_Localized: I'm at the shed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149415
+    m_Localized: Where are you?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149416
+    m_Localized: "I\u2019m standing right in front of that bench. There\u2019s no
+      one here."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149417
+    m_Localized: I don't see you either. The shed is completely empty. Just a single
+      light.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149418
+    m_Localized: Listen, let me finish what my uncle told me.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149419
+    m_Localized: "That woman was named Paeng. Years ago, she was waiting for a bus
+      at this shed when she got sent a set of rules\u2014just like you did."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149420
+    m_Localized: A stranger was there with her that night. They both followed the
+      rules together and almost made it to the end.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149421
+    m_Localized: But the last bus could only take one person.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149422
+    m_Localized: By morning, the shed was empty. Paeng vanished, and while the guy
+      made it home... no one ever saw him again.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149423
+    m_Localized: My grandma said ever since then, anyone who wanders into that shed
+      receives texts from an unknown number.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149424
+    m_Localized: Bro...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149425
+    m_Localized: The person texting you... my uncle thinks it might be the guy who
+      survived that night
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149426
+    m_Localized: "He\u2019s not trying to help you. He\u2019s trying to find someone
+      to take his place."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149427
+    m_Localized: My uncle said Paeng never actually killed anyone.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149428
+    m_Localized: Everyone who died there was consumed by their own fear.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149429
+    m_Localized: I don't know. My uncle only said...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149430
+    m_Localized: "Yeah. But it\u2019s not too late. My uncle said..."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149431
+    m_Localized: '"DO NOT get on the bus he tells you to get on."'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149432
+    m_Localized: "I\u2019ll wait right here until you get out."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149433
+    m_Localized: '[Ton went offline]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149434
+    m_Localized: '[A few seconds later, a chat from an unknown sender popped up]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149435
+    m_Localized: "[Unknown: Your friend talks too much.]\t"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149436
+    m_Localized: "I\u2019m sitting inside on the bench. You're here already?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149437
+    m_Localized: "No way. I\u2019m looking around right now, and there\u2019s no
+      one."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149438
+    m_Localized: So what am I supposed to do now?!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149439
+    m_Localized: "Wait... so I\u2019ve been following his orders this whole time?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149440
+    m_Localized: What would you like to eat today, dear?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149441
+    m_Localized: I'll make it for you so you can eat as soon as you get home.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149442
+    m_Localized: ahmm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149443
+    m_Localized: Great! I just bought some pork
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149444
+    m_Localized: Great! Then I'll add some extra pork for you
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149445
+    m_Localized: Pad Krapow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149446
+    m_Localized: Omelette Rice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149447
+    m_Localized: Do you believe in an afterlife? Some people do
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149448
+    m_Localized: ' but some don''t. And if we die, where do we go next?'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149449
+    m_Localized: Or is it just pitch black, like switching off the lights?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149450
+    m_Localized: It depends on whether you're ready to bear the burden that follows
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149451
+    m_Localized: If you want to survive this situation, first, you must not go any
+      further
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149452
+    m_Localized: Good luck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149453
+    m_Localized: Just follow the rules and wait until the time comes. First, 19:00
+      - 19:40. Good luck
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149454
+    m_Localized: Don't be ridiculous. I don't believe in children's fairy tales
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149455
+    m_Localized: And what do I have to do?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149456
+    m_Localized: The night is still long. Having something to ease your mind would
+      be better, wouldn't it?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149457
+    m_Localized: Rule number 2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149458
+    m_Localized: When you're sitting at the pavilion and the only light that helps
+      you see goes out
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149459
+    m_Localized: ou must get up and turn the light back on and return to your seat.
+      Also, before you sit back down
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149460
+    m_Localized: don't forget to turn on the radio. Then, once you have the light
+      and radio on
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149461
+    m_Localized: return to your seat and wait for the radio to turn off."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149462
+    m_Localized: You can't escape this
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149463
+    m_Localized: It's not difficult
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149464
+    m_Localized: You just have to turn on the light and the radio and return to your
+      seat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149465
+    m_Localized: Wait until the radio turns off. But the path isn't that simple,
+      is it?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149466
+    m_Localized: f the light doesn't come on, you have to fix it. Simple. As for
+      the time, 20:00 - 20:40
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149467
+    m_Localized: May you survive and be safe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149468
+    m_Localized: That's enough, I don't want to play anymore. Go die somewhere!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149469
+    m_Localized: Okay, I've read the rules. What are the other details?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149470
+    m_Localized: Next rule, rule number 3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149471
+    m_Localized: You have to find four pieces of paper with numbers on them
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149472
+    m_Localized: ' You have to stare at them until the numbers disappear, in ascending
+      order'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149473
+    m_Localized: Ahmm...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149474
+    m_Localized: Whatever you choose, in the end, it's your own choice.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149475
+    m_Localized: Stay calm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149476
+    m_Localized: You just need to find the pieces of paper with numbers on them
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149477
+    m_Localized: and look at them in ascending order, all four of them.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149478
+    m_Localized: But be careful, try to keep your eyes open. Do not close your eyes
+      under any circumstances
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149479
+    m_Localized: And if anything is watching you, do not move. 9:00 PM - 9:40 PM.
+      This night is so long
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149480
+    m_Localized: You've come further than expected. Choose what you deserve
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149481
+    m_Localized: I curse every one of you who created this!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149482
+    m_Localized: ' I don''t want to play anymore. I can''t take it anymore. I can''t
+      bear this anymore.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149483
+    m_Localized: Not a bad idea at all. The next rule
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149484
+    m_Localized: 'ule 4: You must find the dolls and put them back at the original
+      shrine'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149485
+    m_Localized: Very good, then listen closely
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149486
+    m_Localized: Those dolls didn't go anywhere; they are just waiting for someone
+      to bring them back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149487
+    m_Localized: Some are crying, some are laughing, and some are calling out to
+      you
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149488
+    m_Localized: The closer you get, the clearer the sound becomes. Collect all 6
+      of them and put them back on the shrine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149489
+    m_Localized: But don't think the shrine will wait for you in the same spot forever
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149490
+    m_Localized: And whenever the person hanging there disappears, do not let it
+      hear your breath
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149491
+    m_Localized: "If it finds you, do not turn away\u2014stare directly at it, even
+      if it doesn't stop"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149492
+    m_Localized: 22:00 - 22:40, may your breath last long enough
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149493
+    m_Localized: The shrine has been empty all night. The missing offerings are crying
+      out around you
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149494
+    m_Localized: Listen carefully, bring them all back, and remember that your breathing
+      is louder than you think.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149495
+    m_Localized: 22:00 - 22:40
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149496
+    m_Localized: What do you want? Just let me out of this hellhole already.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149497
+    m_Localized: Whatever it is, bring it on. I'm always ready to handle it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149498
+    m_Localized: 'Not a bad idea at all. The next rule, Rule 5: You must pay even
+      closer attention to the sounds than before'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149499
+    m_Localized: Hold onto the sacred thread and keep walking. If you hear the sound
+      of the Ching (Thai cymbal), stop immediately
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149500
+    m_Localized: and only continue walking once it goes silent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149501
+    m_Localized: Listen carefully to the bell sound as you walk and count it properly
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149502
+    m_Localized: The 3rd bell chime is the signal for you to return and sit at the
+      pavilion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149503
+    m_Localized: If you return too early or too late even once... you won't get to
+      return again
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149504
+    m_Localized: Do not let go of your hand for too long, and no matter what you
+      hear behind you, ignore it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149505
+    m_Localized: 23:00 - 23:40, listen carefully to distinguish which sound is real
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149506
+    m_Localized: That red thread is the only thing binding you here
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149507
+    m_Localized: If you want to let go, then let go
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149508
+    m_Localized: But don't expect anyone to wait for you to hold it again
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149509
+    m_Localized: I've followed every single thing you ordered. What more do you want
+      from me?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149510
+    m_Localized: Just tell me, what do I have to do this time to survive?
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

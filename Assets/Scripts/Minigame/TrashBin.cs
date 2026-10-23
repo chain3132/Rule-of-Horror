@@ -109,7 +109,7 @@ public class TrashBin : MonoBehaviour
     {
         if (scoreText == null) return;
 
-        scoreText.text = string.Format(scoreFormat, Score, Best);
+        scoreText.text = L10n.Format(scoreFormat, Score, Best);
         scoreText.gameObject.SetActive(true);
 
         if (_hideScoreRoutine != null) StopCoroutine(_hideScoreRoutine);

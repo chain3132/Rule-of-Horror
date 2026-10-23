@@ -1,0 +1,231 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Rules_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: f94bf4ba3599b304ab81f801afdba579, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 393908224
+    m_Localized: Don't go further than this
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491136
+    m_Localized: Do not go further than this
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491137
+    m_Localized: Walk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491138
+    m_Localized: Pick Up
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491139
+    m_Localized: Pick a phone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491140
+    m_Localized: Flashlight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491141
+    m_Localized: Stay close to the pavilion. Do not go far away
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491142
+    m_Localized: 'Follow the rules and wait until the time comes   '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491143
+    m_Localized: Blackout
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491144
+    m_Localized: The power is out. Get up to turn the light back on, turn on the
+      radio before returning, and sit in your original seat until the radio stops
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491145
+    m_Localized: Turn on light / Turn on radio / Open fuse box
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491146
+    m_Localized: Pull lever in fuse box
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491147
+    m_Localized: Turn on the light, then turn on the radio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491148
+    m_Localized: Return to your original seat and wait until the radio turns off
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491149
+    m_Localized: If the light doesn't turn on, you must go fix it yourself
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491150
+    m_Localized: Stare at Numbers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491151
+    m_Localized: Find 4 number papers, then stare at them until they disappear, ordered
+      from lowest to highest number
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491152
+    m_Localized: Stare at paper
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491153
+    m_Localized: Stay still
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491154
+    m_Localized: Stare at each paper one by one, from lowest to highest, until you
+      complete all 4 papers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491155
+    m_Localized: Keep your eyes wide open. Do not blink at all
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491156
+    m_Localized: If something is watching, do not move
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491157
+    m_Localized: Offering
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491158
+    m_Localized: Find the dolls, then place them on the pavilion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491159
+    m_Localized: Pick up / Place doll
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491160
+    m_Localized: Stare
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491161
+    m_Localized: Hold breath
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491162
+    m_Localized: Search for dolls by sound. The closer you are, the clearer it gets
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491163
+    m_Localized: You must place a total of 6 dolls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491164
+    m_Localized: The pavilion is not always in the same place
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491165
+    m_Localized: If the hanged person disappears, do not let them hear you holding
+      your breath
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491166
+    m_Localized: If it finds you, do not run. Stare at it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491167
+    m_Localized: Dolls must be returned to the pavilion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491168
+    m_Localized: Sacred Thread
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491169
+    m_Localized: When the sacred thread surrounds the pavilion, grab it and walk
+      along the path until the bell calls you back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491170
+    m_Localized: Grab / Release sacred thread
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491171
+    m_Localized: Follow the thread
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491172
+    m_Localized: Pray
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491173
+    m_Localized: If you hear a crying sound, stop walking, stay quiet, then continue
+      walking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491174
+    m_Localized: When the bell rings for the 3rd time, return to sit at the pavilion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491175
+    m_Localized: 'Do not let go of your hand for too long   '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491176
+    m_Localized: Ignore the sounds behind you
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491177
+    m_Localized: Do not let go of the sacred thread
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491178
+    m_Localized: The Bus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491179
+    m_Localized: A bus will stop in front of the pavilion. Read it before you stand
+      up - you only get on one
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491180
+    m_Localized: Stay seated. A bus will come to you
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491181
+    m_Localized: Get up to check a bus and it will wait as long as you like
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491182
+    m_Localized: Sit back down and it moves on to the next one
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491183
+    m_Localized: Take the one with people in it. An empty bus at this hour is not
+      a bus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 406491184
+    m_Localized: Get on a bus
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

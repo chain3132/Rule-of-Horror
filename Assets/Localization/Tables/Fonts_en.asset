@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97269afb30aa84742ae3f3342603618a, type: 3}
+  m_Name: Fonts_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.AssetTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: c37e8b6711b1e4144b303222875b3c05, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 465211392
+    m_Localized: 6d525b18108ebd541b3e0a399d68c2c6
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1937412096
+    m_Localized: cea6c2c5c4fe86b4097f0b35231fd4b1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1937412097
+    m_Localized: 66a97c072c11df74ebe3df0221a32ba0
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

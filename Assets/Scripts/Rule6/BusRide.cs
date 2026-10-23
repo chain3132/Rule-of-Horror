@@ -26,6 +26,14 @@ namespace Rule6
         /// <summary>hint ต้องค้างจนเราสั่ง Hide เอง — PlayerDialogueUI fade เองเมื่อ hold ครบ</summary>
         private const float PersistentHint = 3600f;
 
+        /// <summary>
+        /// ต้องออกมานอกกล่องห้องโดยสารอย่างน้อยเท่านี้ (เมตร) รถจึงนับว่าลงแล้ว
+        ///
+        /// วัดจากรากตัวละคร (กลางเท้า) แต่ตัวละครกว้างกว่าจุดนั้น ถ้าใช้ 0 รถจะออกตอนครึ่งตัว
+        /// ยังอยู่ในประตู แล้วตัวรถที่เคลื่อนด้วย transform จะกวาดผู้เล่นไปด้วยหรือทะลุตัวไป
+        /// </summary>
+        private const float CabinExitMargin = 0.6f;
+
         // ════════════════════════════════════════════════════════════════
         #region พาผู้เล่นไปกับรถ
         // ════════════════════════════════════════════════════════════════
@@ -241,14 +249,36 @@ namespace Rule6
 
             Transform seat = bus.Seat != null ? bus.Seat : bus.transform;
 
-            yield return new WaitUntil(() =>
+            if (!bus.HasCabin)
+                Debug.LogWarning($"[BusRide] รถ '{bus.name}' ยังไม่ได้ใส่ Cabin Bounds — ใช้ระยะ " +
+                                 $"{offBusDistance} ม. จากเบาะแทน ซึ่งเดินไปท้ายรถก็นับว่าลงแล้ว " +
+                                 "รถจะออกไปพร้อมผู้เล่นที่ยังอยู่ข้างใน", bus);
+
+            bool OffBus()
             {
+                if (bus.HasCabin) return !bus.IsInsideCabin(pc.transform.position, CabinExitMargin);
+
                 Vector3 delta = pc.transform.position - seat.position;
                 delta.y = 0f;
                 return delta.sqrMagnitude >= offBusDistance * offBusDistance;
-            });
+            }
 
-            if (extraDelay > 0f) yield return new WaitForSeconds(extraDelay);
+            // รอให้อยู่ข้างนอก "ต่อเนื่อง" ครบ extraDelay ไม่ใช่แค่แตะขอบประตูแล้วนับเวลาเลย —
+            // ของเดิมรอ WaitForSeconds เฉยๆ ผู้เล่นที่ก้าวลงแล้วเดินกลับขึ้นไปในสองวินาทีนั้น
+            // จะถูกรถพาออกไปด้วย ตอนนี้ก้าวกลับขึ้นรถเมื่อไหร่ ตัวนับเริ่มใหม่
+            while (true)
+            {
+                yield return new WaitUntil(OffBus);
+
+                float outside = 0f;
+                while (outside < extraDelay && OffBus())
+                {
+                    outside += Time.deltaTime;
+                    yield return null;
+                }
+
+                if (OffBus()) yield break;
+            }
         }
 
         #endregion

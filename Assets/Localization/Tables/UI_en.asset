@@ -1,0 +1,438 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 167e5e399a00460469b2a29063a068eb, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1819971584
+    m_Localized: Rule Book
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943104
+    m_Localized: E - Open
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943105
+    m_Localized: Nang Len Klong 6 Presents
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943106
+    m_Localized: Your Hand
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943107
+    m_Localized: Tuesday night
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943108
+    m_Localized: Press "Space" to skip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943109
+    m_Localized: Right Click to Inspect
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943110
+    m_Localized: E - Pick up
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943111
+    m_Localized: You Dead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943112
+    m_Localized: E - Sit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943113
+    m_Localized: Mom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943114
+    m_Localized: Unknow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943115
+    m_Localized: Ton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943116
+    m_Localized: 'You died - Enter to Restart '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943117
+    m_Localized: Candle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943118
+    m_Localized: Street Lamp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943119
+    m_Localized: Radio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943120
+    m_Localized: Firefly
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943121
+    m_Localized: Incense
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943122
+    m_Localized: End of the thread...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943123
+    m_Localized: E   Get up
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943124
+    m_Localized: E   get up
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943125
+    m_Localized: E Grab sacred thread
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943126
+    m_Localized: "The spirit house is empty\u2026\r\nFind the six figurines and place
+      them all back."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943127
+    m_Localized: Hold the sacred thread and walk forward... Listen to the bell ring
+      {0} times, then return and sit down
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943128
+    m_Localized: 'Pornpisit Rattanasiripakdee '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943129
+    m_Localized: 'Patipong Saetan '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943130
+    m_Localized: 'Songkrod Tongkoy '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943131
+    m_Localized: Chaowanut Mukkhunthod
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943132
+    m_Localized: Project Manager
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943133
+    m_Localized: Game Designer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943134
+    m_Localized: Level Designer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943135
+    m_Localized: Game Developer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943136
+    m_Localized: new message {0} message
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943137
+    m_Localized: Pause
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943138
+    m_Localized: "1      open chat\n 2      flashlight\n 3      Rulebook\n 4 Snake
+      game"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943139
+    m_Localized: TAB  pick up the phone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943140
+    m_Localized: Spacebar to Prey
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943141
+    m_Localized: pick up
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943142
+    m_Localized: The Tail-Eating Snake - Enter to Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943143
+    m_Localized: Now
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943144
+    m_Localized: Point {0}   Hightest {1}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943145
+    m_Localized: E   Sit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943146
+    m_Localized: E   Sit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943147
+    m_Localized: "Rule {0} \u2014 {1}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943148
+    m_Localized: Typing...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943149
+    m_Localized: The thread is tangled... Hold E to untangle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943150
+    m_Localized: You must go back and grab the left-behind red cloth.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943151
+    m_Localized: '{0}%'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943152
+    m_Localized: '- Start -'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943153
+    m_Localized: '''Rule of Horror'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943154
+    m_Localized: '- Quite -'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943155
+    m_Localized: you have 1  message !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943156
+    m_Localized: E - Fix
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943157
+    m_Localized: E  Fix Light Panel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943158
+    m_Localized: E   pick up
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943159
+    m_Localized: you don't have a doll.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943160
+    m_Localized: E   Place the doll.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943161
+    m_Localized: Typing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943162
+    m_Localized: '{0} new messages'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943163
+    m_Localized: Tuesday night
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943164
+    m_Localized: Now
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943165
+    m_Localized: "Rule {0} \u2014 {1}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943166
+    m_Localized: Score {0}   Best {1}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943167
+    m_Localized: 'The Tail-Eating Snake
+
+
+      <size=70%>Enter to play
+
+      WASD
+      to steer</size>'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943168
+    m_Localized: 'Paused
+
+
+      <size=70%>Enter to continue</size>'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943169
+    m_Localized: 'You died
+
+
+      <size=70%>{0} points
+
+      Enter to play again</size>'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943170
+    m_Localized: Take a paper ball
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943171
+    m_Localized: Pick up the paper ball
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943172
+    m_Localized: Hold Left Click
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943173
+    m_Localized: Throw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943174
+    m_Localized: Put it back in the box
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943175
+    m_Localized: 'In the bin: {0} (best {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943176
+    m_Localized: I can't go any further
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943177
+    m_Localized: E  Fix Light Panel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943178
+    m_Localized: E   Pick up the doll
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943179
+    m_Localized: E   Place the doll at the shrine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943180
+    m_Localized: You don't have a doll.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943181
+    m_Localized: E   Grab the sacred thread
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943182
+    m_Localized: You must go back and grab the left-behind red cloth.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943183
+    m_Localized: "The thread is tangled\u2026 Hold E to untangle"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943184
+    m_Localized: "Something is in the way\u2026 Press E to let go and walk around"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943185
+    m_Localized: "End of the thread\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943186
+    m_Localized: "Something is in the way\u2026 you have to let go and walk around"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943187
+    m_Localized: E    Get up
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943188
+    m_Localized: "The spirit house is empty\u2026\nBring back all {0} dolls"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943189
+    m_Localized: "Stop walking\u2026 something is moving closer behind you"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943190
+    m_Localized: "\u2026I am taking my leave now"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943191
+    m_Localized: You have to be holding the sacred thread to pray
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943192
+    m_Localized: E   Get off the bus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943193
+    m_Localized: TAB  Pick up the phone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943194
+    m_Localized: '1      Open chat
+
+      2      Flashlight'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943195
+    m_Localized: Candle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943196
+    m_Localized: Street Lamp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943197
+    m_Localized: Radio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943198
+    m_Localized: Firefly
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943199
+    m_Localized: Incense
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943200
+    m_Localized: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1840943201
+    m_Localized: Resume
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

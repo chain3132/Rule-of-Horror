@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-Assets-Shared
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Localization-Assets-Shared
+  m_GUID: 750e66bc9854ebd47a716c05bd74ff50
+  m_SerializeEntries:
+  - m_GUID: 167e5e399a00460469b2a29063a068eb
+    m_Address: Assets/Localization/Tables/UI Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 40016d2348797504a863b4e97a967a08
+    m_Address: Assets/Localization/Tables/Dialogue Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c37e8b6711b1e4144b303222875b3c05
+    m_Address: Assets/Localization/Tables/Fonts Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f94bf4ba3599b304ab81f801afdba579
+    m_Address: Assets/Localization/Tables/Rules Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ff0fd90b13deee541b2a9f08b82d6bde
+    m_Address: Assets/Localization/Tables/Chat Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 98c10b930902b174cb2e44032c3c0387, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 2580c978be97e084ca2aacff3fbac17a, type: 2}
+    - {fileID: 11400000, guid: ded8735a5b472e94cb910b233a6dae40, type: 2}

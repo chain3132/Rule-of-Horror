@@ -33,6 +33,10 @@ public class GameHintUI : MonoBehaviour
     private bool      _phoneOnboarding;
     private string    _phoneStage2Text;
 
+    // ข้อความต้นฉบับที่ขึ้นอยู่ตอนนี้ — เก็บตัวต้นฉบับไว้ ไม่ใช่ตัวที่แปลแล้ว เพื่อแปลใหม่ได้
+    // ทันทีที่ผู้เล่นเปลี่ยนภาษาจากเมนู Esc ขณะ hint ค้างอยู่บนจอ
+    private string    _currentSource;
+
     private void Awake()
     {
         if (instance == null) instance = this;
@@ -41,10 +45,24 @@ public class GameHintUI : MonoBehaviour
         canvasGroup.alpha = 0f;
     }
 
+    private void OnEnable()  => L10n.Changed += Retranslate;
+    private void OnDisable() => L10n.Changed -= Retranslate;
+
     private void OnDestroy()
     {
         SetAutoDismiss(false);
         SetPhoneOnboarding(false);
+    }
+
+    private void SetText(string source)
+    {
+        _currentSource = source;
+        hintText.text  = L10n.T(source);
+    }
+
+    private void Retranslate()
+    {
+        if (_currentSource != null) hintText.text = L10n.T(_currentSource);
     }
 
     // ─────────────────────────── Public API ───────────────────────────
@@ -56,7 +74,7 @@ public class GameHintUI : MonoBehaviour
     public void Show(string text, bool autoDismissOnChatKey = false)
     {
         SetPhoneOnboarding(false);   // Show ปกติ = ยกเลิก onboarding ที่อาจค้าง
-        hintText.text = text;
+        SetText(text);
         SetAutoDismiss(autoDismissOnChatKey);
         FadeTo(1f);
     }
@@ -72,7 +90,7 @@ public class GameHintUI : MonoBehaviour
         _phoneStage2Text = afterOpenText;
         SetAutoDismiss(false);
         SetPhoneOnboarding(true);
-        hintText.text = beforeOpenText;
+        SetText(beforeOpenText);
         FadeTo(1f);
     }
 
