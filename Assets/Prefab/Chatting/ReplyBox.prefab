@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6098343827664841768}
   - component: {fileID: 740007998773337435}
   - component: {fileID: 8139809498130072134}
+  - component: {fileID: 8078257209932628871}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -137,6 +138,26 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &8078257209932628871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288810334205267711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 004b3c1779140464698d06a7feb81683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedFontAsset
+  m_LocalizedAssetReference:
+    m_TableReference:
+      m_TableCollectionName: Fonts
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: Font/Body
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
 --- !u!1 &8667301332863714093
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,6 +306,7 @@ GameObject:
   - component: {fileID: 1980331696134059897}
   - component: {fileID: 8178555411674206081}
   - component: {fileID: 8062988480655712375}
+  - component: {fileID: 5154113301825730116}
   m_Layer: 5
   m_Name: KeyLabel
   m_TagString: Untagged
@@ -411,3 +433,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5154113301825730116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9209696243388620937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 004b3c1779140464698d06a7feb81683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedFontAsset
+  m_LocalizedAssetReference:
+    m_TableReference:
+      m_TableCollectionName: Fonts
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: Font/Body
+    m_FallbackState: 0
+    m_WaitForCompletion: 0

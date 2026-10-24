@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 9202284426926467066}
   - component: {fileID: 1167819963962328164}
   - component: {fileID: 3949919506136612747}
+  - component: {fileID: 3268306600876314695}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -137,6 +138,26 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3268306600876314695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249336697348579403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 004b3c1779140464698d06a7feb81683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedFontAsset
+  m_LocalizedAssetReference:
+    m_TableReference:
+      m_TableCollectionName: Fonts
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: Font/Body
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
 --- !u!1 &1397107558448509173
 GameObject:
   m_ObjectHideFlags: 0
@@ -434,6 +455,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 44475dbd9a0cd2545b0f15acdffaad7d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2404801370618218933}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 44475dbd9a0cd2545b0f15acdffaad7d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2843131160398629559}
   m_SourcePrefab: {fileID: 100100000, guid: 44475dbd9a0cd2545b0f15acdffaad7d, type: 3}
 --- !u!1 &2773846085880144873 stripped
 GameObject:
@@ -453,7 +477,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rule2.LightPanel
   panelLight: {fileID: 4965861274193957987}
+  puzzleController: {fileID: 0}
   interactionText: {fileID: 3949919506136612747}
+  textBeforePuzzle: "E  \u0E0B\u0E48\u0E2D\u0E21\u0E15\u0E39\u0E49\u0E44\u0E1F"
 --- !u!65 &2404801370618218933
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -475,6 +501,35 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.6058388, y: 3.8627157, z: 1.6559846}
   m_Center: {x: -0.3029194, y: 1.4313579, z: 0.111551404}
+--- !u!114 &2843131160398629559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2773846085880144873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13c63a368b0b2f7439f3de47a12c9cf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rule2.LeverPuzzleController
+  levers: []
+  orderObjects: []
+  orderSlots: []
+  phase1Dot: {fileID: 0}
+  phase2Dot: {fileID: 0}
+  dotOffColor: {r: 0.85, g: 0.85, b: 0.85, a: 1}
+  dotOnColor: {r: 0, g: 1, b: 0, a: 1}
+  minRangeStart: 0.2
+  minZoneWidth: 0.22
+  maxZoneWidth: 0.32
+  playerCamera: {fileID: 0}
+  leverGrabDistance: 3
+  puzzleViewAnchor: {fileID: 0}
+  cameraBlendDuration: 0.3
+  mouseSensitivity: 0.002
+  failFlashDuration: 0.8
+  maxFails: 3
 --- !u!4 &3257649530711980371 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 44475dbd9a0cd2545b0f15acdffaad7d, type: 3}

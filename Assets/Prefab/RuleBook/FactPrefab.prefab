@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 9036068428537680244}
   - component: {fileID: 8789225284667766274}
   - component: {fileID: 8551603272770198926}
+  - component: {fileID: 6306315179805200972}
   m_Layer: 5
   m_Name: FactPrefab
   m_TagString: Untagged
@@ -138,6 +139,26 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6306315179805200972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519584170897768230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 004b3c1779140464698d06a7feb81683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedFontAsset
+  m_LocalizedAssetReference:
+    m_TableReference:
+      m_TableCollectionName: Fonts
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: Font/Body
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
 --- !u!1 &5123890235076920140
 GameObject:
   m_ObjectHideFlags: 0

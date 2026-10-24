@@ -16,6 +16,8 @@ using UnityEngine.Localization.Tables;
 /// deserialize — แบบนี้ข้อมูลเดิมไม่ต้องแตะเลย key คำนวณจากข้อความเอง
 ///
 /// key = ข้อความที่ปรับช่องว่างให้เป็นแบบเดียวกันแล้ว (Normalize) → hash
+/// ตัวที่ใช้ค้นจริงคือ hash 8 หลักท้าย key อย่างเดียว ("..._97912474") ส่วนหน้าเป็นชื่อให้คนอ่าน
+/// (ไฟล์ไหน node ไหน) เปลี่ยนได้อิสระ — แต่ห้ามลบเลขท้าย
 /// ผลข้างเคียงที่รู้ไว้: แก้ข้อความต้นฉบับเมื่อไหร่ key เปลี่ยน คำแปลเดิมจะหลุด แล้วเกมจะ
 /// แสดงต้นฉบับแทน (ไม่มีวันขึ้นคำแปลผิดอัน) — รัน Rule of Horror ▸ Localization ▸ Setup อีกรอบ
 /// เพื่อเพิ่มแถวใหม่ แล้วเติมคำแปลใน Localization Tables
@@ -50,6 +52,9 @@ public static class L10n
     private static readonly HashSet<string> _missingTables = new HashSet<string>();
     private static readonly Dictionary<string, string> _keyCache = new Dictionary<string, string>();
 
+    // hash → id ของแถว แยกตามตาราง — SharedData ใช้ร่วมกันทุกภาษา เปลี่ยนภาษาจึงไม่ต้องสร้างใหม่
+    private static readonly Dictionary<string, Dictionary<uint, long>> _idsByTable = new Dictionary<string, Dictionary<uint, long>>();
+
 #if UNITY_EDITOR
     private static readonly HashSet<string> _reportedMissing = new HashSet<string>();
 #endif
@@ -64,6 +69,7 @@ public static class L10n
         _tables.Clear();
         _missingTables.Clear();
         _keyCache.Clear();
+        _idsByTable.Clear();
 #if UNITY_EDITOR
         _reportedMissing.Clear();
 #endif
@@ -114,14 +120,17 @@ public static class L10n
     {
         if (string.IsNullOrWhiteSpace(source) || !Ready()) return source;
 
-        string key = KeyFor(source);
+        string key  = KeyFor(source);
+        uint   hash = HashOf(source);
 
         foreach (var name in TableNames)
         {
             var table = GetTable(name);
             if (table == null) continue;
 
-            var entry = table.GetEntry(key);
+            if (!IdsOf(name, table).TryGetValue(hash, out long id)) continue;
+
+            var entry = table.GetEntry(id);
             if (entry == null || string.IsNullOrEmpty(entry.Value)) continue;
 
             // ใช้ Value ตรงๆ ไม่ผ่าน GetLocalizedString — ข้อความเกมนี้มีวงเล็บปีกกาของตัวเอง
@@ -193,27 +202,44 @@ public static class L10n
     }
 
     /// <summary>
-    /// key ของข้อความ = ต้นคำอังกฤษให้คนอ่านออกในหน้าต่าง Tables + hash กันชนกัน
-    /// เช่น "honey-dinners-getting-cold-i_3f9a1c2b" · ข้อความไทยล้วนได้ "th_xxxxxxxx"
+    /// key ของข้อความ = [ที่อยู่ - ] ต้นคำอังกฤษให้คนอ่านออกในหน้าต่าง Tables + hash ที่ใช้ค้นจริง
+    /// เช่น "OpeningIntro/#2 reply 1 - pad-krapow_97912474" · ไม่ส่งที่อยู่ = "pad-krapow_97912474"
     /// </summary>
-    public static string KeyFor(string source)
+    public static string KeyFor(string source, string location = null)
     {
         if (source == null) return string.Empty;
-        if (_keyCache.TryGetValue(source, out var cached)) return cached;
+        if (location == null && _keyCache.TryGetValue(source, out var cached)) return cached;
 
         string norm = Normalize(source);
+        string key  = $"{Slug(norm)}_{Hash(norm):x8}";
+        if (!string.IsNullOrEmpty(location)) return $"{location} - {key}";
 
-        // FNV-1a 32 บิต — เขียนเอง ไม่ใช้ string.GetHashCode เพราะตัวนั้นไม่คงที่ข้ามรอบเปิดเกม
+        if (_keyCache.Count < 4096) _keyCache[source] = key;
+        return key;
+    }
+
+    /// <summary>hash ของข้อความ — ตัวเดียวกับ 8 หลักท้าย key</summary>
+    public static uint HashOf(string source) => Hash(Normalize(source));
+
+    /// <summary>อ่าน hash จากท้าย key ("..._97912474") — key ที่ไม่ได้ลงท้ายแบบนี้ = false</summary>
+    public static bool TryParseHash(string key, out uint hash)
+    {
+        hash = 0;
+        if (string.IsNullOrEmpty(key) || key.Length < 9 || key[key.Length - 9] != '_') return false;
+        return uint.TryParse(key.Substring(key.Length - 8), System.Globalization.NumberStyles.AllowHexSpecifier,
+                             System.Globalization.CultureInfo.InvariantCulture, out hash);
+    }
+
+    // FNV-1a 32 บิต — เขียนเอง ไม่ใช้ string.GetHashCode เพราะตัวนั้นไม่คงที่ข้ามรอบเปิดเกม
+    private static uint Hash(string norm)
+    {
         uint hash = 2166136261;
         foreach (char c in norm)
         {
             hash ^= c;
             hash *= 16777619;
         }
-
-        string key = $"{Slug(norm)}_{hash:x8}";
-        if (_keyCache.Count < 4096) _keyCache[source] = key;
-        return key;
+        return hash;
     }
 
     private static string Slug(string norm)
@@ -291,6 +317,18 @@ public static class L10n
 
         _tables[name] = table;
         return table;
+    }
+
+    private static Dictionary<uint, long> IdsOf(string name, StringTable table)
+    {
+        if (_idsByTable.TryGetValue(name, out var ids)) return ids;
+
+        ids = new Dictionary<uint, long>();
+        foreach (var entry in table.SharedData.Entries)
+            if (TryParseHash(entry.Key, out uint hash) && !ids.ContainsKey(hash)) ids[hash] = entry.Id;
+
+        _idsByTable[name] = ids;
+        return ids;
     }
 
     /// <summary>

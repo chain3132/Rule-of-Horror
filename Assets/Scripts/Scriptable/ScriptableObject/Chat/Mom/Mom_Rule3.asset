@@ -31,7 +31,7 @@ MonoBehaviour:
     nextNode: 1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 0, y: 0}
+    graphPosition: {x: 0.89749146, y: -0.89749146}
   - message: Ton called me saying he couldn't reach you. Where are you?
     isPlayer: 0
     scriptedLine: 0
@@ -65,7 +65,7 @@ MonoBehaviour:
     nextNode: 5
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 900, y: 0}
+    graphPosition: {x: 899.10254, y: 0}
   - message: Which shed, sweetheart? Stay calm, and don't move from there.
     isPlayer: 0
     scriptedLine: 0
@@ -74,7 +74,7 @@ MonoBehaviour:
     nextNode: 5
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 900, y: 130}
+    graphPosition: {x: 900, y: 130.89746}
   - message: If anyone texts you giving instructions, do NOT follow them.
     isPlayer: 0
     scriptedLine: 0

@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 5927995960885886357}
   - component: {fileID: 8401308167457856032}
   - component: {fileID: 6348805358595670869}
+  - component: {fileID: 6531140996884059944}
   m_Layer: 5
   m_Name: Action
   m_TagString: Untagged
@@ -221,6 +222,26 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6531140996884059944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3912643467231102576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 004b3c1779140464698d06a7feb81683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedFontAsset
+  m_LocalizedAssetReference:
+    m_TableReference:
+      m_TableCollectionName: Fonts
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: Font/Body
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
 --- !u!1 &4659207715521599374
 GameObject:
   m_ObjectHideFlags: 0
@@ -232,6 +253,7 @@ GameObject:
   - component: {fileID: 348545594916311779}
   - component: {fileID: 3713382770210157804}
   - component: {fileID: 3732499678587095230}
+  - component: {fileID: 8985356098957586407}
   m_Layer: 5
   m_Name: Key
   m_TagString: Untagged
@@ -358,6 +380,26 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &8985356098957586407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4659207715521599374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 004b3c1779140464698d06a7feb81683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedFontAsset
+  m_LocalizedAssetReference:
+    m_TableReference:
+      m_TableCollectionName: Fonts
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: Font/Body
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
 --- !u!1 &6243234108394984004
 GameObject:
   m_ObjectHideFlags: 0
@@ -369,6 +411,7 @@ GameObject:
   - component: {fileID: 7486891261338404927}
   - component: {fileID: 3296161850533791804}
   - component: {fileID: 7947350880543852738}
+  - component: {fileID: 3084580778507575426}
   m_Layer: 5
   m_Name: Key
   m_TagString: Untagged
@@ -495,6 +538,26 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3084580778507575426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6243234108394984004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 004b3c1779140464698d06a7feb81683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedFontAsset
+  m_LocalizedAssetReference:
+    m_TableReference:
+      m_TableCollectionName: Fonts
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: Font/Body
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
 --- !u!1 &6992477372521696703
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,6 +569,7 @@ GameObject:
   - component: {fileID: 8100458733220635070}
   - component: {fileID: 883314613653110004}
   - component: {fileID: 3429501228976182062}
+  - component: {fileID: 4585786101363118583}
   m_Layer: 5
   m_Name: Key
   m_TagString: Untagged
@@ -632,6 +696,26 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4585786101363118583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6992477372521696703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 004b3c1779140464698d06a7feb81683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedFontAsset
+  m_LocalizedAssetReference:
+    m_TableReference:
+      m_TableCollectionName: Fonts
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: Font/Body
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
 --- !u!1 &7283966264619761846
 GameObject:
   m_ObjectHideFlags: 0

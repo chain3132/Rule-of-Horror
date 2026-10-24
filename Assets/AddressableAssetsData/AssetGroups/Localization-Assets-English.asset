@@ -15,20 +15,8 @@ MonoBehaviour:
   m_GroupName: Localization-Assets-English
   m_GUID: 165eecce0ed131d4a9fd37ae2428dead
   m_SerializeEntries:
-  - m_GUID: 66a97c072c11df74ebe3df0221a32ba0
-    m_Address: Inter-VariableFont_opsz,wght SDF
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale-en
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6d525b18108ebd541b3e0a399d68c2c6
-    m_Address: LiberationSans SDF
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale-en
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: cea6c2c5c4fe86b4097f0b35231fd4b1
-    m_Address: SpecialElite-Regular SDF
+  - m_GUID: b8df2be05008b8446a6ae6503e9ccd52
+    m_Address: Cloud-Light SDF
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-en

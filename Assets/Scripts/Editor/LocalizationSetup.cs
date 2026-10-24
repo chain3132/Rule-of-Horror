@@ -86,6 +86,9 @@ public static class LocalizationSetup
     private class Row
     {
         public string source, en, th, context, table;
+
+        /// <summary>Context read from the live asset (file + node number), not from the import file.</summary>
+        public bool precise;
     }
 
     // ═════════════════════════════════════════════════════════════════════════════
@@ -109,33 +112,28 @@ public static class LocalizationSetup
         foreach (var name in L10n.TableNames)
             collections[name] = EnsureStringCollection(name, locales);
 
-        // ── gather rows: the import file, the menus, live assets, and what play-testing collected ──
-        var rows = new List<Row>();
-        rows.AddRange(ReadTsv(report));
-        rows.AddRange(BuiltInRows.Select(r => new Row { source = r.src, en = r.en, th = r.th, context = r.ctx, table = "UI" }));
-        rows.AddRange(HarvestAssets());
-        rows.AddRange(ReadMissingLog(report));
-        rows.RemoveAll(r => string.IsNullOrWhiteSpace(r.source));
+        var rows  = GatherRows(report);
+        var names = KeyNames(rows);
 
         int newKeys = 0, filledEn = 0, filledTh = 0;
         foreach (var row in rows)
         {
             var collection = collections[row.table];
-            string key = L10n.KeyFor(row.source);
+            var shared     = collection.SharedData;
+            uint hash      = L10n.HashOf(row.source);
 
-            var shared = collection.SharedData;
-            var entry  = shared.GetEntry(key);
+            var entry = FindByHash(shared, hash);
             if (entry == null)
             {
-                entry = shared.AddKey(key);
+                entry = shared.AddKey(names[(row.table, hash)]);
                 newKeys++;
             }
 
             if (!string.IsNullOrEmpty(row.context) && !entry.Metadata.HasMetadata<Comment>())
                 entry.Metadata.AddMetadata(new Comment { CommentText = row.context });
 
-            if (Fill(collection, L10n.EnglishCode, key, row.en)) filledEn++;
-            if (Fill(collection, L10n.ThaiCode,    key, row.th)) filledTh++;
+            if (Fill(collection, L10n.EnglishCode, entry.Id, row.en)) filledEn++;
+            if (Fill(collection, L10n.ThaiCode,    entry.Id, row.th)) filledTh++;
         }
 
         foreach (var collection in collections.Values) MarkModified(collection);
@@ -265,17 +263,17 @@ public static class LocalizationSetup
     }
 
     /// <summary>Writes a value only into an empty cell. Returns true if it wrote.</summary>
-    private static bool Fill(StringTableCollection collection, string code, string key, string value)
+    private static bool Fill(StringTableCollection collection, string code, long id, string value)
     {
         if (string.IsNullOrEmpty(value)) return false;
 
         var table = collection.GetTable(new LocaleIdentifier(code)) as StringTable;
         if (table == null) return false;
 
-        var entry = table.GetEntry(key);
+        var entry = table.GetEntry(id);
         if (entry == null)
         {
-            table.AddEntry(key, value);
+            table.AddEntry(id, value);
             EditorUtility.SetDirty(table);
             return true;
         }
@@ -346,11 +344,13 @@ public static class LocalizationSetup
                 var node = data.nodes[i];
                 if (node == null) continue;
 
-                yield return SourceRow(node.message, $"Chat/{data.name}#{i}", "Chat");
+                // "#i" is the number the Conversation Graph window shows on the node
+                yield return Precise(SourceRow(node.message, $"Chat/{data.name}/#{i}", "Chat"));
 
                 if (node.replies == null) continue;
-                foreach (var reply in node.replies)
-                    if (reply != null) yield return SourceRow(reply.replyText, $"Chat/{data.name}/reply", "Chat");
+                for (int r = 0; r < node.replies.Count; r++)
+                    if (node.replies[r] != null)
+                        yield return Precise(SourceRow(node.replies[r].replyText, $"Chat/{data.name}/#{i} reply {r + 1}", "Chat"));
             }
         }
 
@@ -359,16 +359,103 @@ public static class LocalizationSetup
             var rule = AssetDatabase.LoadAssetAtPath<ScriptableObject.RuleEntryData>(AssetDatabase.GUIDToAssetPath(guid));
             if (rule == null) continue;
 
-            yield return SourceRow(rule.title,   $"Rules/{rule.name}/title",   "Rules");
-            yield return SourceRow(rule.summary, $"Rules/{rule.name}/summary", "Rules");
+            yield return Precise(SourceRow(rule.title,   $"Rules/{rule.name}/title",   "Rules"));
+            yield return Precise(SourceRow(rule.summary, $"Rules/{rule.name}/summary", "Rules"));
 
             if (rule.factsIfCooperative != null)
-                foreach (var f in rule.factsIfCooperative) yield return SourceRow(f, $"Rules/{rule.name}/fact", "Rules");
+                for (int i = 0; i < rule.factsIfCooperative.Length; i++)
+                    yield return Precise(SourceRow(rule.factsIfCooperative[i], $"Rules/{rule.name}/fact {i + 1}", "Rules"));
             if (rule.factsIfDefiant != null)
-                foreach (var f in rule.factsIfDefiant) yield return SourceRow(f, $"Rules/{rule.name}/fact", "Rules");
+                for (int i = 0; i < rule.factsIfDefiant.Length; i++)
+                    yield return Precise(SourceRow(rule.factsIfDefiant[i], $"Rules/{rule.name}/defiant fact {i + 1}", "Rules"));
             if (rule.hands != null)
-                foreach (var h in rule.hands) if (h != null) yield return SourceRow(h.action, $"Rules/{rule.name}/action", "Rules");
+                for (int i = 0; i < rule.hands.Length; i++)
+                    if (rule.hands[i] != null)
+                        yield return Precise(SourceRow(rule.hands[i].action, $"Rules/{rule.name}/action {i + 1}", "Rules"));
         }
+    }
+
+    private static Row Precise(Row row)
+    {
+        row.precise = true;
+        return row;
+    }
+
+    /// <summary>The import file, the menus, live assets, and what play-testing collected.</summary>
+    private static List<Row> GatherRows(StringBuilder report, bool takeMissingLog = true)
+    {
+        var rows = new List<Row>();
+        rows.AddRange(ReadTsv(report));
+        rows.AddRange(BuiltInRows.Select(r => new Row { source = r.src, en = r.en, th = r.th, context = r.ctx, table = "UI" }));
+        rows.AddRange(HarvestAssets());
+        // Reading the play-test log also deletes it, so only the import that keeps its rows may read it
+        if (takeMissingLog) rows.AddRange(ReadMissingLog(report));
+        rows.RemoveAll(r => string.IsNullOrWhiteSpace(r.source));
+        return rows;
+    }
+
+    /// <summary>
+    /// The readable key for every (table, hash): where the text lives, then a few of its words,
+    /// then the hash L10n looks up by. A place read from a live asset wins over the import file's,
+    /// which may be out of date - nodes get added and moved after the file was written.
+    /// </summary>
+    private static Dictionary<(string table, uint hash), string> KeyNames(List<Row> rows)
+    {
+        var names = new Dictionary<(string, uint), string>();
+        var fromAsset = new HashSet<(string, uint)>();
+
+        foreach (var row in rows)
+        {
+            var id = (row.table, L10n.HashOf(row.source));
+            if (names.ContainsKey(id) && (fromAsset.Contains(id) || !row.precise)) continue;
+
+            names[id] = L10n.KeyFor(row.source, Location(row.context));
+            if (row.precise) fromAsset.Add(id);
+        }
+
+        return names;
+    }
+
+    /// <summary>
+    /// "Chat/Mom_Rule3/#3 reply 1" → "Mom_Rule3/#3 reply 1" · "Field/Rule4.unity/introHint" → "Rule4/introHint"
+    /// · "Code/Rule5.prayHint" → "Rule5/prayHint" · "Label/MainMenu.unity" → "MainMenu/Label".
+    /// The first place only when a string is used in several.
+    /// </summary>
+    private static string Location(string context)
+    {
+        if (string.IsNullOrWhiteSpace(context)) return "Misc";
+        if (context == "Collected while play-testing") return "Play-test";
+
+        string c = context.Split(new[] { " | ", " + " }, StringSplitOptions.None)[0];
+        int note = c.IndexOf(" (", StringComparison.Ordinal);
+        if (note > 0) c = c.Substring(0, note);
+
+        var parts = c.Split('/').Where(p => p.Length > 0).ToList();
+        string kind = parts.Count > 1 ? parts[0] : "";
+        if (kind == "Chat" || kind == "Rules" || kind == "Field" || kind == "Label" || kind == "Line" || kind == "Code")
+            parts.RemoveAt(0);
+
+        for (int i = 0; i < parts.Count; i++)
+        {
+            if (parts[i].EndsWith(".unity",  StringComparison.Ordinal)) parts[i] = parts[i].Substring(0, parts[i].Length - 6);
+            if (parts[i].EndsWith(".prefab", StringComparison.Ordinal)) parts[i] = parts[i].Substring(0, parts[i].Length - 7);
+        }
+
+        // Code/Rule5.prayHint - the class and the field
+        if (kind == "Code" && parts.Count == 1 && parts[0].Contains('.'))
+            parts = parts[0].Split('.').ToList();
+
+        if (kind == "Label") parts.Add("Label");
+        if (kind == "Line")  parts.Add("Line");
+
+        return parts.Count > 0 ? string.Join("/", parts) : "Misc";
+    }
+
+    private static SharedTableData.SharedTableEntry FindByHash(SharedTableData shared, uint hash)
+    {
+        foreach (var entry in shared.Entries)
+            if (L10n.TryParseHash(entry.Key, out uint h) && h == hash) return entry;
+        return null;
     }
 
     /// <summary>Strings the game showed while play-testing that had no row - see L10n.ReportMissing.</summary>
@@ -735,14 +822,14 @@ public static class LocalizationSetup
                 continue;
             }
 
-            string table = FindTableWithKey(L10n.KeyFor(current));
+            var (table, id) = FindRow(current);
             if (table == null)
             {
                 unbound.Add($"{where} :: {text.name} :: \"{Short(current)}\"");
                 continue;
             }
 
-            Bind(text, table, L10n.KeyFor(current));
+            Bind(text, table, id);
             labels++;
         }
 
@@ -806,25 +893,30 @@ public static class LocalizationSetup
         "Quaternionf", "Quaternion", "ColorRGBA", "Color", "Matrix4x4f", "Rectf", "Keyframe",
     };
 
-    private static string FindTableWithKey(string key)
+    /// <summary>The table and row id holding this source text, matched by hash like L10n does.</summary>
+    private static (string table, long id) FindRow(string source)
     {
+        uint hash = L10n.HashOf(source);
         foreach (var name in L10n.TableNames)
         {
             var collection = LocalizationEditorSettings.GetStringTableCollection(name);
-            if (collection != null && collection.SharedData.GetEntry(key) != null) return name;
+            var entry = collection != null ? FindByHash(collection.SharedData, hash) : null;
+            if (entry != null) return (name, entry.Id);
         }
-        return null;
+        return (null, 0);
     }
 
     /// <summary>
     /// LocalizeStringEvent wired through the public UnityEventTools API: a persistent call to the
     /// label's text setter, set to EditorAndRuntime so switching language in the Editor updates
     /// the label too (AddPersistentListener alone leaves it RuntimeOnly).
+    ///
+    /// The row is referenced by id, not by key name, so renaming keys never unbinds a label.
     /// </summary>
-    private static void Bind(TMP_Text text, string table, string key)
+    private static void Bind(TMP_Text text, string table, long id)
     {
         var lse = text.gameObject.AddComponent<LocalizeStringEvent>();
-        lse.StringReference = new LocalizedString(table, key);
+        lse.StringReference = new LocalizedString(table, id);
 
         var setText = (UnityAction<string>)Delegate.CreateDelegate(typeof(UnityAction<string>), text, "set_text");
         for (int i = lse.OnUpdateString.GetPersistentEventCount() - 1; i >= 0; i--)
@@ -974,9 +1066,186 @@ public static class LocalizationSetup
     private static void BindIfKnown(TMP_Text text)
     {
         if (text == null) return;
-        string key = L10n.KeyFor(text.text);
-        string table = FindTableWithKey(key);
-        if (table != null) Bind(text, table, key);
+        var (table, id) = FindRow(text.text);
+        if (table != null) Bind(text, table, id);
+    }
+
+    #endregion
+
+    // ═════════════════════════════════════════════════════════════════════════════
+    #region 4. Readable keys
+    // ═════════════════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// Renames every row to "where it lives - first words_hash" and sorts each table by that name,
+    /// so Mom_Rule3's lines sit together in node order and a reply reads as "#3 reply 1".
+    ///
+    /// Translations are untouched: cells belong to the row id, and L10n only reads the hash at the
+    /// end. Labels bound to a row by its OLD name would come loose, though, so every binding in the
+    /// build scenes and prefabs is switched to the row id first - which is why this asks to save.
+    /// Re-run it whenever chat nodes are added or moved and the numbers drift.
+    /// </summary>
+    [MenuItem("Rule of Horror/Localization/4. Rename Keys by Location", false, 4)]
+    private static void RenameKeys()
+    {
+        var scenes  = EditorBuildSettings.scenes.Where(s => s.enabled && File.Exists(s.path)).Select(s => s.path).ToList();
+        var prefabs = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Prefab" })
+                                   .Select(AssetDatabase.GUIDToAssetPath)
+                                   .Where(p => p.EndsWith(".prefab", StringComparison.OrdinalIgnoreCase))
+                                   .ToList();
+
+        if (!EditorUtility.DisplayDialog("Rename Keys by Location",
+                "Every key in the UI, Dialogue, Chat and Rules tables gets a name that says where the text lives, " +
+                "e.g. \"OpeningIntro/#2 reply 1 - pad-krapow_97912474\". Translations are kept.\n\n" +
+                $"Labels bound to a key are re-pointed first, so this opens and SAVES {scenes.Count} build scenes " +
+                $"and the prefabs that need it (of {prefabs.Count}). Save open scenes now?",
+                "Rename", "Cancel"))
+            return;
+
+        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+
+        var report = new StringBuilder("[Localization] Rename keys").AppendLine();
+        var setup  = EditorSceneManager.GetSceneManagerSetup();
+
+        // ── 1. bindings by name → by id, while the old names still resolve ──
+        int rebound = 0, lost = 0;
+        try
+        {
+            for (int i = 0; i < prefabs.Count; i++)
+            {
+                EditorUtility.DisplayProgressBar("Re-point labels", prefabs[i], (float)i / prefabs.Count);
+
+                GameObject root = null;
+                try
+                {
+                    root = PrefabUtility.LoadPrefabContents(prefabs[i]);
+                    var (ok, bad) = BindByIds(root.GetComponentsInChildren<LocalizeStringEvent>(true), prefabs[i], report);
+                    if (ok > 0) PrefabUtility.SaveAsPrefabAsset(root, prefabs[i]);
+                    rebound += ok;
+                    lost    += bad;
+                }
+                catch (Exception e)
+                {
+                    report.AppendLine($"  ! Skipped {prefabs[i]}: {e.Message}");
+                }
+                finally
+                {
+                    if (root != null) PrefabUtility.UnloadPrefabContents(root);
+                }
+            }
+
+            // Prefabs first: scene instances then load with the id already, and only bindings
+            // overridden in the scene are still by name here
+            foreach (var path in scenes)
+            {
+                EditorUtility.DisplayProgressBar("Re-point labels", path, 1f);
+                var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
+
+                var (ok, bad) = BindByIds(FindInScene<LocalizeStringEvent>(scene), path, report);
+                rebound += ok;
+                lost    += bad;
+                if (ok > 0) EditorSceneManager.SaveScene(scene);
+            }
+        }
+        finally
+        {
+            EditorUtility.ClearProgressBar();
+            if (setup != null && setup.Length > 0) EditorSceneManager.RestoreSceneManagerSetup(setup);
+        }
+
+        report.AppendLine($"  - {rebound} labels now point at their row by id" +
+                          (lost > 0 ? $", {lost} pointed at a key that no longer exists (listed above)" : ""));
+
+        // ── 2. rename and sort ──
+        var names   = KeyNames(GatherRows(new StringBuilder(), takeMissingLog: false));
+        int renamed = 0;
+
+        foreach (var tableName in L10n.TableNames)
+        {
+            var collection = LocalizationEditorSettings.GetStringTableCollection(tableName);
+            if (collection == null) continue;
+
+            var shared = collection.SharedData;
+            foreach (var entry in shared.Entries.ToList())
+            {
+                if (!L10n.TryParseHash(entry.Key, out uint hash)) continue;
+                if (!names.TryGetValue((tableName, hash), out var name) || name == entry.Key) continue;
+                if (shared.Contains(name)) continue;
+
+                shared.RenameKey(entry.Id, name);
+                renamed++;
+            }
+
+            shared.Entries.Sort((a, b) => NaturalCompare(a.Key, b.Key));
+            MarkModified(collection);
+        }
+
+        AssetDatabase.SaveAssets();
+
+        report.AppendLine($"  - Renamed {renamed} keys and sorted each table by file and node number");
+        report.AppendLine("  Keys whose text is no longer used anywhere keep their old name - safe to delete.");
+        Debug.Log(report.ToString());
+    }
+
+    /// <summary>Switches each binding to our tables from key name to row id. Returns (switched, broken).</summary>
+    private static (int ok, int bad) BindByIds(IEnumerable<LocalizeStringEvent> events, string where, StringBuilder report)
+    {
+        int ok = 0, bad = 0;
+
+        foreach (var lse in events)
+        {
+            if (lse == null) continue;
+
+            var reference = lse.StringReference;
+            if (reference == null || reference.TableEntryReference.ReferenceType != TableEntryReference.Type.Name) continue;
+
+            var collection = LocalizationEditorSettings.GetStringTableCollection(reference.TableReference);
+            if (collection == null || !L10n.TableNames.Contains(collection.TableCollectionName)) continue;
+
+            string key   = reference.TableEntryReference.Key;
+            var    entry = collection.SharedData.GetEntry(key);
+            if (entry == null && L10n.TryParseHash(key, out uint hash)) entry = FindByHash(collection.SharedData, hash);
+
+            if (entry == null)
+            {
+                report.AppendLine($"  ! {where} :: {lse.name} points at missing key \"{key}\"");
+                bad++;
+                continue;
+            }
+
+            lse.StringReference.SetReference(reference.TableReference, entry.Id);
+            EditorUtility.SetDirty(lse);
+            ok++;
+        }
+
+        return (ok, bad);
+    }
+
+    /// <summary>Ordinal, except runs of digits compare as numbers - "#2" before "#10".</summary>
+    private static int NaturalCompare(string a, string b)
+    {
+        int i = 0, j = 0;
+        while (i < a.Length && j < b.Length)
+        {
+            if (char.IsDigit(a[i]) && char.IsDigit(b[j]))
+            {
+                int si = i, sj = j;
+                while (i < a.Length && char.IsDigit(a[i])) i++;
+                while (j < b.Length && char.IsDigit(b[j])) j++;
+
+                string na = a.Substring(si, i - si).TrimStart('0');
+                string nb = b.Substring(sj, j - sj).TrimStart('0');
+                int c = na.Length != nb.Length ? na.Length.CompareTo(nb.Length) : string.CompareOrdinal(na, nb);
+                if (c != 0) return c;
+                continue;
+            }
+
+            if (a[i] != b[j]) return a[i].CompareTo(b[j]);
+            i++;
+            j++;
+        }
+
+        return (a.Length - i).CompareTo(b.Length - j);
     }
 
     #endregion
