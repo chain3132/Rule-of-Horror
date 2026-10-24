@@ -43,9 +43,21 @@ namespace RuleSystem.Rule
         [Tooltip("ส่งต่อให้รถทุกคันไปรับปุ่ม E ตอนผู้เล่นยืนข้างเบาะ")]
         [SerializeField] private InputHandler inputHandler;
 
-        [Tooltip("แป้งที่ยืนหน้าศาลา — จะชี้รถคันที่ 2 (Escape) เองตอนมันมาจอด\n" +
-                 "เว้นว่างได้ กฎยังเล่นได้ปกติ แต่ผู้เล่นจะไม่มีเบาะแสว่าคันไหนคือทางรอด")]
+        [Tooltip("แป้งที่ยืนหน้าศาลา — ตัวละครในคัทซีนบทจบคันที่ 1 และ 2\n" +
+                 "เว้นว่างได้ กฎยังเล่นได้ปกติ แต่คัทซีนจะไม่มีเธอ")]
         [SerializeField] private PaengBusPointer paeng;
+
+        [Tooltip("✓ = แป้งยืนอยู่หน้าศาลาตั้งแต่กฎเริ่ม\n" +
+                 "✗ = ซ่อนไว้ โผล่มาตอนผู้เล่นนั่งลงในรถคันที่ 1 หรือ 2 แล้ว (ในจังหวะที่ผู้เล่นไม่ได้มอง)")]
+        [SerializeField] private bool paengAtStart = false;
+
+        [Tooltip("✓ = แป้งโผล่มาชี้รถคันที่ 2 ตอนมันจอด (เบาะแสแบบเดิม)\n" +
+                 "✗ = ไม่ชี้ — ผู้เล่นต้องเดาจากตัวรถเอง")]
+        [SerializeField] private bool paengPointsAtEscape = false;
+
+        [Tooltip("คันที่ 1-2: แป้งรอโผล่ตอนผู้เล่นไม่ได้มองศาลา — ถ้านั่งเสร็จแล้วผู้เล่นยังจ้องอยู่\n" +
+                 "รอได้อีกนานสุดเท่านี้ (วินาที) แล้วให้โผล่เลย เพราะคัทซีนต้องหันไปมองเธอ")]
+        [SerializeField] private float paengRevealMaxWait = 2f;
 
         [Header("รถ")]
         [Tooltip("เรียงตามลำดับที่รถวิ่งมาจอด — ช่อง 0 คือคันที่มาก่อน\n" +
@@ -134,6 +146,15 @@ namespace RuleSystem.Rule
         [SerializeField] private GameObject deathEndingObject;
         [SerializeField] private GameObject loopEndingObject;
 
+        [Header("คัทซีนบทจบในเกม (คันที่ 1-3)")]
+        [Tooltip("ใส่แล้ว = ขึ้นรถคันนั้นแล้วเล่นคัทซีนนี้แทนการหลับตาไปตื่นที่ศาลา\n" +
+                 "คัทซีนจบแล้วค่อยเปิด Ending Object ของคันนั้นต่อ\n" +
+                 "เว้นว่าง = ใช้บทจบแบบเดิม (รถออก → หลับตา → ตื่นที่ศาลา → บทพูด)\n\n" +
+                 "คันที่ 4 ไม่มีช่องนี้ — บทจบวนลูปเล่นเป็นเกมต่อเนื่องอยู่แล้ว")]
+        [SerializeField] private EndingCutscene trapCutscene;
+        [SerializeField] private EndingCutscene escapeCutscene;
+        [SerializeField] private EndingCutscene deathCutscene;
+
         [Header("วนลูป (คันที่ 4)")]
         [Tooltip("เวลาที่ย้อนกลับไปเริ่มคืนใหม่")]
         [SerializeField] private int loopRestartHour   = 18;
@@ -163,6 +184,7 @@ namespace RuleSystem.Rule
         private int       _busIndex;
         private Rule6Bus  _currentBus;
         private Coroutine _cycle;
+        private Coroutine _paengReveal;
         private Coroutine _flow;
 
         /// <summary>รถที่ผู้เล่นขึ้น (null = ยังไม่ขึ้นคันไหน) — บทจบของคืนนี้</summary>
@@ -390,7 +412,11 @@ namespace RuleSystem.Rule
             foreach (var bus in buses)
                 if (bus != null) bus.Setup(this, inputHandler);
 
-            if (paeng != null) paeng.Appear();
+            if (paeng != null)
+            {
+                if (paengAtStart) paeng.Appear();
+                else              paeng.Disappear();
+            }
 
             AudioManager.instance.StartRule6Background();
 
@@ -462,15 +488,24 @@ namespace RuleSystem.Rule
             // รถไม่มีประตู — จอดแล้วเดินขึ้นได้เลย ธงนี้คือสิ่งเดียวที่กันการขึ้นรถตอนมันยังวิ่ง
             bus.SetBoardable(true);
 
-            // แป้งชี้เฉพาะคันที่เป็นทางรอด — เบาะแสเดียวของกฎนี้
-            if (bus.Kind == Rule6BusKind.Escape && paeng != null) paeng.PointAt(bus.transform);
+            // แป้งชี้เฉพาะคันที่เป็นทางรอด (ปิดได้ — ดีไซน์ใหม่ไม่ให้เบาะแสนี้)
+            bool pointing = paengPointsAtEscape && bus.Kind == Rule6BusKind.Escape && paeng != null;
+            if (pointing)
+            {
+                if (!paengAtStart) paeng.Appear();
+                paeng.PointAt(bus.transform);
+            }
 
             yield return WaitAtStop();
 
             // ขึ้นรถแล้ว — ปล่อยให้ ResolveRoutine เป็นเจ้าของรถคันนี้ต่อ ห้ามขับออก
             if (_resolved || !_gameplayActive) yield break;
 
-            if (paeng != null) paeng.StopPointing();
+            if (pointing)
+            {
+                if (!paengAtStart) paeng.Disappear();
+                else               paeng.StopPointing();
+            }
 
             bus.SetBoardable(false);
             AudioManager.instance.PlayRule6BusDepart(bus.transform.position);
@@ -584,6 +619,12 @@ namespace RuleSystem.Rule
 
             if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.Hide();
 
+            // คันที่ 1: แป้งต้องอยู่หน้าศาลาก่อนคัทซีนหันไปมอง — เริ่มหาจังหวะให้โผล่ตั้งแต่กด E
+            // ไม่ใช่หลังนั่งเสร็จ (ตอนนั้นผู้เล่นหันมองไปรอบๆ ได้แล้ว แล้วจะเห็นเธอโผล่ขึ้นมาดื้อๆ)
+            if ((bus.Kind == Rule6BusKind.Trap || bus.Kind == Rule6BusKind.Escape)
+                && paeng != null && !paengAtStart && !paeng.gameObject.activeSelf)
+                _paengReveal = StartCoroutine(RevealPaengUnseen());
+
             // พาไปนั่งจริงก่อนบทจบ — ผู้เล่นกด E แล้ว แต่ภาพที่ต้องเห็น
             // คือตัวเองนั่งอยู่ในรถคันนั้น ไม่ใช่ยืนค้างกลางทางเดินแล้วจอดับ
             yield return SitInBus(bus);
@@ -610,6 +651,90 @@ namespace RuleSystem.Rule
         /// ออกไปยังอ่านได้ แต่ถ้าหยุดกลางทางผู้เล่นจะค้างอยู่ในรถที่ไม่ไปไหนเลย
         /// </summary>
         IEnumerator SitInBus(Rule6Bus bus) => _ride.Sit(bus, sitSettleSeconds, this);
+
+        /// <summary>
+        /// ปกติแป้งโผล่ไปแล้วระหว่างท่านั่ง (RevealPaengUnseen) — รอให้เสร็จก่อนคัทซีนหันไปมองเธอ
+        /// ถ้ายังไม่โผล่ (ผู้เล่นจ้องศาลาอยู่ตลอด) ก็ต้องให้โผล่ตอนนี้ คัทซีนต้องมีเธอให้มอง
+        /// </summary>
+        IEnumerator FinishPaengReveal()
+        {
+            if (_paengReveal == null) yield break;
+
+            float waited = 0f;
+            while (_paengReveal != null && waited < paengRevealMaxWait)
+            {
+                waited += Time.deltaTime;
+                yield return null;
+            }
+
+            if (_paengReveal != null) { StopCoroutine(_paengReveal); _paengReveal = null; }
+            if (paeng != null && !paeng.gameObject.activeSelf) paeng.Appear();
+        }
+
+        /// <summary>
+        /// ให้แป้งโผล่ในเฟรมแรกที่ผู้เล่น "มองไม่เห็น" จุดที่เธอยืน — นอกกรอบกล้อง หรือมีผนังรถบังอยู่
+        ///
+        /// ผีที่โผล่ขึ้นมาต่อหน้าต่อตาอ่านเป็นบั๊ก ไม่ใช่ความน่ากลัว ตอนกด E ผู้เล่นมองเบาะอยู่
+        /// (Rule6Bus บังคับไว้) และท่านั่งหันหน้าไปหน้ารถ ศาลาจึงแทบจะพ้นสายตาตั้งแต่เฟรมแรก
+        /// </summary>
+        IEnumerator RevealPaengUnseen()
+        {
+            while (paeng != null && !paeng.gameObject.activeSelf)
+            {
+                if (!PlayerCanSee(paeng.transform))
+                {
+                    paeng.Appear();
+                    break;
+                }
+                yield return null;
+            }
+
+            _paengReveal = null;
+        }
+
+        /// <summary>
+        /// จุดนี้ (คนสูงราว 1.7 ม.) อยู่ในสายตาผู้เล่นไหม — เช็กหลายจุดบนตัว จุดที่อยู่ในกรอบภาพ
+        /// จะยิงเส้นไปหา ถ้าทุกเส้นชนอะไรก่อนถึง แปลว่าผนังรถบังอยู่ (หน้าต่างไม่มี collider
+        /// จึงยังนับว่าเห็นผ่านหน้าต่างได้ ซึ่งถูกแล้ว)
+        /// </summary>
+        bool PlayerCanSee(Transform t)
+        {
+            Camera cam = Camera.main;
+            if (cam == null) return false;
+
+            Vector3 eye   = cam.transform.position;
+            Vector3 side  = cam.transform.right * 0.4f;
+            var pc = PlayerController.Instance;
+
+            // หัว / ตัว / เท้า และขอบซ้ายขวาของตัว — จุดไหนอยู่ในกรอบภาพและไม่มีอะไรบัง = เห็น
+            foreach (Vector3 p in new[]
+                     {
+                         t.position + Vector3.up * 1.6f,
+                         t.position + Vector3.up * 1.0f,
+                         t.position + Vector3.up * 0.2f,
+                         t.position + Vector3.up * 1.0f + side,
+                         t.position + Vector3.up * 1.0f - side,
+                     })
+            {
+                Vector3 vp = cam.WorldToViewportPoint(p);
+                if (vp.z <= 0f || vp.x < 0f || vp.x > 1f || vp.y < 0f || vp.y > 1f) continue;
+
+                bool blocked = false;
+
+                foreach (var hit in Physics.RaycastAll(eye, p - eye, Vector3.Distance(eye, p),
+                                                       ~0, QueryTriggerInteraction.Ignore))
+                {
+                    if (pc != null && hit.transform.IsChildOf(pc.transform)) continue;
+                    if (hit.transform.IsChildOf(t)) continue;
+                    blocked = true;
+                    break;
+                }
+
+                if (!blocked) return true;
+            }
+
+            return false;
+        }
 
         #endregion
 
@@ -694,6 +819,18 @@ namespace RuleSystem.Rule
         }
 
         /// <summary>
+        /// เล่นคัทซีนบทจบในเกม — ผู้เล่นนั่งอยู่ในรถที่ป้ายแล้ว คัทซีนเป็นคนพารถออกเอง
+        ///
+        /// ยึดนาฬิกาก่อนเริ่ม: คัทซีนยาวได้เป็นนาที ถ้าเวลาเดินไปถึง 24:40 ระหว่างนั้น
+        /// RuleManager จะสั่ง EndRule ทับกลางคัทซีน
+        /// </summary>
+        IEnumerator PlayCutscene(EndingCutscene cutscene, Rule6Bus bus)
+        {
+            HoldClock();
+            yield return cutscene.Play(bus, _ride, departPoint);
+        }
+
+        /// <summary>
         /// คันที่ 1 — กับดัก
         ///
         /// รถเหลือที่เดียว มีที่ให้เราแต่ไม่มีที่ให้แป้ง ขึ้นแล้วลืมตามาอยู่บนม้านั่งศาลาเหมือน
@@ -701,6 +838,15 @@ namespace RuleSystem.Rule
         /// </summary>
         IEnumerator TrapEnding(Rule6Bus bus)
         {
+            yield return FinishPaengReveal();
+
+            if (trapCutscene != null)
+            {
+                yield return PlayCutscene(trapCutscene, bus);
+                FinishEnding(Rule6BusKind.Trap, trapEndingObject, warnIfMissing: false);
+                yield break;
+            }
+
             yield return RideAway(bus, () => ParkPlayerForCutscene(bus));
             yield return new WaitUntil(PlayerEyesOpened);
 
@@ -721,6 +867,18 @@ namespace RuleSystem.Rule
         /// </summary>
         IEnumerator EscapeEnding(Rule6Bus bus)
         {
+            yield return FinishPaengReveal();
+
+            if (escapeCutscene != null)
+            {
+                // คัทซีนพาแป้งเดินขึ้นรถ — ต้องเลิกหันเข้าหาศาลาเอง ไม่งั้นเดินแบบหันข้าง
+                if (paeng != null) paeng.HoldPose();
+
+                yield return PlayCutscene(escapeCutscene, bus);
+                FinishEnding(Rule6BusKind.Escape, escapeEndingObject, warnIfMissing: false);
+                yield break;
+            }
+
             AudioManager.instance.PlayRule6PhoneRing();
 
             yield return RideAway(bus, () => ParkPlayerForCutscene(bus));
@@ -743,6 +901,13 @@ namespace RuleSystem.Rule
         /// </summary>
         IEnumerator DeathEnding(Rule6Bus bus)
         {
+            if (deathCutscene != null)
+            {
+                yield return PlayCutscene(deathCutscene, bus);
+                FinishEnding(Rule6BusKind.Death, deathEndingObject, warnIfMissing: false);
+                yield break;
+            }
+
             yield return RideAway(bus, () =>
             {
                 AudioManager.instance.PlayRule3Death();

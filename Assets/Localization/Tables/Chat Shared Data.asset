@@ -16,700 +16,700 @@ MonoBehaviour:
   m_TableCollectionNameGuidString: ff0fd90b13deee541b2a9f08b82d6bde
   m_Entries:
   - m_Id: 612012032
-    m_Key: honey-dinners-getting-cold-i_7f483d13
+    m_Key: Mom_Rule3/#0 - honey-dinners-getting-cold-i_7f483d13
     m_Metadata:
       m_Items:
       - rid: 3244670351061549213
   - m_Id: 653955072
-    m_Key: ton-called-me-saying-he_6b0d95fe
+    m_Key: Mom_Rule3/#1 - ton-called-me-saying-he_6b0d95fe
     m_Metadata:
       m_Items:
       - rid: 3244670351061549214
   - m_Id: 653955073
-    m_Key: x_0ac31c19
+    m_Key: Mom_Rule3/#2 - x_0ac31c19
     m_Metadata:
       m_Items:
       - rid: 3244670351061549215
-  - m_Id: 653955074
-    m_Key: alright-ill-be-waiting-just_9ab3feab
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549216
-  - m_Id: 658149376
-    m_Key: which-shed-sweetheart-stay-calm_be4db0b5
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549217
-  - m_Id: 658149377
-    m_Key: if-anyone-texts-you-giving_a345b3f5
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549218
-  - m_Id: 658149378
-    m_Key: a-few-years-back-the_cf5e7a80
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549219
-  - m_Id: 658149379
-    m_Key: message-failed-to-send_4d5fc1b5
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549220
-  - m_Id: 658149380
-    m_Key: honey-dinners-getting-cold-did_f56454ab
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549221
   - m_Id: 658149381
-    m_Key: im-fine-mom-the-bus_72f2ce99
+    m_Key: Mom_Rule3/#2 reply 1 - im-fine-mom-the-bus_72f2ce99
     m_Metadata:
       m_Items:
       - rid: 3244670351061549222
   - m_Id: 658149382
-    m_Key: mom-im-stuck-at-a_e69b4129
+    m_Key: Mom_Rule3/#2 reply 2 - mom-im-stuck-at-a_e69b4129
     m_Metadata:
       m_Items:
       - rid: 3244670351061549223
+  - m_Id: 653955074
+    m_Key: Mom_Rule3/#3 - alright-ill-be-waiting-just_9ab3feab
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549216
+  - m_Id: 658149376
+    m_Key: Mom_Rule3/#4 - which-shed-sweetheart-stay-calm_be4db0b5
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549217
+  - m_Id: 658149377
+    m_Key: Mom_Rule3/#5 - if-anyone-texts-you-giving_a345b3f5
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549218
+  - m_Id: 658149378
+    m_Key: Mom_Rule3/#6 - a-few-years-back-the_cf5e7a80
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549219
+  - m_Id: 658149379
+    m_Key: Mom_Rule3/#7 - message-failed-to-send_4d5fc1b5
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549220
+  - m_Id: 658149380
+    m_Key: Mom_Rule3/#8 - honey-dinners-getting-cold-did_f56454ab
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549221
   - m_Id: 658149383
-    m_Key: weetheart-ton-is-driving-out_144ed5dc
+    m_Key: Mom_Rule5/#0 - weetheart-ton-is-driving-out_144ed5dc
     m_Metadata:
       m_Items:
       - rid: 3244670351061549224
   - m_Id: 658149384
-    m_Key: i-told-him-to-check_a7e72f02
+    m_Key: Mom_Rule5/#1 - i-told-him-to-check_a7e72f02
     m_Metadata:
       m_Items:
       - rid: 3244670351061549225
-  - m_Id: 658149385
-    m_Key: stay-right-there-dont-walk_a780ada5
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549226
-  - m_Id: 658149386
-    m_Key: its-too-late-sweetie-he_eb8ed08a
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549227
-  - m_Id: 658149387
-    m_Key: i-turned-on-the-porch_68b3c9a3
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549228
-  - m_Id: 658149388
-    m_Key: can-you-see-the-light_4c1896c7
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549229
   - m_Id: 658149389
-    m_Key: really-okay-mom-ill-wait_35b1c680
+    m_Key: Mom_Rule5/#2 reply 1 - really-okay-mom-ill-wait_35b1c680
     m_Metadata:
       m_Items:
       - rid: 3244670351061549230
   - m_Id: 658149390
-    m_Key: tell-him-not-to-come_f388cab8
+    m_Key: Mom_Rule5/#2 reply 2 - tell-him-not-to-come_f388cab8
     m_Metadata:
       m_Items:
       - rid: 3244670351061549231
-  - m_Id: 658149391
-    m_Key: where-the-hell-are-you_96f3f467
+  - m_Id: 658149385
+    m_Key: Mom_Rule5/#3 - stay-right-there-dont-walk_a780ada5
     m_Metadata:
       m_Items:
-      - rid: 3244670351061549232
-  - m_Id: 658149392
-    m_Key: your-mom-even-texted-me_fa48d9de
+      - rid: 3244670351061549226
+  - m_Id: 658149386
+    m_Key: Mom_Rule5/#4 - its-too-late-sweetie-he_eb8ed08a
     m_Metadata:
       m_Items:
-      - rid: 3244670351061549233
-  - m_Id: 658149393
-    m_Key: another-one-which-one-do_20d21bfa
+      - rid: 3244670351061549227
+  - m_Id: 658149387
+    m_Key: Mom_Rule5/#5 - i-turned-on-the-porch_68b3c9a3
     m_Metadata:
       m_Items:
-      - rid: 3244670351061549234
-  - m_Id: 658149394
-    m_Key: what-texts-calm-down-which_5b15a069
+      - rid: 3244670351061549228
+  - m_Id: 658149388
+    m_Key: Mom_Rule5/#6 - can-you-see-the-light_4c1896c7
     m_Metadata:
       m_Items:
-      - rid: 3244670351061549235
-  - m_Id: 658149395
-    m_Key: the-rundown-looking-one-its_8858f085
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549236
-  - m_Id: 658149396
-    m_Key: wait-a-second_61b2fa55
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549237
-  - m_Id: 658149397
-    m_Key: is-it-that-shed-from_58c4170c
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549238
-  - m_Id: 658149398
-    m_Key: dont-tell-me-youre_d9aa010b
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549239
-  - m_Id: 658149399
-    m_Key: disconnected-no-further-messages_4de1a87a
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549240
-  - m_Id: 658149400
-    m_Key: still-waiting-for-the-bus_992f9acf
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549241
-  - m_Id: 658149401
-    m_Key: ton-im-stuck-at-this_e381ff0c
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549242
-  - m_Id: 658149402
-    m_Key: still-waiting-for-the-bus_06f0d033
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549243
-  - m_Id: 658149403
-    m_Key: you-still-there-i-just_5446f824
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549244
-  - m_Id: 658149404
-    m_Key: voice-message-0-00-playback_861bb6a5
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549245
-  - m_Id: 658149405
-    m_Key: okay-hold-on-typing-it_d2f17b25
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549246
-  - m_Id: 658149406
-    m_Key: im-not-messing-around-just_5a0ff559
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549247
-  - m_Id: 658149407
-    m_Key: my-uncle-said-years-ago_6c10a7d5
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549248
-  - m_Id: 658149408
-    m_Key: there-was-another-guy-with_957202a8
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549249
-  - m_Id: 658149409
-    m_Key: but-by-morning-all-they_e3ac902f
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549250
-  - m_Id: 658149410
-    m_Key: this-message-was-unsent_5733c4a8
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549251
-  - m_Id: 658149411
-    m_Key: do-not-follow-any-of_bbf8c167
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549252
-  - m_Id: 658149412
-    m_Key: i-cant-play-it-just_8d33a88c
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549253
-  - m_Id: 658149413
-    m_Key: can-you-not-mess-around_d9b165f1
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549254
-  - m_Id: 658149414
-    m_Key: im-at-the-shed_84c9bb52
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549255
-  - m_Id: 658149415
-    m_Key: where-are-you_e819bb9a
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549256
-  - m_Id: 658149416
-    m_Key: im-standing-right-in-front_a97fa2a7
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549257
-  - m_Id: 658149417
-    m_Key: i-dont-see-you-either_405a4076
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549258
-  - m_Id: 658149418
-    m_Key: listen-let-me-finish-what_296631f6
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549259
-  - m_Id: 658149419
-    m_Key: that-woman-was-named-paeng_93a632f9
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549260
-  - m_Id: 658149420
-    m_Key: a-stranger-was-there-with_2c3c67d0
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549261
-  - m_Id: 658149421
-    m_Key: but-the-last-bus-could_c745c396
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549262
-  - m_Id: 658149422
-    m_Key: by-morning-the-shed-was_40f15ecf
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549263
-  - m_Id: 658149423
-    m_Key: my-grandma-said-ever-since_12419482
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549264
-  - m_Id: 658149424
-    m_Key: bro_3e84f02c
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549265
-  - m_Id: 658149425
-    m_Key: the-person-texting-you-my_368d6287
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549266
-  - m_Id: 658149426
-    m_Key: hes-not-trying-to-help_974bd9fe
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549267
-  - m_Id: 658149427
-    m_Key: my-uncle-said-paeng-never_a2d6b978
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549268
-  - m_Id: 658149428
-    m_Key: everyone-who-died-there-was_48241726
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549269
-  - m_Id: 658149429
-    m_Key: i-dont-know-my-uncle_32578f95
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549270
-  - m_Id: 658149430
-    m_Key: yeah-but-its-not-too_f9b5debf
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549271
-  - m_Id: 658149431
-    m_Key: do-not-get-on-the_9fd8bd93
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549272
-  - m_Id: 658149432
-    m_Key: ill-wait-right-here-until_018d7db7
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549273
-  - m_Id: 658149433
-    m_Key: ton-went-offline_a95c3caf
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549274
-  - m_Id: 658149434
-    m_Key: a-few-seconds-later-a_3ed3d541
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549275
-  - m_Id: 658149435
-    m_Key: unknown-your-friend-talks-too_cb07fe72
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549276
-  - m_Id: 658149436
-    m_Key: im-sitting-inside-on-the_01a00b02
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549277
-  - m_Id: 658149437
-    m_Key: no-way-im-looking-around_332cfaa8
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549278
-  - m_Id: 658149438
-    m_Key: so-what-am-i-supposed_5b3ecdf1
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549279
-  - m_Id: 658149439
-    m_Key: wait-so-ive-been-following_31df85b2
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549280
+      - rid: 3244670351061549229
   - m_Id: 658149440
-    m_Key: what-would-you-like-to_e7d0fca7
+    m_Key: OpeningIntro/#0 - what-would-you-like-to_e7d0fca7
     m_Metadata:
       m_Items:
       - rid: 3244670351061549281
   - m_Id: 658149441
-    m_Key: ill-make-it-for-you_21d91460
+    m_Key: OpeningIntro/#1 - ill-make-it-for-you_21d91460
     m_Metadata:
       m_Items:
       - rid: 3244670351061549282
   - m_Id: 658149442
-    m_Key: ahmm_a5558b7a
+    m_Key: OpeningIntro/#2 - ahmm_a5558b7a
     m_Metadata:
       m_Items:
       - rid: 3244670351061549283
-  - m_Id: 658149443
-    m_Key: great-i-just-bought-some_7ceaefa1
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549284
-  - m_Id: 658149444
-    m_Key: great-then-ill-add-some_a54e53af
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549285
   - m_Id: 658149445
-    m_Key: pad-krapow_97912474
+    m_Key: OpeningIntro/#2 reply 1 - pad-krapow_97912474
     m_Metadata:
       m_Items:
       - rid: 3244670351061549286
   - m_Id: 658149446
-    m_Key: omelette-rice_06ca4ba7
+    m_Key: OpeningIntro/#2 reply 2 - omelette-rice_06ca4ba7
     m_Metadata:
       m_Items:
       - rid: 3244670351061549287
+  - m_Id: 658149443
+    m_Key: OpeningIntro/#3 - great-i-just-bought-some_7ceaefa1
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549284
+  - m_Id: 658149444
+    m_Key: OpeningIntro/#4 - great-then-ill-add-some_a54e53af
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549285
   - m_Id: 658149447
-    m_Key: do-you-believe-in-an_4359d55a
+    m_Key: OpeningRule1/#0 - do-you-believe-in-an_4359d55a
     m_Metadata:
       m_Items:
       - rid: 3244670351061549288
   - m_Id: 658149448
-    m_Key: but-some-dont-and-if_9c3c794e
+    m_Key: OpeningRule1/#1 - but-some-dont-and-if_9c3c794e
     m_Metadata:
       m_Items:
       - rid: 3244670351061549289
   - m_Id: 658149449
-    m_Key: or-is-it-just-pitch_60922a6b
+    m_Key: OpeningRule1/#2 - or-is-it-just-pitch_60922a6b
     m_Metadata:
       m_Items:
       - rid: 3244670351061549290
   - m_Id: 658149450
-    m_Key: it-depends-on-whether-youre_f300c4dc
+    m_Key: OpeningRule1/#3 - it-depends-on-whether-youre_f300c4dc
     m_Metadata:
       m_Items:
       - rid: 3244670351061549291
   - m_Id: 658149451
-    m_Key: if-you-want-to-survive_71315a1f
+    m_Key: OpeningRule1/#4 - if-you-want-to-survive_71315a1f
     m_Metadata:
       m_Items:
       - rid: 3244670351061549292
-  - m_Id: 658149452
-    m_Key: good-luck_cb96ba79
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549293
-  - m_Id: 658149453
-    m_Key: just-follow-the-rules-and_1268a1b8
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549294
   - m_Id: 658149454
-    m_Key: dont-be-ridiculous-i-dont_6e35bb28
+    m_Key: OpeningRule1/#5 reply 1 - dont-be-ridiculous-i-dont_6e35bb28
     m_Metadata:
       m_Items:
       - rid: 3244670351061549295
   - m_Id: 658149455
-    m_Key: and-what-do-i-have_519000df
+    m_Key: OpeningRule1/#5 reply 2 - and-what-do-i-have_519000df
     m_Metadata:
       m_Items:
       - rid: 3244670351061549296
+  - m_Id: 658149452
+    m_Key: OpeningRule1/#6 - good-luck_cb96ba79
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549293
+  - m_Id: 658149453
+    m_Key: OpeningRule1/#7 - just-follow-the-rules-and_1268a1b8
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549294
   - m_Id: 658149456
-    m_Key: the-night-is-still-long_b62c3f05
+    m_Key: Rule2/#0 - the-night-is-still-long_b62c3f05
     m_Metadata:
       m_Items:
       - rid: 3244670351061549297
   - m_Id: 658149457
-    m_Key: rule-number-2_0b23c66a
+    m_Key: Rule2/#2 - rule-number-2_0b23c66a
     m_Metadata:
       m_Items:
       - rid: 3244670351061549298
   - m_Id: 658149458
-    m_Key: when-youre-sitting-at-the_5e41ed65
+    m_Key: Rule2/#3 - when-youre-sitting-at-the_5e41ed65
     m_Metadata:
       m_Items:
       - rid: 3244670351061549299
   - m_Id: 658149459
-    m_Key: ou-must-get-up-and_fbc29b1c
+    m_Key: Rule2/#4 - ou-must-get-up-and_fbc29b1c
     m_Metadata:
       m_Items:
       - rid: 3244670351061549300
   - m_Id: 658149460
-    m_Key: dont-forget-to-turn-on_7515c2bc
+    m_Key: Rule2/#5 - dont-forget-to-turn-on_7515c2bc
     m_Metadata:
       m_Items:
       - rid: 3244670351061549301
   - m_Id: 658149461
-    m_Key: return-to-your-seat-and_182fae54
+    m_Key: Rule2/#6 - return-to-your-seat-and_182fae54
     m_Metadata:
       m_Items:
       - rid: 3244670351061549302
-  - m_Id: 658149462
-    m_Key: you-cant-escape-this_9b84a284
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549303
-  - m_Id: 658149463
-    m_Key: its-not-difficult_7d76cb75
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549304
-  - m_Id: 658149464
-    m_Key: you-just-have-to-turn_25533421
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549305
-  - m_Id: 658149465
-    m_Key: wait-until-the-radio-turns_e9ad7532
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549306
-  - m_Id: 658149466
-    m_Key: f-the-light-doesnt-come_c458e2bf
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549307
-  - m_Id: 658149467
-    m_Key: may-you-survive-and-be_588cca44
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549308
   - m_Id: 658149468
-    m_Key: thats-enough-i-dont-want_5ee8bab3
+    m_Key: Rule2/#7 reply 1 - thats-enough-i-dont-want_5ee8bab3
     m_Metadata:
       m_Items:
       - rid: 3244670351061549309
   - m_Id: 658149469
-    m_Key: okay-ive-read-the-rules_da3c7cf6
+    m_Key: Rule2/#7 reply 2 - okay-ive-read-the-rules_da3c7cf6
     m_Metadata:
       m_Items:
       - rid: 3244670351061549310
+  - m_Id: 658149462
+    m_Key: Rule2/#8 - you-cant-escape-this_9b84a284
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549303
+  - m_Id: 658149463
+    m_Key: Rule2/#9 - its-not-difficult_7d76cb75
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549304
+  - m_Id: 658149464
+    m_Key: Rule2/#10 - you-just-have-to-turn_25533421
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549305
+  - m_Id: 658149465
+    m_Key: Rule2/#11 - wait-until-the-radio-turns_e9ad7532
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549306
+  - m_Id: 658149466
+    m_Key: Rule2/#12 - f-the-light-doesnt-come_c458e2bf
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549307
+  - m_Id: 658149467
+    m_Key: Rule2/#13 - may-you-survive-and-be_588cca44
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549308
   - m_Id: 658149470
-    m_Key: next-rule-rule-number-3_37b53894
+    m_Key: Rule3/#0 - next-rule-rule-number-3_37b53894
     m_Metadata:
       m_Items:
       - rid: 3244670351061549311
   - m_Id: 658149471
-    m_Key: you-have-to-find-four_7acc8ef3
+    m_Key: Rule3/#1 - you-have-to-find-four_7acc8ef3
     m_Metadata:
       m_Items:
       - rid: 3244670351061549312
   - m_Id: 658149472
-    m_Key: you-have-to-stare-at_f03a1134
+    m_Key: Rule3/#2 - you-have-to-stare-at_f03a1134
     m_Metadata:
       m_Items:
       - rid: 3244670351061549313
   - m_Id: 658149473
-    m_Key: ahmm_50cb6388
+    m_Key: Rule3/#3 - ahmm_50cb6388
     m_Metadata:
       m_Items:
       - rid: 3244670351061549314
-  - m_Id: 658149474
-    m_Key: whatever-you-choose-in-the_ddcac60d
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549315
-  - m_Id: 658149475
-    m_Key: stay-calm_d1304153
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549316
-  - m_Id: 658149476
-    m_Key: you-just-need-to-find_0a5910ba
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549317
-  - m_Id: 658149477
-    m_Key: and-look-at-them-in_39d1a5fd
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549318
-  - m_Id: 658149478
-    m_Key: but-be-careful-try-to_3d2ea2ce
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549319
-  - m_Id: 658149479
-    m_Key: and-if-anything-is-watching_e2d87ca7
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549320
-  - m_Id: 658149480
-    m_Key: youve-come-further-than-expected_b128bdc7
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549321
   - m_Id: 658149481
-    m_Key: i-curse-every-one-of_397141b6
+    m_Key: Rule3/#3 reply 1 - i-curse-every-one-of_397141b6
     m_Metadata:
       m_Items:
       - rid: 3244670351061549322
   - m_Id: 658149482
-    m_Key: i-dont-want-to-play_1fd8c220
+    m_Key: Rule3/#3 reply 2 - i-dont-want-to-play_1fd8c220
     m_Metadata:
       m_Items:
       - rid: 3244670351061549323
+  - m_Id: 658149474
+    m_Key: Rule3/#4 - whatever-you-choose-in-the_ddcac60d
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549315
+  - m_Id: 658149475
+    m_Key: Rule3/#5 - stay-calm_d1304153
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549316
+  - m_Id: 658149476
+    m_Key: Rule3/#6 - you-just-need-to-find_0a5910ba
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549317
+  - m_Id: 658149477
+    m_Key: Rule3/#7 - and-look-at-them-in_39d1a5fd
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549318
+  - m_Id: 658149478
+    m_Key: Rule3/#8 - but-be-careful-try-to_3d2ea2ce
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549319
+  - m_Id: 658149479
+    m_Key: Rule3/#9 - and-if-anything-is-watching_e2d87ca7
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549320
+  - m_Id: 658149480
+    m_Key: Rule3/#10 - youve-come-further-than-expected_b128bdc7
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549321
   - m_Id: 658149483
-    m_Key: not-a-bad-idea-at_502db8b7
+    m_Key: Rule4/#2 - not-a-bad-idea-at_502db8b7
     m_Metadata:
       m_Items:
       - rid: 3244670351061549324
   - m_Id: 658149484
-    m_Key: ule-4-you-must-find_ee2e98e4
+    m_Key: Rule4/#3 - ule-4-you-must-find_ee2e98e4
     m_Metadata:
       m_Items:
       - rid: 3244670351061549325
-  - m_Id: 658149485
-    m_Key: very-good-then-listen-closely_1944445f
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549326
-  - m_Id: 658149486
-    m_Key: those-dolls-didnt-go-anywhere_0daf7ed8
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549327
-  - m_Id: 658149487
-    m_Key: some-are-crying-some-are_60b174ef
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549328
-  - m_Id: 658149488
-    m_Key: the-closer-you-get-the_73c43988
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549329
-  - m_Id: 658149489
-    m_Key: but-dont-think-the-shrine_496ace22
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549330
-  - m_Id: 658149490
-    m_Key: and-whenever-the-person-hanging_af6d7837
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549331
-  - m_Id: 658149491
-    m_Key: if-it-finds-you-do_8a464c86
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549332
-  - m_Id: 658149492
-    m_Key: 22-00-22-40-may_6944c480
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549333
-  - m_Id: 658149493
-    m_Key: the-shrine-has-been-empty_286dc5fb
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549334
-  - m_Id: 658149494
-    m_Key: listen-carefully-bring-them-all_9b1ac21c
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549335
-  - m_Id: 658149495
-    m_Key: 22-00-22-40_3b40c880
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549336
   - m_Id: 658149496
-    m_Key: what-do-you-want-just_d0a0ee09
+    m_Key: Rule4/#4 reply 1 - what-do-you-want-just_d0a0ee09
     m_Metadata:
       m_Items:
       - rid: 3244670351061549337
   - m_Id: 658149497
-    m_Key: whatever-it-is-bring-it_10a22d3b
+    m_Key: Rule4/#4 reply 2 - whatever-it-is-bring-it_10a22d3b
     m_Metadata:
       m_Items:
       - rid: 3244670351061549338
+  - m_Id: 658149485
+    m_Key: Rule4/#5 - very-good-then-listen-closely_1944445f
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549326
+  - m_Id: 658149486
+    m_Key: Rule4/#6 - those-dolls-didnt-go-anywhere_0daf7ed8
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549327
+  - m_Id: 658149487
+    m_Key: Rule4/#7 - some-are-crying-some-are_60b174ef
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549328
+  - m_Id: 658149488
+    m_Key: Rule4/#8 - the-closer-you-get-the_73c43988
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549329
+  - m_Id: 658149489
+    m_Key: Rule4/#9 - but-dont-think-the-shrine_496ace22
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549330
+  - m_Id: 658149490
+    m_Key: Rule4/#10 - and-whenever-the-person-hanging_af6d7837
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549331
+  - m_Id: 658149491
+    m_Key: Rule4/#11 - if-it-finds-you-do_8a464c86
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549332
+  - m_Id: 658149492
+    m_Key: Rule4/#12 - 22-00-22-40-may_6944c480
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549333
+  - m_Id: 658149493
+    m_Key: Rule4/#13 - the-shrine-has-been-empty_286dc5fb
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549334
+  - m_Id: 658149494
+    m_Key: Rule4/#14 - listen-carefully-bring-them-all_9b1ac21c
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549335
+  - m_Id: 658149495
+    m_Key: Rule4/#15 - 22-00-22-40_3b40c880
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549336
   - m_Id: 658149498
-    m_Key: not-a-bad-idea-at_b25414ee
+    m_Key: Rule5/#2 - not-a-bad-idea-at_b25414ee
     m_Metadata:
       m_Items:
       - rid: 3244670351061549339
-  - m_Id: 658149499
-    m_Key: hold-onto-the-sacred-thread_efa31ffc
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549340
-  - m_Id: 658149500
-    m_Key: and-only-continue-walking-once_dfcb27db
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549341
-  - m_Id: 658149501
-    m_Key: listen-carefully-to-the-bell_3f01b759
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549342
-  - m_Id: 658149502
-    m_Key: the-3rd-bell-chime-is_2412d9a3
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549343
-  - m_Id: 658149503
-    m_Key: if-you-return-too-early_f98bebeb
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549344
-  - m_Id: 658149504
-    m_Key: do-not-let-go-of_45fc7f2e
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549345
-  - m_Id: 658149505
-    m_Key: 23-00-23-40-listen_43f84e22
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549346
-  - m_Id: 658149506
-    m_Key: that-red-thread-is-the_2822faea
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549347
-  - m_Id: 658149507
-    m_Key: if-you-want-to-let_fa47645d
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549348
-  - m_Id: 658149508
-    m_Key: but-dont-expect-anyone-to_2ca63994
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549349
   - m_Id: 658149509
-    m_Key: ive-followed-every-single-thing_af9b9643
+    m_Key: Rule5/#3 reply 1 - ive-followed-every-single-thing_af9b9643
     m_Metadata:
       m_Items:
       - rid: 3244670351061549350
   - m_Id: 658149510
-    m_Key: just-tell-me-what-do_f6d41565
+    m_Key: Rule5/#3 reply 2 - just-tell-me-what-do_f6d41565
     m_Metadata:
       m_Items:
       - rid: 3244670351061549351
+  - m_Id: 658149499
+    m_Key: Rule5/#4 - hold-onto-the-sacred-thread_efa31ffc
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549340
+  - m_Id: 658149500
+    m_Key: Rule5/#5 - and-only-continue-walking-once_dfcb27db
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549341
+  - m_Id: 658149501
+    m_Key: Rule5/#6 - listen-carefully-to-the-bell_3f01b759
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549342
+  - m_Id: 658149502
+    m_Key: Rule5/#7 - the-3rd-bell-chime-is_2412d9a3
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549343
+  - m_Id: 658149503
+    m_Key: Rule5/#8 - if-you-return-too-early_f98bebeb
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549344
+  - m_Id: 658149504
+    m_Key: Rule5/#9 - do-not-let-go-of_45fc7f2e
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549345
+  - m_Id: 658149505
+    m_Key: Rule5/#10 - 23-00-23-40-listen_43f84e22
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549346
+  - m_Id: 658149506
+    m_Key: Rule5/#11 - that-red-thread-is-the_2822faea
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549347
+  - m_Id: 658149507
+    m_Key: Rule5/#12 - if-you-want-to-let_fa47645d
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549348
+  - m_Id: 658149508
+    m_Key: Rule5/#13 - but-dont-expect-anyone-to_2ca63994
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549349
+  - m_Id: 658149391
+    m_Key: Ton_Rule2/#0 - where-the-hell-are-you_96f3f467
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549232
+  - m_Id: 658149392
+    m_Key: Ton_Rule2/#1 - your-mom-even-texted-me_fa48d9de
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549233
+  - m_Id: 658149400
+    m_Key: Ton_Rule2/#1 reply 1 - still-waiting-for-the-bus_992f9acf
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549241
+  - m_Id: 658149401
+    m_Key: Ton_Rule2/#1 reply 2 - ton-im-stuck-at-this_e381ff0c
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549242
+  - m_Id: 658149402
+    m_Key: Ton_Rule2/#2 reply 1 - still-waiting-for-the-bus_06f0d033
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549243
+  - m_Id: 658149393
+    m_Key: Ton_Rule2/#3 - another-one-which-one-do_20d21bfa
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549234
+  - m_Id: 658149394
+    m_Key: Ton_Rule2/#4 - what-texts-calm-down-which_5b15a069
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549235
+  - m_Id: 658149395
+    m_Key: Ton_Rule2/#5 - the-rundown-looking-one-its_8858f085
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549236
+  - m_Id: 658149396
+    m_Key: Ton_Rule2/#6 - wait-a-second_61b2fa55
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549237
+  - m_Id: 658149397
+    m_Key: Ton_Rule2/#7 - is-it-that-shed-from_58c4170c
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549238
+  - m_Id: 658149398
+    m_Key: Ton_Rule2/#8 - dont-tell-me-youre_d9aa010b
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549239
+  - m_Id: 658149399
+    m_Key: Ton_Rule2/#9 - disconnected-no-further-messages_4de1a87a
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549240
+  - m_Id: 658149403
+    m_Key: Ton_Rule4/#0 - you-still-there-i-just_5446f824
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549244
+  - m_Id: 658149404
+    m_Key: Ton_Rule4/#1 - voice-message-0-00-playback_861bb6a5
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549245
+  - m_Id: 658149412
+    m_Key: Ton_Rule4/#2 reply 1 - i-cant-play-it-just_8d33a88c
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549253
+  - m_Id: 658149413
+    m_Key: Ton_Rule4/#2 reply 2 - can-you-not-mess-around_d9b165f1
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549254
+  - m_Id: 658149405
+    m_Key: Ton_Rule4/#3 - okay-hold-on-typing-it_d2f17b25
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549246
+  - m_Id: 658149406
+    m_Key: Ton_Rule4/#4 - im-not-messing-around-just_5a0ff559
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549247
+  - m_Id: 658149407
+    m_Key: Ton_Rule4/#5 - my-uncle-said-years-ago_6c10a7d5
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549248
+  - m_Id: 658149408
+    m_Key: Ton_Rule4/#6 - there-was-another-guy-with_957202a8
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549249
+  - m_Id: 658149409
+    m_Key: Ton_Rule4/#7 - but-by-morning-all-they_e3ac902f
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549250
+  - m_Id: 658149410
+    m_Key: Ton_Rule4/#8 - this-message-was-unsent_5733c4a8
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549251
+  - m_Id: 658149411
+    m_Key: Ton_Rule4/#9 - do-not-follow-any-of_bbf8c167
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549252
+  - m_Id: 658149414
+    m_Key: Ton_Rule6/#0 - im-at-the-shed_84c9bb52
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549255
+  - m_Id: 658149415
+    m_Key: Ton_Rule6/#1 - where-are-you_e819bb9a
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549256
+  - m_Id: 658149436
+    m_Key: Ton_Rule6/#2 reply 1 - im-sitting-inside-on-the_01a00b02
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549277
+  - m_Id: 658149437
+    m_Key: Ton_Rule6/#2 reply 2 - no-way-im-looking-around_332cfaa8
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549278
+  - m_Id: 658149416
+    m_Key: Ton_Rule6/#3 - im-standing-right-in-front_a97fa2a7
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549257
+  - m_Id: 658149417
+    m_Key: Ton_Rule6/#4 - i-dont-see-you-either_405a4076
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549258
+  - m_Id: 658149418
+    m_Key: Ton_Rule6/#5 - listen-let-me-finish-what_296631f6
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549259
+  - m_Id: 658149419
+    m_Key: Ton_Rule6/#6 - that-woman-was-named-paeng_93a632f9
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549260
+  - m_Id: 658149420
+    m_Key: Ton_Rule6/#7 - a-stranger-was-there-with_2c3c67d0
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549261
+  - m_Id: 658149421
+    m_Key: Ton_Rule6/#8 - but-the-last-bus-could_c745c396
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549262
+  - m_Id: 658149422
+    m_Key: Ton_Rule6/#9 - by-morning-the-shed-was_40f15ecf
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549263
+  - m_Id: 658149423
+    m_Key: Ton_Rule6/#10 - my-grandma-said-ever-since_12419482
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549264
+  - m_Id: 658149424
+    m_Key: Ton_Rule6/#11 - bro_3e84f02c
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549265
+  - m_Id: 658149425
+    m_Key: Ton_Rule6/#12 - the-person-texting-you-my_368d6287
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549266
+  - m_Id: 658149426
+    m_Key: Ton_Rule6/#13 - hes-not-trying-to-help_974bd9fe
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549267
+  - m_Id: 658149427
+    m_Key: Ton_Rule6/#14 - my-uncle-said-paeng-never_a2d6b978
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549268
+  - m_Id: 658149428
+    m_Key: Ton_Rule6/#15 - everyone-who-died-there-was_48241726
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549269
+  - m_Id: 658149438
+    m_Key: Ton_Rule6/#16 reply 1 - so-what-am-i-supposed_5b3ecdf1
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549279
+  - m_Id: 658149439
+    m_Key: Ton_Rule6/#16 reply 2 - wait-so-ive-been-following_31df85b2
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549280
+  - m_Id: 658149429
+    m_Key: Ton_Rule6/#17 - i-dont-know-my-uncle_32578f95
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549270
+  - m_Id: 658149430
+    m_Key: Ton_Rule6/#18 - yeah-but-its-not-too_f9b5debf
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549271
+  - m_Id: 658149431
+    m_Key: Ton_Rule6/#19 - do-not-get-on-the_9fd8bd93
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549272
+  - m_Id: 658149432
+    m_Key: Ton_Rule6/#20 - ill-wait-right-here-until_018d7db7
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549273
+  - m_Id: 658149433
+    m_Key: Ton_Rule6/#21 - ton-went-offline_a95c3caf
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549274
+  - m_Id: 658149434
+    m_Key: Ton_Rule6/#22 - a-few-seconds-later-a_3ed3d541
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549275
+  - m_Id: 658149435
+    m_Key: Ton_Rule6/#23 - unknown-your-friend-talks-too_cb07fe72
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549276
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

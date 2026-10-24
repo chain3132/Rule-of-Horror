@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41317668c27ad3e4eb2364064ad2ed14, type: 3}
+  m_Name: Rule6_EscapeEndingChat
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableObject.ConversationData
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  startNode: 0
+  nodes:
+  - message: "\u0E27\u0E31\u0E19\u0E19\u0E35\u0E49\u0E01\u0E34\u0E19\u0E2D\u0E30\u0E44\u0E23\u0E14\u0E35\u0E25\u0E39\u0E01
+      \u0E40\u0E14\u0E35\u0E4B\u0E22\u0E27\u0E41\u0E21\u0E48\u0E17\u0E33\u0E43\u0E2B\u0E49\u0E01\u0E34\u0E19"
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 0, y: 0}
+  - message: "\u0E41\u0E21\u0E48 \u0E1C\u0E21\u0E16\u0E36\u0E07\u0E1A\u0E49\u0E32\u0E19\u0E41\u0E25\u0E49\u0E27
+      \u0E2D\u0E32\u0E2B\u0E32\u0E23\u0E40\u0E22\u0E47\u0E19\u0E2B\u0E23\u0E37\u0E2D\u0E22\u0E31\u0E07"
+    isPlayer: 1
+    scriptedLine: 1
+    offersReward: 0
+    replies: []
+    nextNode: -1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 0, y: 0}

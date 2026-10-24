@@ -15,31 +15,31 @@ MonoBehaviour:
   m_TableCollectionName: Dialogue
   m_TableCollectionNameGuidString: 40016d2348797504a863b4e97a967a08
   m_Entries:
-  - m_Id: 939167744
-    m_Key: whew-took-long-enough-if_227eefcc
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549451
-  - m_Id: 955944960
-    m_Key: ehh-whats-happening-something_a4c400fb
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549452
-  - m_Id: 955944961
-    m_Key: wait-wheres-my-phone_21b492bf
-    m_Metadata:
-      m_Items:
-      - rid: 3244670351061549453
   - m_Id: 955944962
-    m_Key: and-what-the-hell-was_f5fed96f
+    m_Key: Rule4/Line - and-what-the-hell-was_f5fed96f
     m_Metadata:
       m_Items:
       - rid: 3244670351061549454
+  - m_Id: 955944960
+    m_Key: Rule4/Line - ehh-whats-happening-something_a4c400fb
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549452
   - m_Id: 955944963
-    m_Key: i-have-to-find-my_bc2dac96
+    m_Key: Rule4/Line - i-have-to-find-my_bc2dac96
     m_Metadata:
       m_Items:
       - rid: 3244670351061549455
+  - m_Id: 955944961
+    m_Key: Rule4/Line - wait-wheres-my-phone_21b492bf
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549453
+  - m_Id: 939167744
+    m_Key: Rule4/Line - whew-took-long-enough-if_227eefcc
+    m_Metadata:
+      m_Items:
+      - rid: 3244670351061549451
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

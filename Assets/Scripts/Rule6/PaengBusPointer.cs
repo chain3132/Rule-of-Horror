@@ -81,6 +81,14 @@ namespace Rule6
         }
 
         /// <summary>เลิกชี้ — รถคันนั้นออกไปแล้ว</summary>
+        /// <summary>
+        /// เลิกหันตัวเอง — ให้คัทซีนเป็นคนคุมทิศ
+        ///
+        /// ปกติแป้งหันเข้าหาม้านั่งศาลาตลอดใน Update ถ้าคัทซีนพาเธอเดินไปที่รถโดยไม่ปิดตัวนี้
+        /// ทุกเฟรมเธอจะถูกบิดกลับไปมองศาลา เดินแบบหันข้าง
+        /// </summary>
+        public void HoldPose() => _faceTarget = null;
+
         public void StopPointing()
         {
             _pointing   = false;

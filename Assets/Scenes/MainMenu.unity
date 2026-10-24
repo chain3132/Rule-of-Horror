@@ -6290,7 +6290,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4291285465
   m_fontColor: {r: 0.85, g: 0.82, b: 0.78, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -6303,7 +6303,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -6776,8 +6776,8 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: UI
     m_TableEntryReference:
-      m_KeyId: 0
-      m_Key: start_54f01ea3
+      m_KeyId: 1840943152
+      m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
@@ -19694,8 +19694,8 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: UI
     m_TableEntryReference:
-      m_KeyId: 0
-      m_Key: quite_18aee0fd
+      m_KeyId: 1840943154
+      m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
@@ -44502,7 +44502,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4291285465
   m_fontColor: {r: 0.85, g: 0.82, b: 0.78, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -44515,7 +44515,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2

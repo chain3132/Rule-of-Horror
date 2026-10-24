@@ -631,8 +631,8 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: UI
     m_TableEntryReference:
-      m_KeyId: 0
-      m_Key: you-have-1-message_1287ba39
+      m_KeyId: 1840943155
+      m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
