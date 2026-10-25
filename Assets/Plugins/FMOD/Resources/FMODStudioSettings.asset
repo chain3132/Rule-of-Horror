@@ -492,10 +492,12 @@ MonoBehaviour:
   - Action
   - AmbienceBank
   - BoneBroken
+  - Intro
   - Radio
   - Rule2
   - Rule4
   - Rule5
+  - Rule6
   - RunningGhost
   - WomanSound
   BanksToLoad: []
