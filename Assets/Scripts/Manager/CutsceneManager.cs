@@ -378,10 +378,20 @@ public class CutsceneManager : MonoBehaviour
         if (cutsceneCameraGO != null) cutsceneCameraGO.SetActive(true);
 
         // เริ่มเสียง cutscene
+        // หา event ไม่เจอ (ย้ายโฟลเดอร์ใน FMOD แต่ยังไม่ได้กด Build) ต้องแค่เงียบ —
+        // ถ้าปล่อยให้ exception หลุด บรรทัดข้างล่างจะไม่รัน คัทซีนไม่เริ่ม และผู้เล่นค้างอยู่กับที่
         if (!string.IsNullOrWhiteSpace(cutsceneMusicEvent))
         {
-            _cutsceneMusicInstance = RuntimeManager.CreateInstance(cutsceneMusicEvent);
-            _cutsceneMusicInstance.start();
+            try
+            {
+                _cutsceneMusicInstance = RuntimeManager.CreateInstance(cutsceneMusicEvent);
+                _cutsceneMusicInstance.start();
+            }
+            catch (EventNotFoundException)
+            {
+                Debug.LogWarning($"[FMOD] ยังไม่มี event '{cutsceneMusicEvent}' — คัทซีนเล่นต่อแบบไม่มีเพลง " +
+                                 "(ถ้าเพิ่งย้าย/เปลี่ยนชื่อใน FMOD Studio ให้กด Build ใหม่)", this);
+            }
         }
 
         // ซ่อน credit ตั้งแต่ต้น

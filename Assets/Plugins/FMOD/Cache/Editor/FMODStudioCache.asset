@@ -401,6 +401,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 100
   Length: 1272
+--- !u!114 &-7662057621746302180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Menu/CutsceneMusic
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Menu/CutsceneMusic
+  Guid:
+    Data1: -485675657
+    Data2: 1121247402
+    Data3: 546286740
+    Data4: 1582137800
+  Banks:
+  - {fileID: 4340563681340270436}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 21315
 --- !u!114 &-7568326989738345454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -842,7 +869,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/BoneBroken.bank
   Name: BoneBroken
   StudioPath: bank:/New Folder/BoneBroken
-  lastModified: 639258754188007212
+  lastModified: 639285412994615895
   FileSizes:
   - Name: Desktop
     Value: 7520
@@ -1544,7 +1571,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/WomanSound.bank
   Name: WomanSound
   StudioPath: bank:/WomanSound
-  lastModified: 639258754188525462
+  lastModified: 639285412994355158
   FileSizes:
   - Name: Desktop
     Value: 56096
@@ -2392,7 +2419,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule2.bank
   Name: Rule2
   StudioPath: bank:/Rule2
-  lastModified: 639268179164980676
+  lastModified: 639285412988565582
   FileSizes:
   - Name: Desktop
     Value: 1030912
@@ -2759,8 +2786,8 @@ MonoBehaviour:
     Data3: -493498185
     Data4: 2133030281
   Banks:
-  - {fileID: -4368771935535294408}
   - {fileID: 2037088329598349015}
+  - {fileID: -4368771935535294408}
   IsStream: 0
   Is3D: 1
   IsOneShot: 0
@@ -2966,10 +2993,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Radio.bank
   Name: Radio
   StudioPath: bank:/Radio
-  lastModified: 639278857779805244
+  lastModified: 639285412987671129
   FileSizes:
   - Name: Desktop
-    Value: 6797408
+    Value: 6797216
   Exists: 1
 --- !u!114 &-252490073037744945
 MonoBehaviour:
@@ -3138,7 +3165,6 @@ MonoBehaviour:
   - {fileID: 1547586123517638744}
   - {fileID: -7568326989738345454}
   - {fileID: 4841204165627619137}
-  - {fileID: 289455076466151232}
   - {fileID: 6512950548796790981}
   - {fileID: 4570081332186695772}
   - {fileID: -8936584954267378136}
@@ -3172,13 +3198,14 @@ MonoBehaviour:
   - {fileID: -677866589681844877}
   - {fileID: 5727829971138432132}
   - {fileID: 2645332907658593063}
+  - {fileID: -7662057621746302180}
   EditorParameters: []
   MasterBanks:
   - {fileID: 2037088329598349015}
   StringsBanks:
   - {fileID: 8790939570095508767}
   cacheVersion: 131858
-  cacheTime: 639278857779805244
+  cacheTime: 639285412994615895
   SerializableEventsDict:
   - key: event:/Notification
     index: 0
@@ -3244,73 +3271,73 @@ MonoBehaviour:
     index: 30
   - key: event:/Rule1/GhostHum
     index: 31
-  - key: event:/Menu/CutsceneMusic
-    index: 32
   - key: event:/Menu/CarSoundEvent
-    index: 33
+    index: 32
   - key: event:/Rule3/Breathing
-    index: 34
+    index: 33
   - key: event:/Menu/MainMenuBGM
-    index: 35
+    index: 34
   - key: event:/Rule3/BoneBroken
-    index: 36
+    index: 35
   - key: event:/Rule2/RadioNoise
-    index: 37
+    index: 36
   - key: event:/Rule4/Background Rule 4
-    index: 38
+    index: 37
   - key: event:/Rule4/Rule4Ambient
-    index: 39
+    index: 38
   - key: event:/Rule4/Background Ghost
-    index: 40
+    index: 39
   - key: event:/Rule4/Bones Crack
-    index: 41
+    index: 40
   - key: event:/Rule4/Crow Panic
-    index: 42
+    index: 41
   - key: event:/Rule4/Temple gong
-    index: 43
+    index: 42
   - key: event:/Rule2/RunningGhost
-    index: 44
+    index: 43
   - key: event:/Rule2/GhostWalk
-    index: 45
+    index: 44
   - key: event:/Rule4/Drop Doll
-    index: 46
+    index: 45
   - key: event:/Rule4/Pick up
-    index: 47
+    index: 46
   - key: event:/Rule4/Ghost Breathing
-    index: 48
+    index: 47
   - key: event:/Rule5/Ching
-    index: 49
+    index: 48
   - key: event:/Rule5/UntangleDone
-    index: 50
+    index: 49
   - key: event:/Rule5/GhostChaseStart
-    index: 51
+    index: 50
   - key: event:/Rule5/GrabThread
-    index: 52
+    index: 51
   - key: event:/Rule5/ReleaseThread
-    index: 53
+    index: 52
   - key: event:/Rule5/Untangle
-    index: 54
+    index: 53
   - key: event:/Rule5/Bell
-    index: 55
+    index: 54
   - key: event:/Rule5/HeartAttack
-    index: 56
+    index: 55
   - key: event:/Rule5/GhostChingChap
-    index: 57
+    index: 56
   - key: event:/Rule5/Background Rule 5
-    index: 58
+    index: 57
   - key: event:/Rule5/Jumpscare
-    index: 59
+    index: 58
   - key: event:/Rule5/PlayerPrey
-    index: 60
+    index: 59
   - key: event:/Radio/RadioOpen
-    index: 61
+    index: 60
   - key: event:/Radio/RadioSound
-    index: 62
+    index: 61
   - key: event:/Radio/Release Radio
-    index: 63
+    index: 62
   - key: event:/Radio/Tension Radio
-    index: 64
+    index: 63
   - key: event:/Radio/RadioPrayer
+    index: 64
+  - key: event:/Menu/CutsceneMusic
     index: 65
 --- !u!114 &125022446526344972
 MonoBehaviour:
@@ -3409,38 +3436,11 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule4.bank
   Name: Rule4
   StudioPath: bank:/Rule4
-  lastModified: 639268179165051048
+  lastModified: 639285412989431877
   FileSizes:
   - Name: Desktop
-    Value: 1335072
+    Value: 1335136
   Exists: 1
---- !u!114 &289455076466151232
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/Menu/CutsceneMusic
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/Menu/CutsceneMusic
-  Guid:
-    Data1: -485675657
-    Data2: 1121247402
-    Data3: 546286740
-    Data4: 1582137800
-  Banks:
-  - {fileID: 4340563681340270436}
-  IsStream: 1
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 42984
 --- !u!114 &343499979947184952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4116,7 +4116,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639258754188012244
+  lastModified: 639285412979370599
   FileSizes:
   - Name: Desktop
     Value: 39392
@@ -4852,7 +4852,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Action.bank
   Name: Action
   StudioPath: bank:/Action
-  lastModified: 639258754187818953
+  lastModified: 639285412978288515
   FileSizes:
   - Name: Desktop
     Value: 407488
@@ -4919,10 +4919,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/AmbienceBank.bank
   Name: AmbienceBank
   StudioPath: bank:/AmbienceBank
-  lastModified: 639268179164925404
+  lastModified: 639285412979043184
   FileSizes:
   - Name: Desktop
-    Value: 3121504
+    Value: 2667936
   Exists: 1
 --- !u!114 &4431298768614482692
 MonoBehaviour:
@@ -5708,10 +5708,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule5.bank
   Name: Rule5
   StudioPath: bank:/Rule5
-  lastModified: 639268179165091047
+  lastModified: 639285412993833637
   FileSizes:
   - Name: Desktop
-    Value: 690528
+    Value: 690560
   Exists: 1
 --- !u!114 &6512950548796790981
 MonoBehaviour:
@@ -6489,7 +6489,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639278857779472839
+  lastModified: 639285412979380595
   FileSizes:
   - Name: Desktop
     Value: 4454
@@ -6590,7 +6590,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/RunningGhost.bank
   Name: RunningGhost
   StudioPath: bank:/RunningGhost
-  lastModified: 639258754188515460
+  lastModified: 639285412994090459
   FileSizes:
   - Name: Desktop
     Value: 84704
