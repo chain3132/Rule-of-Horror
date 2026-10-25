@@ -82,26 +82,27 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-        music = FMODUnity.RuntimeManager.CreateInstance("event:/New Event");
+        // ทุกตัวใช้ TryCreate — event ไหนถูกย้าย/เปลี่ยนชื่อใน FMOD ตัวเดียว ตัวอื่นต้องยังดังได้
+        TryCreate("event:/New Event", out music);
         music.set3DAttributes(
             FMODUnity.RuntimeUtils.To3DAttributes(transform));
         music.start();
-        music.setParameterByName("MusicIntensity", 0); 
-        
-        heartbeat = RuntimeManager.CreateInstance("event:/HeartBeat");
+        music.setParameterByName("MusicIntensity", 0);
+
+        TryCreate("event:/HeartBeat", out heartbeat);
         heartbeat.start();
         heartbeat.setParameterByName("HeartLevel", 0);
-        
+
         //ghostScream = RuntimeManager.CreateInstance("event:/GhostScream");
 
         // ── Rule 3 sounds ──
         // TODO: create "event:/Breathing" in FMOD with a "BreathingLevel" parameter (1 / 2 / 3)
-        breathing = RuntimeManager.CreateInstance("event:/Rule3/Breathing");
+        TryCreate("event:/Rule3/Breathing", out breathing);
         if (player != null)
             breathing.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(player));
 
         // TODO: create "event:/GhostWarning" in FMOD (bone / neck crack one-shot)
-        ghostWarning = RuntimeManager.CreateInstance("event:/Rule3/GhostWarning");
+        TryCreate("event:/Rule3/GhostWarning", out ghostWarning);
 
         // ── Rule 3 exclusive sounds ──
         // TODO: create these events in FMOD Studio:
@@ -110,15 +111,15 @@ public class AudioManager : MonoBehaviour
         //   event:/Rule3Ambient         – looping ambient background unique to Rule 3
         //   event:/Rule3LightBulb       – short one-shot light-bulb buzz/click
         // ── Rule 2 looping instances ──
-        rule2AmbienceBG = RuntimeManager.CreateInstance("event:/Rule2/Rule2AmbienceBG");
-        rule2Ambience   = RuntimeManager.CreateInstance("event:/Rule2/Rule2Ambience");
+        TryCreate("event:/Rule2/Rule2AmbienceBG", out rule2AmbienceBG);
+        TryCreate("event:/Rule2/Rule2Ambience",   out rule2Ambience);
 
-        rule3HeartbeatIntro = RuntimeManager.CreateInstance("event:/Rule3/Rule3HeartbeatIntro");
-        rule3BuildUpTension = RuntimeManager.CreateInstance("event:/Rule3/Rule3BuildUpTension");
-        rule3Ambient        = RuntimeManager.CreateInstance("event:/Rule3/Rule3Ambient");
-        rule3LightBulb      = RuntimeManager.CreateInstance("event:/Rule3/Rule3LightBulb");
-        rule3BurnPaper      = RuntimeManager.CreateInstance("event:/Rule3/BurnPaper");
-        rule3Death          = RuntimeManager.CreateInstance("event:/Rule3/Rule3Death");
+        TryCreate("event:/Rule3/Rule3HeartbeatIntro", out rule3HeartbeatIntro);
+        TryCreate("event:/Rule3/Rule3BuildUpTension", out rule3BuildUpTension);
+        TryCreate("event:/Rule3/Rule3Ambient",        out rule3Ambient);
+        TryCreate("event:/Rule3/Rule3LightBulb",      out rule3LightBulb);
+        TryCreate("event:/Rule3/BurnPaper",           out rule3BurnPaper);
+        TryCreate("event:/Rule3/Rule3Death",          out rule3Death);
 
         
         _rule4BackgroundOk      = TryCreate("event:/Rule4/Background Rule 4",     out rule4Background);
@@ -166,37 +167,39 @@ public class AudioManager : MonoBehaviour
         }
 
 
-        WomanScream = RuntimeManager.CreateInstance("event:/WomanScream");
+        TryCreate("event:/WomanScream", out WomanScream);
         if (womanScreamTransform != null && womanScreamTransform.Length > 0 && womanScreamTransform[0] != null)
             WomanScream.set3DAttributes(RuntimeUtils.To3DAttributes(womanScreamTransform[0]));
-        
-        jumpScare = RuntimeManager.CreateInstance("event:/Rule2/JumpScareSound");
-        
 
-        radioOpen = RuntimeManager.CreateInstance("event:/RadioOpen");
+        TryCreate("event:/Rule2/JumpScareSound", out jumpScare);
+
+
+        // วิทยุย้ายไปอยู่ในโฟลเดอร์ Radio ใน FMOD แล้ว — path เดิม (event:/RadioOpen ฯลฯ) ไม่มีแล้ว
+        // ถ้าใช้ CreateInstance ตรงๆ ตรงนี้จะ throw แล้ว Start() หยุดกลางคัน ลมด้านล่างจะไม่ดังเลย
+        TryCreate("event:/Radio/RadioOpen", out radioOpen);
         radioOpen.set3DAttributes(RuntimeUtils.To3DAttributes(radioTransform));
-        
-        radioSound = RuntimeManager.CreateInstance("event:/RadioSound");
+
+        TryCreate("event:/Radio/RadioSound", out radioSound);
         radioSound.set3DAttributes(RuntimeUtils.To3DAttributes(radioTransform));
-        
-        radioNoise = RuntimeManager.CreateInstance("event:/Rule2/RadioNoise");
+
+        TryCreate("event:/Rule2/RadioNoise", out radioNoise);
         radioNoise.set3DAttributes(RuntimeUtils.To3DAttributes(radioTransform));
-        
-        radioPray = RuntimeManager.CreateInstance("event:/RadioPrayer");
+
+        TryCreate("event:/Radio/RadioPrayer", out radioPray);
         radioPray.set3DAttributes(RuntimeUtils.To3DAttributes(radioTransform));
-        
+
         radioNoise.setVolume(0f);
         radioNoise.start();
 
         radioSound.setVolume(0f);
         radioSound.start();
-        
-        windAmbience = RuntimeManager.CreateInstance("event:/WindAmbience");
+
+        TryCreate("event:/WindAmbience", out windAmbience);
         windAmbience.start();
         windAmbience.setParameterByName("Tension", 0);
         if (player != null)
             windAmbience.set3DAttributes(RuntimeUtils.To3DAttributes(player));
-        
+
     }
     // ─────────── FMOD Safety ───────────
 
