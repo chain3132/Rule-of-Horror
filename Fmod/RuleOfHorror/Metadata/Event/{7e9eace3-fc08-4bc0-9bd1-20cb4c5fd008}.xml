@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="Event" id="{7e9eace3-fc08-4bc0-9bd1-20cb4c5fd008}">
 		<property name="name">
-			<value>จอดรอ</value>
+			<value>BusWait</value>
 		</property>
 		<property name="outputFormat">
 			<value>2</value>
@@ -56,7 +56,11 @@
 			<destination>{1750c899-345d-4fff-93ca-ede0e136c68d}</destination>
 		</relationship>
 	</object>
-	<object class="EventAutomatableProperties" id="{ef930b39-357f-4865-8695-49b835556214}" />
+	<object class="EventAutomatableProperties" id="{ef930b39-357f-4865-8695-49b835556214}">
+		<property name="maximumDistance">
+			<value>50</value>
+		</property>
+	</object>
 	<object class="MarkerTrack" id="{ed106f1f-cdfc-43a8-b756-030f2488cd6a}" />
 	<object class="GroupTrack" id="{74a593fc-c899-4b63-a025-eb108de8cb3a}">
 		<relationship name="modules">
@@ -69,6 +73,9 @@
 	<object class="Timeline" id="{0d48a046-8ce1-41a3-b3e7-11abfb3dc6c2}">
 		<relationship name="modules">
 			<destination>{ddb2ff2e-69b7-4ef9-8d30-321eb367ae67}</destination>
+		</relationship>
+		<relationship name="markers">
+			<destination>{15e52245-700d-44bb-a26b-d312191e3ee3}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{5a95dabe-e88f-4e1e-88d9-8784309c104a}">
@@ -111,6 +118,20 @@
 		</relationship>
 		<relationship name="output">
 			<destination>{5a95dabe-e88f-4e1e-88d9-8784309c104a}</destination>
+		</relationship>
+	</object>
+	<object class="LoopRegion" id="{15e52245-700d-44bb-a26b-d312191e3ee3}">
+		<property name="position">
+			<value>0</value>
+		</property>
+		<property name="length">
+			<value>5</value>
+		</property>
+		<relationship name="timeline">
+			<destination>{0d48a046-8ce1-41a3-b3e7-11abfb3dc6c2}</destination>
+		</relationship>
+		<relationship name="markerTrack">
+			<destination>{ed106f1f-cdfc-43a8-b756-030f2488cd6a}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusEffectChain" id="{694a5041-1f2e-498f-8c89-99c38d28dac0}">

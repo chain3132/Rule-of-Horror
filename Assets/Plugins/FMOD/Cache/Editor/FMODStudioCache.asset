@@ -2021,33 +2021,6 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 16104
---- !u!114 &-2648753695820845434
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: "event:/Rule6/\u0E08\u0E2D\u0E14\u0E23\u0E2D"
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: "event:/Rule6/\u0E08\u0E2D\u0E14\u0E23\u0E2D"
-  Guid:
-    Data1: 2124328163
-    Data2: 1270938632
-    Data3: -887041637
-    Data4: 147873612
-  Banks:
-  - {fileID: 6034062475665250213}
-  IsStream: 0
-  Is3D: 1
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 5000
 --- !u!114 &-2553910847165662471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3302,16 +3275,16 @@ MonoBehaviour:
   - {fileID: 5727829971138432132}
   - {fileID: 2645332907658593063}
   - {fileID: 6707908068748035192}
-  - {fileID: -2648753695820845434}
   - {fileID: -6744238639030222862}
   - {fileID: -3897900594733164813}
+  - {fileID: 6018494142798601598}
   EditorParameters: []
   MasterBanks:
   - {fileID: 2037088329598349015}
   StringsBanks:
   - {fileID: 8790939570095508767}
   cacheVersion: 131858
-  cacheTime: 639285420555534214
+  cacheTime: 639285431801593056
   SerializableEventsDict:
   - key: event:/Notification
     index: 0
@@ -3445,11 +3418,11 @@ MonoBehaviour:
     index: 64
   - key: event:/Rule6/Bus
     index: 65
-  - key: "event:/Rule6/\u0E08\u0E2D\u0E14\u0E23\u0E2D"
-    index: 66
   - key: event:/Menu/CutsceneMusic
-    index: 67
+    index: 66
   - key: event:/Menu/BusCutscene
+    index: 67
+  - key: event:/Rule6/BusWait
     index: 68
 --- !u!114 &125022446526344972
 MonoBehaviour:
@@ -4228,7 +4201,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639285420553534960
+  lastModified: 639285428687867524
   FileSizes:
   - Name: Desktop
     Value: 39392
@@ -5724,6 +5697,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 0
+--- !u!114 &6018494142798601598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Rule6/BusWait
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Rule6/BusWait
+  Guid:
+    Data1: 2124328163
+    Data2: 1270938632
+    Data3: -887041637
+    Data4: 147873612
+  Banks:
+  - {fileID: 6034062475665250213}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 50
+  Length: 5000
 --- !u!114 &6020563150328995412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5766,10 +5766,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule6.bank
   Name: Rule6
   StudioPath: bank:/Rule6
-  lastModified: 639285420555534214
+  lastModified: 639285431801593056
   FileSizes:
   - Name: Desktop
-    Value: 237280
+    Value: 237536
   Exists: 1
 --- !u!114 &6112308488618897596
 MonoBehaviour:
@@ -5969,10 +5969,10 @@ MonoBehaviour:
   - {fileID: 6034062475665250213}
   IsStream: 1
   Is3D: 1
-  IsOneShot: 1
+  IsOneShot: 0
   Parameters: []
   MinDistance: 1
-  MaxDistance: 20
+  MaxDistance: 50
   Length: 13896
 --- !u!114 &6728868338019665853
 MonoBehaviour:
@@ -6648,10 +6648,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639285420553545001
+  lastModified: 639285428687877565
   FileSizes:
   - Name: Desktop
-    Value: 4658
+    Value: 4646
   Exists: 1
 --- !u!114 &8802997137489455850
 MonoBehaviour:

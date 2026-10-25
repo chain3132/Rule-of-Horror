@@ -15,6 +15,12 @@ public class SittingPoint : MonoBehaviour
 
     private PlayerController _player;
     private bool _isSubscribed = false;
+    private Collider _zone;
+
+    private void Awake()
+    {
+        _zone = GetComponent<Collider>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -24,11 +30,21 @@ public class SittingPoint : MonoBehaviour
 
     // Fallback: ถ้าผู้เล่น "นั่งอยู่แล้ว" (layer = PlayerSitting) trigger จะไม่ยิง เช่นตอน skip intro
     // มานั่งเลยโดยไม่ได้เดินผ่านโซน — เช็คระยะแทนเฉพาะเคสนี้ (ปกติปล่อยให้ trigger จัดการ)
+    //
+    // ขาออกก็พึ่ง OnTriggerExit อย่างเดียวไม่ได้ด้วยเหตุผลเดียวกัน: ตอนนั่ง/ลุก CharacterController
+    // ถูกปิดชั่วคราวและ layer ถูกสลับ ผู้เล่นจึงออกจากโซนได้โดยไม่มี OnTriggerExit มาเลย
+    // แล้วม้านั่งตัวนี้จะยังฟังปุ่ม E ค้างอยู่ตลอดเกม — กด E ขึ้นรถบัสทีไร ม้านั่งก็ดึงตัวกลับมานั่งที่ศาลาด้วย
+    // จึงเช็คระยะขาออกเองทุกเฟรมด้วย
     private void Update()
     {
-        if (_isSubscribed) return;
-
         var pc = PlayerController.Instance;
+
+        if (_isSubscribed)
+        {
+            if (pc == null || !IsPlayerInRange(pc)) Unsubscribe();
+            return;
+        }
+
         if (pc == null || !pc.IsSitting()) return;
 
         if (Vector3.Distance(transform.position, pc.transform.position) <= proximityRadius)
@@ -56,21 +72,52 @@ public class SittingPoint : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player") && _isSubscribed)
-        {
-            interactionText.gameObject.SetActive(false);
-            
-            if (inputHandler != null)
-            {
-                inputHandler.OnInteractPressed -= Interact;
-                _isSubscribed = false; // 
-            }
-            _player = null; 
-        }
+            Unsubscribe();
     }
-    
+
+    private void OnDisable()
+    {
+        Unsubscribe();
+    }
+
+    private void Unsubscribe()
+    {
+        if (!_isSubscribed) return;
+
+        if (interactionText != null) interactionText.gameObject.SetActive(false);
+        if (inputHandler != null) inputHandler.OnInteractPressed -= Interact;
+
+        _isSubscribed = false;
+        _player = null;
+    }
+
+    /// <summary>
+    /// ผู้เล่นยังอยู่ที่ม้านั่งนี้จริงไหม — อยู่ในโซน trigger หรืออยู่ในรัศมี fallback อย่างใดอย่างหนึ่ง
+    ///
+    /// ใช้สองเงื่อนไขรวมกัน เพราะโซน trigger อาจใหญ่กว่ารัศมี (เดินอยู่ขอบโซนก็ต้องยังนั่งได้)
+    /// และตอนนั่งอยู่ ตัวผู้เล่นอยู่ที่เบาะซึ่งอยู่ในรัศมีเสมอ
+    /// </summary>
+    private bool IsPlayerInRange(PlayerController pc)
+    {
+        Vector3 p = pc.transform.position;
+
+        if (Vector3.Distance(transform.position, p) <= proximityRadius) return true;
+
+        // ClosestPoint คืนจุดเดิมถ้าอยู่ในโซน — เผื่อระยะไว้นิดหน่อยเพราะตำแหน่งผู้เล่นคือเท้า
+        return _zone != null && _zone.enabled
+            && (_zone.ClosestPoint(p) - p).sqrMagnitude <= 0.5f * 0.5f;
+    }
+
     public void Interact()
     {
         if (_player == null) return;
+
+        // กันไว้อีกชั้นตอนกดจริง — ต่อให้ยังไม่ทันถอนการฟังปุ่ม ม้านั่งที่อยู่ไกลต้องไม่ดึงตัวผู้เล่นกลับมา
+        if (!IsPlayerInRange(_player))
+        {
+            Unsubscribe();
+            return;
+        }
 
         if (_player.IsSitting())
         {
@@ -82,6 +129,6 @@ public class SittingPoint : MonoBehaviour
         }
     }
 
-    
-    
+
+
 }

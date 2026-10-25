@@ -56,7 +56,11 @@
 			<destination>{1750c899-345d-4fff-93ca-ede0e136c68d}</destination>
 		</relationship>
 	</object>
-	<object class="EventAutomatableProperties" id="{1e1b5e82-bff8-4675-a19e-a63c0c09d04a}" />
+	<object class="EventAutomatableProperties" id="{1e1b5e82-bff8-4675-a19e-a63c0c09d04a}">
+		<property name="maximumDistance">
+			<value>50</value>
+		</property>
+	</object>
 	<object class="MarkerTrack" id="{8aa51637-f9a7-423d-9f14-81e026d8fc5a}" />
 	<object class="GroupTrack" id="{84810597-3452-49c4-8877-9744a86cefd2}">
 		<relationship name="modules">
@@ -69,6 +73,9 @@
 	<object class="Timeline" id="{f7e9b39e-46d3-4afa-8634-4bf231d3a151}">
 		<relationship name="modules">
 			<destination>{5531d71f-ab0b-4a87-86f6-d731ad47d538}</destination>
+		</relationship>
+		<relationship name="markers">
+			<destination>{cd1da07b-46b2-467c-8c01-59fba533abaf}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{7fe36b57-ab4c-4870-9990-8131aa961ea6}">
@@ -111,6 +118,20 @@
 		</relationship>
 		<relationship name="output">
 			<destination>{7fe36b57-ab4c-4870-9990-8131aa961ea6}</destination>
+		</relationship>
+	</object>
+	<object class="LoopRegion" id="{cd1da07b-46b2-467c-8c01-59fba533abaf}">
+		<property name="position">
+			<value>0</value>
+		</property>
+		<property name="length">
+			<value>13.896000000000001</value>
+		</property>
+		<relationship name="timeline">
+			<destination>{f7e9b39e-46d3-4afa-8634-4bf231d3a151}</destination>
+		</relationship>
+		<relationship name="markerTrack">
+			<destination>{8aa51637-f9a7-423d-9f14-81e026d8fc5a}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusEffectChain" id="{fa927894-8bad-4042-b9fe-6c4e93865fb7}">
