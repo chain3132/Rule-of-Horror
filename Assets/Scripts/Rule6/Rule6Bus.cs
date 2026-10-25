@@ -5,6 +5,7 @@ using FMODUnity;
 using InputSystem;
 using Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 using STOP_MODE = FMOD.Studio.STOP_MODE;
 
 namespace Rule6
@@ -106,17 +107,42 @@ namespace Rule6
         // ─────────────────────────── เสียง ───────────────────────────
 
         [Header("เสียง")]
-        [Tooltip("event เครื่องยนต์ของรถคันนี้ (3D loop เกาะที่ตัวรถ) — เว้นว่าง = ไม่มีเสียงเครื่อง\n" +
+        [Tooltip("เสียงตอนรถวิ่ง (3D loop เกาะที่ตัวรถ)\n\n" +
+                 "เว้นว่าง = เครื่องดับทั้งคัน ไม่มีทั้งเสียงวิ่งและเสียงจอดรอ\n" +
                  "คันที่ 4 ต้องเว้นว่าง ดีไซน์บอกว่าเครื่องยนต์ไม่มีเสียง นั่นคือเบาะแสของมัน")]
-        [SerializeField] private string engineEvent = "event:/Rule6/BusEngine";
+        [FormerlySerializedAs("engineEvent")]
+        [SerializeField] private string driveEvent = DefaultDriveEvent;
+
+        [Tooltip("เสียงตอนรถจอดรอ (เครื่องเดินเบา, 3D loop) — เว้นว่าง = จอดแล้วเงียบ")]
+        [SerializeField] private string idleEvent = "event:/Rule6/Buswait";
+
+        [Tooltip("เร็วกว่านี้ (เมตร/วินาที) = นับว่ารถกำลังวิ่ง")]
+        [SerializeField] private float movingSpeed = 0.3f;
+
+        [Tooltip("ต้องวิ่ง/หยุดต่อเนื่องนานเท่านี้ (วินาที) ก่อนสลับเสียง\n" +
+                 "กันเสียงสลับไปมาตอนรถเพิ่งออกตัวช้าๆ หรือตอนถูกย้ายตำแหน่งกระโดดเฟรมเดียว")]
+        [SerializeField] private float switchDelay = 0.25f;
+
+        private const string DefaultDriveEvent = "event:/Rule6/Bus";
+
+        // ชื่อเก่าก่อนแยกเสียงวิ่ง/จอด — ไม่มีใน FMOD แล้ว ฉากที่เซฟค่านี้ไว้ต้องถูกแปลงเป็นชื่อใหม่
+        private const string LegacyEngineEvent = "event:/Rule6/BusEngine";
 
         // ─────────────────────────── Runtime ───────────────────────────
 
         private RuleSystem.Rule.Rule6 _rule;
         private InputHandler          _inputHandler;
         private Camera                _playerCam;
-        private EventInstance         _engine;
+        private EventInstance         _drive;
+        private EventInstance         _idle;
+        private bool                  _driveOk;
+        private bool                  _idleOk;
         private bool                  _engineStarted;
+        private bool                  _engineStateKnown;
+        private bool                  _engineMoving;
+        private int                   _engineWarmupFrames;
+        private float                 _engineSwitchTimer;
+        private Vector3               _engineLastPos;
         private bool                  _subscribed;
         private bool                  _boardable;
         private bool                  _boarded;
@@ -275,44 +301,131 @@ namespace Rule6
 
         // ─────────────────────────── เสียงเครื่องยนต์ ───────────────────────────
 
+        //
+        // รถมีสองเสียง: วิ่ง (driveEvent) กับจอดรอ (idleEvent) เลือกจากความเร็วจริงของตัวรถ
+        // ไม่ได้ให้คนขับรถมาบอก เพราะรถถูกขยับจากหลายที่ (คิวรถของ Rule6, RideAway, ฉากจบ,
+        // ฉากเปิด) — วัดเองที่นี่ที่เดียว ทุกที่ที่ขยับรถได้เสียงถูกโดยไม่ต้องแก้ตาม
+
         private void StartEngine()
         {
-            if (_engineStarted || string.IsNullOrWhiteSpace(engineEvent)) return;
+            if (_engineStarted || string.IsNullOrWhiteSpace(driveEvent)) return;
 
-            // CreateInstance จะ throw ถ้ายังไม่มี event ใน FMOD — ห้ามให้หลุดออกไป
-            // ไม่งั้น Rule6 จะตายกลางคิวรถ แล้วไม่มีรถคันไหนมาอีกเลย
-            try
-            {
-                _engine = RuntimeManager.CreateInstance(engineEvent);
-            }
-            catch (EventNotFoundException)
-            {
-                Debug.LogWarning($"[Rule6] ยังไม่มี event '{engineEvent}' ใน FMOD — " +
-                                 $"รถ '{name}' จะไม่มีเสียงเครื่อง (ยังขึ้นได้ปกติ)", this);
-                return;
-            }
+            _driveOk = TryCreate(driveEvent, out _drive);
+            _idleOk  = TryCreate(idleEvent,  out _idle);
+            if (!_driveOk && !_idleOk) return;
 
-            _engine.set3DAttributes(RuntimeUtils.To3DAttributes(transform));
-            _engine.start();
-            _engineStarted = true;
+            // ยังไม่รู้ว่าวิ่งหรือจอด — รอวัดความเร็วเฟรมถัดไปก่อนค่อยเริ่มตัวที่ถูก
+            // (Appear มักถูกเรียกก่อนย้ายรถไปจุดเริ่ม ถ้าวัดทันทีจะเห็นเป็นการวิ่งเร็วมาก)
+            _engineStarted      = true;
+            _engineStateKnown   = false;
+            _engineWarmupFrames = 1;
+            _engineSwitchTimer  = 0f;
+            _engineLastPos     = transform.position;
         }
 
         private void StopEngine()
         {
             if (!_engineStarted) return;
 
-            _engine.stop(STOP_MODE.ALLOWFADEOUT);
-            _engine.release();
+            if (_driveOk) { _drive.stop(STOP_MODE.ALLOWFADEOUT); _drive.release(); }
+            if (_idleOk)  { _idle.stop(STOP_MODE.ALLOWFADEOUT);  _idle.release(); }
+            _driveOk       = false;
+            _idleOk        = false;
             _engineStarted = false;
         }
+
+        private void UpdateEngine()
+        {
+            var attributes = RuntimeUtils.To3DAttributes(transform);
+            if (_driveOk) _drive.set3DAttributes(attributes);
+            if (_idleOk)  _idle.set3DAttributes(attributes);
+
+            float dt = Time.deltaTime;
+            if (dt <= 0f) return;   // เกมหยุดเวลาอยู่ — ระยะ/เวลาคำนวณความเร็วไม่ได้
+
+            Vector3 position = transform.position;
+            bool    moving   = (position - _engineLastPos).magnitude / dt > movingSpeed;
+            _engineLastPos   = position;
+
+            if (_engineWarmupFrames > 0)
+            {
+                // เฟรมแรกหลัง Appear: เก็บตำแหน่งเฉยๆ ระยะที่วัดได้รวมการย้ายจุดเกิดของรถอยู่
+                _engineWarmupFrames--;
+                return;
+            }
+
+            if (!_engineStateKnown)
+            {
+                // วัดได้ครั้งแรก — เริ่มเสียงที่ถูกทันที ไม่ต้องรอ switchDelay
+                _engineStateKnown = true;
+                SetEngineMoving(moving);
+                return;
+            }
+
+            if (moving == _engineMoving) { _engineSwitchTimer = 0f; return; }
+
+            _engineSwitchTimer += dt;
+            if (_engineSwitchTimer >= switchDelay) SetEngineMoving(moving);
+        }
+
+        private void SetEngineMoving(bool moving)
+        {
+            _engineMoving      = moving;
+            _engineSwitchTimer = 0f;
+
+            SetPlaying(_drive, _driveOk, moving);
+            SetPlaying(_idle,  _idleOk,  !moving);
+        }
+
+        private static void SetPlaying(EventInstance instance, bool ok, bool on)
+        {
+            if (!ok) return;
+
+            instance.getPlaybackState(out PLAYBACK_STATE state);
+            bool playing = state == PLAYBACK_STATE.PLAYING
+                        || state == PLAYBACK_STATE.STARTING
+                        || state == PLAYBACK_STATE.SUSTAINING;
+
+            if (on && !playing) instance.start();
+            if (!on && playing) instance.stop(STOP_MODE.ALLOWFADEOUT);
+        }
+
+        // CreateInstance จะ throw ถ้ายังไม่มี event ใน FMOD — ห้ามให้หลุดออกไป
+        // ไม่งั้น Rule6 จะตายกลางคิวรถ แล้วไม่มีรถคันไหนมาอีกเลย
+        private bool TryCreate(string path, out EventInstance instance)
+        {
+            instance = default;
+            if (string.IsNullOrWhiteSpace(path)) return false;
+
+            if (path == LegacyEngineEvent) path = DefaultDriveEvent;
+
+            try
+            {
+                instance = RuntimeManager.CreateInstance(path);
+                return true;
+            }
+            catch (EventNotFoundException)
+            {
+                Debug.LogWarning($"[Rule6] ยังไม่มี event '{path}' ใน FMOD — " +
+                                 $"รถ '{name}' จะไม่มีเสียงนี้ (ยังขึ้นได้ปกติ)", this);
+                return false;
+            }
+        }
+
+#if UNITY_EDITOR
+        // ฉากที่เซฟชื่อเก่าไว้ แสดงชื่อใหม่ใน Inspector เลย เซฟฉากครั้งหน้าค่าใหม่จะลงไฟล์
+        private void OnValidate()
+        {
+            if (driveEvent == LegacyEngineEvent) driveEvent = DefaultDriveEvent;
+        }
+#endif
 
         // ─────────────────────────── ขึ้นรถ ───────────────────────────
 
         private void Update()
         {
             // ตำแหน่ง 3D ต้องตามตัวรถ — Rule6 ขับรถด้วยการขยับ transform ทุกเฟรม
-            if (_engineStarted)
-                _engine.set3DAttributes(RuntimeUtils.To3DAttributes(transform));
+            if (_engineStarted) UpdateEngine();
 
             if (_boarded || !_boardable || seat == null || _rule == null) return;
 

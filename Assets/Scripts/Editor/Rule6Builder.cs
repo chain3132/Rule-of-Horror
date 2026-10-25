@@ -275,7 +275,7 @@ public static class Rule6Builder
     {
         var flicker = so.FindProperty("flickerInterior");
         var headOff = so.FindProperty("headLightsOff");
-        var engine  = so.FindProperty("engineEvent");
+        var engine  = so.FindProperty("driveEvent");
         var lights  = so.FindProperty("interiorLights");
 
         switch (kind)
@@ -283,7 +283,7 @@ public static class Rule6Builder
             case Rule6BusKind.Trap:
                 flicker.boolValue  = false;
                 headOff.boolValue  = false;
-                engine.stringValue = "event:/Rule6/BusEngine";
+                engine.stringValue = "event:/Rule6/Bus";
 
                 report.AppendLine("  - Bus 1 Trap: nothing to drive. The model carries the warm bright " +
                                   "interior, the village sign, the full seats and the man on his phone. " +
@@ -294,7 +294,7 @@ public static class Rule6Builder
             case Rule6BusKind.Escape:
                 flicker.boolValue  = false;
                 headOff.boolValue  = false;
-                engine.stringValue = "event:/Rule6/BusEngine";
+                engine.stringValue = "event:/Rule6/Bus";
 
                 report.AppendLine("  - Bus 2 Escape: nothing to drive. The model carries the dim light, " +
                                   "the blank sign and the empty seats. Paeng points at this one");
@@ -303,7 +303,7 @@ public static class Rule6Builder
             case Rule6BusKind.Death:
                 flicker.boolValue  = true;                      // ไฟในติดๆ ดับๆ
                 headOff.boolValue  = false;
-                engine.stringValue = "event:/Rule6/BusEngine";
+                engine.stringValue = "event:/Rule6/Bus";
 
                 // The flicker is the only thing on this bus the code owns, so this is the one
                 // bus whose interior lights MUST be in the array or the tell is simply missing
@@ -586,7 +586,7 @@ public static class Rule6Builder
         so.FindProperty("sitPose").objectReferenceValue   = sitPose;
         so.FindProperty("standPose").objectReferenceValue = standPose;
         so.FindProperty("cabinBounds").objectReferenceValue = cabin;
-        so.FindProperty("engineEvent").stringValue        = "event:/Rule6/BusEngine";
+        so.FindProperty("driveEvent").stringValue        = "event:/Rule6/Bus";
         so.FindProperty("flickerInterior").boolValue    = false;
         so.FindProperty("headLightsOff").boolValue      = false;
         SetArray(so.FindProperty("headLights"), new Object[] { headL, headR });
@@ -648,7 +648,7 @@ public static class Rule6Builder
                           "clue which bus is the way out");
         report.AppendLine("   6. Write the four Ending Object screens on Rule6 and the dialogue lines " +
                           "for each ending");
-        report.AppendLine("   7. FMOD events: event:/Rule6/Background Rule 6, BusEngine (loop), " +
+        report.AppendLine("   7. FMOD events: event:/Rule6/Background Rule 6, Bus (driving loop), Buswait (idle loop)," +
                           "BusArrive, BusDepart, Board, PhoneRing");
         report.AppendLine("   8. Fill the Death Screen on the PermanentDeath component - that is what " +
                           "the player sees when they die on a looped night, and it is the only thing " +

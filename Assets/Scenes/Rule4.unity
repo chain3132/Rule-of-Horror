@@ -19681,7 +19681,7 @@ MonoBehaviour:
   creditGroup: {fileID: 1907989535}
   creditTextTop: {fileID: 1190696937}
   creditTextBottom: {fileID: 532801489}
-  cutsceneMusicEvent: event:/Menu/CutsceneMusic
+  cutsceneMusicEvent: event:/Menu/BusCutscene
   endingDialogue:
   - text: Whew, took long enough! If the usual waiting spot hadn't been wrecked in
       the storm, I would have reached home to see my mom ages ago
@@ -20988,7 +20988,10 @@ MonoBehaviour:
   flickerInterior: 1
   flickerOnRange: {x: 0.15, y: 1.2}
   flickerOffRange: {x: 0.05, y: 0.35}
-  engineEvent: event:/Rule6/BusEngine
+  driveEvent: event:/Rule6/Bus
+  idleEvent: event:/Rule6/Buswait
+  movingSpeed: 0.3
+  switchDelay: 0.25
 --- !u!1 &467453458
 GameObject:
   m_ObjectHideFlags: 0
@@ -69104,7 +69107,10 @@ MonoBehaviour:
   flickerInterior: 0
   flickerOnRange: {x: 0.15, y: 1.2}
   flickerOffRange: {x: 0.05, y: 0.35}
-  engineEvent: event:/Rule6/BusEngine
+  driveEvent: event:/Rule6/Bus
+  idleEvent: event:/Rule6/Buswait
+  movingSpeed: 0.3
+  switchDelay: 0.25
 --- !u!1 &1343046550
 GameObject:
   m_ObjectHideFlags: 0
@@ -81684,7 +81690,10 @@ MonoBehaviour:
   flickerInterior: 0
   flickerOnRange: {x: 0.15, y: 1.2}
   flickerOffRange: {x: 0.05, y: 0.35}
-  engineEvent: event:/Rule6/BusEngine
+  driveEvent: event:/Rule6/Bus
+  idleEvent: event:/Rule6/Buswait
+  movingSpeed: 0.3
+  switchDelay: 0.25
 --- !u!1 &1640608447
 GameObject:
   m_ObjectHideFlags: 0
@@ -106672,7 +106681,10 @@ MonoBehaviour:
   flickerInterior: 0
   flickerOnRange: {x: 0.15, y: 1.2}
   flickerOffRange: {x: 0.05, y: 0.35}
-  engineEvent: event:/Rule6/BusEngine
+  driveEvent: event:/Rule6/Bus
+  idleEvent: event:/Rule6/Buswait
+  movingSpeed: 0.3
+  switchDelay: 0.25
 --- !u!4 &1835776261
 Transform:
   m_ObjectHideFlags: 0
@@ -111552,7 +111564,10 @@ MonoBehaviour:
   flickerInterior: 0
   flickerOnRange: {x: 0.15, y: 1.2}
   flickerOffRange: {x: 0.05, y: 0.35}
-  engineEvent: 
+  driveEvent: 
+  idleEvent: event:/Rule6/Buswait
+  movingSpeed: 0.3
+  switchDelay: 0.25
 --- !u!1001 &2035759917
 PrefabInstance:
   m_ObjectHideFlags: 0
