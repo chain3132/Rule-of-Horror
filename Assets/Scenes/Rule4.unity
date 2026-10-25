@@ -656,6 +656,37 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &26608324
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 26608325}
+  m_Layer: 0
+  m_Name: Lamp L
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &26608325
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 26608324}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.75, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1702474403}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &27958772
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6294,6 +6325,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6310,6 +6343,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 3 \xB7 door closes (put the FMOD event)"
     action: 5
     waitToFinish: 1
@@ -6320,6 +6363,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 1337943888}
     lines: []
@@ -6336,6 +6381,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 3 \xB7 turn to look at Paeng through the window"
     action: 1
     waitToFinish: 1
@@ -6346,6 +6401,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6362,6 +6419,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 3 \xB7 she stands there looking at us"
     action: 0
     waitToFinish: 1
@@ -6372,6 +6439,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6388,6 +6457,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 4 \xB7 bus pulls out"
     action: 2
     waitToFinish: 0
@@ -6398,6 +6477,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6414,6 +6495,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 4 \xB7 keep watching until she slides out of the window"
     action: 1
     waitToFinish: 1
@@ -6424,6 +6515,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6440,6 +6533,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 5 \xB7 turn back to the front of the bus"
     action: 1
     waitToFinish: 1
@@ -6450,6 +6553,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6466,6 +6571,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: SHOT 5
     action: 0
     waitToFinish: 1
@@ -6476,6 +6591,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6492,6 +6609,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 6 \xB7 behind Paeng, the bus drives away"
     action: 3
     waitToFinish: 1
@@ -6502,6 +6629,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 575599745}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6518,6 +6647,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 6 \xB7 Paeng cries"
     action: 7
     waitToFinish: 1
@@ -6528,6 +6667,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6544,6 +6685,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 6 \xB7 sobbing (put the FMOD event)"
     action: 5
     waitToFinish: 1
@@ -6554,6 +6705,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 1250172754}
     lines: []
@@ -6570,6 +6723,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 6 \xB7 her line"
     action: 6
     waitToFinish: 0
@@ -6580,6 +6743,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines:
@@ -6598,6 +6763,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: SHOT 6
     action: 0
     waitToFinish: 1
@@ -6608,6 +6783,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6624,6 +6801,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 7 \xB7 cut to black"
     action: 4
     waitToFinish: 1
@@ -6634,6 +6821,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6650,6 +6839,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: SHOT 7
     action: 0
     waitToFinish: 1
@@ -6660,6 +6859,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6676,6 +6877,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 8 \xB7 back to our own eyes (still black)"
     action: 3
     waitToFinish: 1
@@ -6686,6 +6897,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6702,6 +6915,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 8 \xB7 we lift the phone - black around it, screen lights up"
     action: 10
     waitToFinish: 0
@@ -6712,6 +6935,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6728,6 +6953,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: SHOT 8
     action: 4
     waitToFinish: 1
@@ -6738,6 +6973,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 1
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6754,6 +6991,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 8 \xB7 unlock (put the FMOD event)"
     action: 5
     waitToFinish: 1
@@ -6764,6 +7011,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6780,6 +7029,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: SHOT 8
     action: 0
     waitToFinish: 1
@@ -6790,6 +7049,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6806,6 +7067,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 9 \xB7 cut to the chat screen"
     action: 8
     waitToFinish: 1
@@ -6816,6 +7087,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6832,6 +7105,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 9 \xB7 we send the first rule to the next person"
     action: 9
     waitToFinish: 1
@@ -6842,6 +7125,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -6858,6 +7143,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   cinematicCamera: {fileID: 2142595774}
   maxHeadYaw: 105
   maxHeadPitch: 60
@@ -6866,6 +7161,20 @@ MonoBehaviour:
     m_Bits: 503
   fadeGroup: {fileID: 0}
   fadeSortOrder: 500
+  letterbox: 1
+  letterboxHeight: 0.1
+  letterboxSeconds: 0.8
+  letterboxSortOrder: 550
+  endCard: 1
+  endCardTitle: Thank you for playing
+  endCardSubtitle: Rule of Horror
+  endCardFont: {fileID: 11400000, guid: cea6c2c5c4fe86b4097f0b35231fd4b1, type: 2}
+  endCardThaiFont: {fileID: 11400000, guid: 67e219c4ab03a6449b6e19dcdae975fe, type: 2}
+  endCardDelay: 1
+  endCardFadeSeconds: 2
+  endCardPause: 1
+  endCardTextSeconds: 3
+  endCardSortOrder: 700
 --- !u!1 &58809541
 GameObject:
   m_ObjectHideFlags: 0
@@ -6969,6 +7278,12 @@ MonoBehaviour:
       read: 0
     - conversation: {fileID: 11400000, guid: bc9e10c3be9080d4dab4871a6e8dff29, type: 2}
       notifyHour: 22
+      notifyMinute: 40
+      triggersRule1OnEnd: 0
+      delivered: 0
+      read: 0
+    - conversation: {fileID: 11400000, guid: 4328bdf1ce854676ab810d9e780a227a, type: 2}
+      notifyHour: 23
       notifyMinute: 40
       triggersRule1OnEnd: 0
       delivered: 0
@@ -7547,6 +7862,38 @@ Transform:
   m_Children: []
   m_Father: {fileID: 859750946}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &93283171
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 93283172}
+  m_Layer: 0
+  m_Name: Seat
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &93283172
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 93283171}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -4.41, y: 2.3079998, z: -0.728}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1466218444}
+  m_Father: {fileID: 1013248899922686475}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &94632330
 GameObject:
   m_ObjectHideFlags: 0
@@ -7670,6 +8017,46 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1474810215}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &100882248
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 100882249}
+  m_Layer: 0
+  m_Name: Cutscene Markers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &100882249
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100882248}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1218691315}
+  - {fileID: 203140969}
+  - {fileID: 1192146620}
+  - {fileID: 241701071}
+  - {fileID: 640436748}
+  - {fileID: 1483322244}
+  - {fileID: 1180809198}
+  - {fileID: 501909681}
+  - {fileID: 1702474403}
+  m_Father: {fileID: 464619487}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &103559943
 PrefabInstance:
@@ -9289,12 +9676,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 168090231}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.188781, y: 12.074559, z: -9.09}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -3.242, y: 2.663, z: 2.95}
+  m_LocalScale: {x: 0.8333331, y: 0.8333333, z: 0.8333331}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 893964138}
+  m_Father: {fileID: 231377500}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &169965661
 GameObject:
@@ -10066,8 +10453,8 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 0.764151, g: 0.3276094, b: 0.018022425, a: 1}
-  m_Intensity: 50
-  m_Range: 2.7
+  m_Intensity: 10
+  m_Range: 2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -10228,6 +10615,106 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Rule6.CutsceneMarker
   height: 1.7
   color: {r: 0.9, g: 0.5, b: 1, a: 0.9}
+--- !u!1 &195442786
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 195442787}
+  - component: {fileID: 195442788}
+  m_Layer: 0
+  m_Name: walk
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &195442787
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 195442786}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.4286374, y: -0, z: -0, w: 0.90347666}
+  m_LocalPosition: {x: 6.051, y: 0.742, z: 1.819}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1013248899922686475}
+  m_LocalEulerAnglesHint: {x: -50.762, y: 0, z: 0}
+--- !u!65 &195442788
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 195442786}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 2.065524, z: 0.09775482}
+  m_Center: {x: 0.000000029428058, y: 0.5327659, z: -0.4511231}
+--- !u!1 &203140968
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 203140969}
+  - component: {fileID: 203140970}
+  m_Layer: 0
+  m_Name: Shadow 2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &203140969
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 203140968}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
+  m_LocalPosition: {x: -1.351, y: 1.7, z: -0.82}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 598178836}
+  m_Father: {fileID: 100882249}
+  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+--- !u!114 &203140970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 203140968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf0298cee48ad554d8c7ab9e4a88f7a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rule6.CutsceneMarker
+  height: 2
+  color: {r: 0.3, g: 0.3, b: 0.35, a: 0.95}
 --- !u!1001 &204196848
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10913,6 +11400,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1640970415678080288, guid: 723e224036b227249a0f4a32c54942a6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1261517720}
+    - targetCorrespondingSourceObject: {fileID: 1640970415678080288, guid: 723e224036b227249a0f4a32c54942a6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 168090232}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 723e224036b227249a0f4a32c54942a6, type: 3}
 --- !u!4 &231377500 stripped
@@ -10994,6 +11484,53 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ef33d0c76dbd0ba4fb87d210f6affc73, type: 3}
   m_PrefabInstance: {fileID: 239030413}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &241701070
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 241701071}
+  - component: {fileID: 241701072}
+  m_Layer: 0
+  m_Name: Shadow 4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &241701071
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 241701070}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
+  m_LocalPosition: {x: -1.382, y: 1.7, z: 0.13600004}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1081796523}
+  m_Father: {fileID: 100882249}
+  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+--- !u!114 &241701072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 241701070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf0298cee48ad554d8c7ab9e4a88f7a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rule6.CutsceneMarker
+  height: 2
+  color: {r: 0.3, g: 0.3, b: 0.35, a: 0.95}
 --- !u!1 &243978622
 GameObject:
   m_ObjectHideFlags: 0
@@ -11144,6 +11681,80 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ef33d0c76dbd0ba4fb87d210f6affc73, type: 3}
   m_PrefabInstance: {fileID: 245579957}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &248064082
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1192146620}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_Name
+      value: NPCmass14 1 (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+--- !u!4 &248064083 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+  m_PrefabInstance: {fileID: 248064082}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &254885914
 GameObject:
@@ -17526,6 +18137,80 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1001 &320417791
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 640436748}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_Name
+      value: NPCmass14 1 (3)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+--- !u!4 &320417792 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+  m_PrefabInstance: {fileID: 320417791}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &324210131
 GameObject:
   m_ObjectHideFlags: 0
@@ -20270,6 +20955,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1013248899922686475}
+  - {fileID: 100882249}
   m_Father: {fileID: 1815186553}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &464619488
@@ -20285,8 +20971,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rule6.Rule6Bus
   kind: 2
-  seat: {fileID: 0}
-  sitPose: {fileID: 0}
+  seat: {fileID: 93283172}
+  sitPose: {fileID: 621296280}
   standPose: {fileID: 0}
   cabinBounds: {fileID: 0}
   seatRadius: 1.3
@@ -20451,6 +21137,37 @@ Camera:
   m_CorrespondingSourceObject: {fileID: 7329108241725599810, guid: 0430bf69dfe141540a5a76e7e687ccd2, type: 3}
   m_PrefabInstance: {fileID: 1568439025}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &501909680
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 501909681}
+  m_Layer: 0
+  m_Name: Headlights Near
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &501909681
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 501909680}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.8, z: -12.9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 100882249}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &504769578
 GameObject:
   m_ObjectHideFlags: 0
@@ -27737,6 +28454,80 @@ Transform:
   m_Children: []
   m_Father: {fileID: 363939822}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!1001 &598178835
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 203140969}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_Name
+      value: NPCmass14 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+--- !u!4 &598178836 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+  m_PrefabInstance: {fileID: 598178835}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &605518019
 GameObject:
   m_ObjectHideFlags: 0
@@ -28226,6 +29017,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ef33d0c76dbd0ba4fb87d210f6affc73, type: 3}
   m_PrefabInstance: {fileID: 617349393}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &621296279
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 621296280}
+  m_Layer: 0
+  m_Name: SitPose
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &621296280
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621296279}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -4.39, y: 1.6909996, z: -0.831}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1013248899922686475}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &622402173
 GameObject:
   m_ObjectHideFlags: 0
@@ -28611,6 +29433,53 @@ Light:
   m_CorrespondingSourceObject: {fileID: 5445582997649585270, guid: 032e31ac862c1bd44aa0e4c1e89731cc, type: 3}
   m_PrefabInstance: {fileID: 636714125}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &640436747
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 640436748}
+  - component: {fileID: 640436749}
+  m_Layer: 0
+  m_Name: Shadow 5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &640436748
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 640436747}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
+  m_LocalPosition: {x: 0.775, y: 1.7, z: 1.529}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 320417792}
+  m_Father: {fileID: 100882249}
+  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+--- !u!114 &640436749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 640436747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf0298cee48ad554d8c7ab9e4a88f7a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rule6.CutsceneMarker
+  height: 2
+  color: {r: 0.3, g: 0.3, b: 0.35, a: 0.95}
 --- !u!1 &641469147
 GameObject:
   m_ObjectHideFlags: 0
@@ -35672,8 +36541,8 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 0.764151, g: 0.3276094, b: 0.018022425, a: 1}
-  m_Intensity: 50
-  m_Range: 2.7
+  m_Intensity: 10
+  m_Range: 2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -35799,8 +36668,8 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 0.764151, g: 0.3276094, b: 0.018022425, a: 1}
-  m_Intensity: 50
-  m_Range: 2.7
+  m_Intensity: 10
+  m_Range: 2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -47664,7 +48533,7 @@ Transform:
   m_GameObject: {fileID: 826899162}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 2.76, y: 0, z: -7.23}
+  m_LocalPosition: {x: 2.76, y: 0.26, z: -2.19}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -54080,7 +54949,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 168090232}
   - {fileID: 164818674}
   m_Father: {fileID: 1815186553}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -54107,6 +54975,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54123,6 +54993,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 2 \xB7 look out at Paeng, still a ghost"
     action: 1
     waitToFinish: 1
@@ -54133,6 +55013,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54149,6 +55031,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 2 \xB7 wind (put the FMOD event)"
     action: 5
     waitToFinish: 1
@@ -54159,6 +55051,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54175,6 +55069,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: SHOT 2
     action: 0
     waitToFinish: 1
@@ -54185,6 +55089,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54201,6 +55107,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 3 \xB7 footsteps on the road (put the FMOD event)"
     action: 5
     waitToFinish: 1
@@ -54211,6 +55127,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 1250172754}
     lines: []
@@ -54227,16 +55145,28 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 3 \xB7 she walks slowly to the bus door (our eyes follow her)"
     action: 11
     waitToFinish: 1
-    seconds: 3.5
+    seconds: 5
     lookTarget: {fileID: 0}
     holdUntilHidden: 0
     maxHoldSeconds: 8
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54253,6 +55183,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 4 \xB7 camera at the door"
     action: 3
     waitToFinish: 1
@@ -54263,6 +55203,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 1412162634}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54279,6 +55221,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 4 \xB7 footsteps on the steps (put the FMOD event)"
     action: 5
     waitToFinish: 1
@@ -54289,6 +55241,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 1250172754}
     lines: []
@@ -54305,6 +55259,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 4 \xB7 she climbs in"
     action: 11
     waitToFinish: 1
@@ -54315,6 +55279,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54331,6 +55297,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 4 \xB7 ...and goes behind the bus wall"
     action: 11
     waitToFinish: 1
@@ -54341,6 +55317,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54357,6 +55335,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 5 \xB7 hidden: ghost model off"
     action: 8
     waitToFinish: 1
@@ -54367,6 +55355,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54383,6 +55373,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 5 \xB7 hidden: normal model on"
     action: 8
     waitToFinish: 1
@@ -54393,12 +55393,14 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
     animator: {fileID: 0}
     trigger: 
-    target: {fileID: 1242574493}
+    target: {fileID: 107553686}
     active: 1
     chat: {fileID: 0}
     phone: {fileID: 0}
@@ -54409,6 +55411,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 5 \xB7 soft music - first time in the game (put the FMOD event)"
     action: 5
     waitToFinish: 1
@@ -54419,6 +55431,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54435,6 +55449,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 5 \xB7 she steps out as a normal girl"
     action: 11
     waitToFinish: 1
@@ -54445,6 +55469,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54461,6 +55487,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 6 \xB7 back to our eyes"
     action: 3
     waitToFinish: 1
@@ -54471,6 +55507,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54487,6 +55525,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 6 \xB7 look at her standing by the seat across from us"
     action: 1
     waitToFinish: 1
@@ -54497,6 +55545,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54513,6 +55563,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 6 \xB7 she nods - thank you (needs a 'nod' animation)"
     action: 7
     waitToFinish: 1
@@ -54523,6 +55583,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54539,6 +55601,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: SHOT 6
     action: 0
     waitToFinish: 1
@@ -54549,6 +55621,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54565,6 +55639,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 7 \xB7 she sits in her seat, facing the window"
     action: 11
     waitToFinish: 1
@@ -54575,6 +55659,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54591,6 +55677,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 7 \xB7 sit (needs a 'sit' animation)"
     action: 7
     waitToFinish: 1
@@ -54601,6 +55697,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54617,6 +55715,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 7 \xB7 door closes (put the FMOD event)"
     action: 5
     waitToFinish: 1
@@ -54627,6 +55735,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 1628973111}
     lines: []
@@ -54643,6 +55753,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 7 \xB7 engine starts (put the FMOD event)"
     action: 5
     waitToFinish: 1
@@ -54653,6 +55773,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 1628973111}
     lines: []
@@ -54669,6 +55791,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: SHOT 7
     action: 0
     waitToFinish: 1
@@ -54679,6 +55811,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54695,6 +55829,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 8 \xB7 Paeng rides with the bus from here"
     action: 12
     waitToFinish: 1
@@ -54705,6 +55849,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54721,6 +55867,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 1628973111}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 8 \xB7 the bus pulls out"
     action: 2
     waitToFinish: 0
@@ -54731,6 +55887,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54747,6 +55905,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 8 \xB7 watch the pavilion fall away past the window"
     action: 1
     waitToFinish: 1
@@ -54757,6 +55925,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54773,6 +55943,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 9 \xB7 cut to the chat with Mom"
     action: 8
     waitToFinish: 1
@@ -54783,6 +55963,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54799,6 +55981,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 9 \xB7 \"Mom, I'm home - is dinner ready?\""
     action: 9
     waitToFinish: 1
@@ -54809,6 +56001,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54825,6 +56019,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: "SHOT 9 \xB7 cut to black"
     action: 4
     waitToFinish: 1
@@ -54835,6 +56039,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54851,6 +56057,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   - note: SHOT 9
     action: 0
     waitToFinish: 1
@@ -54861,6 +56077,8 @@ MonoBehaviour:
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
     fmodEvent: 
     soundAt: {fileID: 0}
     lines: []
@@ -54877,6 +56095,16 @@ MonoBehaviour:
     walkAnimator: {fileID: 0}
     walkBool: 
     parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
   cinematicCamera: {fileID: 2142595774}
   maxHeadYaw: 105
   maxHeadPitch: 60
@@ -54885,6 +56113,20 @@ MonoBehaviour:
     m_Bits: 503
   fadeGroup: {fileID: 0}
   fadeSortOrder: 500
+  letterbox: 1
+  letterboxHeight: 0.1
+  letterboxSeconds: 0.8
+  letterboxSortOrder: 550
+  endCard: 1
+  endCardTitle: Thank you for playing
+  endCardSubtitle: Rule of Horror
+  endCardFont: {fileID: 11400000, guid: cea6c2c5c4fe86b4097f0b35231fd4b1, type: 2}
+  endCardThaiFont: {fileID: 11400000, guid: 67e219c4ab03a6449b6e19dcdae975fe, type: 2}
+  endCardDelay: 1
+  endCardFadeSeconds: 2
+  endCardPause: 1
+  endCardTextSeconds: 3
+  endCardSortOrder: 700
 --- !u!1 &897150910 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5983473954983969189, guid: 2a422216ff8ed564f87252632ae929c6, type: 3}
@@ -55271,6 +56513,951 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1bad4b36fdcb8974980bbdcd31518a45, type: 3}
   m_PrefabInstance: {fileID: 908193623}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &913536542
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1483322244}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_Name
+      value: NPCmass14 1 (4)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+--- !u!4 &913536543 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+  m_PrefabInstance: {fileID: 913536542}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &921360610
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 921360611}
+  - component: {fileID: 921360612}
+  m_Layer: 0
+  m_Name: Ending Cutscene 3 Death
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &921360611
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 921360610}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1529879581}
+  m_Father: {fileID: 1815186553}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &921360612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 921360610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 697767ad65940b6429e992b20b2911de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rule6.EndingCutscene
+  steps:
+  - note: "SHOT 1 \xB7 door slams shut (put the FMOD event)"
+    action: 5
+    waitToFinish: 1
+    seconds: 1
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 464619487}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: SHOT 1
+    action: 0
+    waitToFinish: 1
+    seconds: 0.4
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 2 \xB7 look down the aisle"
+    action: 1
+    waitToFinish: 1
+    seconds: 0.8
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 2 \xB7 creaks, many at once (put the FMOD event)"
+    action: 5
+    waitToFinish: 1
+    seconds: 1
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 464619487}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 2 \xB7 the shadow passengers turn to look at us, one by one"
+    action: 15
+    waitToFinish: 1
+    seconds: 1.6
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners:
+    - {fileID: 1218691315}
+    - {fileID: 203140969}
+    - {fileID: 1192146620}
+    - {fileID: 241701071}
+    - {fileID: 640436748}
+    turnTarget: {fileID: 1187062163}
+    stagger: 0.35
+    yawOnly: 1
+    barsOn: 1
+  - note: SHOT 2
+    action: 0
+    waitToFinish: 1
+    seconds: 1.2
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 3 \xB7 the bus pulls out"
+    action: 2
+    waitToFinish: 0
+    seconds: 9
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 70341717}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 3 \xB7 a moment of driving before anything shows"
+    action: 0
+    waitToFinish: 1
+    seconds: 1.5
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 3 \xB7 long horn (put the FMOD event)"
+    action: 5
+    waitToFinish: 1
+    seconds: 1
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 501909681}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 3 \xB7 headlights rush at us from ahead"
+    action: 11
+    waitToFinish: 0
+    seconds: 3.5
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 1702474403}
+    moveTo: {fileID: 501909681}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 3 \xB7 ...brighter and brighter (lamps + glare follow this light)"
+    action: 14
+    waitToFinish: 1
+    seconds: 3.5
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 1702474404}
+    lightIntensity: 60
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 4 \xB7 screech + brakes (put the FMOD event)"
+    action: 5
+    waitToFinish: 1
+    seconds: 1
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 4 \xB7 the camera shakes hard and tilts"
+    action: 13
+    waitToFinish: 0
+    seconds: 2.2
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 7
+    shakeTilt: 14
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 4 \xB7 very bright, shake still visible"
+    action: 4
+    waitToFinish: 1
+    seconds: 0.3
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 1, g: 1, b: 1, a: 1}
+    fadeAlpha: 0.5
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: SHOT 4
+    action: 0
+    waitToFinish: 1
+    seconds: 1.4
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 4 \xB7 blinding white just before the impact"
+    action: 4
+    waitToFinish: 1
+    seconds: 0.4
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 1, g: 1, b: 1, a: 1}
+    fadeAlpha: 0.95
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 5 \xB7 cut to black"
+    action: 4
+    waitToFinish: 1
+    seconds: 0
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 5 \xB7 headlights (and their glare) off behind the black"
+    action: 8
+    waitToFinish: 1
+    seconds: 1
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 1702474402}
+    active: 0
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 5 \xB7 cracks across the screen"
+    action: 8
+    waitToFinish: 1
+    seconds: 1
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 1529879580}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 5 \xB7 CRASH, then silence (put the FMOD event)"
+    action: 5
+    waitToFinish: 1
+    seconds: 1
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: SHOT 5
+    action: 0
+    waitToFinish: 1
+    seconds: 3
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  cinematicCamera: {fileID: 2142595774}
+  maxHeadYaw: 105
+  maxHeadPitch: 60
+  occluders:
+    serializedVersion: 2
+    m_Bits: 503
+  fadeGroup: {fileID: 0}
+  fadeSortOrder: 500
+  letterbox: 1
+  letterboxHeight: 0.1
+  letterboxSeconds: 0.8
+  letterboxSortOrder: 550
+  endCard: 1
+  endCardTitle: Thank you for playing
+  endCardSubtitle: Rule of Horror
+  endCardFont: {fileID: 11400000, guid: cea6c2c5c4fe86b4097f0b35231fd4b1, type: 2}
+  endCardThaiFont: {fileID: 11400000, guid: 67e219c4ab03a6449b6e19dcdae975fe, type: 2}
+  endCardDelay: 1
+  endCardFadeSeconds: 2
+  endCardPause: 1
+  endCardTextSeconds: 3
+  endCardSortOrder: 700
 --- !u!1 &922153645
 GameObject:
   m_ObjectHideFlags: 0
@@ -56342,6 +58529,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &968017732 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8882459285009350536, guid: f1a215bb83836674182a6e26520c91ec, type: 3}
+  m_PrefabInstance: {fileID: 1013248899922686474}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &968017736
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 968017732}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -2228417370725966487, guid: 71434535186d87344befe22b23455073, type: 3}
 --- !u!1 &969905378
 GameObject:
   m_ObjectHideFlags: 0
@@ -57689,8 +59903,8 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 0.764151, g: 0.3276094, b: 0.018022425, a: 1}
-  m_Intensity: 50
-  m_Range: 2.7
+  m_Intensity: 10
+  m_Range: 2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -59928,6 +62142,80 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9196457682908851051, guid: e7ad1b7fff96642458f151fe4af06b9b, type: 3}
   m_PrefabInstance: {fileID: 1080129387}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1081796522
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 241701071}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_Name
+      value: NPCmass14 1 (2)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+--- !u!4 &1081796523 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+  m_PrefabInstance: {fileID: 1081796522}
+  m_PrefabAsset: {fileID: 0}
 --- !u!28 &1082236657
 Texture2D:
   m_ObjectHideFlags: 0
@@ -61614,8 +63902,8 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 0.764151, g: 0.3276094, b: 0.018022425, a: 1}
-  m_Intensity: 50
-  m_Range: 2.7
+  m_Intensity: 10
+  m_Range: 2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -62531,6 +64819,37 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1 &1180809197
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1180809198}
+  m_Layer: 0
+  m_Name: Headlights Far
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1180809198
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1180809197}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.8, z: -72}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 100882249}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1181169677
 GameObject:
   m_ObjectHideFlags: 0
@@ -63049,6 +65368,53 @@ MonoBehaviour:
       m_Key: Font/Typewriter
     m_FallbackState: 0
     m_WaitForCompletion: 0
+--- !u!1 &1192146619
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1192146620}
+  - component: {fileID: 1192146621}
+  m_Layer: 0
+  m_Name: Shadow 3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1192146620
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1192146619}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
+  m_LocalPosition: {x: 0.841, y: 1.7, z: 0.13600004}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 248064083}
+  m_Father: {fileID: 100882249}
+  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+--- !u!114 &1192146621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1192146619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf0298cee48ad554d8c7ab9e4a88f7a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rule6.CutsceneMarker
+  height: 2
+  color: {r: 0.3, g: 0.3, b: 0.35, a: 0.95}
 --- !u!1 &1197295578
 GameObject:
   m_ObjectHideFlags: 0
@@ -63731,6 +66097,53 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1bad4b36fdcb8974980bbdcd31518a45, type: 3}
   m_PrefabInstance: {fileID: 1215405091}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1218691314
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1218691315}
+  - component: {fileID: 1218691316}
+  m_Layer: 0
+  m_Name: Shadow 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1218691315
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1218691314}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
+  m_LocalPosition: {x: 0.854, y: 1.753, z: -0.933}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2040252752}
+  m_Father: {fileID: 100882249}
+  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+--- !u!114 &1218691316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1218691314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf0298cee48ad554d8c7ab9e4a88f7a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rule6.CutsceneMarker
+  height: 2
+  color: {r: 0.3, g: 0.3, b: 0.35, a: 0.95}
 --- !u!1 &1220896535
 GameObject:
   m_ObjectHideFlags: 0
@@ -64847,8 +67260,8 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 0.764151, g: 0.3276094, b: 0.018022425, a: 1}
-  m_Intensity: 50
-  m_Range: 2.7
+  m_Intensity: 10
+  m_Range: 2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -65122,7 +67535,7 @@ Transform:
   m_GameObject: {fileID: 1270736638}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 1.83, y: 0.7, z: -7.27}
+  m_LocalPosition: {x: 2.35, y: 0.26, z: -7.27}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -68728,6 +71141,133 @@ MonoBehaviour:
       m_Key: Font/Inter
     m_FallbackState: 0
     m_WaitForCompletion: 0
+--- !u!1 &1466218443
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1466218444}
+  - component: {fileID: 1466218446}
+  - component: {fileID: 1466218445}
+  m_Layer: 0
+  m_Name: Point Light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1466218444
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466218443}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 93283172}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1466218445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466218443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
+--- !u!108 &1466218446
+Light:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466218443}
+  m_Enabled: 1
+  serializedVersion: 12
+  m_Type: 2
+  m_Color: {r: 0.061502814, g: 1, b: 0, a: 1}
+  m_Intensity: 2
+  m_Range: 0.5187166
+  m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
+  m_CookieSize2D: {x: 0.5, y: 0.5}
+  m_Shadows:
+    m_Type: 0
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingLayerMask: 1
+  m_Lightmapping: 4
+  m_LightShadowCasterMode: 0
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 1
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1001 &1470571208
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -69003,6 +71543,53 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1bad4b36fdcb8974980bbdcd31518a45, type: 3}
   m_PrefabInstance: {fileID: 1475036683}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1483322243
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1483322244}
+  - component: {fileID: 1483322245}
+  m_Layer: 0
+  m_Name: Shadow 6
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1483322244
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1483322243}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
+  m_LocalPosition: {x: 1.132, y: 1.7, z: -2.14}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 913536543}
+  m_Father: {fileID: 100882249}
+  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+--- !u!114 &1483322245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1483322243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf0298cee48ad554d8c7ab9e4a88f7a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rule6.CutsceneMarker
+  height: 2
+  color: {r: 0.3, g: 0.3, b: 0.35, a: 0.95}
 --- !u!1 &1485793385
 GameObject:
   m_ObjectHideFlags: 0
@@ -74979,6 +77566,81 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6064261302557182866, guid: 5813cada12f873a46b4064d161342b6b, type: 3}
   m_PrefabInstance: {fileID: 1518216253}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1518624224
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1518624225}
+  - component: {fileID: 1518624227}
+  - component: {fileID: 1518624226}
+  m_Layer: 0
+  m_Name: Cracks
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1518624225
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1518624224}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1529879581}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1518624226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1518624224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 707f89d231e55c349a1d20c00f5db589, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1518624227
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1518624224}
+  m_CullTransparentMesh: 1
 --- !u!1 &1518709973
 GameObject:
   m_ObjectHideFlags: 0
@@ -75484,6 +78146,66 @@ MonoBehaviour:
       m_Key: Font/Body
     m_FallbackState: 0
     m_WaitForCompletion: 0
+--- !u!1 &1529879580
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1529879581}
+  - component: {fileID: 1529879582}
+  m_Layer: 5
+  m_Name: Crash Cracks
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1529879581
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1529879580}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1518624225}
+  m_Father: {fileID: 921360611}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
+--- !u!223 &1529879582
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1529879580}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 600
+  m_TargetDisplay: 0
 --- !u!1 &1533392527
 GameObject:
   m_ObjectHideFlags: 0
@@ -78500,8 +81222,8 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 0.764151, g: 0.3276094, b: 0.018022425, a: 1}
-  m_Intensity: 50
-  m_Range: 2.7
+  m_Intensity: 10
+  m_Range: 2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -84892,6 +87614,158 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3964817828198026601, guid: d3df7f929bc709b45b9ee5dde731a4a7, type: 3}
   m_PrefabInstance: {fileID: 1773492791}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1702474402
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1702474403}
+  - component: {fileID: 1702474404}
+  - component: {fileID: 1702474405}
+  - component: {fileID: 1702474406}
+  m_Layer: 0
+  m_Name: Oncoming Headlights
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1702474403
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702474402}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.8, z: -72}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 26608325}
+  - {fileID: 2135749782}
+  m_Father: {fileID: 100882249}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!108 &1702474404
+Light:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702474402}
+  m_Enabled: 0
+  serializedVersion: 12
+  m_Type: 0
+  m_Color: {r: 1, g: 0.95, b: 0.85, a: 1}
+  m_Intensity: 0
+  m_Range: 23.890238
+  m_SpotAngle: 80
+  m_InnerSpotAngle: 21.80208
+  m_CookieSize2D: {x: 0.5, y: 0.5}
+  m_Shadows:
+    m_Type: 0
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingLayerMask: 1
+  m_Lightmapping: 4
+  m_LightShadowCasterMode: 0
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 1
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
+--- !u!114 &1702474405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702474402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
+--- !u!114 &1702474406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702474402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07c5a53d91af00b4b91d85023dda69c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rule6.HeadlightGlare
+  lamps:
+  - {fileID: 26608325}
+  - {fileID: 2135749782}
+  fullIntensity: 60
+  lampSize: 0.35
+  flareScale: 10
+  minPixels: 10
+  washAlpha: 0.038
+  color: {r: 1, g: 0.96, b: 0.88, a: 1}
+  sortingOrder: 450
 --- !u!1 &1704557079
 GameObject:
   m_ObjectHideFlags: 0
@@ -103225,6 +106099,7 @@ Transform:
   - {fileID: 1250172754}
   - {fileID: 52831766}
   - {fileID: 893964138}
+  - {fileID: 921360611}
   m_Father: {fileID: 591596786}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1815186555
@@ -103281,7 +106156,7 @@ MonoBehaviour:
   loopEndingObject: {fileID: 0}
   trapCutscene: {fileID: 52831767}
   escapeCutscene: {fileID: 893964139}
-  deathCutscene: {fileID: 0}
+  deathCutscene: {fileID: 921360612}
   loopRestartHour: 18
   loopRestartMinute: 40
   ruleManager: {fileID: 591596785}
@@ -105760,8 +108635,8 @@ Light:
   serializedVersion: 12
   m_Type: 2
   m_Color: {r: 0.764151, g: 0.3276094, b: 0.018022425, a: 1}
-  m_Intensity: 50
-  m_Range: 2.7
+  m_Intensity: 10
+  m_Range: 2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -108718,6 +111593,80 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1221083933}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &2040252751
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1218691315}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+      propertyPath: m_Name
+      value: NPCmass14 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+--- !u!4 &2040252752 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b1ad918311fd42a4282ef07769014086, type: 3}
+  m_PrefabInstance: {fileID: 2040252751}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2043997535
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -111404,6 +114353,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5604559069381756499, guid: 7311fc0f61b9713458d2f9678f441c5e, type: 3}
   m_PrefabInstance: {fileID: 2129305489}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2135749781
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2135749782}
+  m_Layer: 0
+  m_Name: Lamp R
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2135749782
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2135749781}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.75, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1702474403}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &2136653266 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 13596be43044e7445b43307ffa4173de, type: 3}
@@ -111811,11 +114791,23 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 3640794139089025451, guid: f1a215bb83836674182a6e26520c91ec, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 195442787}
+    - targetCorrespondingSourceObject: {fileID: 3640794139089025451, guid: f1a215bb83836674182a6e26520c91ec, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 2061648510}
     - targetCorrespondingSourceObject: {fileID: 3640794139089025451, guid: f1a215bb83836674182a6e26520c91ec, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1808808781}
-    m_AddedComponents: []
+    - targetCorrespondingSourceObject: {fileID: 3640794139089025451, guid: f1a215bb83836674182a6e26520c91ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 93283172}
+    - targetCorrespondingSourceObject: {fileID: 3640794139089025451, guid: f1a215bb83836674182a6e26520c91ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 621296280}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8882459285009350536, guid: f1a215bb83836674182a6e26520c91ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 968017736}
   m_SourcePrefab: {fileID: 100100000, guid: f1a215bb83836674182a6e26520c91ec, type: 3}
 --- !u!4 &1013248899922686475 stripped
 Transform:

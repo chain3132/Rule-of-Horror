@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using FMODUnity;
 using Player;
 using Sirenix.OdinInspector;
+using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.UI;
@@ -73,6 +74,18 @@ namespace Rule6
 
             [Tooltip("ให้ object ไปเกาะกับอีกตัว (เช่น แป้งเกาะรถ จะได้ไปกับรถตอนรถออก)")]
             Parent,
+
+            [Tooltip("กล้องสั่น (และเอียง) — เช่น ตอนรถโดนชน")]
+            Shake,
+
+            [Tooltip("ไฟค่อยๆ สว่าง/มืดไปถึงค่าที่กำหนด — เช่น ไฟหน้ารถที่พุ่งเข้ามา")]
+            LightRamp,
+
+            [Tooltip("ให้หลายตัว (เช่น เงาคนในรถ) ค่อยๆ หันมามองเรา ทีละตัว")]
+            TurnToward,
+
+            [Tooltip("แถบดำบน-ล่างแบบหนัง เลื่อนเข้า/ออก — ปกติเข้ามาเองตอนคัทซีนเริ่ม ใช้ขั้นนี้ถ้าอยากเอาออกกลางทาง")]
+            Letterbox,
         }
 
         public enum FadeDirection
@@ -131,7 +144,17 @@ namespace Rule6
             // ── Fade ──
 
             [ShowIf(nameof(IsFade))]
+            [Tooltip("To Black = ค่อยๆ คลุมจอด้วยสีที่กำหนด\nFrom Black = ค่อยๆ เอาแผ่นที่คลุมจอออก")]
             public FadeDirection fade = FadeDirection.ToBlack;
+
+            [ShowIf(nameof(IsFadeIn))]
+            [Tooltip("สีที่คลุมจอ — ดำ = ตัดดำ, ขาว = แสงจ้าจนตาพร่า")]
+            public Color fadeColor = Color.black;
+
+            [ShowIf(nameof(IsFadeIn))]
+            [Tooltip("คลุมแค่ไหน — 1 = ทึบทั้งจอ, 0.4 = จางๆ ยังเห็นข้างหลัง")]
+            [Range(0f, 1f)]
+            public float fadeAlpha = 1f;
 
             // ── Sound ──
 
@@ -206,6 +229,53 @@ namespace Rule6
                      "ตำแหน่งในโลกไม่เปลี่ยน แค่หลังจากนี้จะขยับตามตัวแม่")]
             public Transform parentTo;
 
+            // ── Shake ──
+
+            [ShowIf(nameof(IsShake))]
+            [Tooltip("สั่นแรงแค่ไหน (องศา)")]
+            public float shakeAmplitude = 4f;
+
+            [ShowIf(nameof(IsShake))]
+            [Tooltip("ภาพเอียงไปข้างหนึ่งเท่านี้ (องศา) ช่วงที่สั่น — 0 = ไม่เอียง")]
+            public float shakeTilt = 10f;
+
+            [ShowIf(nameof(IsShake))]
+            [Tooltip("✓ = กล้องค้างท่าเอียงไว้ตอนจบ (เช่น ตัดดำต่อทันที)  ✗ = กลับมาตรงเหมือนเดิม")]
+            public bool shakeHoldAtEnd = true;
+
+            // ── Light Ramp ──
+
+            [ShowIf(nameof(IsLightRamp))]
+            public Light light;
+
+            [ShowIf(nameof(IsLightRamp))]
+            [Tooltip("ความสว่างปลายทาง — ไฟที่ปิดอยู่จะถูกเปิดให้เอง")]
+            public float lightIntensity = 20f;
+
+            // ── Turn Toward ──
+
+            [ShowIf(nameof(IsTurn))]
+            [Tooltip("ตัวที่จะหัน — ใส่ตัวแม่ของแต่ละคน (หรือแค่หัว ถ้าโมเดลมีหัวแยก)")]
+            public Transform[] turners;
+
+            [ShowIf(nameof(IsTurn))]
+            [Tooltip("หันไปมองอะไร — เว้นว่าง = ตาของผู้เล่น")]
+            public Transform turnTarget;
+
+            [ShowIf(nameof(IsTurn))]
+            [Tooltip("ตัวถัดไปเริ่มหันหลังตัวก่อนหน้าเท่านี้ (วินาที) — 0 = หันพร้อมกันหมด")]
+            public float stagger = 0.4f;
+
+            [ShowIf(nameof(IsTurn))]
+            [Tooltip("✓ = หันแค่ซ้ายขวา (ไม่ก้มเงย) — ตัวที่นั่งอยู่จะไม่เอนตัวแปลกๆ")]
+            public bool yawOnly = true;
+
+            // ── Letterbox ──
+
+            [ShowIf(nameof(IsLetterbox))]
+            [Tooltip("✓ = แถบดำเลื่อนเข้ามา  ✗ = เลื่อนออก")]
+            public bool barsOn = true;
+
             // ── ตัวช่วยของ Inspector ──
 
             private bool IsLook           => action == StepAction.PlayerLook;
@@ -222,8 +292,14 @@ namespace Rule6
             private bool IsMoveTo         => action == StepAction.MoveTo;
             private bool IsParent         => action == StepAction.Parent;
             private bool UsesMover        => IsMoveTo || IsParent;
+            private bool IsFadeIn         => IsFade && fade == FadeDirection.ToBlack;
+            private bool IsShake          => action == StepAction.Shake;
+            private bool IsLightRamp      => action == StepAction.LightRamp;
+            private bool IsTurn           => action == StepAction.TurnToward;
+            private bool IsLetterbox      => action == StepAction.Letterbox;
 
-            private bool UsesSeconds => action == StepAction.Wait || IsLook || IsDrive || IsCameraCut || IsFade || IsMoveTo;
+            private bool UsesSeconds => action == StepAction.Wait || IsLook || IsDrive || IsCameraCut || IsFade || IsMoveTo
+                                        || IsShake || IsLightRamp || IsTurn || IsLetterbox;
 
             private string SecondsLabel
             {
@@ -236,6 +312,10 @@ namespace Rule6
                         case StepAction.CameraCut:  return "Blend Seconds";
                         case StepAction.Fade:       return "Fade Seconds";
                         case StepAction.MoveTo:     return "Walk Seconds";
+                        case StepAction.Shake:      return "Shake Seconds";
+                        case StepAction.LightRamp:  return "Ramp Seconds";
+                        case StepAction.TurnToward: return "Turn Seconds (each)";
+                        case StepAction.Letterbox:  return "Slide Seconds";
                         default:                    return "Seconds";
                     }
                 }
@@ -275,6 +355,53 @@ namespace Rule6
         [Tooltip("ลำดับของแผ่นดำที่สร้างเอง — ต้องสูงกว่า HUD ของเกม")]
         [SerializeField] private int fadeSortOrder = 500;
 
+        [Header("แถบดำบน-ล่าง (Letterbox)")]
+        [Tooltip("✓ = แถบดำเลื่อนเข้ามาเองตอนคัทซีนเริ่ม\n" +
+                 "หน้าแชทเต็มจอ (Set Active ที่เปิดหน้าแชท / ขั้น Chat) จะเอาแถบออกให้ทันที ไม่งั้นบังหัวกับท้ายแชท")]
+        [SerializeField] private bool letterbox = true;
+
+        [Tooltip("ความสูงของแถบแต่ละข้าง เทียบกับความสูงจอ — 0.1 = บน 10% ล่าง 10% (ใกล้ๆ จอหนัง 2.35:1)")]
+        [Range(0f, 0.25f)]
+        [SerializeField] private float letterboxHeight = 0.1f;
+
+        [Tooltip("ใช้เวลาเลื่อนเข้ากี่วินาทีตอนคัทซีนเริ่ม")]
+        [SerializeField] private float letterboxSeconds = 0.8f;
+
+        [Tooltip("ลำดับ canvas ของแถบ — สูงกว่าจอดำ/จอขาว (500) แถบจะได้ดำสนิทตลอด แต่ต่ำกว่ารอยแตก (600)")]
+        [SerializeField] private int letterboxSortOrder = 550;
+
+        [Header("จอจบ (Thank you for playing)")]
+        [Tooltip("✓ = เล่นทุกขั้นจบแล้ว จอค่อยๆ ดำ แล้วตัวอักษรค่อยๆ ขึ้นมา — ค้างไว้อย่างนั้น (จบเกม)")]
+        [SerializeField] private bool endCard = true;
+
+        [Tooltip("ข้อความหลัก — เป็นต้นฉบับภาษาอังกฤษ คำแปลไทยมาจาก Translations.tsv")]
+        [SerializeField] private string endCardTitle = "Thank you for playing";
+
+        [Tooltip("บรรทัดเล็กใต้ข้อความหลัก — เว้นว่าง = ไม่มี")]
+        [SerializeField] private string endCardSubtitle = "Rule of Horror";
+
+        [Tooltip("ฟอนต์ตอนเล่นภาษาอังกฤษ — เว้นว่าง = ใส่ Special Elite ให้เอง")]
+        [SerializeField] private TMP_FontAsset endCardFont;
+
+        [Tooltip("ฟอนต์ตอนเล่นภาษาไทย — เว้นว่าง = ใส่ Torsilp Chettana ให้เอง\n" +
+                 "ถ้ายังว่างอยู่ตอนเล่น จะขึ้นข้อความอังกฤษแทน ไม่งั้นตัวไทยขึ้นเป็นสี่เหลี่ยม")]
+        [SerializeField] private TMP_FontAsset endCardThaiFont;
+
+        [Tooltip("รอหลังขั้นสุดท้ายจบกี่วินาทีก่อนเริ่มดำ — ให้ภาพสุดท้าย/เสียงสุดท้ายได้ค้างนิดนึง")]
+        [SerializeField] private float endCardDelay = 1f;
+
+        [Tooltip("จอค่อยๆ ดำกี่วินาที")]
+        [SerializeField] private float endCardFadeSeconds = 2f;
+
+        [Tooltip("ดำสนิทแล้วเงียบไว้กี่วินาทีก่อนตัวอักษรขึ้น")]
+        [SerializeField] private float endCardPause = 1f;
+
+        [Tooltip("ตัวอักษรค่อยๆ ขึ้นกี่วินาที")]
+        [SerializeField] private float endCardTextSeconds = 3f;
+
+        [Tooltip("ลำดับ canvas — สูงกว่าทุกอย่างของคัทซีน (แถบดำ 550, รอยแตก 600) จอจบต้องดำสนิททั้งจอ")]
+        [SerializeField] private int endCardSortOrder = 700;
+
         #endregion
 
         // ════════════════════════════════════════════════════════════════
@@ -288,6 +415,18 @@ namespace Rule6
         private Coroutine _driveRoutine;
         private CinemachineCamera _currentVcam;
         private bool      _playing;
+
+        // แถบดำบน-ล่าง — สร้างตอนใช้ครั้งแรก
+        private RectTransform _barTop;
+        private RectTransform _barBottom;
+        private Canvas        _barCanvas;
+        private float         _barAmount;    // 0 = ไม่มีแถบ, 1 = เต็มความสูงที่ตั้งไว้
+        private Coroutine     _barRoutine;
+
+        // จอจบ — สร้างตอนใช้ครั้งแรก
+        private Canvas      _cardCanvas;
+        private CanvasGroup _cardBlack;
+        private CanvasGroup _cardText;
 
         // สถานะการหันกล้อง POV — ใช้ใน LateUpdate
         private bool       _looking;
@@ -329,6 +468,8 @@ namespace Rule6
 
             if (_ride != null && _bus != null && !_ride.IsCarrying) _ride.BeginCarry(_bus.transform);
 
+            if (letterbox) SetBars(true, letterboxSeconds);
+
             if (steps.Count == 0)
                 Debug.LogWarning($"[EndingCutscene] '{name}' ยังไม่มีขั้นอะไรเลย — คัทซีนจะจบทันที", this);
 
@@ -344,22 +485,54 @@ namespace Rule6
                 else StartCoroutine(run);
             }
 
+            if (endCard) yield return EndCard();
+
             _playing = false;
         }
 
         /// <summary>
         /// หยุดทุกอย่างที่ค้างอยู่ — เรียกตอนกฎ 6 ถูกปิดกลางคัน
         /// ไม่คืนกล้อง: คัทซีนจบที่ภาพสุดท้ายของมันโดยตั้งใจ (บทจบต่อจากตรงนั้น)
+        /// แต่เอาแถบดำออก — ถูกตัดกลางคันแล้วแถบค้างอยู่ จะบังเกมไปตลอด
+        /// จอจบก็เอาออกเฉพาะตอนถูกตัดกลางคัน — เล่นจบแล้วมันคือจอสุดท้ายของเกม ต้องค้างไว้
         /// </summary>
         public void Stop()
         {
+            if (_playing && _cardCanvas != null) _cardCanvas.enabled = false;
+
             StopAllCoroutines();
             _driveRoutine = null;
+            _barRoutine   = null;
             _looking      = false;
             _playing      = false;
+            ApplyBars(0f);
         }
 
         private void OnDisable() => Stop();
+
+#if UNITY_EDITOR
+        // ใส่ฟอนต์ให้เองถ้ายังว่าง — คัทซีนมีหลายตัว (คันที่ 1-3) จะได้ไม่ต้องลากใส่ทีละตัว
+        private const string EndCardFontPath     = "Assets/Fonts/SpecialElite-Regular SDF.asset";
+        private const string EndCardThaiFontPath = "Assets/Fonts/Thai/TorsilpChettana-Medium SDF.asset";
+
+        private void OnValidate()
+        {
+            if (Application.isPlaying) return;
+
+            bool changed = false;
+            if (endCardFont == null)
+            {
+                endCardFont = UnityEditor.AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(EndCardFontPath);
+                changed |= endCardFont != null;
+            }
+            if (endCardThaiFont == null)
+            {
+                endCardThaiFont = UnityEditor.AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(EndCardThaiFontPath);
+                changed |= endCardThaiFont != null;
+            }
+            if (changed) UnityEditor.EditorUtility.SetDirty(this);
+        }
+#endif
 
         #endregion
 
@@ -385,7 +558,9 @@ namespace Rule6
                     return null;
 
                 case StepAction.Fade:
-                    return Fade(step.fade == FadeDirection.ToBlack ? 1f : 0f, step.seconds);
+                    return step.fade == FadeDirection.ToBlack
+                        ? Fade(step.fadeAlpha, step.seconds, step.fadeColor)
+                        : Fade(0f, step.seconds, null);
 
                 case StepAction.Sound:
                     PlaySound(step.fmodEvent, step.soundAt);
@@ -402,11 +577,18 @@ namespace Rule6
                     return null;
 
                 case StepAction.SetActive:
-                    if (step.target != null) step.target.SetActive(step.active);
+                    if (step.target != null)
+                    {
+                        // เปิดหน้าแชทเต็มจอ = ตัดไปหน้า UI แถบต้องหายพร้อมกัน ไม่งั้นบังหัว/ท้ายแชท
+                        if (step.active && step.target.GetComponentInChildren<EndingChat>(true) != null)
+                            SetBars(false, 0f);
+                        step.target.SetActive(step.active);
+                    }
                     else Debug.LogWarning($"[EndingCutscene] ขั้น {index} ({step.note}) ยังไม่ได้ใส่ Target", this);
                     return null;
 
                 case StepAction.Chat:
+                    SetBars(false, 0f);
                     if (step.chat != null) return step.chat.Play();
                     Debug.LogWarning($"[EndingCutscene] ขั้น {index} ({step.note}) ยังไม่ได้ใส่ Chat", this);
                     return null;
@@ -430,9 +612,227 @@ namespace Rule6
                     if (step.mover != null) step.mover.SetParent(step.parentTo, worldPositionStays: true);
                     else Debug.LogWarning($"[EndingCutscene] ขั้น {index} ({step.note}) ยังไม่ได้ใส่ Mover", this);
                     return null;
+
+                case StepAction.Shake:
+                    return Shake(step);
+
+                case StepAction.LightRamp:
+                    if (step.light != null) return LightRamp(step.light, step.lightIntensity, step.seconds);
+                    Debug.LogWarning($"[EndingCutscene] ขั้น {index} ({step.note}) ยังไม่ได้ใส่ Light", this);
+                    return null;
+
+                case StepAction.TurnToward:
+                    if (step.turners != null && step.turners.Length > 0) return TurnAll(step);
+                    Debug.LogWarning($"[EndingCutscene] ขั้น {index} ({step.note}) ยังไม่ได้ใส่ Turners", this);
+                    return null;
+
+                case StepAction.Letterbox:
+                    SetBars(step.barsOn, step.seconds);
+                    return WaitSeconds(step.seconds);
             }
 
             return null;
+        }
+
+        // ─────────────────────────── Letterbox ───────────────────────────
+
+        /// <summary>เลื่อนแถบเข้า/ออก — สั่งใหม่ระหว่างที่ยังเลื่อนอยู่ได้ จะเลื่อนต่อจากจุดที่ค้างอยู่</summary>
+        private void SetBars(bool on, float seconds)
+        {
+            if (_barRoutine != null) StopCoroutine(_barRoutine);
+            _barRoutine = null;
+
+            if (seconds <= 0f) { ApplyBars(on ? 1f : 0f); return; }
+            _barRoutine = StartCoroutine(SlideBars(on ? 1f : 0f, seconds));
+        }
+
+        private IEnumerator SlideBars(float to, float seconds)
+        {
+            float from = _barAmount;
+            float elapsed = 0f;
+            while (elapsed < seconds)
+            {
+                elapsed += Time.deltaTime;
+                ApplyBars(Mathf.Lerp(from, to, Mathf.SmoothStep(0f, 1f, elapsed / seconds)));
+                yield return null;
+            }
+
+            ApplyBars(to);
+            _barRoutine = null;
+        }
+
+        /// <summary>
+        /// ใช้ anchor แทนพิกเซล — แถบสูงเป็นสัดส่วนของจอเสมอ ไม่ว่าจอจะละเอียดแค่ไหน
+        /// </summary>
+        private void ApplyBars(float amount)
+        {
+            _barAmount = amount;
+            if (amount <= 0f && _barCanvas == null) return;   // ยังไม่เคยใช้ ไม่ต้องสร้าง
+
+            EnsureBars();
+            float h = letterboxHeight * amount;
+
+            _barTop.anchorMin    = new Vector2(0f, 1f - h);
+            _barBottom.anchorMax = new Vector2(1f, h);
+            _barCanvas.enabled   = amount > 0f;
+        }
+
+        private void EnsureBars()
+        {
+            if (_barCanvas != null) return;
+
+            var go = new GameObject("Ending Letterbox", typeof(RectTransform), typeof(Canvas));
+            go.transform.SetParent(transform, false);
+
+            _barCanvas = go.GetComponent<Canvas>();
+            _barCanvas.renderMode   = RenderMode.ScreenSpaceOverlay;
+            _barCanvas.sortingOrder = letterboxSortOrder;
+
+            _barTop    = Bar(go.transform, "Top",    new Vector2(0f, 1f), Vector2.one);
+            _barBottom = Bar(go.transform, "Bottom", Vector2.zero,        new Vector2(1f, 0f));
+        }
+
+        private static RectTransform Bar(Transform parent, string name, Vector2 anchorMin, Vector2 anchorMax)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(parent, false);
+
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = anchorMin;
+            rt.anchorMax = anchorMax;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+
+            var image = go.GetComponent<Image>();
+            image.color         = Color.black;
+            image.raycastTarget = false;
+            return rt;
+        }
+
+        // ─────────────────────────── Shake ───────────────────────────
+
+        /// <summary>
+        /// สั่นที่ตัวกล้อง ไม่ใช่ที่ cameraPivot — pivot เป็นของการหันมอง (LateUpdate เขียนทุกเฟรม)
+        /// ถ้าสั่นที่ pivot สองอย่างจะแย่งกันเขียน แล้วการสั่นจะหายไปครึ่งหนึ่ง
+        ///
+        /// ใช้ Perlin noise ไม่ใช่ Random — สุ่มใหม่ทุกเฟรมจะกระตุกเป็นจุดๆ ดูเหมือนเฟรมเรตตก
+        /// ความแรงพุ่งขึ้นเร็วแล้วค่อยๆ ลด ส่วนการเอียงค่อยๆ เอนไปจนสุดตอนท้าย (รถกำลังพลิก)
+        /// </summary>
+        private IEnumerator Shake(Step step)
+        {
+            Camera cam = _currentVcam != null ? null : _playerCamera;
+            Transform t = cam != null ? cam.transform : (_currentVcam != null ? _currentVcam.transform : null);
+            if (t == null) yield break;
+
+            Quaternion baseRot = t.localRotation;
+            Vector3    basePos = t.localPosition;
+            float seconds = Mathf.Max(0.01f, step.seconds);
+            float seed    = UnityEngine.Random.value * 100f;
+
+            float elapsed = 0f;
+            while (elapsed < seconds)
+            {
+                elapsed += Time.deltaTime;
+                float k     = Mathf.Clamp01(elapsed / seconds);
+                // แรงกระแทกช่วงแรกแรงกว่าปกติสามเท่า แล้วค่อยๆ ลดลงเหลือแค่สั่น
+                float kick  = 1f + 2f * Mathf.Exp(-elapsed * 6f);
+                float power = step.shakeAmplitude * kick * Mathf.Lerp(1f, 0.6f, k) * Mathf.Clamp01(elapsed / 0.05f);
+                float n     = elapsed * 22f;
+
+                // Perlin ส่วนใหญ่ออกมาแค่ 0.3–0.7 — คูณ 4 ให้ shakeAmplitude ใกล้เคียงองศาที่สั่นจริง
+                float x = (Mathf.PerlinNoise(seed,      n) - 0.5f) * 4f * power;
+                float y = (Mathf.PerlinNoise(seed + 10, n) - 0.5f) * 4f * power;
+                float z = (Mathf.PerlinNoise(seed + 20, n) - 0.5f) * 4f * power + step.shakeTilt * Mathf.SmoothStep(0f, 1f, k);
+
+                t.localRotation = baseRot * Quaternion.Euler(x, y, z);
+                t.localPosition = basePos + new Vector3(x, y, 0f) * 0.01f;
+                yield return null;
+            }
+
+            if (step.shakeHoldAtEnd)
+                t.localRotation = baseRot * Quaternion.Euler(0f, 0f, step.shakeTilt);
+            else
+                t.localRotation = baseRot;
+            t.localPosition = basePos;
+        }
+
+        // ─────────────────────────── Light Ramp ───────────────────────────
+
+        /// <summary>
+        /// ความสว่างไล่แบบเร่งขึ้นเรื่อยๆ (k²) — ไฟของรถที่วิ่งเข้าหาเราสว่างช้าๆ ตอนอยู่ไกล
+        /// แล้วจ้าขึ้นพรวดตอนใกล้ ไล่แบบเส้นตรงจะดูเหมือนคนค่อยๆ หมุนสวิตช์หรี่ไฟ
+        /// </summary>
+        private static IEnumerator LightRamp(Light light, float to, float seconds)
+        {
+            if (!light.gameObject.activeSelf) light.gameObject.SetActive(true);
+            if (!light.enabled) { light.enabled = true; light.intensity = 0f; }
+
+            float from = light.intensity;
+            float elapsed = 0f;
+            while (elapsed < seconds)
+            {
+                elapsed += Time.deltaTime;
+                float k = Mathf.Clamp01(elapsed / seconds);
+                light.intensity = Mathf.Lerp(from, to, k * k);
+                yield return null;
+            }
+
+            light.intensity = to;
+        }
+
+        // ─────────────────────────── Turn Toward ───────────────────────────
+
+        private IEnumerator TurnAll(Step step)
+        {
+            int running = 0;
+
+            for (int i = 0; i < step.turners.Length; i++)
+            {
+                if (step.turners[i] == null) continue;
+
+                running++;
+                StartCoroutine(TurnOne(step.turners[i], step, () => running--));
+
+                if (step.stagger > 0f && i < step.turners.Length - 1)
+                    yield return new WaitForSeconds(step.stagger);
+            }
+
+            while (running > 0) yield return null;
+        }
+
+        /// <summary>
+        /// หันช้าๆ แบบเร่งแล้วผ่อน (SmoothStep) — อ่านเป้าใหม่ทุกเฟรม ตัวที่หันอยู่จะมองตามเรา
+        /// ถึงรถจะขยับหรือกล้องจะสั่นก็ตาม
+        /// </summary>
+        private IEnumerator TurnOne(Transform t, Step step, Action done)
+        {
+            Quaternion from    = t.rotation;
+            float      seconds = Mathf.Max(0.01f, step.seconds);
+
+            float elapsed = 0f;
+            while (elapsed < seconds)
+            {
+                elapsed += Time.deltaTime;
+                t.rotation = Quaternion.Slerp(from, FaceRotation(t, step), Mathf.SmoothStep(0f, 1f, elapsed / seconds));
+                yield return null;
+            }
+
+            t.rotation = FaceRotation(t, step);
+            done();
+        }
+
+        private Quaternion FaceRotation(Transform t, Step step)
+        {
+            Vector3 target = step.turnTarget != null ? step.turnTarget.position
+                           : _playerCamera != null   ? _playerCamera.transform.position
+                           : t.position + t.forward;
+
+            Vector3 dir = target - t.position;
+            if (step.yawOnly) dir.y = 0f;
+            if (dir.sqrMagnitude < 0.0001f) return t.rotation;
+
+            Vector3 up = step.yawOnly ? Vector3.up : (t.parent != null ? t.parent.up : Vector3.up);
+            return Quaternion.LookRotation(dir.normalized, up);
         }
 
         // ─────────────────────────── Move To ───────────────────────────
@@ -695,9 +1095,19 @@ namespace Rule6
 
         // ─────────────────────────── Fade ───────────────────────────
 
-        private IEnumerator Fade(float to, float seconds)
+        /// <summary>
+        /// color = null คือใช้สีเดิมของแผ่น (ตอนเอาแผ่นออก) — เปลี่ยนสีแผ่นกลางทางได้ เช่น
+        /// จอขาวจ้าแล้วตัดเป็นดำทันทีตอนรถชน
+        /// </summary>
+        private IEnumerator Fade(float to, float seconds, Color? color)
         {
             var group = EnsureFadeGroup();
+            if (color.HasValue)
+            {
+                var image = group.GetComponent<Image>();
+                if (image != null) image.color = new Color(color.Value.r, color.Value.g, color.Value.b, 1f);
+            }
+
             float from = group.alpha;
 
             if (seconds > 0f)
@@ -739,6 +1149,118 @@ namespace Rule6
             fadeGroup.interactable   = false;
 
             return fadeGroup;
+        }
+
+        // ─────────────────────────── จอจบ ───────────────────────────
+
+        /// <summary>
+        /// จอดำค่อยๆ มา → เงียบไว้ครู่หนึ่ง → "Thank you for playing" ค่อยๆ ขึ้น แล้วค้างไว้
+        ///
+        /// ใช้ canvas ของตัวเอง ไม่ใช้แผ่นดำของขั้น Fade: แผ่นนั้นอยู่ใต้แถบดำกับรอยแตก (คันที่ 3)
+        /// ถ้าใช้แผ่นเดิม รอยแตกจะค้างทับตัวอักษร
+        /// </summary>
+        private IEnumerator EndCard()
+        {
+            EnsureEndCard();
+
+            _cardBlack.alpha    = 0f;
+            _cardText.alpha     = 0f;
+            _cardCanvas.enabled = true;
+
+            if (endCardDelay > 0f) yield return new WaitForSeconds(endCardDelay);
+            yield return FadeGroup(_cardBlack, 1f, endCardFadeSeconds);
+
+            if (endCardPause > 0f) yield return new WaitForSeconds(endCardPause);
+            yield return FadeGroup(_cardText, 1f, endCardTextSeconds);
+        }
+
+        private static IEnumerator FadeGroup(CanvasGroup group, float to, float seconds)
+        {
+            float from    = group.alpha;
+            float elapsed = 0f;
+            while (elapsed < seconds)
+            {
+                elapsed    += Time.deltaTime;
+                group.alpha = Mathf.SmoothStep(from, to, Mathf.Clamp01(elapsed / seconds));
+                yield return null;
+            }
+            group.alpha = to;
+        }
+
+        private void EnsureEndCard()
+        {
+            if (_cardCanvas == null)
+            {
+                var go = new GameObject("Ending Card", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
+                go.transform.SetParent(transform, false);
+
+                _cardCanvas = go.GetComponent<Canvas>();
+                _cardCanvas.renderMode   = RenderMode.ScreenSpaceOverlay;
+                _cardCanvas.sortingOrder = endCardSortOrder;
+
+                // ขนาดตัวอักษรตามความสูงจอ — จอ 4K กับ 720p เห็นเท่ากัน
+                var scaler = go.GetComponent<CanvasScaler>();
+                scaler.uiScaleMode         = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(1920f, 1080f);
+                scaler.matchWidthOrHeight  = 1f;
+
+                var black = Bar(go.transform, "Black", Vector2.zero, Vector2.one);
+                _cardBlack = black.gameObject.AddComponent<CanvasGroup>();
+
+                var text = new GameObject("Text", typeof(RectTransform), typeof(CanvasGroup));
+                text.transform.SetParent(go.transform, false);
+                var textRt = (RectTransform)text.transform;
+                textRt.anchorMin = Vector2.zero;
+                textRt.anchorMax = Vector2.one;
+                textRt.offsetMin = Vector2.zero;
+                textRt.offsetMax = Vector2.zero;
+                _cardText = text.GetComponent<CanvasGroup>();
+
+                Label(text.transform, "Title",    0.52f, 0.62f, 64f, new Color(0.92f, 0.92f, 0.92f));
+                Label(text.transform, "Subtitle", 0.43f, 0.50f, 30f, new Color(0.55f, 0.55f, 0.55f));
+
+                foreach (var group in new[] { _cardBlack, _cardText })
+                {
+                    group.blocksRaycasts = false;
+                    group.interactable   = false;
+                }
+            }
+
+            // ตั้งข้อความทุกครั้งที่ขึ้น — ภาษาอาจถูกเปลี่ยนไปแล้วตั้งแต่ครั้งก่อน
+            // ภาษาไทยแต่ไม่มีฟอนต์ไทย = ขึ้นต้นฉบับอังกฤษ ดีกว่าขึ้นเป็นสี่เหลี่ยม
+            bool thai = L10n.IsThai && endCardThaiFont != null;
+            TMP_FontAsset font = thai ? endCardThaiFont : endCardFont;
+
+            var labels = _cardText.GetComponentsInChildren<TextMeshProUGUI>(true);
+            SetLabel(labels[0], endCardTitle,    thai, font);
+            SetLabel(labels[1], endCardSubtitle, thai, font);
+        }
+
+        private static void SetLabel(TextMeshProUGUI label, string source, bool thai, TMP_FontAsset font)
+        {
+            if (font != null) label.font = font;
+            // ระยะห่างตัวอักษรใช้กับไทยไม่ได้ — สระ/วรรณยุกต์ก็นับเป็นตัวอักษร จะถูกดันหลุดไปข้างหลัง
+            label.characterSpacing = thai ? 0f : 6f;
+            label.text = string.IsNullOrWhiteSpace(source) ? "" : thai ? L10n.T(source) : source;
+            label.gameObject.SetActive(label.text.Length > 0);
+        }
+
+        private static void Label(Transform parent, string name, float yMin, float yMax, float size, Color color)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
+            go.transform.SetParent(parent, false);
+
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = new Vector2(0.05f, yMin);
+            rt.anchorMax = new Vector2(0.95f, yMax);
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+
+            var label = go.GetComponent<TextMeshProUGUI>();
+            label.alignment        = TextAlignmentOptions.Center;
+            label.fontSize         = size;
+            label.color            = color;
+            label.raycastTarget    = false;
         }
 
         // ─────────────────────────── Sound / Dialogue ───────────────────────────

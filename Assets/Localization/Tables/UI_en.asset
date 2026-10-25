@@ -433,6 +433,14 @@ MonoBehaviour:
     m_Localized: Resume
     m_Metadata:
       m_Items: []
+  - m_Id: 461274647007232
+    m_Localized: Thank you for playing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 461274651201536
+    m_Localized: Rule of Horror
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -710,6 +710,81 @@ MonoBehaviour:
     m_Metadata:
       m_Items:
       - rid: 3244670351061549276
+  - m_Id: 455480220225536
+    m_Key: Rule6/#0 - theres-nothing-left-to-choose_f875763a
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751312
+  - m_Id: 455480262168576
+    m_Key: Rule6/#1 - the-last-rule-at-midnight_58478b84
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751313
+  - m_Id: 455480262168577
+    m_Key: Rule6/#2 reply 1 - this-is-the-last-one_deb8332b
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751314
+  - m_Id: 455480262168578
+    m_Key: Rule6/#3 - all-you-have-to-do_a8744fb6
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751315
+  - m_Id: 455480262168579
+    m_Key: Rule6/#4 - wait-at-the-pavilion-the_4161e20a
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751316
+  - m_Id: 455480262168580
+    m_Key: Rule6/#5 - be-careful-some-of-them_0d7cf11d
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751317
+  - m_Id: 455480262168581
+    m_Key: Rule6/#6 - your-bus-will-have-bright_9631b7cb
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751318
+  - m_Id: 455480262168582
+    m_Key: Rule6/#7 - one-more-piece-of-advice_60e33a6f
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751319
+  - m_Id: 455480266362880
+    m_Key: Rule6_EscapeEndingChat/#0 - th_efd5c273
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751320
+  - m_Id: 455480266362881
+    m_Key: Rule6_EscapeEndingChat/#1 - th_16ef4382
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751321
+  - m_Id: 455480270557184
+    m_Key: Rule6_TrapEndingChat/#0 - th_bbbc3ab6
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751322
+  - m_Id: 455480270557185
+    m_Key: Rule6_TrapEndingChat/#1 - th_2aa7511b
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751323
+  - m_Id: 455480270557186
+    m_Key: Rule6_TrapEndingChat/#2 - th_fb118824
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751324
+  - m_Id: 455480270557187
+    m_Key: Rule6_TrapEndingChat/#3 - th_e4130d20
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751325
+  - m_Id: 455480270557188
+    m_Key: Rule6_TrapEndingChat/#4 - th_0ba67107
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751326
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
@@ -1277,3 +1352,63 @@ MonoBehaviour:
       type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
       data:
         m_CommentText: Chat/Rule5/reply#1
+    - rid: 3244670378102751312
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6#0
+    - rid: 3244670378102751313
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6#1
+    - rid: 3244670378102751314
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6/reply#0
+    - rid: 3244670378102751315
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6#3
+    - rid: 3244670378102751316
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6#4
+    - rid: 3244670378102751317
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6#5
+    - rid: 3244670378102751318
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6#6
+    - rid: 3244670378102751319
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6#7
+    - rid: 3244670378102751320
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6_EscapeEndingChat/#0
+    - rid: 3244670378102751321
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6_EscapeEndingChat/#1
+    - rid: 3244670378102751322
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6_TrapEndingChat/#0
+    - rid: 3244670378102751323
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6_TrapEndingChat/#1
+    - rid: 3244670378102751324
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6_TrapEndingChat/#2
+    - rid: 3244670378102751325
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6_TrapEndingChat/#3
+    - rid: 3244670378102751326
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6_TrapEndingChat/#4

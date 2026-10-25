@@ -620,6 +620,48 @@ MonoBehaviour:
     m_Localized: Just tell me, what do I have to do this time to survive?
     m_Metadata:
       m_Items: []
+  - m_Id: 455480220225536
+    m_Localized: There's nothing left to choose this time. You've reached the last
+      rule.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 455480262168576
+    m_Localized: 'The last rule: at midnight tonight, the buses will start coming.
+      Wait at the pavilion, then get on the bus that will take you home. You can
+      only choose one.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 455480262168577
+    m_Localized: This is the last one, right? Tell me what I have to do.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 455480262168578
+    m_Localized: All you have to do is get on a bus that looks safe enough to take
+      you back to your village. But check carefully which one will actually get you
+      out alive. Here are the details.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 455480262168579
+    m_Localized: Wait at the pavilion. The buses will pass by one at a time. If you
+      want a closer look at one, get up and go to it. It will wait for you. If it's
+      not the right one, go back and sit down. The next one will come on its own.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 455480262168580
+    m_Localized: 'Be careful. Some of them aren''t real buses. Look closely: if the
+      sign outside doesn''t match the one inside, that bus is a fake.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 455480262168581
+    m_Localized: Your bus will have bright lights, a sign with the name of your village,
+      and exactly one empty seat waiting for you.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 455480262168582
+    m_Localized: One more piece of advice. Whichever one looks the safest, I'd like
+      you to get on that one, and make it home safely.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

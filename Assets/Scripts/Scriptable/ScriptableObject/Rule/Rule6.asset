@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41317668c27ad3e4eb2364064ad2ed14, type: 3}
+  m_Name: Rule6
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableObject.ConversationData
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes:
+    ReferencedUnityObjects: []
+    SerializedBytesString:
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  startNode: 0
+  nodes:
+  - message: "There's nothing left to choose this time. You've reached the last rule."
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 0, y: 0}
+  - message: "The last rule: at midnight tonight, the buses will start coming. Wait at the pavilion, then get on the bus that will take you home. You can only choose one."
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 2
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 300, y: 0}
+  - message: "..."
+    isPlayer: 1
+    scriptedLine: 0
+    offersReward: 0
+    replies:
+    - replyText: "This is the last one, right? Tell me what I have to do."
+      nextNode: 3
+    nextNode: -1
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 600, y: 0}
+  - message: "All you have to do is get on a bus that looks safe enough to take you back to your village. But check carefully which one will actually get you out alive. Here are the details."
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 4
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 900, y: 0}
+  - message: "Wait at the pavilion. The buses will pass by one at a time. If you want a closer look at one, get up and go to it. It will wait for you. If it's not the right one, go back and sit down. The next one will come on its own."
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 5
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 1200, y: 0}
+  - message: "Be careful. Some of them aren't real buses. Look closely: if the sign outside doesn't match the one inside, that bus is a fake."
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 6
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 1500, y: 0}
+  - message: "Your bus will have bright lights, a sign with the name of your village, and exactly one empty seat waiting for you."
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 7
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 1800, y: 0}
+  - message: "One more piece of advice. Whichever one looks the safest, I'd like you to get on that one, and make it home safely."
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: -1
+    recordsRule: {fileID: 11400000, guid: 1d6971a0b3009b244918885d863b79c1, type: 2}
+    recordsAsCooperative: 1
+    graphPosition: {x: 2100, y: 0}

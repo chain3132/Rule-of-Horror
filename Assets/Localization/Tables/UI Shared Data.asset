@@ -510,6 +510,66 @@ MonoBehaviour:
     m_Metadata:
       m_Items:
       - rid: 3244670351061549449
+  - m_Id: 455481403019264
+    m_Key: Play-test - th_154a40ef
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751327
+  - m_Id: 455481423990784
+    m_Key: Play-test - th_bbbc3ab6
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751328
+  - m_Id: 455481423990785
+    m_Key: Play-test - th_2aa7511b
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751329
+  - m_Id: 455481423990786
+    m_Key: Play-test - th_fb118824
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751330
+  - m_Id: 455481423990787
+    m_Key: Play-test - th_e4130d20
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751331
+  - m_Id: 455481423990788
+    m_Key: Play-test - th_0ba67107
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751332
+  - m_Id: 455481423990789
+    m_Key: Play-test - th_bbcb8566
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751333
+  - m_Id: 455481423990790
+    m_Key: Play-test - th_787d108d
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751334
+  - m_Id: 455481423990791
+    m_Key: Play-test - th_efd5c273
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751335
+  - m_Id: 455481423990792
+    m_Key: Play-test - th_16ef4382
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751336
+  - m_Id: 461274647007232
+    m_Key: EndingCutscene/endCardTitle - thank-you-for-playing_2b12b065
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751339
+  - m_Id: 461274651201536
+    m_Key: EndingCutscene/endCardSubtitle - rule-of-horror_04e02088
+    m_Metadata:
+      m_Items:
+      - rid: 3244670378102751340
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
@@ -918,3 +978,51 @@ MonoBehaviour:
       type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
       data:
         m_CommentText: UI/Language menu button
+    - rid: 3244670378102751327
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Collected while play-testing
+    - rid: 3244670378102751328
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Collected while play-testing
+    - rid: 3244670378102751329
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Collected while play-testing
+    - rid: 3244670378102751330
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Collected while play-testing
+    - rid: 3244670378102751331
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Collected while play-testing
+    - rid: 3244670378102751332
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Collected while play-testing
+    - rid: 3244670378102751333
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Collected while play-testing
+    - rid: 3244670378102751334
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Collected while play-testing
+    - rid: 3244670378102751335
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Collected while play-testing
+    - rid: 3244670378102751336
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Collected while play-testing
+    - rid: 3244670378102751339
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/EndingCutscene.endCardTitle
+    - rid: 3244670378102751340
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/EndingCutscene.endCardSubtitle
