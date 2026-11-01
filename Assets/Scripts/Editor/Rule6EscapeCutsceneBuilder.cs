@@ -142,7 +142,7 @@ public static class Rule6EscapeCutsceneBuilder
 
     private struct Markers
     {
-        public Transform door, doorway, hidden, stand, seat;
+        public Transform door, doorway, hidden, walkTo, stand, seat;
         public CinemachineCamera doorCam;
     }
 
@@ -169,15 +169,18 @@ public static class Rule6EscapeCutsceneBuilder
         steps.Add(new Step { note = "SHOT 4 · ...and goes behind the bus wall", action = Action.MoveTo,
                              mover = paeng, moveTo = m.hidden, seconds = 1.0f });
 
-        steps.Add(new Step { note = "SHOT 5 · hidden: ghost model off", action = Action.SetActive, target = ghost, active = false });
-        steps.Add(new Step { note = "SHOT 5 · hidden: normal model on", action = Action.SetActive, target = normal, active = true });
         steps.Add(new Step { note = "SHOT 5 · soft music - first time in the game (put the FMOD event)", action = Action.Sound });
-        steps.Add(new Step { note = "SHOT 5 · she steps out as a normal girl", action = Action.MoveTo,
-                             mover = paeng, moveTo = m.stand, seconds = 2.5f });
+        steps.Add(WalkToStep(paeng, m.walkTo, null));
 
+        // Cut to our eyes before the last stretch - we watch her walk up to the seat.
+        // She is a ghost through the whole door shot; the cut itself hides the model swap.
         steps.Add(new Step { note = "SHOT 6 · back to our eyes", action = Action.CameraCut, vcam = null, seconds = 0f });
+        steps.Add(new Step { note = "SHOT 6 · on the cut: ghost model off", action = Action.SetActive, target = ghost, active = false });
+        steps.Add(new Step { note = "SHOT 6 · on the cut: normal model on", action = Action.SetActive, target = normal, active = true });
         steps.Add(new Step { note = "SHOT 6 · look at her standing by the seat across from us", action = Action.PlayerLook,
                              lookTarget = look, seconds = 0.6f });
+        steps.Add(new Step { note = "SHOT 5 · she steps out as a normal girl", action = Action.MoveTo,
+                             mover = paeng, moveTo = m.stand, seconds = 2.5f });
         steps.Add(new Step { note = "SHOT 6 · she nods - thank you (needs a 'nod' animation)", action = Action.AnimatorTrigger,
                              animator = animator, trigger = "nod" });
         steps.Add(new Step { note = "SHOT 6", action = Action.Wait, seconds = 2.5f });
@@ -282,12 +285,277 @@ public static class Rule6EscapeCutsceneBuilder
             stand   = Marker(group, "Paeng 4 Stand",        Horizontal(aisle) + Vector3.up * floor, Flat(seatPos - aisle), report),
             seat    = Marker(group, "Paeng 5 Seat",         Horizontal(across) + Vector3.up * floor, Flat(across - aisle), report),
         };
+        m.walkTo = EnsureWalkToMarker(m.hidden, m.stand, report);
 
         m.doorCam = EnsureDoorCamera(group, m.door, m.doorway, side, fwd, report);
         return m;
     }
 
     private static Vector3 Horizontal(Vector3 v) => new Vector3(v.x, 0f, v.z);
+
+    // ─────────────────────────── Paeng 3.5 WalkTo ───────────────────────────
+
+    private const string WalkToName = "Paeng 3.5 WalkTo";
+    private const string WalkToNote = "SHOT 5 · she walks here first (Paeng 3.5 WalkTo)";
+
+    /// <summary>
+    /// Updates the existing Escape cutscene:
+    ///   1. "Paeng 3.5 WalkTo": a marker between Paeng 3 Hidden and Paeng 4 Stand, and a MoveTo
+    ///      step to it right before the step that walks her to Paeng 4 Stand
+    ///   2. The cut back to our eyes (and the look at her) moves to just before that last walk,
+    ///      so we watch her walk up to the seat from our own eyes
+    /// Re-runnable - nothing is added or moved twice.
+    /// </summary>
+    [MenuItem("Rule of Horror/Rule 6/Update Escape Cutscene (WalkTo + Cut)", false, 22)]
+    private static void AddWalkTo()
+    {
+        var report = new StringBuilder("[Rule 6] Escape cutscene update");
+        report.AppendLine();
+
+        EndingCutscene cutscene = null;
+        foreach (var c in Object.FindObjectsByType<EndingCutscene>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            if (c.name == CutsceneName) cutscene = c;
+
+        if (cutscene == null)
+        {
+            EditorUtility.DisplayDialog("Paeng 3.5 WalkTo", $"'{CutsceneName}' is not in the open scene.", "OK");
+            return;
+        }
+
+        var so    = new SerializedObject(cutscene);
+        var steps = so.FindProperty("steps");
+
+        // Find the walk to Paeng 4 Stand (and Paeng 3 Hidden for the marker's position) by their targets
+        int standIndex = -1;
+        Transform hidden = null, stand = null, walkTo = null;
+        for (int i = 0; i < steps.arraySize; i++)
+        {
+            var step = steps.GetArrayElementAtIndex(i);
+            if ((Action)step.FindPropertyRelative("action").enumValueIndex != Action.MoveTo) continue;
+
+            var target = step.FindPropertyRelative("moveTo").objectReferenceValue as Transform;
+            if (target == null) continue;
+
+            if (target.name == "Paeng 3 Hidden") hidden = target;
+            if (target.name == WalkToName)       walkTo = target;
+            if (target.name == "Paeng 4 Stand" && standIndex < 0) { stand = target; standIndex = i; }
+        }
+
+        if (stand == null)
+        {
+            EditorUtility.DisplayDialog("Paeng 3.5 WalkTo",
+                "No MoveTo step walks to 'Paeng 4 Stand' - nothing to put the new point in front of.", "OK");
+            return;
+        }
+
+        if (walkTo != null)
+        {
+            report.AppendLine("  - The step to Paeng 3.5 WalkTo already exists");
+        }
+        else
+        {
+            walkTo = EnsureWalkToMarker(hidden, stand, report);
+
+            // Inserting duplicates the stand step (same mover, walk animator and bool); the first copy becomes ours
+            steps.InsertArrayElementAtIndex(standIndex);
+            var added = steps.GetArrayElementAtIndex(standIndex);
+            added.FindPropertyRelative("note").stringValue            = WalkToNote;
+            added.FindPropertyRelative("moveTo").objectReferenceValue = walkTo;
+            added.FindPropertyRelative("seconds").floatValue          = 1.2f;
+            added.FindPropertyRelative("matchRotation").boolValue     = false;   // keep walking, no turn on the spot
+            added.FindPropertyRelative("waitToFinish").boolValue      = true;
+
+            report.AppendLine($"  + Step {standIndex}: walk to '{WalkToName}' (1.2 s), then on to Paeng 4 Stand");
+            standIndex++;
+        }
+
+        MoveCutBeforeStand(steps, standIndex, report);
+
+        var paeng = steps.GetArrayElementAtIndex(FindStand(steps)).FindPropertyRelative("mover").objectReferenceValue as Transform;
+        MoveSwapToCut(steps, paeng, report);
+
+        so.ApplyModifiedProperties();
+        EditorSceneManager.MarkSceneDirty(cutscene.gameObject.scene);
+        Selection.activeTransform = walkTo;
+
+        report.AppendLine("  Drag Paeng 3.5 WalkTo into place (it is selected), then save the scene.");
+        Debug.Log(report.ToString(), walkTo);
+    }
+
+    private static int FindStand(SerializedProperty steps)
+    {
+        for (int i = 0; i < steps.arraySize; i++)
+        {
+            var step = steps.GetArrayElementAtIndex(i);
+            if ((Action)step.FindPropertyRelative("action").enumValueIndex != Action.MoveTo) continue;
+            var target = step.FindPropertyRelative("moveTo").objectReferenceValue as Transform;
+            if (target != null && target.name == "Paeng 4 Stand") return i;
+        }
+        return -1;
+    }
+
+    /// <summary>
+    /// Moves the model swap (ghost off, normal on) from the hidden spot to right after the cut back
+    /// to our eyes: she stays a ghost for the whole door shot, and on the cut she is a girl.
+    /// The cut hides the swap, so it no longer needs a spot the door camera cannot see.
+    ///
+    /// Walk steps before the swap stop driving the girl's "walk" bool - her model is still off
+    /// then, and an inactive Animator only logs warnings. Walk steps after it drive it.
+    /// </summary>
+    private static void MoveSwapToCut(SerializedProperty steps, Transform paeng, StringBuilder report)
+    {
+        if (paeng == null) { report.AppendLine("  ! Walk steps have no Mover (Paeng) - model swap left alone"); return; }
+
+        SerializedProperty At(int i) => steps.GetArrayElementAtIndex(i);
+        Action ActionAt(int i) => (Action)At(i).FindPropertyRelative("action").enumValueIndex;
+        GameObject TargetAt(int i) => At(i).FindPropertyRelative("target").objectReferenceValue as GameObject;
+        bool ActiveAt(int i) => At(i).FindPropertyRelative("active").boolValue;
+
+        bool IsSwap(int i, bool on) =>
+            ActionAt(i) == Action.SetActive && ActiveAt(i) == on &&
+            TargetAt(i) != null && TargetAt(i).transform.IsChildOf(paeng);
+
+        int Find(System.Func<int, bool> match)
+        {
+            for (int i = 0; i < steps.arraySize; i++) if (match(i)) return i;
+            return -1;
+        }
+
+        // The cut back to our eyes = the first no-vcam Camera Cut after the door camera
+        int EyesCut()
+        {
+            int door = Find(i => ActionAt(i) == Action.CameraCut && At(i).FindPropertyRelative("vcam").objectReferenceValue != null);
+            for (int i = door + 1; door >= 0 && i < steps.arraySize; i++)
+                if (ActionAt(i) == Action.CameraCut && At(i).FindPropertyRelative("vcam").objectReferenceValue == null) return i;
+            return -1;
+        }
+
+        int ghostOff = Find(i => IsSwap(i, false));
+        int normalOn = Find(i => IsSwap(i, true));
+        int cut      = EyesCut();
+
+        if (ghostOff < 0 || normalOn < 0 || cut < 0)
+        {
+            report.AppendLine("  ! Could not find the ghost-off / normal-on steps or the cut back to our eyes - swap left alone");
+            return;
+        }
+
+        if (ghostOff == cut + 1 && normalOn == cut + 2)
+        {
+            report.AppendLine("  - The model swap is already on the cut back to our eyes");
+        }
+        else
+        {
+            // Moving an earlier element to a later index puts it after that index's element
+            if (ghostOff < cut) steps.MoveArrayElement(ghostOff, cut);
+            else                steps.MoveArrayElement(ghostOff, cut + 1);
+
+            ghostOff = Find(i => IsSwap(i, false));
+            normalOn = Find(i => IsSwap(i, true));
+            if (normalOn < ghostOff) steps.MoveArrayElement(normalOn, ghostOff);
+            else                     steps.MoveArrayElement(normalOn, ghostOff + 1);
+
+            report.AppendLine("  + Model swap moved: Paeng stays a ghost through the door shot, " +
+                              "and is a girl from the cut back to our eyes");
+        }
+
+        // Walk animation only once the girl's model is on
+        normalOn = Find(i => IsSwap(i, true));
+        var girl = TargetAt(normalOn).GetComponentInChildren<Animator>(true);
+        if (girl == null) return;
+
+        for (int i = 0; i < steps.arraySize; i++)
+        {
+            if (ActionAt(i) != Action.MoveTo) continue;
+
+            var walkAnimator = At(i).FindPropertyRelative("walkAnimator");
+            if (i < normalOn)
+            {
+                if (walkAnimator.objectReferenceValue == girl)
+                {
+                    walkAnimator.objectReferenceValue = null;
+                    At(i).FindPropertyRelative("walkBool").stringValue = "";
+                }
+            }
+            else
+            {
+                walkAnimator.objectReferenceValue = girl;
+                At(i).FindPropertyRelative("walkBool").stringValue = "walk";
+            }
+        }
+    }
+
+    /// <summary>
+    /// Moves "cut back to our eyes" (Camera Cut with no vcam) and the look at Paeng that follows it
+    /// from after the walk to Paeng 4 Stand to just before it. The look follows her every frame,
+    /// so our eyes track her as she walks up.
+    /// </summary>
+    private static void MoveCutBeforeStand(SerializedProperty steps, int standIndex, StringBuilder report)
+    {
+        Action ActionAt(int i) => (Action)steps.GetArrayElementAtIndex(i).FindPropertyRelative("action").enumValueIndex;
+        bool IsEyesCut(int i) => ActionAt(i) == Action.CameraCut &&
+                                 steps.GetArrayElementAtIndex(i).FindPropertyRelative("vcam").objectReferenceValue == null;
+
+        // Already in place: the cut sits right before the walk (or right before the look before it)
+        if ((standIndex >= 1 && IsEyesCut(standIndex - 1)) ||
+            (standIndex >= 2 && IsEyesCut(standIndex - 2) && ActionAt(standIndex - 1) == Action.PlayerLook))
+        {
+            report.AppendLine("  - The cut back to our eyes is already before the walk to Paeng 4 Stand");
+            return;
+        }
+
+        int cut = -1;
+        for (int i = standIndex + 1; i < steps.arraySize; i++)
+            if (IsEyesCut(i)) { cut = i; break; }
+
+        if (cut < 0)
+        {
+            report.AppendLine("  ! No 'back to our eyes' Camera Cut after the walk to Paeng 4 Stand - add one by hand");
+            return;
+        }
+
+        bool lookFollows = cut + 1 < steps.arraySize && ActionAt(cut + 1) == Action.PlayerLook;
+
+        steps.MoveArrayElement(cut, standIndex);                        // cut   -> before the walk
+        if (lookFollows) steps.MoveArrayElement(cut + 1, standIndex + 1); // look  -> right after the cut
+
+        report.AppendLine($"  + Moved the cut back to our eyes{(lookFollows ? " and the look at Paeng" : "")} " +
+                          "to just before she walks to Paeng 4 Stand");
+    }
+
+    /// <summary>The step that walks to Paeng 3.5 - used by the full build.</summary>
+    private static Step WalkToStep(Transform paeng, Transform walkTo, Animator walkAnimator) => new Step
+    {
+        note = WalkToNote, action = Action.MoveTo, mover = paeng, moveTo = walkTo,
+        seconds = 1.2f, matchRotation = false, walkAnimator = walkAnimator,
+    };
+
+    /// <summary>
+    /// Marker halfway between Hidden and Stand, facing the way she walks, placed right after Hidden
+    /// in the hierarchy so the markers read in order.
+    /// </summary>
+    private static Transform EnsureWalkToMarker(Transform hidden, Transform stand, StringBuilder report)
+    {
+        Transform group = stand.parent;
+        var existing = group != null ? group.Find(WalkToName) : null;
+        if (existing != null) return existing;
+
+        Vector3 from = hidden != null ? hidden.position : stand.position - stand.forward;
+        Vector3 pos  = Vector3.Lerp(from, stand.position, 0.5f);
+        Vector3 dir  = stand.position - from;
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.0001f) dir = stand.forward;
+
+        var go = new GameObject(WalkToName, typeof(CutsceneMarker));
+        Undo.RegisterCreatedObjectUndo(go, "Add Paeng 3.5 WalkTo");
+        go.transform.SetParent(group, false);
+        go.transform.SetPositionAndRotation(pos, Quaternion.LookRotation(dir.normalized, Vector3.up));
+        if (hidden != null && hidden.parent == group)
+            go.transform.SetSiblingIndex(hidden.GetSiblingIndex() + 1);
+
+        report.AppendLine($"  + Marker '{WalkToName}' halfway between Hidden and Stand (drag it into place)");
+        return go.transform;
+    }
 
     private static Transform Marker(Transform group, string name, Vector3 position, Vector3 facing, StringBuilder report)
     {

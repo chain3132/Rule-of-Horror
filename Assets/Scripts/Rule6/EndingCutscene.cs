@@ -485,10 +485,26 @@ namespace Rule6
                 else StartCoroutine(run);
             }
 
+            // คัทซีนไหนไม่มีขั้นตัดไปจอ UI/จอดำ ก็ต้องไม่มีเสียงรถค้างใต้จอจบ
+            SilenceBus();
+
             if (endCard) yield return EndCard();
 
             _playing = false;
         }
+
+        /// <summary>
+        /// ปิดเสียงรถคันที่นั่งมา — เรียกตอนคัทซีนออกจากฉากในรถ (หน้าแชท / ยกโทรศัพท์ / ตัดดำ)
+        ///
+        /// รถยังวิ่งต่อและยังอยู่ในฉาก (ขั้น Bus Drive ไม่รอให้จบ) เสียง 3D ของมันจึงดังติดหูผู้เล่น
+        /// ที่นั่งอยู่ในรถตลอด แม้ภาพจะตัดไปหน้าโทรศัพท์แล้วก็ตาม
+        /// </summary>
+        private void SilenceBus()
+        {
+            if (_bus != null) _bus.SilenceEngine();
+        }
+
+        private static bool IsDark(Color c) => c.r + c.g + c.b < 0.3f;
 
         /// <summary>
         /// หยุดทุกอย่างที่ค้างอยู่ — เรียกตอนกฎ 6 ถูกปิดกลางคัน
@@ -558,6 +574,9 @@ namespace Rule6
                     return null;
 
                 case StepAction.Fade:
+                    // ตัดดำเต็มจอ = ออกจากฉากในรถแล้ว (แสงขาวจ้าแบบโปร่งของรถชนยังอยู่ในฉาก ไม่นับ)
+                    if (step.fade == FadeDirection.ToBlack && step.fadeAlpha >= 0.99f && IsDark(step.fadeColor))
+                        SilenceBus();
                     return step.fade == FadeDirection.ToBlack
                         ? Fade(step.fadeAlpha, step.seconds, step.fadeColor)
                         : Fade(0f, step.seconds, null);
@@ -581,7 +600,10 @@ namespace Rule6
                     {
                         // เปิดหน้าแชทเต็มจอ = ตัดไปหน้า UI แถบต้องหายพร้อมกัน ไม่งั้นบังหัว/ท้ายแชท
                         if (step.active && step.target.GetComponentInChildren<EndingChat>(true) != null)
+                        {
                             SetBars(false, 0f);
+                            SilenceBus();
+                        }
                         step.target.SetActive(step.active);
                     }
                     else Debug.LogWarning($"[EndingCutscene] ขั้น {index} ({step.note}) ยังไม่ได้ใส่ Target", this);
@@ -589,6 +611,7 @@ namespace Rule6
 
                 case StepAction.Chat:
                     SetBars(false, 0f);
+                    SilenceBus();
                     if (step.chat != null) return step.chat.Play();
                     Debug.LogWarning($"[EndingCutscene] ขั้น {index} ({step.note}) ยังไม่ได้ใส่ Chat", this);
                     return null;
@@ -599,7 +622,11 @@ namespace Rule6
                         Debug.LogWarning($"[EndingCutscene] ขั้น {index} ({step.note}) ยังไม่ได้ใส่ Phone", this);
                         return null;
                     }
-                    if (step.show) return step.phone.Show();
+                    if (step.show)
+                    {
+                        SilenceBus();   // ยกโทรศัพท์ = ฉากหลังดำ ไม่ได้อยู่ในรถแล้ว
+                        return step.phone.Show();
+                    }
                     step.phone.Hide();
                     return null;
 

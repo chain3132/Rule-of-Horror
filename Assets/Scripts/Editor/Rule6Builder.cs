@@ -648,7 +648,7 @@ public static class Rule6Builder
                           "clue which bus is the way out");
         report.AppendLine("   6. Write the four Ending Object screens on Rule6 and the dialogue lines " +
                           "for each ending");
-        report.AppendLine("   7. FMOD events: event:/Rule6/Background Rule 6, Bus (driving loop), Buswait (idle loop)," +
+        report.AppendLine("   7. FMOD events: event:/Rule6/Background Rule 6, Bus (driving loop), BusWait (idle loop)," +
                           "BusArrive, BusDepart, Board, PhoneRing");
         report.AppendLine("   8. Fill the Death Screen on the PermanentDeath component - that is what " +
                           "the player sees when they die on a looped night, and it is the only thing " +

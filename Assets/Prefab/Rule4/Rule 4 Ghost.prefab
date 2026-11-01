@@ -98,11 +98,15 @@ MonoBehaviour:
   staredBrake: 60
   sprintSpeed: 3.2
   sprintDuration: 4
-  speedGainPerDoll: 1.5
+  speedGainPerDoll: 1
   beforeChaseDuration: 3.97
   windupOnFirstChase: 1
   laughDelayAfterCrack: 2.5
   debugWindupHeight: 1
+  wanderSpeed: 0.8
+  wanderRadius: 6
+  wanderRepathInterval: 3
+  wanderMaxDotToPlayer: 0.2
   markerTurnSpeed: 1.5
   killDistance: 3
   strideLength: 0.9
@@ -111,10 +115,15 @@ MonoBehaviour:
   repathInterval: 0.25
   animator: {fileID: 721230193153240017}
   runBoolName: isRun
+  walkBoolName: isWalk
   runSpeedParamName: RunSpeed
   runClipNaturalSpeed: 1.6
   minRunAnimSpeed: 0.08
   maxRunAnimSpeed: 2.5
+  walkSpeedParamName: WalkSpeed
+  walkClipNaturalSpeed: 0.8
+  minWalkAnimSpeed: 0.2
+  maxWalkAnimSpeed: 1.6
 --- !u!1 &6670290070714472053
 GameObject:
   m_ObjectHideFlags: 0

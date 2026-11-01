@@ -114,7 +114,7 @@ namespace Rule6
         [SerializeField] private string driveEvent = DefaultDriveEvent;
 
         [Tooltip("เสียงตอนรถจอดรอ (เครื่องเดินเบา, 3D loop) — เว้นว่าง = จอดแล้วเงียบ")]
-        [SerializeField] private string idleEvent = "event:/Rule6/Buswait";
+        [SerializeField] private string idleEvent = DefaultIdleEvent;
 
         [Tooltip("เร็วกว่านี้ (เมตร/วินาที) = นับว่ารถกำลังวิ่ง")]
         [SerializeField] private float movingSpeed = 0.3f;
@@ -125,8 +125,13 @@ namespace Rule6
 
         private const string DefaultDriveEvent = "event:/Rule6/Bus";
 
-        // ชื่อเก่าก่อนแยกเสียงวิ่ง/จอด — ไม่มีใน FMOD แล้ว ฉากที่เซฟค่านี้ไว้ต้องถูกแปลงเป็นชื่อใหม่
+        private const string DefaultIdleEvent  = "event:/Rule6/BusWait";
+
+        // ชื่อเก่าที่ไม่มีใน FMOD แล้ว — ฉากที่เซฟค่าเหล่านี้ไว้ต้องถูกแปลงเป็นชื่อใหม่
+        //   BusEngine = ก่อนแยกเสียงวิ่ง/จอด
+        //   Buswait   = ก่อนเปลี่ยนเป็น W ใหญ่ใน FMOD
         private const string LegacyEngineEvent = "event:/Rule6/BusEngine";
+        private const string LegacyIdleEvent   = "event:/Rule6/Buswait";
 
         // ─────────────────────────── Runtime ───────────────────────────
 
@@ -323,6 +328,12 @@ namespace Rule6
             _engineLastPos     = transform.position;
         }
 
+        /// <summary>
+        /// ปิดเสียงเครื่อง (ค่อยๆ เบาลง) ทั้งที่รถยังอยู่ — คัทซีนตัดไปจอโทรศัพท์/จอดำแล้ว
+        /// ภาพไม่ได้อยู่ในรถอีกต่อไป เสียงรถต้องไม่ตามไปด้วย จะดังอีกครั้งตอน Appear รอบหน้า
+        /// </summary>
+        public void SilenceEngine() => StopEngine();
+
         private void StopEngine()
         {
             if (!_engineStarted) return;
@@ -398,6 +409,7 @@ namespace Rule6
             if (string.IsNullOrWhiteSpace(path)) return false;
 
             if (path == LegacyEngineEvent) path = DefaultDriveEvent;
+            if (path == LegacyIdleEvent)   path = DefaultIdleEvent;
 
             try
             {
@@ -417,6 +429,7 @@ namespace Rule6
         private void OnValidate()
         {
             if (driveEvent == LegacyEngineEvent) driveEvent = DefaultDriveEvent;
+            if (idleEvent  == LegacyIdleEvent)   idleEvent  = DefaultIdleEvent;
         }
 #endif
 
