@@ -824,10 +824,10 @@ namespace RuleSystem.Rule
         /// ยึดนาฬิกาก่อนเริ่ม: คัทซีนยาวได้เป็นนาที ถ้าเวลาเดินไปถึง 24:40 ระหว่างนั้น
         /// RuleManager จะสั่ง EndRule ทับกลางคัทซีน
         /// </summary>
-        IEnumerator PlayCutscene(EndingCutscene cutscene, Rule6Bus bus)
+        IEnumerator PlayCutscene(EndingCutscene cutscene, Rule6Bus bus, Action beforeEndCard = null)
         {
             HoldClock();
-            yield return cutscene.Play(bus, _ride, departPoint);
+            yield return cutscene.Play(bus, _ride, departPoint, beforeEndCard);
         }
 
         /// <summary>
@@ -901,9 +901,10 @@ namespace RuleSystem.Rule
         /// </summary>
         IEnumerator DeathEnding(Rule6Bus bus)
         {
+            // "ขอโทษ" — ทุกการตายตั้งแต่กฎ 3 รวมบทจบนี้ด้วย ดังในความเงียบหลังรถชน ก่อนจอจบขึ้น
             if (deathCutscene != null)
             {
-                yield return PlayCutscene(deathCutscene, bus);
+                yield return PlayCutscene(deathCutscene, bus, AudioManager.instance.PlayGhostSorry);
                 FinishEnding(Rule6BusKind.Death, deathEndingObject, warnIfMissing: false);
                 yield break;
             }
@@ -913,6 +914,7 @@ namespace RuleSystem.Rule
                 AudioManager.instance.PlayRule3Death();
                 ParkPlayerForCutscene(bus);
             });
+            AudioManager.instance.PlayGhostSorry();
 
             yield return new WaitUntil(PlayerEyesOpened);
 

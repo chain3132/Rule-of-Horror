@@ -256,7 +256,10 @@ public class Rule1 : RuleBase
 
         // รอผู้เล่นกลับมานั่ง
         if (PlayerController.Instance.IsSitting())
+        {
+            ReportCompleted();
             EndRule();
+        }
     }
 
     // ─────────────────────────── Callback จาก PhoneGroundPickup ───────────────────────────

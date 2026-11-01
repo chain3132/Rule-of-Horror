@@ -365,7 +365,10 @@ public class Rule3 : RuleBase
 
             // ── Step 2: Ghost starts turning head (SitTurningHead) ──
             if (ghostAnimator != null)
+            {
                 ghostAnimator.SetTrigger("TurnHead");
+                AudioManager.instance.PlayGhostDontSleep(ghostAnimator.transform.position);   // "อย่าหลับ"
+            }
 
             yield return new WaitForSeconds(ghostTurnAnimDuration);
             if (!_isRuleActive) yield break;
@@ -513,6 +516,7 @@ public class Rule3 : RuleBase
         // ① Death sound + camera fall play simultaneously
         AudioManager.instance.PlayRule3Death();
         yield return StartCoroutine(PlayerController.Instance.PlayDeathFallRoutine());
+        AudioManager.instance.PlayGhostSorry();   // "ขอโทษ" — ทุกการตายตั้งแต่กฎ 3
 
         // ② Short pause at the fallen position
         yield return new WaitForSeconds(0.5f);
@@ -544,7 +548,10 @@ public class Rule3 : RuleBase
         }
 
         if (!isGameOver)
+        {
+            ReportCompleted();
             EndRule();          // success path – normal progression
+        }
         else
             StartCoroutine(GameOverResetRoutine()); // death path – reset & retry
     }

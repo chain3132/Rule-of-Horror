@@ -229,6 +229,8 @@ namespace RuleSystem
                 return;
             }
 
+            // ข้ามกฎ = นับว่าผ่าน (สมุดโน้ตปลดล็อกโน้ตของข้อนี้ให้เทสต่อได้)
+            active.ReportCompleted();
             active.EndRule();
 
             // กฎหลายข้อสั่ง IsPauseTime(false) + SetTime ใน EndRule อยู่แล้ว แต่บางข้อไม่ทำ

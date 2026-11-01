@@ -6822,7 +6822,7 @@ MonoBehaviour:
   - note: SHOT 6
     action: 0
     waitToFinish: 1
-    seconds: 4
+    seconds: 6
     lookTarget: {fileID: 0}
     holdUntilHidden: 0
     maxHoldSeconds: 8
@@ -23464,16 +23464,16 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 588932628}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 573bfc5ec9f8edb45b406b5b33ac2405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rule4.Rule4DevSkip
   rule4: {fileID: 675104924}
-  enableDevSkip: 0
+  enableDevSkip: 1
   jumpKey: 97
   toggleDollLinesKey: 98
-  freezeClockOnStart: 0
+  freezeClockOnStart: 1
   jumpHour: 21
   jumpMinute: 59
   showDollLines: 0
@@ -23534,7 +23534,7 @@ MonoBehaviour:
   rule1: {fileID: 421595021}
   rule2: {fileID: 859750947}
   rule3: {fileID: 842431700}
-  enableDevSkip: 0
+  enableDevSkip: 1
   rule1Key: 94
   rule2Key: 95
   rule3Key: 96
@@ -23551,7 +23551,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 588932628}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c8ff162045c9e84f8b72cc6605f63f3, type: 3}
   m_Name: 
@@ -55517,82 +55517,6 @@ MonoBehaviour:
     stagger: 0.4
     yawOnly: 1
     barsOn: 1
-  - note: "SHOT 5 \xB7 hidden: ghost model off"
-    action: 8
-    waitToFinish: 1
-    seconds: 1
-    lookTarget: {fileID: 0}
-    holdUntilHidden: 0
-    maxHoldSeconds: 8
-    driveTo: {fileID: 0}
-    vcam: {fileID: 0}
-    fade: 0
-    fadeColor: {r: 0, g: 0, b: 0, a: 1}
-    fadeAlpha: 1
-    fmodEvent: 
-    soundAt: {fileID: 0}
-    lines: []
-    animator: {fileID: 0}
-    trigger: 
-    target: {fileID: 107553686}
-    active: 0
-    chat: {fileID: 0}
-    phone: {fileID: 0}
-    show: 1
-    mover: {fileID: 0}
-    moveTo: {fileID: 0}
-    matchRotation: 1
-    walkAnimator: {fileID: 0}
-    walkBool: 
-    parentTo: {fileID: 0}
-    shakeAmplitude: 4
-    shakeTilt: 10
-    shakeHoldAtEnd: 1
-    light: {fileID: 0}
-    lightIntensity: 20
-    turners: []
-    turnTarget: {fileID: 0}
-    stagger: 0.4
-    yawOnly: 1
-    barsOn: 1
-  - note: "SHOT 5 \xB7 hidden: normal model on"
-    action: 8
-    waitToFinish: 1
-    seconds: 1
-    lookTarget: {fileID: 0}
-    holdUntilHidden: 0
-    maxHoldSeconds: 8
-    driveTo: {fileID: 0}
-    vcam: {fileID: 0}
-    fade: 0
-    fadeColor: {r: 0, g: 0, b: 0, a: 1}
-    fadeAlpha: 1
-    fmodEvent: 
-    soundAt: {fileID: 0}
-    lines: []
-    animator: {fileID: 0}
-    trigger: 
-    target: {fileID: 1412211307}
-    active: 1
-    chat: {fileID: 0}
-    phone: {fileID: 0}
-    show: 1
-    mover: {fileID: 0}
-    moveTo: {fileID: 0}
-    matchRotation: 1
-    walkAnimator: {fileID: 0}
-    walkBool: 
-    parentTo: {fileID: 0}
-    shakeAmplitude: 4
-    shakeTilt: 10
-    shakeHoldAtEnd: 1
-    light: {fileID: 0}
-    lightIntensity: 20
-    turners: []
-    turnTarget: {fileID: 0}
-    stagger: 0.4
-    yawOnly: 1
-    barsOn: 1
   - note: "SHOT 5 \xB7 soft music - first time in the game (put the FMOD event)"
     action: 5
     waitToFinish: 1
@@ -55656,8 +55580,8 @@ MonoBehaviour:
     mover: {fileID: 1250172754}
     moveTo: {fileID: 28476966}
     matchRotation: 0
-    walkAnimator: {fileID: 1412211308}
-    walkBool: walk
+    walkAnimator: {fileID: 0}
+    walkBool: 
     parentTo: {fileID: 0}
     shakeAmplitude: 4
     shakeTilt: 10
@@ -55687,6 +55611,82 @@ MonoBehaviour:
     animator: {fileID: 0}
     trigger: 
     target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 5 \xB7 hidden: ghost model off"
+    action: 8
+    waitToFinish: 1
+    seconds: 1
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 107553686}
+    active: 0
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 5 \xB7 hidden: normal model on"
+    action: 8
+    waitToFinish: 1
+    seconds: 1
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 1412211307}
     active: 1
     chat: {fileID: 0}
     phone: {fileID: 0}
@@ -56014,7 +56014,7 @@ MonoBehaviour:
   - note: SHOT 7
     action: 0
     waitToFinish: 1
-    seconds: 2
+    seconds: 5
     lookTarget: {fileID: 0}
     holdUntilHidden: 0
     maxHoldSeconds: 8
@@ -56094,7 +56094,7 @@ MonoBehaviour:
     lookTarget: {fileID: 0}
     holdUntilHidden: 0
     maxHoldSeconds: 8
-    driveTo: {fileID: 0}
+    driveTo: {fileID: 70341717}
     vcam: {fileID: 0}
     fade: 0
     fadeColor: {r: 0, g: 0, b: 0, a: 1}
@@ -56166,10 +56166,48 @@ MonoBehaviour:
   - note: "SHOT 8 \xB7 watch the pavilion fall away past the window"
     action: 1
     waitToFinish: 1
-    seconds: 1.2
+    seconds: 2
     lookTarget: {fileID: 168090232}
     holdUntilHidden: 1
     maxHoldSeconds: 4
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    lines: []
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: wait of cut scene
+    action: 0
+    waitToFinish: 1
+    seconds: 4
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
     driveTo: {fileID: 0}
     vcam: {fileID: 0}
     fade: 0
@@ -57155,7 +57193,7 @@ MonoBehaviour:
   - note: "SHOT 3 \xB7 a moment of driving before anything shows"
     action: 0
     waitToFinish: 1
-    seconds: 1.5
+    seconds: 5
     lookTarget: {fileID: 0}
     holdUntilHidden: 0
     maxHoldSeconds: 8
@@ -63328,8 +63366,8 @@ Transform:
   m_GameObject: {fileID: 1111593575}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0.7071068, z: 0, w: 0}
-  m_LocalPosition: {x: 0.00009, y: 0.00798, z: 0.00003}
-  m_LocalScale: {x: 0.01409677, y: 0.019999994, z: 0.049999986}
+  m_LocalPosition: {x: 0.0003, y: 0.008, z: 0.0006}
+  m_LocalScale: {x: 0.010220158, y: 0.014499996, z: 0.049999986}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 502650194}
@@ -63352,7 +63390,7 @@ MonoBehaviour:
   inkStyle: 0
   side: 0
   spreadOverride: -1
-  pageSize: {x: 0.35, y: 0.4}
+  pageSize: {x: 0.28, y: 0.29}
   flipHorizontal: 0
   flipVertical: 0
 --- !u!23 &1111593578
@@ -67918,8 +67956,8 @@ Transform:
   m_GameObject: {fileID: 1278596892}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0.7071068, z: 0, w: 0}
-  m_LocalPosition: {x: 0.00009, y: 0.00798, z: 0.00003}
-  m_LocalScale: {x: 0.014096768, y: 0.01999999, z: 0.049999975}
+  m_LocalPosition: {x: 0.0001, y: 0.008, z: 0.0004}
+  m_LocalScale: {x: 0.010220156, y: 0.014499993, z: 0.049999975}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 502650193}
@@ -67942,7 +67980,7 @@ MonoBehaviour:
   inkStyle: 0
   side: 0
   spreadOverride: -1
-  pageSize: {x: 0.35, y: 0.4}
+  pageSize: {x: 0.28, y: 0.29}
   flipHorizontal: 0
   flipVertical: 0
 --- !u!23 &1278596895
@@ -88186,7 +88224,7 @@ Transform:
   m_GameObject: {fileID: 1702474402}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.8, z: -72}
+  m_LocalPosition: {x: 0, y: 2.8, z: -98.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -106010,8 +106048,8 @@ Transform:
   m_GameObject: {fileID: 1770847963}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0.7071068, z: 0, w: 0}
-  m_LocalPosition: {x: 0.00009, y: 0.00798, z: 0.00003}
-  m_LocalScale: {x: 0.01409677, y: 0.019999994, z: 0.049999986}
+  m_LocalPosition: {x: 0.0001, y: 0.008, z: 0.0004}
+  m_LocalScale: {x: 0.010220158, y: 0.014499996, z: 0.049999986}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 502650190}
@@ -106034,7 +106072,7 @@ MonoBehaviour:
   inkStyle: 0
   side: 0
   spreadOverride: -1
-  pageSize: {x: 0.35, y: 0.4}
+  pageSize: {x: 0.28, y: 0.29}
   flipHorizontal: 0
   flipVertical: 0
 --- !u!23 &1770847966
@@ -109052,8 +109090,8 @@ Transform:
   m_GameObject: {fileID: 1916335693}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0.7071068, z: 0, w: 0}
-  m_LocalPosition: {x: 0.00009, y: 0.00798, z: 0.00003}
-  m_LocalScale: {x: 0.01409677, y: 0.019999994, z: 0.049999986}
+  m_LocalPosition: {x: 0.0001, y: 0.008, z: 0.0004}
+  m_LocalScale: {x: 0.010220158, y: 0.014499996, z: 0.049999986}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 502650191}
@@ -109076,7 +109114,7 @@ MonoBehaviour:
   inkStyle: 0
   side: 0
   spreadOverride: -1
-  pageSize: {x: 0.35, y: 0.4}
+  pageSize: {x: 0.28, y: 0.29}
   flipHorizontal: 0
   flipVertical: 0
 --- !u!23 &1916335696
@@ -111312,15 +111350,18 @@ MonoBehaviour:
   pageCount: 7
   openState: Armature|OpenBook
   pageStateFormat: Armature|Page{0}
-  openOnStart: 1
-  canClose: 1
+  clipNumberOffset: 1
   turnSpeed: 1
+  closeSpeed: 2.5
   inputHandler: {fileID: 1279262527}
   focusPoint: {fileID: 0}
   readDistance: 3
   lookAngle: 35
-  lockMovementWhileReading: 1
-  hint: 
+  holdDistance: 0
+  holdMargin: 1.1
+  moveSeconds: 0.6
+  pickUpHint: E   Read
+  readingHint: A / D   Turn page      E   Put back
 --- !u!1 &2017312710
 GameObject:
   m_ObjectHideFlags: 0
@@ -111505,7 +111546,7 @@ Transform:
   m_GameObject: {fileID: 2018528216}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: -1.385, y: 1.957, z: -3.333}
+  m_LocalPosition: {x: -1.385, y: 1.957, z: -3.448}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -115273,8 +115314,8 @@ Transform:
   m_GameObject: {fileID: 2136547854}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0.7071068, z: 0, w: 0}
-  m_LocalPosition: {x: 0.00009, y: 0.00798, z: 0.00003}
-  m_LocalScale: {x: 0.014096768, y: 0.01999999, z: 0.049999975}
+  m_LocalPosition: {x: 0.0001, y: 0.008, z: 0.0004}
+  m_LocalScale: {x: 0.010220156, y: 0.014499993, z: 0.049999975}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 502650192}
@@ -115297,7 +115338,7 @@ MonoBehaviour:
   inkStyle: 0
   side: 0
   spreadOverride: -1
-  pageSize: {x: 0.35, y: 0.4}
+  pageSize: {x: 0.28, y: 0.29}
   flipHorizontal: 0
   flipVertical: 0
 --- !u!23 &2136547857

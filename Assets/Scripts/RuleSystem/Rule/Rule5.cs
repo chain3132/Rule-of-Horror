@@ -727,6 +727,7 @@ namespace RuleSystem.Rule
             AudioManager.instance.PlayRule5Complete();
 
             yield return new WaitForSeconds(2f);
+            ReportCompleted();
             EndRule();
         }
 
@@ -800,6 +801,9 @@ namespace RuleSystem.Rule
         /// <summary>ส่วนท้ายของการตายทุกแบบ — เคลียร์ / blink กลับ / rewind เวลาให้ RuleManager เรียกกฎใหม่</summary>
         IEnumerator FinishGameOver()
         {
+            // "ขอโทษ" — ทุกการตายตั้งแต่กฎ 3 (ทั้งผีกระโดดใส่และหัวใจวาย มาจบที่นี่)
+            AudioManager.instance.PlayGhostSorry();
+
             CleanupGameplay();
 
             var player = PlayerController.Instance;

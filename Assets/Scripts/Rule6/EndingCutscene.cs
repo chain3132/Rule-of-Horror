@@ -449,7 +449,7 @@ namespace Rule6
         /// ride ต้องเป็นตัวเดียวกับที่กฎ 6 ใช้ เพราะคัทซีนพาผู้เล่นไปกับรถด้วยตัวนั้น
         /// defaultDriveTo = จุด Depart ของกฎ 6 สำหรับขั้น Bus Drive ที่ไม่ได้ใส่ปลายทาง
         /// </summary>
-        public IEnumerator Play(Rule6Bus bus, BusRide ride, Transform defaultDriveTo)
+        public IEnumerator Play(Rule6Bus bus, BusRide ride, Transform defaultDriveTo, Action beforeEndCard = null)
         {
             _bus            = bus;
             _ride           = ride;
@@ -487,6 +487,9 @@ namespace Rule6
 
             // คัทซีนไหนไม่มีขั้นตัดไปจอ UI/จอดำ ก็ต้องไม่มีเสียงรถค้างใต้จอจบ
             SilenceBus();
+
+            // ของที่ผู้เรียกอยากให้เกิดตอนลิสต์จบ ก่อนจอจบขึ้น (บทจบตาย: เสียงผี "ขอโทษ")
+            beforeEndCard?.Invoke();
 
             if (endCard) yield return EndCard();
 

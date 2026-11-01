@@ -682,6 +682,7 @@ namespace RuleSystem.Rule
 
             yield return new WaitForSeconds(2f);
 
+            ReportCompleted();
             EndRule();
         }
 
@@ -772,6 +773,7 @@ namespace RuleSystem.Rule
             if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.Hide();
 
             yield return StartCoroutine(PlayerController.Instance.PlayDeathFallRoutine());
+            AudioManager.instance.PlayGhostSorry();   // "ขอโทษ" — ทุกการตายตั้งแต่กฎ 3
             yield return new WaitForSeconds(0.5f);
 
             CleanupGameplay();

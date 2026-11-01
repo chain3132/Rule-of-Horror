@@ -15,6 +15,33 @@ namespace RuleSystem
         public bool ruleActive;
         private HorrorTextUI _horrorTextUI;
 
+        /// <summary>
+        /// ผ่านกฎข้อนี้สำเร็จ (ไม่ใช่ตาย ไม่ใช่ถูกย้อนเวลา) — สมุดโน้ตฟังตัวนี้เพื่อปลดล็อกโน้ตของข้อนั้น
+        ///
+        /// แยกจาก EndRule เพราะ EndRule ถูกเรียกทั้งตอนผ่านและตอนตาย (ทางตายเรียก base.EndRule()
+        /// เพื่อให้ RuleManager trigger ข้อเดิมใหม่) ดูจาก EndRule อย่างเดียวจึงแยกสองทางไม่ออก
+        /// </summary>
+        public static event System.Action<RuleBase> OnRuleCompleted;
+
+        // ปิด Reload Domain แล้ว static ไม่ถูกล้างเอง — event ที่ค้างจากรอบ Play ก่อนจะชี้ไปหา object ที่ถูกทำลายไปแล้ว
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() => OnRuleCompleted = null;
+
+        /// <summary>เลขของกฎจากชื่อคลาส (Rule3 → 3) — 0 = ไม่มีเลข</summary>
+        public int Number
+        {
+            get
+            {
+                string n = GetType().Name;
+                int i = n.Length;
+                while (i > 0 && char.IsDigit(n[i - 1])) i--;
+                return i < n.Length && int.TryParse(n.Substring(i), out int number) ? number : 0;
+            }
+        }
+
+        /// <summary>เรียกที่ทางผ่านของกฎแต่ละข้อ ก่อน EndRule() — ทางตายห้ามเรียก</summary>
+        public void ReportCompleted() => OnRuleCompleted?.Invoke(this);
+
         
         public virtual void StartRule()
         {

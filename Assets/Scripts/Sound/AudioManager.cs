@@ -386,6 +386,22 @@ public class AudioManager : MonoBehaviour
         ghostWarning.start();
     }
 
+    // ─────────── เสียงผีพูด ───────────
+
+    /// <summary>"อย่าหลับ" — กฎ 3 ทุกครั้งที่ผีหันหน้ามาหาผู้เล่น ดังจากตัวผี</summary>
+    public void PlayGhostDontSleep(Vector3 position)
+        => SafeOneShot("event:/Ghost/don't sleep 1", position);
+
+    /// <summary>
+    /// "ขอโทษ" — ทุกครั้งที่ผู้เล่นตาย ตั้งแต่กฎ 3 เป็นต้นไป
+    /// ดังที่หูผู้เล่น ไม่ใช่ที่ตัวผี — ตอนตายกล้องล้มลงพื้น ผีอาจอยู่ไกลหรือถูกลบไปแล้ว
+    /// </summary>
+    public void PlayGhostSorry()
+    {
+        Camera cam = Camera.main;
+        SafeOneShot("event:/Ghost/Sorry 2", cam != null ? cam.transform.position : Vector3.zero);
+    }
+
     // ─────────── Rule 3 Intro (mode-transition) ───────────
 
     /// <summary>Start the looping heartbeat + build-up tension that play during the Tension blink transition.</summary>

@@ -112,6 +112,9 @@ public class SittingPoint : MonoBehaviour
     {
         if (_player == null) return;
 
+        // ผู้เล่นกำลังเล็ง/ถือสมุดโน้ตบนโต๊ะศาลา — E ตอนนี้เป็นของสมุด ไม่ใช่ของม้านั่ง
+        if (Book.BookPageTurner.ClaimsInteract) return;
+
         // กันไว้อีกชั้นตอนกดจริง — ต่อให้ยังไม่ทันถอนการฟังปุ่ม ม้านั่งที่อยู่ไกลต้องไม่ดึงตัวผู้เล่นกลับมา
         if (!IsPlayerInRange(_player))
         {

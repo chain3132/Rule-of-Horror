@@ -124,6 +124,34 @@ namespace Book
         /// <summary>ปิดหนังสือ — หยุดทุกวิดีโอ</summary>
         public void Close() => SetSpread(Closed);
 
+        /// <summary>Note ทุกอันในหนังสือ</summary>
+        public IReadOnlyList<BookNoteSurface> Surfaces => _surfaces;
+
+        /// <summary>
+        /// เล่นวิดีโอของหน้าคู่ที่เปิดอยู่ใหม่ตั้งแต่ต้น — ผู้เล่นหยิบสมุดขึ้นมาอ่าน ตัวหนังสือเขียนตัวเองใหม่อีกรอบ
+        /// ไม่ล้างหมึกก่อน: เฟรมเก่าค้างจนเฟรมแรกของรอบใหม่มาทับ (เฟรมแรกเป็นหน้าว่าง หมึกจึงหายไปเอง)
+        /// </summary>
+        public void Replay()
+        {
+            if (_slots == null) return;
+
+            foreach (var slot in _slots)
+            {
+                if (slot.Surface == null) continue;
+
+                if (slot.Player.isPrepared)
+                {
+                    slot.Player.time = 0;
+                    slot.Player.Play();
+                }
+                else
+                {
+                    slot.PendingTime = 0;
+                    slot.Player.Prepare();
+                }
+            }
+        }
+
         /// <summary>หา Note ในหนังสือใหม่ — เรียกถ้าเพิ่ม/ลบ BookNoteSurface ตอนเกมเล่นอยู่</summary>
         public void RefreshSurfaces()
         {

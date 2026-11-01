@@ -86,6 +86,8 @@ namespace Book
 
         public InkStyle Style => inkStyle;
 
+        public PageSide Side => side;
+
         /// <summary>วิดีโอของภาษานี้ — ไม่มีก็ใช้อีกภาษาแทน ดีกว่าหน้ากระดาษว่าง</summary>
         public VideoClip ClipFor(bool thai)
         {

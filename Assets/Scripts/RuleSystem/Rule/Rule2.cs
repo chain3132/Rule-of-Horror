@@ -641,6 +641,7 @@ namespace RuleSystem.Rule
             // รอนิดนึงหลังเหตุการณ์ → จบ Rule
             yield return new WaitForSeconds(2f);
             AudioManager.instance.StopPlayRadioPrayer();
+            ReportCompleted();
             EndRule();
         }
 
