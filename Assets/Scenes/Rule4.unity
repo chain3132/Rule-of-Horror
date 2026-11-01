@@ -23551,13 +23551,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 588932628}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c8ff162045c9e84f8b72cc6605f63f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rule6.Rule6DevSkip
   rule6: {fileID: 1815186555}
-  enableDevSkip: 1
+  enableDevSkip: 0
   enterRuleKey: 104
   nextBusKey: 105
   armPermanentDeathKey: 84
