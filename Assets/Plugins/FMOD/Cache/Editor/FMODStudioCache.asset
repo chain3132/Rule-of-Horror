@@ -655,6 +655,26 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 80
   Length: 0
+--- !u!114 &-7146311529320431428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Rules3.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: Fmod/RuleOfHorror/Build/Desktop/Rules3.bank
+  Name: Rules3
+  StudioPath: bank:/Rules3
+  lastModified: 639290823969583564
+  FileSizes:
+  - Name: Desktop
+    Value: 18400
+  Exists: 1
 --- !u!114 &-7079097143769619240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -896,7 +916,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/BoneBroken.bank
   Name: BoneBroken
   StudioPath: bank:/New Folder/BoneBroken
-  lastModified: 639285412994615895
+  lastModified: 639290823969878061
   FileSizes:
   - Name: Desktop
     Value: 7520
@@ -1598,7 +1618,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/WomanSound.bank
   Name: WomanSound
   StudioPath: bank:/WomanSound
-  lastModified: 639285412994355158
+  lastModified: 639290823968548339
   FileSizes:
   - Name: Desktop
     Value: 56096
@@ -1920,6 +1940,33 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &-3499846721906549580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ghost/Wait me 1
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Ghost/Wait me 1
+  Guid:
+    Data1: 161008524
+    Data2: 1179034689
+    Data3: -948500848
+    Data4: 1966290123
+  Banks:
+  - {fileID: 242708116425849655}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &-3198855560229535009
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2473,7 +2520,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule2.bank
   Name: Rule2
   StudioPath: bank:/Rule2
-  lastModified: 639285412988565582
+  lastModified: 639290823965337268
   FileSizes:
   - Name: Desktop
     Value: 1030912
@@ -2742,6 +2789,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1166
+--- !u!114 &-728862365290280292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ghost/Sorry 2
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Ghost/Sorry 2
+  Guid:
+    Data1: -467208907
+    Data2: 1113267401
+    Data3: -783657538
+    Data4: -1098548434
+  Banks:
+  - {fileID: 5520231885728977804}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &-720689364606467603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2840,8 +2914,8 @@ MonoBehaviour:
     Data3: -493498185
     Data4: 2133030281
   Banks:
-  - {fileID: -4368771935535294408}
   - {fileID: 2037088329598349015}
+  - {fileID: -4368771935535294408}
   IsStream: 0
   Is3D: 1
   IsOneShot: 0
@@ -3047,10 +3121,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Radio.bank
   Name: Radio
   StudioPath: bank:/Radio
-  lastModified: 639285412987671129
+  lastModified: 639290823964844845
   FileSizes:
   - Name: Desktop
-    Value: 6797216
+    Value: 6797408
   Exists: 1
 --- !u!114 &-252490073037744945
 MonoBehaviour:
@@ -3177,7 +3251,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Intro.bank
   Name: Intro
   StudioPath: bank:/Intro
-  lastModified: 639285420553287282
+  lastModified: 639290823963723415
   FileSizes:
   - Name: Desktop
     Value: 269984
@@ -3208,6 +3282,8 @@ MonoBehaviour:
   - {fileID: 6285338211224124519}
   - {fileID: 6034062475665250213}
   - {fileID: -42346166195018147}
+  - {fileID: 5520231885728977804}
+  - {fileID: -7146311529320431428}
   EditorEvents:
   - {fileID: -3564296313009200095}
   - {fileID: -167029359368010065}
@@ -3278,13 +3354,16 @@ MonoBehaviour:
   - {fileID: -6744238639030222862}
   - {fileID: -3897900594733164813}
   - {fileID: 6018494142798601598}
+  - {fileID: -728862365290280292}
+  - {fileID: -3499846721906549580}
+  - {fileID: 3138005132260215264}
   EditorParameters: []
   MasterBanks:
   - {fileID: 2037088329598349015}
   StringsBanks:
   - {fileID: 8790939570095508767}
   cacheVersion: 131858
-  cacheTime: 639285431801593056
+  cacheTime: 639290823969878061
   SerializableEventsDict:
   - key: event:/Notification
     index: 0
@@ -3424,6 +3503,12 @@ MonoBehaviour:
     index: 67
   - key: event:/Rule6/BusWait
     index: 68
+  - key: event:/Ghost/Sorry 2
+    index: 69
+  - key: event:/Ghost/Wait me 1
+    index: 70
+  - key: event:/Ghost/don't sleep 1
+    index: 71
 --- !u!114 &125022446526344972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3521,10 +3606,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule4.bank
   Name: Rule4
   StudioPath: bank:/Rule4
-  lastModified: 639285412989431877
+  lastModified: 639290823966991284
   FileSizes:
   - Name: Desktop
-    Value: 1335136
+    Value: 1358624
   Exists: 1
 --- !u!114 &343499979947184952
 MonoBehaviour:
@@ -4201,7 +4286,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639285428687867524
+  lastModified: 639290823964069507
   FileSizes:
   - Name: Desktop
     Value: 39392
@@ -4495,6 +4580,33 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 7584
+--- !u!114 &3138005132260215264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Ghost/don't sleep 1
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Ghost/don't sleep 1
+  Guid:
+    Data1: -4824456
+    Data2: 1271606276
+    Data3: 910481076
+    Data4: 1557731986
+  Banks:
+  - {fileID: -7146311529320431428}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &3238797569342701487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4937,7 +5049,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Action.bank
   Name: Action
   StudioPath: bank:/Action
-  lastModified: 639285412978288515
+  lastModified: 639290823960899963
   FileSizes:
   - Name: Desktop
     Value: 407488
@@ -5004,7 +5116,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/AmbienceBank.bank
   Name: AmbienceBank
   StudioPath: bank:/AmbienceBank
-  lastModified: 639285420550208999
+  lastModified: 639290823963302371
   FileSizes:
   - Name: Desktop
     Value: 2667936
@@ -5481,6 +5593,26 @@ MonoBehaviour:
   IsGlobal: 0
   Labels: []
   Exists: 1
+--- !u!114 &5520231885728977804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Die.bank
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorBankRef
+  Path: Fmod/RuleOfHorror/Build/Desktop/Die.bank
+  Name: Die
+  StudioPath: bank:/Die
+  lastModified: 639290823969121107
+  FileSizes:
+  - Name: Desktop
+    Value: 20448
+  Exists: 1
 --- !u!114 &5543237175582797665
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5766,10 +5898,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule6.bank
   Name: Rule6
   StudioPath: bank:/Rule6
-  lastModified: 639285431801593056
+  lastModified: 639290823967988804
   FileSizes:
   - Name: Desktop
-    Value: 237536
+    Value: 237504
   Exists: 1
 --- !u!114 &6112308488618897596
 MonoBehaviour:
@@ -5840,10 +5972,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Rule5.bank
   Name: Rule5
   StudioPath: bank:/Rule5
-  lastModified: 639285412993833637
+  lastModified: 639290823967662182
   FileSizes:
   - Name: Desktop
-    Value: 690560
+    Value: 690528
   Exists: 1
 --- !u!114 &6512950548796790981
 MonoBehaviour:
@@ -6648,10 +6780,10 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639285428687877565
+  lastModified: 639290823964089498
   FileSizes:
   - Name: Desktop
-    Value: 4646
+    Value: 4852
   Exists: 1
 --- !u!114 &8802997137489455850
 MonoBehaviour:
@@ -6749,7 +6881,7 @@ MonoBehaviour:
   Path: Fmod/RuleOfHorror/Build/Desktop/RunningGhost.bank
   Name: RunningGhost
   StudioPath: bank:/RunningGhost
-  lastModified: 639285412994090459
+  lastModified: 639290823968259157
   FileSizes:
   - Name: Desktop
     Value: 84704
