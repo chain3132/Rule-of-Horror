@@ -112,7 +112,46 @@ namespace Player
             if (!_isSitting && !_isTransitioning)
             {
                 ApplyGravity();
+                GuardLanding();
             }
+        }
+
+        // ─────────────── กันตกทะลุพื้นหลังลุก/ย้ายตัว ───────────────
+
+        /// <summary>ช่วงเวลาหลังลุก/ย้ายตัวที่คอยดูว่าตัวละครหล่นทะลุพื้นหรือเปล่า (วินาที)</summary>
+        private const float LandingGuardSeconds = 1.5f;
+
+        /// <summary>หล่นต่ำกว่าจุดที่วางเท้าเกินนี้ภายในช่วงเฝ้า = ทะลุพื้นแน่ ไม่ใช่เดินลงบันได (เมตร)</summary>
+        private const float LandingGuardDrop = 1.0f;
+
+        private float   _landingGuardUntil;
+        private Vector3 _landingGuardPosition;
+
+        /// <summary>
+        /// ตาข่ายกันตกชั้นสุดท้าย — ลุกจากม้านั่งหรือถูกย้ายตัวแล้วร่วงทะลุพื้นศาลาลงไปข้างล่าง
+        /// ภายในเสี้ยววินาที ให้ดึงกลับมายืนที่จุดเดิม
+        ///
+        /// ผู้เล่นยังขยับไม่ได้ในช่วงนี้แทบทั้งหมด (เพิ่งลุก) การลดระดับเกินเมตรในเวลาสั้นๆ
+        /// จึงมาจากการตกทะลุ collider เท่านั้น ไม่ใช่การเดินลงบันไดศาลา
+        /// </summary>
+        private void GuardLanding()
+        {
+            if (Time.time > _landingGuardUntil) return;
+            if (transform.position.y > _landingGuardPosition.y - LandingGuardDrop) return;
+
+            Debug.LogWarning($"[Player] หล่นทะลุพื้นหลังลุก/ย้ายตัว ({_landingGuardPosition.y:0.00} → " +
+                             $"{transform.position.y:0.00}) — ดึงกลับที่เดิม", this);
+
+            _characterController.enabled = false;
+            transform.position = _landingGuardPosition;
+            _characterController.enabled = true;
+            _verticalVelocity = -2f;
+        }
+
+        private void StartLandingGuard()
+        {
+            _landingGuardPosition = transform.position;
+            _landingGuardUntil    = Time.time + LandingGuardSeconds;
         }
         
 
@@ -279,6 +318,7 @@ namespace Player
             // แล้วค่อยย้าย พื้นที่ไปเกาะจึงเป็นพื้นใต้เบาะ ไม่ใช่พื้นตรงที่ยืนจริง
             SnapToGround();
             _verticalVelocity = -2f;   // ให้ gravity เกาะพื้นทันที ไม่ลอยค้างหนึ่งเฟรม
+            StartLandingGuard();
             SetMovement(true); // ปลดล็อกให้เดินได้
             SetLook(true);     // ปลดล็อกให้หันหน้าได้ปกติ
             _isTransitioning = false;
@@ -301,17 +341,40 @@ namespace Player
         /// <summary>
         /// ยิง Raycast จากด้านบนลงมาหาพื้น แล้ว snap ตัวละครขึ้นไปยืนบนพื้นนั้น
         /// ป้องกันตัวอยู่ใต้ MeshCollider ตอนลุกจากการนั่ง
+        ///
+        /// แก้แค่ "นิดหน่อย" รอบจุดเดิมเท่านั้น (ขึ้นได้ maxRise ลงได้ maxDrop) เพราะจุดที่ส่งมาคือ
+        /// จุดที่ผู้เล่นเคยยืนได้จริง (ก่อนนั่ง) — ของเดิมยิงลงไปไกล 3 เมตรแล้ววางที่อะไรก็ได้ที่
+        /// โดนก่อน ถ้าเส้นลอดช่องพื้นศาลา หรือพื้นศาลาไม่ได้อยู่ในเลเยอร์ที่ raycast เห็น มันจะไป
+        /// ชนพื้นดินใต้ศาลาแล้ววางผู้เล่นไว้ข้างล่างนั้นเลย
+        ///
+        /// ไม่นับ trigger (โซนกดนั่ง / โซนของกฎ) และ collider ของตัวผู้เล่นเอง — ทั้งสองอย่าง
+        /// ไม่ใช่พื้น แต่ Physics.Raycast แบบเดิมชนได้หมด
         /// </summary>
-        private void SnapToGround()
+        private void SnapToGround(float maxRise = 0.6f, float maxDrop = 0.6f)
         {
-            // ยิงจาก 2m เหนือตำแหน่งปัจจุบัน ลงมา 5m เพื่อหาพื้นจริง
-            Vector3 rayStart = transform.position + Vector3.up * 2f;
-            if (Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, 5f))
+            // เขียน transform.position ตรงๆ มาก่อนหน้า (Auto Sync Transforms ปิดอยู่) — ให้ physics รู้ตำแหน่งล่าสุดก่อนยิง
+            Physics.SyncTransforms();
+
+            Vector3 rayStart = transform.position + Vector3.up * maxRise;
+            float   bestDistance = float.MaxValue;
+            Vector3 ground = Vector3.zero;
+
+            foreach (var hit in Physics.RaycastAll(rayStart, Vector3.down, maxRise + maxDrop,
+                                                   Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
             {
-                _characterController.enabled = false;
-                transform.position = hit.point;   // วางเท้าบนพื้น
-                _characterController.enabled = true;
+                if (hit.collider.transform.IsChildOf(transform)) continue;   // ตัวเราเอง
+                if (hit.distance >= bestDistance) continue;
+
+                bestDistance = hit.distance;
+                ground       = hit.point;
             }
+
+            // ไม่เจอพื้นใกล้ๆ = ยืนที่จุดเดิมไป ดีกว่าไปวางบนอะไรก็ไม่รู้ที่อยู่ไกลลงไป
+            if (bestDistance == float.MaxValue) return;
+
+            _characterController.enabled = false;
+            transform.position = ground;   // วางเท้าบนพื้น
+            _characterController.enabled = true;
         }
 
         /// <summary>
@@ -330,8 +393,9 @@ namespace Player
             transform.rotation = rotation;
             _characterController.enabled = true;
 
-            SnapToGround();
+            SnapToGround(maxRise: 1f, maxDrop: 1f);
             _verticalVelocity = -2f;   // ให้ gravity เกาะพื้นทันที ไม่ลอยค้างหนึ่งเฟรม
+            StartLandingGuard();
         }
 
         /// <summary>

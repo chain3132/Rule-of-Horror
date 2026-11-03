@@ -106,6 +106,13 @@ public class Rule1 : RuleBase
         StartRule();
     }
 
+    /// <summary>
+    /// ผู้เล่นนั่งอยู่ที่ศาลา — คนปลุกกฎ 1 (FriendListController / Rule6 คืนรอบสอง) รอตัวนี้ก่อน blink
+    /// เพราะกฎ 1 เริ่มด้วยโทรศัพท์หลุดจากมือแล้วให้ลุกไปเก็บ ต้องเริ่มจากท่านั่งเหมือนกฎข้ออื่น
+    /// </summary>
+    public static bool PlayerIsSeated()
+        => PlayerController.Instance != null && PlayerController.Instance.IsSitting();
+
     public override void StartRule()
     {
         base.StartRule();
@@ -188,7 +195,10 @@ public class Rule1 : RuleBase
             }
         }
 
-        if (phoneDropDialogue != null && phoneDropDialogue.Length > 0)
+        // คืนรอบสอง (วนลูปจากกฎ 6) ไม่พูดซ้ำ — ผู้เล่นเคยเจอโทรศัพท์หายมาแล้ว
+        // ตกใจซ้ำแบบเดิมอ่านเป็นเกมลืม ไม่ใช่คืนเดิมที่วนกลับมา
+        bool loopedNight = RuleSystem.Rule.Rule6.NightLoopCount > 0;
+        if (!loopedNight && phoneDropDialogue != null && phoneDropDialogue.Length > 0)
             StartCoroutine(ShowPhoneDropDialogue());
     }
 

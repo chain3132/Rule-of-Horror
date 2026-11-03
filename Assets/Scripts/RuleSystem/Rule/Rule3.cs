@@ -84,6 +84,24 @@ public class Rule3 : RuleBase
     private bool _isRuleActive = false;
     private bool _isEnding     = false;
 
+    // มีกระดาษแผ่นหนึ่งกำลังถูกเลือกอยู่ (กล้องจ้อง / เผา / สลับที่) — แผ่นอื่นต้องรอ
+    //
+    // กระดาษแต่ละแผ่นรับคลิกขวาของตัวเอง เดิมคลิกรัวๆ จึงเริ่มหลายแผ่นพร้อมกัน กล้องไปจ้อง
+    // แผ่นล่าสุด แล้วพอกระดาษสลับที่ กล้องก็ตามแผ่นนั้นไปตำแหน่งใหม่ — และถ้าแผ่นปลอมที่
+    // กำลังจ้องอยู่ถูกลบตอนสลับ StopFocus ไม่เคยถูกเรียก ผู้เล่นหันกล้องไม่ได้อีกเลย
+    private bool _paperBusy;
+
+    /// <summary>ขอเริ่มเลือกกระดาษ — false = มีแผ่นอื่นกำลังทำงาน หรือกฎไม่ได้เล่นอยู่</summary>
+    public bool TryBeginPaper()
+    {
+        if (_paperBusy || _isEnding || !_isRuleActive) return false;
+        _paperBusy = true;
+        return true;
+    }
+
+    /// <summary>เลือกกระดาษเสร็จ (ผิด / ปลอม) — แผ่นถูกปล่อยเองหลังสลับที่เสร็จใน OnCorrectRoutine</summary>
+    public void EndPaper() => _paperBusy = false;
+
     // ══════════════════════════════════════════════════════
     #region Lifecycle
 
@@ -193,6 +211,7 @@ public class Rule3 : RuleBase
 
         _isRuleActive        = true;
         _isEnding            = false;
+        _paperBusy           = false;
         currentIndex         = 0;
         _correctCount        = 0;
         _ghostLookWrongCount = 0;
@@ -478,7 +497,9 @@ public class Rule3 : RuleBase
         else
         {
             // Shuffle remaining papers; ghost stays at its spawn point
-            StartCoroutine(paperSpawner.ShuffleRoutine(realPapers, fakePapers));
+            // ปล่อยให้เลือกแผ่นถัดไปได้หลังสลับที่เสร็จเท่านั้น — คลิกระหว่างนี้จะไปโดนแผ่นที่กำลังย้าย
+            yield return StartCoroutine(paperSpawner.ShuffleRoutine(realPapers, fakePapers));
+            _paperBusy = false;
         }
     }
 

@@ -100,6 +100,9 @@ public class Paper : MonoBehaviour
         if (Time.time - lookEnterTime < 0.1f) return;
         if (isUsed) return;
 
+        // ทีละแผ่น — แผ่นอื่นกำลังถูกจ้อง/เผา/สลับที่อยู่ คลิกนี้ไม่นับ
+        if (Rule3.Instance == null || !Rule3.Instance.TryBeginPaper()) return;
+
         Debug.Log("Interact with paper: " + number);
 
         isUsed = true;
@@ -126,6 +129,7 @@ public class Paper : MonoBehaviour
 
         // Allow the player to click this fake paper again (it will always be wrong)
         isUsed = false;
+        Rule3.Instance.EndPaper();
     }
 
     // ─────────────── Real Paper ───────────────
@@ -140,7 +144,7 @@ public class Paper : MonoBehaviour
 
         if (isCorrect)
         {
-            Burn();
+            Burn();   // ปล่อยให้เลือกแผ่นต่อไปได้หลังกระดาษสลับที่เสร็จ (Rule3.OnCorrectRoutine)
         }
         else
         {
@@ -151,6 +155,8 @@ public class Paper : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
         LookDistortionSystem.Instance.StopFocus();
+
+        if (!isCorrect) Rule3.Instance.EndPaper();
     }
 
     // ─────────────── Burn (correct answer) ───────────────

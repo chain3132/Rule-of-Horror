@@ -268,6 +268,12 @@ namespace RuleSystem.Rule
             CleanupGameplay();
 
             PlayerController.Instance.isBlockStanding = false;
+
+            // เดินนาฬิกาต่อจากเวลาจบกฎ — นาฬิกาถูกยึดไว้ที่ 23:00 ตลอดช่วงเล่น ถ้าปล่อยเดินจากตรงนั้น
+            // ผู้เล่นจะเห็นเวลาย้อนกลับไป 5 ทุ่ม และนาทีถัดไปยังอยู่ในช่วงกฎ 5 (23:00-23:40)
+            // RuleManager จะเริ่มกฎ 5 ซ้ำทันทีที่ ruleActive ถูกปลด
+            // (SetTime ยิง CheckRules ทันที → EndRule ซ้ำ ซึ่ง _isEnding ข้างบนกันไว้แล้ว)
+            TimeManager.instance.SetTime(endHour, endMinute);
             TimeManager.instance.IsPauseTime(false);
             GameModeController.instance.BlinkToMode(GameMode.Relax);
 

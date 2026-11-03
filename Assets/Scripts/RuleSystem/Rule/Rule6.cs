@@ -1001,6 +1001,9 @@ namespace RuleSystem.Rule
                 yield break;
             }
 
+            // ลงจากรถมายืนอยู่ — รอให้ไปนั่งที่ศาลาก่อนเหมือนคืนแรก
+            yield return new WaitUntil(Rule1.PlayerIsSeated);
+
             GameModeController.instance.BlinkToMode(GameMode.Tension);
             yield return null;
             yield return new WaitUntil(() => !PlayerEyesOpened());

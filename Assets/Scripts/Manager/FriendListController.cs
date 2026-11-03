@@ -379,6 +379,10 @@ public class FriendListController : MonoBehaviour
         // หน่วงสักพักหลังอ่านจบ
         yield return new WaitForSeconds(delayBeforeModeChange);
 
+        // รอผู้เล่นไปนั่งที่ศาลาก่อน เหมือนกฎ 2-6 — เดิมเริ่มทันทีที่อ่านแชทจบ ผู้เล่นที่ยืนอ่าน
+        // อยู่ที่อื่นจึงโดนกฎ 1 ทั้งที่ยังไม่ได้นั่ง (นาฬิกาถูกหยุดไว้ตั้งแต่ข้อความกฎ 1 ส่งถึงแล้ว)
+        yield return new WaitUntil(Rule1.PlayerIsSeated);
+
         // เปลี่ยน mode เหมือน Rule2 gameflow (BlinkToMode มี faint + blink)
         GameModeController.instance.BlinkToMode(rule1StartMode);
 

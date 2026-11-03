@@ -181,8 +181,17 @@ namespace Rule6
         /// </summary>
         public Transform StandPose => standPose;
 
-        /// <summary>มีกล่องห้องโดยสารให้เช็กไหม (ไม่มี = ผู้เรียกต้องใช้วิธีอื่นตัดสินว่าลงรถแล้ว)</summary>
-        public bool HasCabin => cabinBounds != null;
+        /// <summary>
+        /// มีกล่องห้องโดยสารให้เช็กไหม (ไม่มี = ผู้เรียกต้องใช้วิธีอื่นตัดสินว่าลงรถแล้ว)
+        ///
+        /// ไม่ได้ใส่ Cabin Bounds ก็ยังนับว่ามี ถ้าวัดขนาดจากโมเดลรถได้ — ระยะจากเบาะเป็นวงกลม
+        /// รถยาวสิบเมตรเดินไปท้ายรถก็หลุดวงแล้ว รถเลยออกไปทั้งที่ผู้เล่นยังอยู่ข้างใน
+        /// </summary>
+        public bool HasCabin => cabinBounds != null || TryGetModelBounds(out _);
+
+        // กล่องของโมเดลในพิกัดของตัวรถ — คำนวณครั้งเดียว โมเดลไม่ขยับเทียบกับรถอยู่แล้ว
+        private Bounds _modelBounds;
+        private bool   _modelBoundsReady;
 
         /// <summary>
         /// จุดนี้อยู่ในห้องโดยสารไหม — margin (เมตร) ขยายกล่องออกทุกด้าน
@@ -196,7 +205,7 @@ namespace Rule6
         /// </summary>
         public bool IsInsideCabin(Vector3 worldPoint, float margin = 0f)
         {
-            if (cabinBounds == null) return false;
+            if (cabinBounds == null) return IsInsideModel(worldPoint, margin);
 
             Vector3 p = cabinBounds.InverseTransformPoint(worldPoint);
             Vector3 s = cabinBounds.lossyScale;
@@ -204,6 +213,63 @@ namespace Rule6
             return Mathf.Abs(p.x) <= 0.5f + margin / Mathf.Max(0.001f, Mathf.Abs(s.x))
                 && Mathf.Abs(p.y) <= 0.5f + margin / Mathf.Max(0.001f, Mathf.Abs(s.y))
                 && Mathf.Abs(p.z) <= 0.5f + margin / Mathf.Max(0.001f, Mathf.Abs(s.z));
+        }
+
+        /// <summary>
+        /// ตัวสำรองของ IsInsideCabin ตอนไม่ได้ใส่ Cabin Bounds — ใช้กล่องที่คลุมโมเดลรถทั้งคัน
+        /// หยาบกว่ากล่องที่ลากเอง (รวมล้อ กระจกข้าง) แต่ผิดไปทางปลอดภัย: รถรอนานขึ้นนิดเดียว
+        /// ดีกว่ารถพาผู้เล่นที่ยังยืนท้ายรถออกไปด้วย
+        /// </summary>
+        private bool IsInsideModel(Vector3 worldPoint, float margin)
+        {
+            if (!TryGetModelBounds(out Bounds b)) return false;
+
+            Vector3 p = transform.InverseTransformPoint(worldPoint) - b.center;
+            Vector3 s = transform.lossyScale;
+
+            return Mathf.Abs(p.x) <= b.extents.x + margin / Mathf.Max(0.001f, Mathf.Abs(s.x))
+                && Mathf.Abs(p.y) <= b.extents.y + margin / Mathf.Max(0.001f, Mathf.Abs(s.y))
+                && Mathf.Abs(p.z) <= b.extents.z + margin / Mathf.Max(0.001f, Mathf.Abs(s.z));
+        }
+
+        /// <summary>
+        /// กล่องที่คลุม MeshRenderer ทุกตัวในรถ ในพิกัดของตัวรถ
+        ///
+        /// วัดได้เฉพาะตอนรถ active — Renderer.bounds ของวัตถุที่ปิดอยู่เป็นศูนย์ ถ้าเก็บค่านั้น
+        /// ไว้ กล่องจะเหลือจุดเดียวแล้วผู้เล่นจะนับว่าลงรถตั้งแต่ลุกจากเบาะ
+        /// </summary>
+        private bool TryGetModelBounds(out Bounds bounds)
+        {
+            bounds = _modelBounds;
+            if (_modelBoundsReady) return true;
+            if (!gameObject.activeInHierarchy) return false;
+
+            bool found = false;
+            foreach (var r in GetComponentsInChildren<Renderer>())
+            {
+                if (!(r is MeshRenderer) && !(r is SkinnedMeshRenderer)) continue;
+
+                Bounds w = r.bounds;
+                Vector3 min = w.min, max = w.max;
+                for (int i = 0; i < 8; i++)
+                {
+                    var corner = new Vector3((i & 1) == 0 ? min.x : max.x,
+                                             (i & 2) == 0 ? min.y : max.y,
+                                             (i & 4) == 0 ? min.z : max.z);
+                    Vector3 local = transform.InverseTransformPoint(corner);
+
+                    if (!found) { bounds = new Bounds(local, Vector3.zero); found = true; }
+                    else bounds.Encapsulate(local);
+                }
+            }
+
+            if (!found) return false;
+
+            _modelBounds      = bounds;
+            _modelBoundsReady = true;
+            Debug.LogWarning($"[Rule6] รถ '{name}' ยังไม่ได้ใส่ Cabin Bounds — ใช้กล่องของโมเดลรถแทน " +
+                             $"(ขนาด {bounds.size.x:0.0} x {bounds.size.y:0.0} x {bounds.size.z:0.0} ม.)", this);
+            return true;
         }
 
         // ─────────────────────────── Setup ───────────────────────────

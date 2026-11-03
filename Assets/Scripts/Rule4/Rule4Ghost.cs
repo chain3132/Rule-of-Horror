@@ -91,6 +91,13 @@ namespace Rule4
         [Tooltip("ระยะที่ผีจับผู้เล่นได้ → ตายทันที (เฉพาะตอน Chase)")]
         [SerializeField] private float killDistance = 1.4f;
 
+        [Tooltip("เท้าผีกับเท้าผู้เล่นต้องสูงต่างกันไม่เกินนี้ถึงจะจับได้ (เมตร)\n" +
+                 "กันผีที่เดินอยู่บน NavMesh ใต้พื้น (เช่นใต้ศาลา) จับผู้เล่นที่ยืนอยู่ข้างบนทะลุพื้นขึ้นมา")]
+        [SerializeField] private float killMaxHeightDiff = 1f;
+
+        [Tooltip("DEBUG: เตือนใน Console เมื่อผีอยู่ใกล้แต่ต่ำกว่าผู้เล่นมาก — แปลว่ามันเดินบน NavMesh ใต้พื้น")]
+        [SerializeField] private bool warnBelowPlayer = true;
+
         [Header("Footsteps")]
         [Tooltip("เดินได้กี่เมตรถึงจะลงเท้า 1 ก้าว — ยิ่งน้อยยิ่งก้าวถี่\n" +
                  "จังหวะก้าวคำนวณจากระยะที่เดินได้จริง จึงช้า/เร็วตามความเร็วผีเองอัตโนมัติ")]
@@ -385,12 +392,37 @@ namespace Rule4
             SetMoving(true, sprinting);
             Repath(_player.position);
 
-            if (!_caught && Vector3.Distance(transform.position, _player.position) <= killDistance)
+            // ตัว root ลอยเหนือ NavMesh เท่า baseOffset ส่วน pivot ผู้เล่นอยู่ที่เท้า — เทียบเท้ากับเท้า
+            float heightDiff = _player.position.y - (transform.position.y - _agent.baseOffset);
+            WarnIfBelowPlayer(heightDiff);
+
+            if (!_caught && Mathf.Abs(heightDiff) <= killMaxHeightDiff &&
+                Vector3.Distance(transform.position, _player.position) <= killDistance)
             {
                 _caught = true;
                 _mode   = GhostMode.Idle;
                 if (_rule != null) _rule.OnGhostCaughtPlayer();
             }
+        }
+
+        private float _nextBelowWarn;
+
+        /// <summary>
+        /// ผีอยู่ใกล้ผู้เล่นในแนวราบ แต่เท้าต่ำกว่ามาก = มันเดินอยู่บน NavMesh ชั้นล่าง (ใต้ศาลา / NavMesh เก่า
+        /// ที่ไม่ตรงกับพื้นปัจจุบัน) ตัวผีจึงโผล่ทะลุพื้นขึ้นมา — log ตำแหน่งไว้ให้ไปดูในซีน
+        /// </summary>
+        private void WarnIfBelowPlayer(float heightDiff)
+        {
+            if (!warnBelowPlayer || heightDiff < 1.2f || Time.time < _nextBelowWarn) return;
+
+            Vector3 flat = _player.position - transform.position;
+            flat.y = 0f;
+            if (flat.magnitude > 4f) return;
+
+            _nextBelowWarn = Time.time + 3f;
+            Debug.LogWarning($"[Rule4Ghost] ผีอยู่ต่ำกว่าผู้เล่น {heightDiff:0.0} m ที่ระยะ {flat.magnitude:0.0} m " +
+                             $"— ผี {transform.position} / ผู้เล่น {_player.position} " +
+                             "(NavMesh ตรงนี้อยู่ใต้พื้นที่ผู้เล่นยืน)", this);
         }
 
         /// <summary>

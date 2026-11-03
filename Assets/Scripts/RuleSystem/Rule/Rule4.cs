@@ -833,7 +833,9 @@ namespace RuleSystem.Rule
                 if (s != null) Destroy(s);
             _shadows.Clear();
 
-            if (spiritHouse != null) spiritHouse.ResetSlots();
+            // กลับที่เดิมทั้งตอนผ่านและตอนตาย — ตอนตายรอ retrigger อยู่ ศาลก็ควรอยู่ที่เดิมระหว่างนั้น
+            // (StartGameplay จะ Setup + ย้ายไปจุดสุ่มใหม่เองตอนเริ่มรอบถัดไป)
+            if (spiritHouse != null) spiritHouse.ResetToHome();
 
             if (breathSystem != null) breathSystem.EndRuleCleanup();
             if (stareSystem  != null) stareSystem.EndRuleCleanup();

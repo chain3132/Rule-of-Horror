@@ -61,6 +61,12 @@ namespace PhoneSystem
         {
             if (_phoneLocked) return; // โทรศัพท์หายอยู่ → ห้ามเปิด
 
+            // ถือสมุดอยู่ → ห้ามเปิด/ปิด (ปิด = UnlockPlayer ผู้เล่นเดินได้ทั้งที่สมุดลอยค้างตรงหน้า)
+            if (Book.BookPageTurner.IsReading) return;
+
+            // ซ่อมตู้ไฟกฎ 2 อยู่ → ห้ามเปิด (เหตุผลเดียวกัน กล้องจับอยู่ที่ตู้)
+            if (Rule2.LeverPuzzleController.AnyPlayerLocked) return;
+
             if (CurrentState == PhoneState.Hidden)
                 RaisePhone();
             else
@@ -123,7 +129,12 @@ namespace PhoneSystem
             // มีตัวเลือกคำตอบค้างอยู่ → เลข 1/2 คือการเลือกคำตอบ ไม่ใช่การสลับแอป
             // (ตามดีไซน์: ในหน้าแชท "1 2 เลือกคำตอบ" แต่ในหน้าอื่น "1 กลับไปแชท")
             // จอโทรศัพท์ถ่ายลง RenderTexture เมาส์คลิกปุ่มในนั้นไม่ได้ ปุ่มตัวเลขจึงเป็นทางเดียว
-            if (chatUI != null && chatUI.AwaitingReply && chatUI.TrySelectReply(index)) return;
+            //
+            // ต้องอยู่ในหน้าแชทจริงๆ ด้วย — ตัวเลือกยังค้างอยู่หลังปิดโทรศัพท์/ถอยออกจากแชท
+            // เดิมเปิดโทรศัพท์ใหม่แล้วกด 1 เพื่อเข้าแอปแชท เลข 1 กลับไปเลือกคำตอบแรกแทน
+            // ผู้เล่นเห็นเป็น "ตอบเอง" ทั้งที่ยังไม่เห็นตัวเลือกด้วยซ้ำ
+            if (CurrentState == PhoneState.ChatView &&
+                chatUI != null && chatUI.AwaitingReply && chatUI.TrySelectReply(index)) return;
 
             PhoneState state = appController.GetStateByIndex(index);
 

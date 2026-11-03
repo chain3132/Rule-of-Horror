@@ -79,6 +79,22 @@ namespace Rule2
 
         public bool IsPuzzleRunning { get; private set; }
 
+        /// <summary>
+        /// มีตู้ไฟไหนล็อกผู้เล่นอยู่ (ตั้งแต่เปิด puzzle จนคืนสภาพ) — PhoneSystem เช็กตัวนี้แล้วไม่ยอมเปิดโทรศัพท์
+        /// เพราะปิดโทรศัพท์ = UnlockPlayer ผู้เล่นจะเดินได้ทั้งที่กล้องยังจับอยู่ที่ตู้
+        /// </summary>
+        public static bool AnyPlayerLocked => _lockedCount > 0;
+
+        private static int _lockedCount;
+
+        // ปิด Reload Domain แล้ว static ไม่ถูกล้างเอง
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() => _lockedCount = 0;
+
+        [Header("Phone")]
+        [Tooltip("เว้นว่าง = หาในซีนเอง — เปิดตู้ตอนโทรศัพท์เปิดอยู่จะปิดโทรศัพท์ให้ก่อน")]
+        [SerializeField] private PhoneSystem.PhoneSystem phoneSystem;
+
         // ─────────────────────────── Runtime ───────────────────────────
 
         private int[]                   _order;
@@ -469,6 +485,13 @@ namespace Rule2
         {
             if (_playerLocked) return;
             _playerLocked = true;
+            _lockedCount++;
+
+            // ปิดโทรศัพท์ก่อนล็อก — LowerPhone ปลดล็อกเดิน/หัน + ล็อกเมาส์เสมอ
+            // ถ้าปล่อยไว้ ผู้เล่นกด Tab ปิดทีหลังจะเดินได้กลางตู้ และเคอร์เซอร์จะหายไปจากจอ
+            if (phoneSystem == null) phoneSystem = FindAnyObjectByType<PhoneSystem.PhoneSystem>(FindObjectsInactive.Include);
+            if (phoneSystem != null && phoneSystem.CurrentState != Enum.PhoneState.Hidden)
+                phoneSystem.LowerPhone();
 
             var pc = PlayerController.Instance;
             pc.SetMovement(false);
@@ -506,6 +529,7 @@ namespace Rule2
         {
             if (!_playerLocked) return;
             _playerLocked = false;
+            _lockedCount = Mathf.Max(0, _lockedCount - 1);
 
             if (_camBlendRoutine != null) { StopCoroutine(_camBlendRoutine); _camBlendRoutine = null; }
 
@@ -548,6 +572,12 @@ namespace Rule2
         /// <summary>safety net — ถ้าตู้ถูก destroy ระหว่าง puzzle/blend อย่าทิ้งผู้เล่นไว้แบบ look-lock</summary>
         private void OnDestroy()
         {
+            if (_playerLocked)
+            {
+                _playerLocked = false;
+                _lockedCount = Mathf.Max(0, _lockedCount - 1);
+            }
+
             if (!_lookSuppressed) return;
             _lookSuppressed = false;
 

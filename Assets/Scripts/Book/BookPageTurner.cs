@@ -91,13 +91,26 @@ namespace Book
         private static readonly HashSet<int> _unlocked = new HashSet<int>();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() => _unlocked.Clear();
+        private static void ResetStatics()
+        {
+            _unlocked.Clear();
+            IsReading = false;
+        }
 
         /// <summary>
         /// ผู้เล่นกำลังเล็งสมุดอยู่ หรือถือสมุดอยู่ — ปุ่ม E ตอนนี้เป็นของสมุด
         /// SittingPoint เช็กตัวนี้ ไม่งั้นกด E ที่สมุดบนโต๊ะศาลาจะไปนั่ง/ลุกจากม้านั่งพร้อมกัน
         /// </summary>
         public static bool ClaimsInteract { get; private set; }
+
+        /// <summary>
+        /// ถือสมุดอยู่ (ตั้งแต่กด E หยิบจนวางคืนเสร็จ) — PhoneSystem เช็กตัวนี้แล้วไม่ยอมเปิดโทรศัพท์
+        /// เพราะปิดโทรศัพท์ = ปลดล็อกเดิน/หัน ผู้เล่นจะเดินได้ทั้งที่สมุดยังลอยค้างอยู่ตรงหน้า
+        /// </summary>
+        public static bool IsReading { get; private set; }
+
+        [Tooltip("เว้นว่าง = หาในซีนเอง — หยิบสมุดตอนโทรศัพท์เปิดอยู่จะปิดโทรศัพท์ให้ก่อน")]
+        [SerializeField] private PhoneSystem.PhoneSystem phoneSystem;
 
         private BookVideoController _video;
         private Camera              _cam;
@@ -127,6 +140,7 @@ namespace Book
         {
             if (animator == null) animator = GetComponentInChildren<Animator>(true);
             if (inputHandler == null) inputHandler = FindAnyObjectByType<InputHandler>(FindObjectsInactive.Include);
+            if (phoneSystem == null) phoneSystem = FindAnyObjectByType<PhoneSystem.PhoneSystem>(FindObjectsInactive.Include);
 
             _video = GetComponentInChildren<BookVideoController>(true);
             if (_video != null) _video.FollowAnimator = false;
@@ -154,6 +168,7 @@ namespace Book
             }
             ReleasePlayer();
             ClaimsInteract = false;
+            IsReading = false;
             HideHint();
         }
 
@@ -261,8 +276,15 @@ namespace Book
         private IEnumerator PickUpRoutine()
         {
             _holding = true;
+            IsReading = true;
             ClaimsInteract = true;
             HideHint();
+
+            // ปิดโทรศัพท์ก่อนล็อก — LowerPhone ปลดล็อกเดิน/หันเสมอ ถ้าปิดทีหลังมันจะไปปลดล็อกของเรา
+            // และถ้าผู้เล่นเปิดแอปอยู่ PhoneSystem เป็นคนล็อกไว้ ซึ่งสมุดไม่ได้จำว่าต้องปลดคืน
+            if (phoneSystem != null && phoneSystem.CurrentState != Enum.PhoneState.Hidden)
+                phoneSystem.LowerPhone();
+
             LockPlayer();
 
             _homePosition = transform.position;
@@ -286,6 +308,7 @@ namespace Book
             yield return MoveTo(_homePosition, _homeRotation);
 
             _holding = false;
+            IsReading = false;
             ReleasePlayer();
 
             // ปิดหลังวางลงแล้ว ผู้เล่นเดินไปได้เลยไม่ต้องรอ

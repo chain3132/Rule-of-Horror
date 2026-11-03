@@ -42,6 +42,22 @@ namespace Rule4
         // ส่งค่ายาวๆ ไปเพื่อให้มันค้าง แล้วเรียก Hide() เองตอนออกนอกระยะ
         private const float PersistentHold = 3600f;
 
+        // สภาพศาลก่อนกฎ 4 เริ่ม (ตำแหน่งในซีน + ช่องตุ๊กตาที่เปิดอยู่) — คืนให้ตอนกฎจบ
+        private Vector3    _homePosition;
+        private Quaternion _homeRotation;
+        private bool[]     _homeSlots;
+
+        private void Awake()
+        {
+            _homePosition = transform.position;
+            _homeRotation = transform.rotation;
+
+            if (dollSlots == null) return;
+            _homeSlots = new bool[dollSlots.Length];
+            for (int i = 0; i < dollSlots.Length; i++)
+                _homeSlots[i] = dollSlots[i] != null && dollSlots[i].activeSelf;
+        }
+
         // ─────────────────────────── Setup ───────────────────────────
 
         public void Setup(RuleSystem.Rule.Rule4 rule, InputHandler inputHandler)
@@ -63,6 +79,24 @@ namespace Rule4
             if (dollSlots == null) return;
             foreach (var slot in dollSlots)
                 if (slot != null) slot.SetActive(false);
+        }
+
+        /// <summary>
+        /// คืนศาลเป็นเหมือนก่อนเข้ากฎ 4 — กลับที่เดิมในซีน ช่องตุ๊กตากลับเป็นแบบเดิม และเลิกรับปุ่ม E
+        ///
+        /// เดิมจบกฎแล้วศาลค้างอยู่ที่จุดสุ่มล่าสุด ช่องว่างหมด และยังผูกกับ Rule4 อยู่
+        /// เดินผ่านแถวนั้นจึงยังขึ้น "ยังไม่มีตุ๊กตาในมือ" ทั้งที่กฎจบไปแล้ว
+        /// </summary>
+        public void ResetToHome()
+        {
+            Unsubscribe();
+            _rule = null;
+
+            transform.SetPositionAndRotation(_homePosition, _homeRotation);
+
+            if (dollSlots == null || _homeSlots == null) return;
+            for (int i = 0; i < dollSlots.Length && i < _homeSlots.Length; i++)
+                if (dollSlots[i] != null) dollSlots[i].SetActive(_homeSlots[i]);
         }
 
         /// <summary>ย้ายศาลไปยังจุดใหม่ — เรียกทุกครั้งที่ผู้เล่นเก็บตุ๊กตาได้</summary>
