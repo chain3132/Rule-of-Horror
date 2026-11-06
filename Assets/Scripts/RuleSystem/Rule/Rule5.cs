@@ -214,7 +214,7 @@ namespace RuleSystem.Rule
         {
             TimeManager.instance.IsPauseTime(true);
 
-            yield return new WaitUntil(PlayerIsSitting);
+            yield return WaitForMessagesAndSeat();
             PlayerController.Instance.isBlockStanding = true;
 
             GameModeController.instance.BlinkToMode(GameMode.Tension);
@@ -265,6 +265,12 @@ namespace RuleSystem.Rule
             _isEnding       = true;
             _gameplayActive = false;
 
+            // ผ่านกฎ: ผียังไม่หาย — มันยังวิ่งตามมาระหว่างที่ตาค่อยๆ ปิด แล้วลืมตามาก็ไม่อยู่แล้ว
+            // ปลดออกจาก _ghost ก่อน ไม่งั้น CleanupGameplay จะลบมันทิ้งต่อหน้าผู้เล่น
+            // มันฆ่าไม่ได้แล้ว เพราะ OnGhostCaughtPlayer เช็ก _gameplayActive อยู่
+            Rule5Ghost lingeringGhost = _completed ? _ghost : null;
+            if (lingeringGhost != null) _ghost = null;
+
             CleanupGameplay();
 
             PlayerController.Instance.isBlockStanding = false;
@@ -275,7 +281,10 @@ namespace RuleSystem.Rule
             // (SetTime ยิง CheckRules ทันที → EndRule ซ้ำ ซึ่ง _isEnding ข้างบนกันไว้แล้ว)
             TimeManager.instance.SetTime(endHour, endMinute);
             TimeManager.instance.IsPauseTime(false);
-            GameModeController.instance.BlinkToMode(GameMode.Relax);
+            GameModeController.instance.BlinkToMode(GameMode.Relax, () =>
+            {
+                if (lingeringGhost != null) Destroy(lingeringGhost.gameObject);
+            });
 
             base.EndRule();
         }
@@ -349,7 +358,7 @@ namespace RuleSystem.Rule
             // นั่งแล้ว — ต้องครบทั้งจำนวนระฆัง และต้องสวดมนต์ลาก่อนถึงจะนับว่าชนะ
             if (_bellCount == requiredBells && _prayed)
             {
-                StartCoroutine(CompleteRoutine());
+                CompleteRule();
                 return;
             }
 
@@ -706,6 +715,10 @@ namespace RuleSystem.Rule
             _ghost.EnterWait(pos);
         }
 
+        public override bool UsesTensionZones => ruleActive && _gameplayActive;
+
+        public override void DieOutsidePlayArea() => StartHeartAttackDeath();
+
         /// <summary>ผีเข้าใกล้เกินระยะ (Approach / Chase)</summary>
         public void OnGhostCaughtPlayer()
         {
@@ -719,20 +732,16 @@ namespace RuleSystem.Rule
         #region Complete / Game Over
         // ════════════════════════════════════════════════════════════════
 
-        IEnumerator CompleteRoutine()
+        /// <summary>
+        /// นั่งลงครบเงื่อนไข — เข้า Relax ทันทีโดยไม่หน่วง ผีไม่หายตรงนี้
+        /// (EndRule เก็บผีไว้จนตาปิดสนิท ผู้เล่นจึงลืมตามาแล้วไม่เจอมันอีก)
+        /// </summary>
+        void CompleteRule()
         {
             _completed      = true;
             _gameplayActive = false;
 
-            if (_ghost != null) _ghost.Deactivate();
-            StopChing();
-            if (walker != null) walker.EndRuleCleanup();
-            if (obstacleSpawner != null) obstacleSpawner.EndRuleCleanup();
-            if (ghostHandOverlay != null) ghostHandOverlay.SetActive(false);
-            AudioManager.instance.SilenceHeartbeat();
             AudioManager.instance.PlayRule5Complete();
-
-            yield return new WaitForSeconds(2f);
             ReportCompleted();
             EndRule();
         }
@@ -827,6 +836,7 @@ namespace RuleSystem.Rule
                 {
                     player.ResetCameraAfterDeath();
                     player.SetMovement(true);
+                    ReturnPlayerToPavilion();   // ตายกลางสายก็ต้องกลับศาลา กฎจะ retrigger ที่ 23:00
                 });
 
             yield return new WaitUntil(() => GameModeController.instance.IsEyesOpen);

@@ -99,6 +99,18 @@ namespace Rule4
                 if (dollSlots[i] != null) dollSlots[i].SetActive(_homeSlots[i]);
         }
 
+        /// <summary>
+        /// วางครบแล้ว — เลิกรับปุ่ม E และเลิกขึ้น hint แต่ตัวศาลกับตุ๊กตาที่วางไว้ยังอยู่ที่เดิม
+        ///
+        /// ผู้เล่นยังยืนอยู่ในระยะศาลตอนวางตัวสุดท้าย ถ้าไม่หยุดตรงนี้ เฟรมถัดไปจะขึ้น
+        /// "ยังไม่มีตุ๊กตาในมือ" ทับ hint ที่บอกให้กลับไปนั่ง
+        /// </summary>
+        public void StopAcceptingDolls()
+        {
+            Unsubscribe();
+            _rule = null;
+        }
+
         /// <summary>ย้ายศาลไปยังจุดใหม่ — เรียกทุกครั้งที่ผู้เล่นเก็บตุ๊กตาได้</summary>
         public void RelocateTo(Transform point)
         {

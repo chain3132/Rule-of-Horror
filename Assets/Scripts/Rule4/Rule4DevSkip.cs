@@ -130,6 +130,8 @@ namespace Rule4
 
             // ตั้งเวลาให้อยู่ก่อนหน้าต่างของ Rule 4 พอดี
             // (Rule4.EndRule จะ SetTime(22,39) ตอนจบ — ตั้งไว้แบบนี้ลำดับเวลาจะไม่เพี้ยน)
+            RuleSystem.RuleBase.DebugSkipMessageGate = true;   // ข้ามเวลามา ข้อความก่อนหน้าส่งถึงพร้อมกันหมด
+
             if (TimeManager.instance != null)
             {
                 TimeManager.instance.SetTime(jumpHour, jumpMinute);

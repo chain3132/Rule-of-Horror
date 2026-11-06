@@ -13,8 +13,8 @@ using UnityEngine;
 /// หันแล้วปล่อยมือเลย ไม่ได้ลากเดินกลับให้: พอหันหน้าเข้าในแล้ว ปุ่มเดินหน้าของผู้เล่นเอง
 /// กลายเป็นทางกลับบ้านทันที การแย่งปุ่มเดินต่ออีกจะรู้สึกเหมือนเกมค้างมากกว่าเหมือนตัวละครกลัว
 ///
-/// ไม่ทับกับกฎ 1: red zone ของ HeartbeatSystem คือ "ไปไกลกว่านี้แล้วตาย" ส่วนตัวนี้คือขอบโลก
-/// ซึ่งอยู่ไกลออกไปอีก redZoneMargin เมตร ผู้เล่นจึงยังมีที่ให้เดินออกไปตายในกฎ 1 ได้ตามเดิม
+/// มีผลเฉพาะตอน Relax — ตอน Tension ใช้กติกาเขตของ HeartbeatSystem แทน (ออกนอกเขตนานเกิน = ตาย)
+/// ถ้าตัวนี้ยังทำงานตอน Tension ผู้เล่นจะถูกหันกลับก่อนได้ตาย แล้วกติกานั้นจะไม่มีความหมาย
 ///
 /// Setup: แปะไว้ที่ object ไหนก็ได้ในซีน (แนะนำตัวเดียวกับ HeartbeatSystem) แล้วดู gizmo
 /// สีฟ้าในซีนว่าเขตครอบที่ที่ต้องเดินไปถึงครบไหม
@@ -35,7 +35,7 @@ public class PlayAreaBoundary : MonoBehaviour
     [SerializeField] private AreaShape shape = AreaShape.RedZonePlusMargin;
 
     [Tooltip("เผื่อออกไปจากขอบ red zone กี่เมตร — ใช้เฉพาะโหมด Red Zone Plus Margin\n" +
-             "ต้องมากกว่า 0 ไม่งั้นขอบจะทับ red zone พอดี แล้วกฎ 1 จะไม่มีที่ให้เดินออกไปตาย")]
+             "ตัวนี้ใช้เฉพาะตอน Relax จึงไม่มีผลกับการตายนอกเขตตอน Tension")]
     [SerializeField] private float redZoneMargin = 10f;
 
     [Tooltip("จุดกลางเขต (โหมด Box / Circle) — เว้นว่างจะใช้ตำแหน่งของ object นี้")]
@@ -91,6 +91,9 @@ public class PlayAreaBoundary : MonoBehaviour
         }
 
         if (!Enforcing) return;
+
+        var mode = GameModeController.instance;
+        if (mode != null && mode.CurrentMode != GameMode.Relax) return;
 
         // นั่งอยู่ออกนอกเขตไม่ได้ และตอนที่คนอื่นยึดการควบคุมไว้ (โทรศัพท์ / ตู้ไฟ / ฉากตาย)
         // ก็ไม่ใช่การเดินของผู้เล่น — เข้าไปแตะ SetLook ตอนนั้นจะเป็นการปลดล็อกแทนเจ้าของจริง

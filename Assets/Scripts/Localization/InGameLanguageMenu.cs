@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 
 /// <summary>
 /// เมนูหยุดเกมในฉากเล่น — กด Esc เปิด/ปิด มีปุ่มเปลี่ยนภาษา (LanguageSwitcher) กับปุ่มกลับเข้าเกม
+/// ตอนโทรศัพท์ยกอยู่ Esc เป็นปุ่มถอยกลับของโทรศัพท์ เมนูจะเปิดเมื่อกด Esc หลังโทรศัพท์ปิดแล้ว
 ///
 /// ตอนเปิด:
 ///   หยุดเวลา (Time.timeScale = 0) + หยุดเสียง FMOD ทั้งหมด — กฎแต่ละข้อมีตัวนับเวลาตายอยู่
@@ -70,8 +71,16 @@ public class InGameLanguageMenu : MonoBehaviour
     {
         if (!EscapePressed()) return;
 
-        if (IsOpen) Close();
-        else if (allowDuringCutscene || !CutsceneManager.IsPlaying) Open();
+        if (IsOpen)
+        {
+            Close();
+            return;
+        }
+
+        // โทรศัพท์ยกอยู่ Esc เป็นปุ่มถอยกลับของโทรศัพท์ เมนูเปิดได้เมื่อโทรศัพท์ปิดแล้วเท่านั้น
+        if (PhoneSystem.PhoneSystem.HandlesEscape) return;
+
+        if (allowDuringCutscene || !CutsceneManager.IsPlaying) Open();
     }
 
     private void LateUpdate()

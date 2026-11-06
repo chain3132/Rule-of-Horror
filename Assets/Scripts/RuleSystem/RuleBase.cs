@@ -25,7 +25,57 @@ namespace RuleSystem
 
         // ปิด Reload Domain แล้ว static ไม่ถูกล้างเอง — event ที่ค้างจากรอบ Play ก่อนจะชี้ไปหา object ที่ถูกทำลายไปแล้ว
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() => OnRuleCompleted = null;
+        private static void ResetStatics()
+        {
+            OnRuleCompleted      = null;
+            DebugSkipMessageGate = false;
+            _friendList          = null;
+        }
+
+        // ─────────────────────────── ก่อนเข้ากฎ ───────────────────────────
+
+        /// <summary>หลังอ่านข้อความสุดท้ายจบ รออีกเท่านี้ก่อนเข้ากฎ ผู้เล่นจะได้อ่านบรรทัดสุดท้ายทัน (วินาที)</summary>
+        private const float AfterReadingSeconds = 1.5f;
+
+        /// <summary>
+        /// DEBUG: ไม่ต้องรออ่านข้อความก่อนเข้ากฎ — ปุ่มลัดกระโดดข้ามเวลาทำให้ข้อความทุกชุดก่อนหน้า
+        /// ถูกส่งพร้อมกัน ถ้าต้องอ่านให้จบก่อนทุกครั้งก็เทสกฎตรงๆ ไม่ได้
+        /// </summary>
+        public static bool DebugSkipMessageGate;
+
+        private static FriendListController _friendList;
+
+        private static bool HasUnreadMessages()
+        {
+            if (DebugSkipMessageGate) return false;
+
+            if (_friendList == null)
+                _friendList = FindAnyObjectByType<FriendListController>(FindObjectsInactive.Include);
+
+            return _friendList != null && _friendList.HasUnreadMessages;
+        }
+
+        /// <summary>
+        /// ทางเข้ากฎทุกข้อ: ต้องอ่านและตอบข้อความที่ส่งถึงแล้วให้จบก่อน แล้วค่อยนั่งที่ศาลา
+        ///
+        /// นั่งรออยู่ก็ไม่เริ่มถ้ายังอ่านไม่จบ และยืนอ่านจบแล้วก็ยังไม่เริ่มจนกว่าจะกลับมานั่ง
+        /// เรียกหลังหยุดนาฬิกาแล้ว ระหว่างรอจึงไม่มีข้อความใหม่เข้ามาเพิ่ม
+        ///
+        /// เสียงแจ้งเตือนดังอีกครั้งตอนเริ่มรอ เพราะนาฬิกาหยุดอยู่ ผู้เล่นที่นั่งรอเฉยๆ จะนึกว่าเกมค้าง
+        /// </summary>
+        public static IEnumerator WaitForMessagesAndSeat()
+        {
+            if (HasUnreadMessages())
+            {
+                if (AudioManager.instance != null) AudioManager.instance.PlayMessageNotification();
+
+                yield return new WaitUntil(() => !HasUnreadMessages());
+                yield return new WaitForSeconds(AfterReadingSeconds);
+            }
+
+            yield return new WaitUntil(() =>
+                PlayerController.Instance != null && PlayerController.Instance.IsSitting());
+        }
 
         /// <summary>เลขของกฎจากชื่อคลาส (Rule3 → 3) — 0 = ไม่มีเลข</summary>
         public int Number
@@ -66,47 +116,95 @@ namespace RuleSystem
         public virtual void ResetForNewLoop() { }
 
         /// <summary>
+        /// ตอนนี้กำลังเล่นกฎข้อนี้อยู่จริงไหม — HeartbeatSystem ใช้ตัดสินว่ากติกาเขตตอน Tension มีผลหรือเปล่า
+        ///
+        /// กฎต้อง override ให้เป็น false ตั้งแต่เริ่มฉากตาย ภาพจะหยุดบิดและไม่นับเวลาตายซ้ำ
+        /// </summary>
+        public virtual bool UsesTensionZones => ruleActive;
+
+        /// <summary>
+        /// อยู่นอกเขตจนหมดเวลาตอน Tension — ตายตามทางของกฎข้อนั้น แล้วเริ่มกฎเดิมใหม่
+        /// ใช้ทางตายเดิมของกฎ เพราะแต่ละข้อมีของที่ต้องเก็บไม่เหมือนกัน
+        /// </summary>
+        public virtual void DieOutsidePlayArea() { }
+
+        /// <summary>
         /// ลุกจากที่นั่งให้อัตโนมัติเมื่อกฎจบ (กฎ 1-5)
         ///
         /// ทุกกฎจบลงตอนผู้เล่นนั่งอยู่ที่ศาลา เดิมต้องเล็งม้านั่งแล้วกด E ลุกเอง ซึ่งไม่มีอะไรบอก
         /// และหน้าตาเหมือนเกมค้าง — กฎจบแล้ว เวลาเดินแล้ว แต่ขยับไปไหนไม่ได้
         ///
-        /// รอให้ตาปิดก่อนแล้วค่อยลุก: ทุกกฎสั่ง BlinkToMode(Relax) ก่อนเรียก base.EndRule()
-        /// อยู่แล้ว การลุกจึงเกิดตอนจอดำ ลืมตามาก็ยืนอยู่แล้ว ไม่ใช่เห็นตัวเองค่อยๆ ยืดขึ้น
-        /// กลางอาการหน้ามืด
+        /// รอให้ตาปิดสนิทก่อนแล้วค่อยลุก การลุกจึงเกิดตอนจอดำ ลืมตามาก็ยืนอยู่แล้ว ไม่ใช่เห็น
+        /// ตัวเองค่อยๆ ยืดขึ้นกลางอาการหน้ามืด
+        ///
+        /// ล็อก isBlockStanding ไว้ตลอดช่วงรอ ไม่ให้กด E ลุกเองระหว่างช่วงเวียนหัวก่อนตาปิด
+        /// แล้วค่อยปลดตอนสั่งลุก — ฝั่งกฎจึงไม่ต้องปลดเองหลังเรียกตัวนี้
         /// </summary>
         protected void StandUpAfterRule()
         {
             var pc = PlayerController.Instance;
-            if (pc == null || !pc.IsSitting()) return;
+            if (pc == null) return;
 
+            if (!pc.IsSitting())
+            {
+                pc.isBlockStanding = false;   // ยืนอยู่แล้ว ไม่มีอะไรต้องรอ แต่ต้องไม่ทิ้งล็อกค้างไว้ให้ตอนนั่งครั้งหน้า
+                return;
+            }
+
+            pc.isBlockStanding = true;
             StartCoroutine(StandUpAfterRuleRoutine());
         }
 
-        /// <summary>นานสุดที่จะรอให้ตาปิด ก่อนจะยอมลุกทั้งที่จอยังสว่าง (วินาที)</summary>
-        private const float EyesCloseTimeout = 2.5f;
-
         private IEnumerator StandUpAfterRuleRoutine()
         {
-            // นับด้วย unscaledDeltaTime เพราะช่วง faint ก่อน blink หั่น Time.timeScale ลงถึง 0.6
-            // ถ้าใช้ deltaTime timeout จะยืดตามไปด้วยโดยไม่มีเหตุผล
-            float waited = 0f;
-            while (waited < EyesCloseTimeout)
-            {
-                var mode = GameModeController.instance;
-                if (mode == null || !mode.IsEyesOpen) break;
+            // กฎ 1 สั่ง blink หลังเรียก base.EndRule() — รอหนึ่งเฟรมให้ทุกกฎสั่งครบก่อนค่อยถาม
+            yield return null;
 
-                waited += Time.unscaledDeltaTime;
+            // ไม่มี timeout โดยตั้งใจ: ช่วงเวียนหัวก่อนตาปิดยาวตาม frame rate (ราว 1.5 วิที่ 30 fps
+            // ถึง 7 วิที่ 240 fps) เดิมรอแค่ 2.5 วิ เครื่องที่ fps สูงจึงลุกทั้งที่ยังไม่ทันเข้า Relax
+            //
+            // ไม่มี blink เล่นอยู่ (ทางตาย: ลืมตาเสร็จแล้วค่อยเรียก base.EndRule) = ลุกได้เลย
+            var mode = GameModeController.instance;
+            while (mode != null && mode.IsBlinking && !mode.IsEyesFullyClosed)
+            {
                 yield return null;
+                mode = GameModeController.instance;
             }
 
             var pc = PlayerController.Instance;
-            if (pc == null || !pc.IsSitting()) yield break;
+            if (pc == null) yield break;
 
-            // Rule 1 เรียก base.EndRule() ก่อนปลด isBlockStanding ส่วนกฎอื่นปลดก่อน
-            // ถ้าไม่เคลียร์ตรงนี้ StartStandingSequence() จะเงียบออกไปเฉยๆ แล้วค้างในท่านั่ง
             pc.isBlockStanding = false;
-            pc.StartStandingSequence();
+            if (pc.IsSitting()) pc.StartStandingSequence();
+        }
+
+        /// <summary>
+        /// ส่งผู้เล่นกลับมายืนหน้าม้านั่งที่ศาลา — เรียกตอนตาปิด (จอดำ) เท่านั้น
+        ///
+        /// กฎที่เดินออกไปไกลจากศาลา (กฎ 4 ตุ๊กตา / กฎ 5 สายสิญจน์) ใช้ตัวนี้ตอนตาย: กฎจะ retrigger
+        /// แล้ว RuleFlow รอให้นั่งก่อนเริ่ม ถ้าไม่ส่งกลับ ผู้เล่นจะฟื้นอยู่กลางทางตรงจุดที่ตาย
+        ///
+        /// ใช้จุดที่ยืนก่อนนั่งครั้งล่าสุดเป็นเป้า ไม่ใช่ช่อง Inspector ใหม่ เพราะเป็นจุดเดียวกับที่
+        /// StandUpRoutine ส่งกลับอยู่แล้วตอนลุกปกติ — การันตีว่ายืนได้จริงบนพื้นที่มี collider
+        /// และไม่ต้องมีใครมาคอยอัปเดตตำแหน่งถ้าย้ายศาลาในซีน
+        ///
+        /// นั่งอยู่แล้ว = อยู่ที่ศาลาอยู่แล้ว ไม่ต้องย้าย — TeleportTo จะเปิด CharacterController
+        /// แล้ว snap ลงพื้น ทำให้ท่านั่งเพี้ยน และ StandUpAfterRule จะพาลุกเองอยู่แล้ว
+        /// </summary>
+        protected void ReturnPlayerToPavilion()
+        {
+            var pc = PlayerController.Instance;
+            if (pc == null || pc.IsSitting()) return;
+
+            if (!pc.HasSatOnce)
+            {
+                // ข้าม intro มาด้วย dev skip → ไม่เคยนั่ง → ไม่รู้ว่าศาลาอยู่ไหน
+                // ย้ายไป Vector3.zero จะแย่กว่าปล่อยไว้ที่เดิมมาก
+                Debug.LogWarning($"[{GetType().Name}] ผู้เล่นยังไม่เคยนั่งในรอบนี้ — ไม่รู้ตำแหน่งศาลา จึงไม่ย้ายกลับ", this);
+                return;
+            }
+
+            pc.TeleportTo(pc.BeforeSitPosition, pc.BeforeSitRotation);
         }
 
         protected virtual void Update()

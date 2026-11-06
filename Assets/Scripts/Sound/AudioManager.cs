@@ -67,6 +67,11 @@ public class AudioManager : MonoBehaviour
     private int heartLevel = 0; // 0,1,2
     float currentHeart;
     float targetHeart;
+
+    // เสียงหัวใจจากโซน (HeartbeatSystem) แยกจากของกฎ — ดังตามค่าที่สูงกว่า ไม่เขียนทับกัน
+    // ไม่งั้นโซนจะล้างระดับที่กฎตั้งไว้ทุกเฟรม เช่น หัวใจที่แรงขึ้นตอนตอบผิดในตู้ไฟกฎ 2
+    float zoneHeart;
+    int   lastHeartUpdateFrame = -1;
     private void Awake()
     {
         if (instance == null)
@@ -280,6 +285,22 @@ public class AudioManager : MonoBehaviour
     {
         targetHeart = value;
     }
+    /// <summary>ระดับหัวใจจากโซนที่ผู้เล่นยืนอยู่ — HeartbeatSystem เรียกทุกเฟรมตอน Tension</summary>
+    public void SetZoneHeartbeat(float value)
+    {
+        zoneHeart = value;
+    }
+
+    /// <summary>
+    /// เลิกนับโซน — ถ้ากฎไม่ได้ตั้งระดับหัวใจไว้ก็ดับทันที เพราะหลังจากนี้อาจไม่มีใครเรียก
+    /// UpdateHeartbeat() มาไต่ลงให้ แล้วเสียงจะค้างดังข้ามไปโหมด Relax
+    /// </summary>
+    public void ClearZoneHeartbeat()
+    {
+        zoneHeart = 0f;
+        if (targetHeart <= 0f) SilenceHeartbeat();
+    }
+
     public void SwitchWindAmbience(float tension)
     {
         windAmbience.setParameterByName("Tension", tension);
@@ -350,6 +371,7 @@ public class AudioManager : MonoBehaviour
     {
         heartLevel   = 0;
         targetHeart  = 0f;
+        zoneHeart    = 0f;
         currentHeart = 0f;
         heartbeat.setParameterByName("HeartLevel", 0f);
     }
@@ -833,7 +855,11 @@ public class AudioManager : MonoBehaviour
 
     public void UpdateHeartbeat()
     {
-        currentHeart = Mathf.Lerp(currentHeart, targetHeart, Time.deltaTime * 2f);
+        // กฎกับ HeartbeatSystem เรียกทั้งคู่ — เดินครั้งเดียวต่อเฟรม ไม่งั้นเสียงจะไต่เร็วขึ้นสองเท่าตอน Tension
+        if (lastHeartUpdateFrame == Time.frameCount) return;
+        lastHeartUpdateFrame = Time.frameCount;
+
+        currentHeart = Mathf.Lerp(currentHeart, Mathf.Max(targetHeart, zoneHeart), Time.deltaTime * 2f);
         heartbeat.setParameterByName("HeartLevel", currentHeart);
     }
     public void PlayRadio()

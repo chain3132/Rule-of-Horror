@@ -63,7 +63,14 @@ namespace Player
         private float _yawLimitCenter;
         private float _yawLimitHalf;
 
-        public bool IsSitting() => _isSitting;
+        /// <summary>
+        /// ผู้เล่นนั่งนิ่งอยู่จริงไหม — ระหว่างท่าลุก (0.6 วิ) ถือว่าไม่ได้นั่งแล้ว
+        ///
+        /// _isSitting เพิ่งเป็น false ตอนท่าลุกจบ ถ้าคืนค่านั้นตรงๆ กฎที่รอ "ผู้เล่นนั่ง" จะผ่าน
+        /// ทั้งที่กด E ลุกไปแล้ว แล้วล็อก isBlockStanding ซึ่งหยุดท่าลุกที่เริ่มไปแล้วไม่ได้
+        /// ผลคือผู้เล่นได้ยืนเดินอยู่กลางกฎที่ควรนั่งอยู่กับที่ (กฎ 3)
+        /// </summary>
+        public bool IsSitting() => _isSitting && !_isTransitioning;
 
         /// <summary>
         /// ผู้เล่นคุมตัวเองได้อยู่ไหม — ระบบที่พาตัวผู้เล่นต้องเช็คก่อนแตะ SetLook/SetMovement
@@ -415,6 +422,9 @@ namespace Player
         public void Move(Vector2 moveInput)
         {
             if (!_canMove) return;
+
+            // ระหว่างท่าลุก/นั่ง CharacterController ถูกปิดอยู่ — เก็บโทรศัพท์จังหวะนี้จะปลด SetMovement ได้
+            if (!_characterController.enabled) return;
 
             Vector3 move = transform.forward * moveInput.y + transform.right * moveInput.x;
             move *= moveSpeed * _moveSpeedMultiplier;

@@ -251,6 +251,23 @@ public class FriendListController : MonoBehaviour
         return n;
     }
 
+    /// <summary>
+    /// มีข้อความที่ส่งถึงแล้วแต่ยังอ่านและตอบไม่จบไหม — ทุก contact รวมกัน กฎจะยังไม่เริ่มจนกว่าจะเป็น false
+    ///
+    /// นับเฉพาะชุดที่มีบทสนทนาจริง ช่องที่ลืมใส่บทไม่มีทางอ่านจบ ถ้านับรวมกฎจะไม่มีวันเริ่ม
+    /// </summary>
+    public bool HasUnreadMessages
+    {
+        get
+        {
+            foreach (var contact in contacts)
+                foreach (var message in contact.DeliveredMessages)
+                    if (!message.read) return true;
+
+            return false;
+        }
+    }
+
     /// <summary>จุดแดงจะหายก็ต่อเมื่ออ่านครบทุกชุดที่ส่งมาแล้ว ไม่ใช่แค่เปิดแชทผ่านๆ</summary>
     private void RefreshBadge(ContactEntry contact)
     {
@@ -379,9 +396,9 @@ public class FriendListController : MonoBehaviour
         // หน่วงสักพักหลังอ่านจบ
         yield return new WaitForSeconds(delayBeforeModeChange);
 
-        // รอผู้เล่นไปนั่งที่ศาลาก่อน เหมือนกฎ 2-6 — เดิมเริ่มทันทีที่อ่านแชทจบ ผู้เล่นที่ยืนอ่าน
-        // อยู่ที่อื่นจึงโดนกฎ 1 ทั้งที่ยังไม่ได้นั่ง (นาฬิกาถูกหยุดไว้ตั้งแต่ข้อความกฎ 1 ส่งถึงแล้ว)
-        yield return new WaitUntil(Rule1.PlayerIsSeated);
+        // รออ่านข้อความคนอื่นให้จบและรอไปนั่งที่ศาลาก่อน เหมือนกฎ 2-6 — เดิมเริ่มทันทีที่อ่านแชทจบ
+        // ผู้เล่นที่ยืนอ่านอยู่ที่อื่นจึงโดนกฎ 1 ทั้งที่ยังไม่ได้นั่ง (นาฬิกาถูกหยุดไว้ตั้งแต่ข้อความกฎ 1 ส่งถึงแล้ว)
+        yield return RuleSystem.RuleBase.WaitForMessagesAndSeat();
 
         // เปลี่ยน mode เหมือน Rule2 gameflow (BlinkToMode มี faint + blink)
         GameModeController.instance.BlinkToMode(rule1StartMode);

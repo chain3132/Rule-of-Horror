@@ -10921,7 +10921,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 503
 --- !u!114 &185907775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22648,14 +22648,7 @@ MonoBehaviour:
   ruleActive: 0
   phoneGroundObject: {fileID: 2105142480}
   playerResetPoint: {fileID: 365961811}
-  outsideDeathTime: 5
   phoneSystem: {fileID: 269643657}
-  globalVolume: {fileID: 1190389803}
-  orangeLens: -0.12
-  orangeChroma: 0.3
-  redLens: -0.3
-  redChroma: 0.6
-  waveEffect: {fileID: 421595022}
   phoneDropDialogue:
   - text: "Ehh What\u2019s happening? Something feels weird here"
     holdDuration: -1
@@ -24880,7 +24873,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5044363363294922790, guid: 61697979c521cb543b7ab941c5ec17f5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1460188495}
   m_SourcePrefab: {fileID: 100100000, guid: 61697979c521cb543b7ab941c5ec17f5, type: 3}
 --- !u!4 &534192116 stripped
 Transform:
@@ -26422,13 +26418,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 588932628}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 573bfc5ec9f8edb45b406b5b33ac2405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rule4.Rule4DevSkip
   rule4: {fileID: 675104924}
-  enableDevSkip: 1
+  enableDevSkip: 0
   jumpKey: 97
   toggleDollLinesKey: 98
   freezeClockOnStart: 0
@@ -26459,7 +26455,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 588932628}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7f3f9e3cf6f76b4da850bc7cf6692c2, type: 3}
   m_Name: 
@@ -26492,7 +26488,7 @@ MonoBehaviour:
   rule1: {fileID: 421595021}
   rule2: {fileID: 859750947}
   rule3: {fileID: 842431700}
-  enableDevSkip: 1
+  enableDevSkip: 0
   rule1Key: 94
   rule2Key: 95
   rule3Key: 96
@@ -26509,13 +26505,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 588932628}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c8ff162045c9e84f8b72cc6605f63f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rule6.Rule6DevSkip
   rule6: {fileID: 1815186555}
-  enableDevSkip: 1
+  enableDevSkip: 0
   enterRuleKey: 104
   nextBusKey: 105
   armPermanentDeathKey: 84
@@ -26640,6 +26636,12 @@ MonoBehaviour:
   redMaxX: 20
   redMinZ: -60
   redMaxZ: 40
+  outsideDeathTime: 5
+  orangeLens: -0.12
+  orangeChroma: 0.3
+  redLens: -0.3
+  redChroma: 0.6
+  waveEffect: {fileID: 0}
 --- !u!114 &591596788
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34301,6 +34303,8 @@ MonoBehaviour:
   introHint: "The spirit house is empty\u2026\r\nFind the six figurines and place
     them all back."
   introHintDuration: 6
+  returnToSeatHint: 
+  returnToSeatHintDuration: 6
   ambientStingerStartOnPickup: 1
   gongOnPickup: 2
   ambientStingerMinGap: 6
@@ -63267,7 +63271,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8625914267460742191, guid: 47236051dfceec84887c5c7294ddf445, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3710731380420230381}
   m_SourcePrefab: {fileID: 100100000, guid: 47236051dfceec84887c5c7294ddf445, type: 3}
 --- !u!1 &931289195
 GameObject:
@@ -64545,13 +64552,13 @@ MonoBehaviour:
   - {fileID: 636714127}
   - {fileID: 30498405}
   - {fileID: 461835132}
-  unclaimedIntensityScale: 0.25
-  tensionIntensityScale: 0.25
+  unclaimedIntensityScale: 0.211
+  tensionIntensityScale: 0.19
   groups: 2
   swapMin: 0.18
   swapMax: 0.55
   offIntensityScale: 0
-  blackoutChance: 0.18
+  blackoutChance: 0.278
   blackoutMin: 0.25
   blackoutMax: 0.9
   flicker: {fileID: 1197295580}
@@ -66042,6 +66049,11 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -1550514412580984892, guid: ef33d0c76dbd0ba4fb87d210f6affc73, type: 3}
+--- !u!1 &981583395 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2454014536599347090, guid: adce8e40dc902e74a9875f5b35e0b8ab, type: 3}
+  m_PrefabInstance: {fileID: 1979001213}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &982548056
 GameObject:
   m_ObjectHideFlags: 0
@@ -77250,7 +77262,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5083636451577552105, guid: 7311fc0f61b9713458d2f9678f441c5e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2001476381}
   m_SourcePrefab: {fileID: 100100000, guid: 7311fc0f61b9713458d2f9678f441c5e, type: 3}
 --- !u!4 &1301798885 stripped
 Transform:
@@ -80673,6 +80688,33 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -30}
   m_SizeDelta: {x: -80, y: -380}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1460188492 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5044363363294922790, guid: 61697979c521cb543b7ab941c5ec17f5, type: 3}
+  m_PrefabInstance: {fileID: 534192115}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &1460188495
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1460188492}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1422656717699764942, guid: 4a160dd5c719efe48848a6e99e1cf5d4, type: 3}
 --- !u!1001 &1460878802
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -118352,6 +118394,8 @@ MonoBehaviour:
   loopRestartMinute: 40
   ruleManager: {fileID: 591596785}
   rule1: {fileID: 421595021}
+  gameOverResetHour: 23
+  gameOverResetMinute: 55
 --- !u!114 &1815186556
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122966,13 +123010,38 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2454014536599347090, guid: adce8e40dc902e74a9875f5b35e0b8ab, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1979001217}
   m_SourcePrefab: {fileID: 100100000, guid: adce8e40dc902e74a9875f5b35e0b8ab, type: 3}
 --- !u!4 &1979001214 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2973987176621425960, guid: adce8e40dc902e74a9875f5b35e0b8ab, type: 3}
   m_PrefabInstance: {fileID: 1979001213}
   m_PrefabAsset: {fileID: 0}
+--- !u!64 &1979001217
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 981583395}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -6645985592239921751, guid: d7ec9f734f3e080439737c914add5638, type: 3}
 --- !u!1 &1979556610
 GameObject:
   m_ObjectHideFlags: 0
@@ -123834,6 +123903,33 @@ MonoBehaviour:
       m_Key: Font/Body
     m_FallbackState: 0
     m_WaitForCompletion: 0
+--- !u!1 &2001476378 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5083636451577552105, guid: 7311fc0f61b9713458d2f9678f441c5e, type: 3}
+  m_PrefabInstance: {fileID: 1301798884}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &2001476381
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2001476378}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 3797953710239847172, guid: 034c19771940f8c4bbc8f65643f1b7fb, type: 3}
 --- !u!64 &2001551453
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -128168,6 +128264,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.05, y: 0.05, z: 0.05}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &2105262193 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8625914267460742191, guid: 47236051dfceec84887c5c7294ddf445, type: 3}
+  m_PrefabInstance: {fileID: 925185868}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2105590286
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -129833,12 +129934,33 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7392375023550639299, guid: 47236051dfceec84887c5c7294ddf445, type: 3}
   m_PrefabInstance: {fileID: 925185868}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2105262193}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9facc4823c4d0b845bb7b2b693e7959f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rule4.SpiritHouse
+--- !u!65 &3710731380420230381
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2105262193}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3596364, y: 1.1172163, z: 0.2506588}
+  m_Center: {x: 0.012452166, y: 0.063860975, z: -0.0043677688}
 --- !u!1 &6639279748421409830
 GameObject:
   m_ObjectHideFlags: 0

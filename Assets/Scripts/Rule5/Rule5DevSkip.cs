@@ -130,6 +130,8 @@ namespace Rule5
                 return;
             }
 
+            RuleSystem.RuleBase.DebugSkipMessageGate = true;   // ข้ามเวลามา ข้อความก่อนหน้าส่งถึงพร้อมกันหมด
+
             if (TimeManager.instance != null)
             {
                 TimeManager.instance.SetTime(jumpHour, jumpMinute);

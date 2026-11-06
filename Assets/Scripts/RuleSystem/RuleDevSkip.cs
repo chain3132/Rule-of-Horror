@@ -160,6 +160,7 @@ namespace RuleSystem
 
             if (TimeManager.instance == null) { Notify("ไม่เจอ TimeManager ในซีน", true); return; }
 
+            RuleBase.DebugSkipMessageGate = true;   // ต้องตั้งก่อน SetTime — CheckRules เริ่มกฎได้ในบรรทัดนั้นเลย
             TimeManager.instance.IsPauseTime(true);
             TimeManager.instance.SetTime(rule.startHour, rule.startMinute);
 

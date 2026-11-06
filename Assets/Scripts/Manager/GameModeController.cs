@@ -52,6 +52,19 @@ public class GameModeController : MonoBehaviour
     public static GameModeController instance;
     public bool IsEyesOpen { get; private set; } = false;
 
+    /// <summary>
+    /// เปลือกตาปิดสนิท (จอดำ) อยู่ตอนนี้ — ต่างจาก !IsEyesOpen ที่เป็นจริงตั้งแต่เปลือกตา "เริ่ม" ปิด
+    /// ของที่ไม่อยากให้ผู้เล่นเห็น (เช่น ลุกจากที่นั่งตอนจบกฎ) ต้องรอตัวนี้
+    /// </summary>
+    public bool IsEyesFullyClosed { get; private set; }
+
+    /// <summary>
+    /// มี blink ที่สั่งไปแล้วและยังไม่จบ — รวมช่วงเวียนหัวก่อนปิดตาด้วย ซึ่ง IsEyesOpen ยังเป็น true อยู่
+    /// ความยาวช่วงเวียนหัวเปลี่ยนตาม frame rate จึงห้ามรอด้วยการนับเวลา ให้ถามตัวนี้แทน
+    /// </summary>
+    public bool IsBlinking => _activeBlinks > 0;
+    private int _activeBlinks;
+
     /// <summary>โหมดที่มีผลอยู่ตอนนี้ — เปลี่ยนตอน ApplyMode คือตอนตาปิดสนิท ไม่ใช่ตอนสั่ง</summary>
     public GameMode CurrentMode { get; private set; } = GameMode.Relax;
 
@@ -92,6 +105,10 @@ public class GameModeController : MonoBehaviour
         if (instance != this) return;
         ResetProfileValues(relaxProfile);
         ResetProfileValues(tensionProfile);
+
+        // coroutine ของ blink ตายไปกับการปิด component — ไม่ล้างจะมีคนรอ blink ที่ไม่มีวันจบ
+        _activeBlinks     = 0;
+        IsEyesFullyClosed = false;
     }
 
     /// <summary>คืนค่า post-processing ของ profile ที่ระบุกลับเป็นค่ากลาง (base ที่ SetFaintEffect lerp ออกไป)</summary>
@@ -146,6 +163,7 @@ public class GameModeController : MonoBehaviour
     /// </param>
     public void BlinkToMode(GameMode targetMode = GameMode.Relax, System.Action onEyesClosed = null)
     {
+        _activeBlinks++;
         StartCoroutine(FaintThenBlinkRoutine(targetMode, onEyesClosed));
     }
 
@@ -160,6 +178,7 @@ public class GameModeController : MonoBehaviour
     {
         // path นี้ไม่ได้เรียก ResetFaintEffects — ถ้าตายกลาง transition faint จะมีค่า postExposure/
         // contrast/vignette/distortion ค้างบน profile → เคลียร์ทั้งสองตอนตาปิด (มองไม่เห็น) ก่อนยิง callback เดิม
+        _activeBlinks++;
         StartCoroutine(BlinkRoutine(targetMode, deathOpenSpeed, () =>
         {
             ResetProfileValues(relaxProfile);
@@ -308,12 +327,16 @@ public class GameModeController : MonoBehaviour
             yield return null;
         }
 
+        IsEyesFullyClosed = true;
+
         ApplyMode(targetMode);
 
         // ยิง callback ตอนตาปิดสนิท (หน้าจอดำ) — reset กล้องขณะที่ผู้เล่นมองไม่เห็น
         onEyesClosed?.Invoke();
 
         yield return new WaitForSeconds(0.8f);
+
+        IsEyesFullyClosed = false;
 
         // ── ลืมตา (speed แยกต่างหาก) ──
         t = 1;
@@ -336,6 +359,7 @@ public class GameModeController : MonoBehaviour
         bottomLid.sizeDelta = new Vector2(widthBottom, 0);
 
         IsEyesOpen = true;
+        _activeBlinks = Mathf.Max(0, _activeBlinks - 1);
         TimeManager.instance.IsPauseTime(false);
 
         // หยุดเสียง transition เมื่อตาเปิดแล้ว (mode change เสร็จ)

@@ -17,6 +17,7 @@ namespace RuleSystem.Rule
     ///   2. ตุ๊กตา dollCount ตัวถูกสุ่มวางบนพื้น หาเจอได้ด้วยการฟังเสียงอย่างเดียว (ร้องไห้ / หัวเราะ / ฮัมเพลง)
     ///      ถ้ามีตัวไหนสุ่มอยู่ใต้ศาลา จะมีเงาโผล่ออกมาให้เห็นก่อน
     ///   3. เก็บทีละตัว → เดินไปวางที่ศาลพระภูมิ → ศาลย้ายที่ทุกครั้งที่เก็บได้ → ทำซ้ำจนครบ 5
+    ///      วางตัวสุดท้าย → ผีไล่หายไปทันที แต่ยังไม่เข้า Relax ต้องเดินกลับไปนั่งที่ศาลาก่อนกฎถึงจะจบ
     ///   4. ผี: เริ่มกฎ → มีผีผูกคอตายแขวนอยู่ (HangingGhost) ไม่ไล่ แค่ให้เห็น
     ///           วางตุ๊กตาตัวที่ 1 สำเร็จ → ตัวผีหายไป เหลือแต่เชือก
     ///           เก็บตุ๊กตาตัวที่ 3 ขึ้นมือ → spawn ผีไล่ (Rule4Ghost) ที่จุดไกล แล้วไล่ยาวจนจบกฎ
@@ -102,6 +103,12 @@ namespace RuleSystem.Rule
         [Tooltip("แสดง introHint กี่วินาทีก่อนซ่อน")]
         [SerializeField] private float introHintDuration = 6f;
 
+        [TextArea(1, 3)]
+        [Tooltip("ขึ้นตอนวางตุ๊กตาตัวสุดท้ายแล้ว บอกให้กลับไปนั่งเพื่อจบกฎ — เว้นว่าง = ไม่บอก")]
+        [SerializeField] private string returnToSeatHint = "ครบแล้ว… กลับไปนั่งที่ศาลา";
+
+        [SerializeField] private float returnToSeatHintDuration = 6f;
+
         // ── Audio ───────────────────────────────────────────────────────
         [Header("Audio")]
         [Tooltip("เก็บตุ๊กตาตัวที่เท่าไรถึงเริ่มสุ่มเสียงบรรยากาศ (สเปก = 1)")]
@@ -151,7 +158,8 @@ namespace RuleSystem.Rule
         private bool       _wasHoldingBreath;
         private bool       _gameplayActive;
         private bool       _isEnding;
-        private bool       _completed;   // วางตุ๊กตาครบแล้ว — เงื่อนไขเดียวที่ยอมให้ EndRule ทำงาน
+        private bool       _allDollsPlaced;   // วางครบแล้ว รอผู้เล่นกลับไปนั่งที่ศาลา
+        private bool       _completed;        // วางครบและกลับมานั่งแล้ว — เงื่อนไขเดียวที่ยอมให้ EndRule ทำงาน
 
         /// <summary>true = ผู้เล่นถือตุ๊กตาอยู่ (เก็บได้ทีละตัว)</summary>
         public bool IsCarryingDoll => _carriedDoll != null;
@@ -189,7 +197,7 @@ namespace RuleSystem.Rule
         {
             TimeManager.instance.IsPauseTime(true);
 
-            yield return new WaitUntil(PlayerIsSitting);
+            yield return WaitForMessagesAndSeat();
             PlayerController.Instance.isBlockStanding = true;
 
             GameModeController.instance.BlinkToMode(GameMode.Tension);
@@ -204,7 +212,7 @@ namespace RuleSystem.Rule
         {
             if (!_gameplayActive) return;
 
-            // ยึดนาฬิกาไว้ทุกเฟรม — Rule 4 จบด้วยการวางตุ๊กตาครบเท่านั้น ไม่ใช่ด้วยเวลา
+            // ยึดนาฬิกาไว้ทุกเฟรม — Rule 4 จบด้วยการวางตุ๊กตาครบแล้วกลับไปนั่งเท่านั้น ไม่ใช่ด้วยเวลา
             // สั่งครั้งเดียวตอน StartGameplay ไม่พอ เพราะ BlinkRoutine / EndRule ของกฎอื่น
             // สั่ง IsPauseTime(false) ได้ทุกเมื่อ พอเวลาเดินถึง 22:40 RuleManager จะสั่งจบกฎทั้งที่ยังเก็บไม่ครบ
             if (!TimeManager.instance.IsPaused)
@@ -215,6 +223,14 @@ namespace RuleSystem.Rule
             }
 
             AudioManager.instance.UpdateHeartbeat();
+
+            // วางครบแล้ว ไม่มีผีให้หนี เหลือแค่เดินกลับไปนั่ง — ระบบเพลง/กลั้นหายใจข้างล่างไม่ต้องทำงานแล้ว
+            if (_allDollsPlaced)
+            {
+                if (PlayerIsSitting()) CompleteRule();
+                return;
+            }
+
             UpdateBackgroundMusic();
 
             if (breathSystem == null) return;
@@ -293,10 +309,10 @@ namespace RuleSystem.Rule
             if (_isEnding) return;
 
             // RuleManager เรียก EndRule เมื่อเวลาถึง endHour — Rule 4 ไม่ยอมให้เวลาเป็นคนจบ
-            // ต้องวางตุ๊กตาครบ (CompleteRoutine) เท่านั้น ถ้ายังเล่นอยู่ให้เมินคำสั่งนี้ไป
+            // ต้องวางตุ๊กตาครบแล้วกลับไปนั่ง (CompleteRule) เท่านั้น ถ้ายังเล่นอยู่ให้เมินคำสั่งนี้ไป
             if (_gameplayActive && !_completed)
             {
-                Debug.LogWarning("[Rule4] ถูกสั่ง EndRule ทั้งที่ยังเก็บตุ๊กตาไม่ครบ — เมิน (กฎจบเมื่อวางครบเท่านั้น)", this);
+                Debug.LogWarning("[Rule4] ถูกสั่ง EndRule ทั้งที่ยังไม่จบกฎ — เมิน (กฎจบเมื่อวางครบแล้วกลับไปนั่งเท่านั้น)", this);
                 TimeManager.instance.IsPauseTime(true);
                 return;
             }
@@ -324,6 +340,7 @@ namespace RuleSystem.Rule
         {
             _isEnding       = false;
             _completed      = false;
+            _allDollsPlaced = false;
             _dollsPlaced    = 0;
             _dollsPickedUp  = 0;
             _carriedDoll    = null;
@@ -645,20 +662,21 @@ namespace RuleSystem.Rule
             _carriedDoll = null;
             _dollsPlaced++;
 
-            if (_dollsPlaced >= dollCount)
-            {
-                StartCoroutine(CompleteRoutine());
-                return;
-            }
-
-            SpawnNextDoll();
-
             // วางครบตามที่กำหนด → ผีผูกคอหายไป เหลือแต่เชือก (เสียงทรมานหยุดด้วย)
             if (_dollsPlaced == hangingVanishAfterPlaced && _hangingGhost != null)
             {
                 _hangingGhost.Vanish();
                 AudioManager.instance.StopHangingGhostSounds();
             }
+
+            if (_dollsPlaced >= dollCount)
+            {
+                BeginReturnToSeat();
+                return;
+            }
+
+            SpawnNextDoll();
+
             // ถ้าผีไล่ออกมาแล้ว → เร็วขึ้นทุกครั้งที่วางสำเร็จ
             if (_ghost != null) _ghost.OnDollDelivered();
         }
@@ -669,18 +687,45 @@ namespace RuleSystem.Rule
             if (_ghost != null) _ghost.StartSprint();
         }
 
-        IEnumerator CompleteRoutine()
+        /// <summary>
+        /// วางตุ๊กตาตัวสุดท้ายแล้ว — ผีหายไปทันที (หันกลับมาก็ไม่เจอแล้ว) แต่กฎยังไม่จบ
+        /// โหมด Tension และไฟกระพริบยังอยู่ จนกว่าผู้เล่นจะเดินกลับไปนั่งที่ศาลา (ดู UpdateRule)
+        ///
+        /// _gameplayActive ยัง true ต่อไป เพื่อให้ UpdateRule ยึดนาฬิกาและคอยเช็กการนั่ง
+        /// ไม่มีผีเหลือให้ฆ่าแล้ว ช่วงเดินกลับจึงตายได้ทางเดียวคือออกนอกเขต
+        /// </summary>
+        void BeginReturnToSeat()
         {
-            _completed      = true;
-            _gameplayActive = false;
+            _allDollsPlaced = true;
 
-            if (_ghost != null) _ghost.Deactivate();
+            // ปิดสองระบบนี้ก่อนลบผี — StareSystem ยังถือ ref ผีอยู่ และถ้าจ้อง/กลั้นหายใจค้างอยู่
+            // ต้องคืนกล้อง ความเร็วเดิน และ effect ให้ผู้เล่นเดินกลับได้ปกติ
             if (breathSystem != null) breathSystem.EndRuleCleanup();
             if (stareSystem  != null) stareSystem.EndRuleCleanup();
 
-            if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.Hide();
+            if (_ghost != null)
+            {
+                _ghost.Deactivate();
+                Destroy(_ghost.gameObject);
+                _ghost = null;
+            }
 
-            yield return new WaitForSeconds(2f);
+            StopAmbientStingers();
+            _ghostBackgroundPlaying = false;
+            AudioManager.instance.StopRule4GhostBackground();
+            AudioManager.instance.ResetHeartbeatLevel();
+
+            if (spiritHouse != null) spiritHouse.StopAcceptingDolls();
+
+            if (!string.IsNullOrWhiteSpace(returnToSeatHint) && PlayerDialogueUI.instance != null)
+                PlayerDialogueUI.instance.ShowLine(returnToSeatHint, returnToSeatHintDuration);
+        }
+
+        /// <summary>กลับมานั่งที่ศาลาหลังวางครบ — จบกฎ เข้า Relax ทันที</summary>
+        void CompleteRule()
+        {
+            _completed      = true;
+            _gameplayActive = false;
 
             ReportCompleted();
             EndRule();
@@ -752,6 +797,10 @@ namespace RuleSystem.Rule
         // ════════════════════════════════════════════════════════════════
         #region Game Over
         // ════════════════════════════════════════════════════════════════
+
+        public override bool UsesTensionZones => ruleActive && _gameplayActive;
+
+        public override void DieOutsidePlayArea() => OnGhostCaughtPlayer();
 
         /// <summary>เรียกโดย Rule4Ghost เมื่อผีเข้าใกล้เกินระยะ — ตายทันที</summary>
         public void OnGhostCaughtPlayer()
@@ -853,33 +902,6 @@ namespace RuleSystem.Rule
             _dolls.Clear();
             _carriedDoll = null;
             _dollsSpawned = 0;
-        }
-
-        /// <summary>
-        /// ส่งผู้เล่นกลับศาลาตอนตาปิด
-        ///
-        /// กฎ 4 เป็นกฎเดียวที่จบห่างจากศาลา — ศาลสุ่มตำแหน่งจาก ShrineSpawnPoints และตุ๊กตา
-        /// ตัวสุดท้ายอยู่ไหนก็ได้ ผู้เล่นจึงวางครบแล้วยืนค้างอยู่กลางทุ่ง ห่างศาลาเป็นสิบเมตร
-        /// แล้วต้องเดินกลับมานั่งเองเพื่อให้กฎ 5 เริ่ม (RuleFlow รอ WaitUntil(PlayerIsSitting))
-        ///
-        /// ใช้จุดที่ผู้เล่นยืนก่อนนั่งครั้งล่าสุดเป็นเป้า ไม่ใช่ช่อง Inspector ใหม่ เพราะเป็นจุด
-        /// เดียวกับที่ StandUpRoutine ส่งกลับอยู่แล้วตอนลุกปกติ — การันตีว่ายืนได้จริงบนพื้น
-        /// ที่มี collider และไม่ต้องมีใครมาคอยอัปเดตตำแหน่งถ้าย้ายศาลาในซีน
-        /// </summary>
-        void ReturnPlayerToPavilion()
-        {
-            var pc = PlayerController.Instance;
-            if (pc == null) return;
-
-            if (!pc.HasSatOnce)
-            {
-                // ข้าม intro มาด้วย dev skip → ไม่เคยนั่ง → ไม่รู้ว่าศาลาอยู่ไหน
-                // ย้ายไป Vector3.zero จะแย่กว่าปล่อยไว้ที่เดิมมาก
-                Debug.LogWarning("[Rule4] ผู้เล่นยังไม่เคยนั่งในรอบนี้ — ไม่รู้ตำแหน่งศาลา จึงไม่ย้ายกลับ", this);
-                return;
-            }
-
-            pc.TeleportTo(pc.BeforeSitPosition, pc.BeforeSitRotation);
         }
 
         // กันค่า/เสียงค้างตอนกด Stop ใน Editor กลางคัน

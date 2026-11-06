@@ -1,5 +1,4 @@
 using System.Collections;
-using System.HeartbeatSystem;
 using FMOD.Studio;
 using FMODUnity;
 using Manager;
@@ -7,17 +6,16 @@ using PhoneSystem;
 using Player;
 using RuleSystem;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 
 /// <summary>
 /// Rule 1 — ห้ามออกนอกเขต
 ///
 /// Flow:
 ///   StartRule()  → โทรศัพท์หายไป, phone on ground ปรากฏในเขตสีแดง (PhoneDropped)
-///   PhoneDropped → ยิ่งออกไกล → distortion มากขึ้น; นอกทุก zone นานเกิน → ตาย
-///   OnPhonePickedUp() → โทรศัพท์คืน, distortion หาย (ReturnToSeat)
+///   OnPhonePickedUp() → โทรศัพท์คืน (ReturnToSeat)
 ///   ReturnToSeat → ผู้เล่นนั่ง → EndRule()
+///
+/// ภาพบิด เสียงหัวใจ และการตายนอกเขต ย้ายไปอยู่ที่ HeartbeatSystem แล้ว เพราะใช้กับทุกกฎตอน Tension
 /// </summary>
 public class Rule1 : RuleBase
 {
@@ -34,34 +32,8 @@ public class Rule1 : RuleBase
     [Tooltip("จุด teleport ผู้เล่นหลังตาย (ตำแหน่งยืนใกล้เก้าอี้)")]
     [SerializeField] private Transform playerResetPoint;
 
-    [Header("Death")]
-    [Tooltip("วินาทีที่อยู่นอกทุก zone (Outside) ก่อนตาย")]
-    [SerializeField] private float outsideDeathTime = 6f;
-
     [Header("Phone")]
     [SerializeField] private PhoneSystem.PhoneSystem phoneSystem;
-
-    [Header("Post Processing")]
-    [SerializeField] private Volume globalVolume;
-
-    // ── Zone Lens Distortion (ambient barrel) ────────────────────────────────
-    [Header("Zone Lens Distortion")]
-    [Tooltip("LensDistortion intensity ของ Orange zone\n" +
-             "แนะนำ -0.10 ถึง -0.20 (เบา ๆ — wave เป็นหลัก)")]
-    [SerializeField] private float orangeLens   = -0.12f;
-    [Tooltip("ChromaticAberration ของ Orange zone")]
-    [SerializeField] private float orangeChroma = 0.30f;
-
-    [Tooltip("LensDistortion intensity ของ Red zone\n" +
-             "แนะนำ -0.25 ถึง -0.40")]
-    [SerializeField] private float redLens   = -0.30f;
-    [Tooltip("ChromaticAberration ของ Red zone")]
-    [SerializeField] private float redChroma = 0.60f;
-
-    [Header("Wave Distortion")]
-    [Tooltip("Component ที่ควบคุม WaveDistortion.shader\n" +
-             "ดู WaveDistortionEffect.cs สำหรับวิธี setup ใน Inspector")]
-    [SerializeField] private WaveDistortionEffect waveEffect;
 
     [Header("Player Dialogue")]
     [Tooltip("บทพูดที่แสดงตอนโทรศัพท์หายออกจากมือผู้เล่น\n" +
@@ -87,7 +59,6 @@ public class Rule1 : RuleBase
     // ─────────────────────────── Runtime ───────────────────────────
 
     private Rule1State    _state        = Rule1State.None;
-    private float         _dieTimer;
     private bool          _isDying;
     private bool          _hasCompleted;   // กันไม่ให้ trigger ซ้ำหลัง EndRule
     private bool          _standHintActive;
@@ -106,13 +77,6 @@ public class Rule1 : RuleBase
         StartRule();
     }
 
-    /// <summary>
-    /// ผู้เล่นนั่งอยู่ที่ศาลา — คนปลุกกฎ 1 (FriendListController / Rule6 คืนรอบสอง) รอตัวนี้ก่อน blink
-    /// เพราะกฎ 1 เริ่มด้วยโทรศัพท์หลุดจากมือแล้วให้ลุกไปเก็บ ต้องเริ่มจากท่านั่งเหมือนกฎข้ออื่น
-    /// </summary>
-    public static bool PlayerIsSeated()
-        => PlayerController.Instance != null && PlayerController.Instance.IsSitting();
-
     public override void StartRule()
     {
         base.StartRule();
@@ -124,12 +88,11 @@ public class Rule1 : RuleBase
     {
         _hasCompleted = true;   // ล็อกไม่ให้ trigger ซ้ำ
         base.EndRule();
-        ResetDistortion();
         StopGhostHum();
         GameHintUI.instance?.Hide();
         StopPhoneSound();
         GameModeController.instance.BlinkToMode(GameMode.Relax);
-        PlayerController.Instance.isBlockStanding = false;
+        // ไม่ปลด isBlockStanding ตรงนี้ — base.EndRule() ข้างบนล็อกไว้ให้จนตาปิดสนิทแล้วปลดเอง
         AudioManager.instance.SetHeartbeatLevel(0);
         AudioManager.instance.UpdateHeartbeat(); // force parameter to 0 ทันที
         TimeManager.instance.IsPauseTime(false);
@@ -148,14 +111,17 @@ public class Rule1 : RuleBase
         _hasCompleted = false;
         _isDying      = false;
         _state        = Rule1State.None;
-        _dieTimer     = outsideDeathTime;
+    }
+
+    public override bool UsesTensionZones => ruleActive && _state != Rule1State.None && !_isDying;
+
+    public override void DieOutsidePlayArea()
+    {
+        if (!_isDying) StartCoroutine(DieRoutine());
     }
 
     protected override void UpdateRule()
     {
-        HeartbeatSystem.instance.CheckPlayerInsideZone();
-        AudioManager.instance.UpdateHeartbeat();
-
         switch (_state)
         {
             case Rule1State.PhoneDropped:  UpdatePhoneDropped();  break;
@@ -181,8 +147,6 @@ public class Rule1 : RuleBase
             RuntimeManager.AttachInstanceToGameObject(_phoneSoundInstance, phoneGroundObject.transform);
             _phoneSoundInstance.start();
         }
-
-        _dieTimer = outsideDeathTime;
 
         // ซ่อน phone controls hint แล้วแสดง stand hint
         if (GameHintUI.instance != null)
@@ -219,21 +183,6 @@ public class Rule1 : RuleBase
             GameHintUI.instance?.Hide();
             _standHintActive = false;
         }
-
-        ZoneLevel zone = HeartbeatSystem.instance.CurrentZoneLevel;
-        ApplyZoneDistortion(zone);
-
-        if (zone == ZoneLevel.Outside)
-        {
-            _dieTimer -= Time.deltaTime;
-            if (_dieTimer <= 0f)
-                StartCoroutine(DieRoutine());
-        }
-        else
-        {
-            // รีเซ็ต timer เมื่อกลับเข้า zone ใด ๆ
-            _dieTimer = outsideDeathTime;
-        }
     }
 
     // ─────────────────────────── State: ReturnToSeat ───────────────────────────
@@ -259,11 +208,6 @@ public class Rule1 : RuleBase
 
     void UpdateReturnToSeat()
     {
-        // อัปเดต wave / distortion ตาม zone เหมือน PhoneDropped state
-        // (ทำงานไม่ว่าจะหยิบโทรศัพท์แล้วหรือยัง)
-        ZoneLevel zone = HeartbeatSystem.instance.CurrentZoneLevel;
-        ApplyZoneDistortion(zone);
-
         // รอผู้เล่นกลับมานั่ง
         if (PlayerController.Instance.IsSitting())
         {
@@ -281,83 +225,11 @@ public class Rule1 : RuleBase
         ChangeState(Rule1State.ReturnToSeat);
     }
 
-    // ─────────────────────────── Distortion ───────────────────────────
-
-    void ApplyZoneDistortion(ZoneLevel zone)
-    {
-        LensDistortion      lens   = null;
-        ChromaticAberration chroma = null;
-        if (globalVolume != null)
-        {
-            globalVolume.profile.TryGet(out lens);
-            globalVolume.profile.TryGet(out chroma);
-        }
-
-        switch (zone)
-        {
-            // ── ปลอดภัย → ปิด effect ทั้งหมด ────────────────────────────
-            case ZoneLevel.Green:
-                SetLens(lens, 0f);
-                SetChroma(chroma, 0f);
-                waveEffect?.SetOff();
-                break;
-
-            // ── Orange → wave แกว่งช้า + lens เบา ๆ ──────────────────
-            case ZoneLevel.Orange:
-                SetLens(lens, orangeLens);
-                SetChroma(chroma, orangeChroma);
-                waveEffect?.SetOrange();
-                break;
-
-            // ── Red → wave รุนแรง + lens medium + chroma สูง ──────────
-            case ZoneLevel.Red:
-                SetLens(lens, redLens);
-                SetChroma(chroma, redChroma);
-                waveEffect?.SetRed();
-                break;
-
-            // ── Outside → barrel distortion สูงสุด ไม่มี wave ──────────
-            // (กำลังนับถอยหลังตาย — static ดูน่ากลัวกว่า wave)
-            case ZoneLevel.Outside:
-                SetLens(lens, -1.0f);
-                SetChroma(chroma, 1.0f);
-                waveEffect?.SetOff();
-                break;
-        }
-    }
-
-    static void SetLens(LensDistortion lens, float v)
-    {
-        if (lens == null) return;
-        lens.intensity.value = v;
-        lens.center.value    = Vector2.zero;
-    }
-
-    static void SetChroma(ChromaticAberration chroma, float v)
-    {
-        if (chroma != null) chroma.intensity.value = v;
-    }
-
-    void ResetDistortion()
-    {
-        waveEffect?.SetOff();
-
-        if (globalVolume == null) return;
-        if (globalVolume.profile.TryGet(out LensDistortion lens))
-        {
-            lens.intensity.value = 0f;
-            lens.center.value    = Vector2.zero;
-        }
-        if (globalVolume.profile.TryGet(out ChromaticAberration chroma))
-            chroma.intensity.value = 0f;
-    }
-
     // ─────────────────────────── Death ───────────────────────────
 
     IEnumerator DieRoutine()
     {
         _isDying = true;
-        ResetDistortion();
 
         // 1. กล้องล้ม (fall animation)
         yield return StartCoroutine(PlayerController.Instance.PlayDeathFallRoutine());
@@ -392,8 +264,7 @@ public class Rule1 : RuleBase
         PlayerController.Instance.ResetCameraAfterDeath();
         PlayerController.Instance.SetMovement(true);
 
-        _isDying  = false;
-        _dieTimer = outsideDeathTime;
+        _isDying = false;
     }
 
     /// <summary>รีเซ็ตตำแหน่งและ phone ขณะหน้าจอดำ (callback ตอนตาปิดสนิท)</summary>
@@ -409,7 +280,8 @@ public class Rule1 : RuleBase
         }
 
         // วางโทรศัพท์กลับบนพื้นใหม่ + เริ่มเสียงใหม่
-        if (phoneGroundObject != null)
+        // เก็บโทรศัพท์ไปแล้วไม่วางซ้ำ — ตอนนี้ตายนอกเขตได้ทั้งระหว่างเดินกลับไปนั่ง ซึ่งโทรศัพท์อยู่ในมือแล้ว
+        if (phoneGroundObject != null && _state == Rule1State.PhoneDropped)
         {
             phoneGroundObject.SetActive(true);
             StopPhoneSound();
@@ -420,8 +292,6 @@ public class Rule1 : RuleBase
                 _phoneSoundInstance.start();
             }
         }
-
-        _dieTimer = outsideDeathTime;
     }
 
     // ─────────────────────────── Helper ───────────────────────────

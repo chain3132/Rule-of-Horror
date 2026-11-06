@@ -128,6 +128,10 @@ public class Rule3 : RuleBase
         AudioManager.instance.UpdateHeartbeat();
     }
 
+    public override bool UsesTensionZones => ruleActive && _isRuleActive;
+
+    public override void DieOutsidePlayArea() => TriggerGameOver();
+
     public override void EndRule()
     {
         // Guard: prevents re-entry from RuleManager.CheckRules() → EndRule() StackOverflow loop
@@ -139,14 +143,15 @@ public class Rule3 : RuleBase
         LightFlickerSystem.Instance.StopAmbientFlicker();
         LightFlickerSystem.Instance.OnFlickerBurst -= OnLightFlicker;
         AudioManager.instance.StopBreathing();
-        AudioManager.instance.StopHeartbeat();
+        AudioManager.instance.SilenceHeartbeat();   // ไม่ใช้ StopHeartbeat — ตัวนั้นหยุด event ถาวร กฎหลังจากนี้จะไม่มีเสียงหัวใจอีกเลย
         AudioManager.instance.StopRule3Ambient();
         AudioManager.instance.StopRule3Intro(); // safety: in case rule ends during blink transition
 
         // Restore vignette + exposure to their original asset values
         RestoreProfileDefaults();
 
-        PlayerController.Instance.isBlockStanding = false;
+        // ไม่ปลด isBlockStanding ตรงนี้ — base.EndRule() ใน EndRuleAsync คุมให้เอง
+        // ปลดตอนตาปิดสนิท ปลดเร็วกว่านั้นผู้เล่นจะกด E ลุกได้ก่อนเข้า Relax
 
         // Use a coroutine to break the synchronous call chain:
         // SetTime() → RuleManager.CheckRules() → EndRule() would cause StackOverflow
@@ -176,8 +181,8 @@ public class Rule3 : RuleBase
     {
         TimeManager.instance.IsPauseTime(true);
 
-        // 1. Wait for player to sit down
-        yield return new WaitUntil(() => PlayerIsSitting());
+        // 1. Wait for the player to finish their messages and sit down
+        yield return WaitForMessagesAndSeat();
 
         // Player is not allowed to stand during Rule 3
         PlayerController.Instance.isBlockStanding = true;
@@ -587,7 +592,7 @@ public class Rule3 : RuleBase
         RestoreProfileDefaults();
 
         // Safety-stop any remaining sounds
-        AudioManager.instance.StopHeartbeat();
+        AudioManager.instance.SilenceHeartbeat();
         AudioManager.instance.StopRule3Intro();
 
         // Release standing lock before the blink (safe – player is already sitting)

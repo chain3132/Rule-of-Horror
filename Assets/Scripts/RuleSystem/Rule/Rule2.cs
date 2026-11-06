@@ -83,6 +83,30 @@ namespace RuleSystem.Rule
         private Coroutine                   _randomSoundCoroutine;
         private Coroutine                   _flashlightFlickerCoroutine;
         private int                         _puzzleFailCount; // นับความผิดพลาดจาก mini-game
+        private bool                        _isDying;         // ฉากตายกำลังเล่น — หยุด state machine กันมันเดินต่อ
+
+        public override bool UsesTensionZones =>
+            ruleActive && !_isDying && currentState != Rule2State.None && currentState != Rule2State.Completed;
+
+        public override void DieOutsidePlayArea() => OnGameOver();
+
+        /// <summary>
+        /// คืนใหม่จากบทจบวนลูปของกฎ 6 — ให้กฎ 2 เล่นได้อีกครั้ง
+        ///
+        /// ไฟดับครั้งแรกเริ่มได้เฉพาะตอน currentState == None แต่จบกฎแล้วสถานะค้างที่ RadioWaiting
+        /// ถ้าไม่ล้างตรงนี้ คืนรอบสองจะเงียบทั้งข้อ: กฎเริ่มตอน 20:00 แล้วไม่มีเหตุการณ์อะไรเกิดขึ้น
+        ///
+        /// ล็อกวิทยุกับสวิตช์คืนด้วย เพราะ StartFirstBlackout เปิดไว้และไม่มีใครปิดตอนผ่านกฎ
+        /// </summary>
+        public override void ResetForNewLoop()
+        {
+            currentState = Rule2State.None;
+            _isDying     = false;
+            ResetRuntime();
+
+            if (radioControl != null) radioControl.UnlockRadio(false);
+            if (switchLight  != null) switchLight.UnlockSwitch(false);
+        }
 
         // ════════════════════════════════════════════════════════════════
         #region Lifecycle
@@ -108,7 +132,7 @@ namespace RuleSystem.Rule
         IEnumerator RuleFlow()
         {
             TimeManager.instance.IsPauseTime(true);
-            yield return new WaitUntil(PlayerIsSitting);
+            yield return WaitForMessagesAndSeat();
             PlayerController.Instance.isBlockStanding = true;
             GameModeController.instance.BlinkToMode(GameMode.Tension);
             yield return null;                                          // รอ 1 frame ให้ BlinkRoutine set IsEyesOpen = false ก่อน
@@ -119,6 +143,8 @@ namespace RuleSystem.Rule
 
         protected override void UpdateRule()
         {
+            if (_isDying) return;
+
             // ตรวจเวลา → trigger First Blackout
             if (TimeManager.instance.CheckTime((int)hourFirstBlackout, (int)minuteFirstBlackout)
                 && currentState == Rule2State.None)
@@ -479,6 +505,8 @@ namespace RuleSystem.Rule
         /// <summary>เรียกโดย LeverPuzzleController เมื่อผิดครบ maxFails ครั้ง</summary>
         public void OnGameOver()
         {
+            if (_isDying) return;
+            _isDying = true;
             StartCoroutine(GameOverRoutine());
         }
 
@@ -486,6 +514,10 @@ namespace RuleSystem.Rule
         {
             // ── หยุดทุกอย่างใน Rule2 ────────────────────────────────
             StopHelperCoroutines();
+
+            // ตายนอกเขตเกิดได้ตอนเดินกลับศาลา ซึ่งผีวิ่งเปิดอยู่ — ต้องไม่ค้างไปถึงรอบถัดไป
+            if (runningGhost != null) runningGhost.SetActive(false);
+
             AudioManager.instance.StopAllRule2Sounds();
 
             if (_flashlightFlickerCoroutine != null)
@@ -520,6 +552,7 @@ namespace RuleSystem.Rule
                 {
                     PlayerController.Instance.ResetCameraAfterDeath();
                     PlayerController.Instance.SetMovement(true);
+                    ReturnPlayerToPavilion();   // ตายนอกเขตหรือที่ตู้ไฟ ก็ต้องกลับศาลา กฎจะ retrigger ที่ 20:00
                 });
 
             yield return new WaitUntil(() => GameModeController.instance.IsEyesOpen);
@@ -542,6 +575,7 @@ namespace RuleSystem.Rule
             TimeManager.instance.SetTime(gameOverResetHour, gameOverResetMinute);
             TimeManager.instance.IsPauseTime(false);
 
+            _isDying = false;
             base.EndRule();   // reset ruleActive → RuleManager จะ retrigger Rule2 เมื่อถึงเวลา
         }
 

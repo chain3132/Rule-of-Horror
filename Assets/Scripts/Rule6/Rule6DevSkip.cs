@@ -101,6 +101,7 @@ namespace Rule6
 
             if (!rule6.ruleActive)
             {
+                RuleSystem.RuleBase.DebugSkipMessageGate = true;   // ต้องตั้งก่อน SetTime — CheckRules เริ่มกฎได้ในบรรทัดนั้นเลย
                 TimeManager.instance.IsPauseTime(true);
                 TimeManager.instance.SetTime(rule6.startHour, rule6.startMinute);
 

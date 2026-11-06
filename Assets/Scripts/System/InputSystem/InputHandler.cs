@@ -86,7 +86,10 @@ namespace InputSystem
             // จึงต้องถามทุกเฟรมเอง — ดู WasMinigamePressed ว่าทำไมไม่ไปเพิ่มใน .inputactions
             if (WasMinigamePressed()) OnAppKeyPressed?.Invoke(3);
 
-            
+            // Esc = ถอยกลับในโทรศัพท์ อ่านตรงๆ เพราะเมนูหยุดเกมก็อ่าน Esc แบบเดียวกัน
+            // ตอนเมนูเปิด ตัวนี้ถูกปิดอยู่ ปุ่มจึงไม่ทะลุมาถึงโทรศัพท์
+            if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+                OnBackPressed?.Invoke();
         }
 
         #endregion

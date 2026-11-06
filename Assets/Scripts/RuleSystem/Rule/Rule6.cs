@@ -21,14 +21,15 @@ namespace RuleSystem.Rule
     ///   ไม่ลุกเลย      → รถรอครบ Idle Seconds If Seated แล้วผ่านไป คันถัดไปมาแทน
     ///   ลุกไปเช็ครถ    → รถหยุดรอไม่จำกัด ผู้เล่นเดินดูป้าย/ภายในได้เต็มที่
     ///   กลับไปนั่ง     → รถออกทันที = "ขอดูคันถัดไป"
+    ///   ลุกได้เฉพาะตอนรถจอดอยู่เท่านั้น — ระหว่างรอรถและตอนรถวิ่งเข้า/ออก ล็อกให้นั่งไว้
     ///
     /// นาฬิกาถูกยึดหยุดไว้ทั้งกฎ กฎนี้ไม่ได้ใช้เวลาเป็นตัวจับจังหวะเลย — มันจบเมื่อขึ้นรถ
     /// เท่านั้น ถ้าปล่อยนาฬิกาเดิน RuleManager จะสั่ง EndRule ตอน 24:40 ทั้งที่ผู้เล่นยัง
     /// นั่งอ่านรถอยู่ แล้วคืนนั้นจะจบลงโดยไม่มีบทจบอะไรเลย (เหตุผลเดียวกับ Rule3/Rule5)
     ///
-    /// ต่างจากกฎ 1-5 ตรงที่กฎนี้ไม่มีทาง "ตายแล้วเล่นใหม่" — รถทั้ง 4 คันเป็นบทจบคนละแบบ
-    /// คันที่ 3 ที่พาไปตายก็เป็นบทจบ ไม่ใช่ game over ที่ rewind เวลากลับ มีแค่คันที่ 4
-    /// (วนลูป) ที่เกมเดินต่อ เพราะมันพาผู้เล่นกลับไปเริ่มคืนเดิมใหม่ที่ 18:40
+    /// รถทั้ง 4 คันเป็นบทจบคนละแบบ คันที่ 3 ที่พาไปตายก็เป็นบทจบ ไม่ใช่ game over ที่ rewind
+    /// เวลากลับ มีแค่คันที่ 4 (วนลูป) ที่เกมเดินต่อ เพราะมันพาผู้เล่นกลับไปเริ่มคืนเดิมใหม่ที่ 18:40
+    /// ทางเดียวที่ตายแล้วเล่นใหม่คือเดินออกนอกเขตก่อนขึ้นรถ (กติกาเขตตอน Tension ของ HeartbeatSystem)
     ///
     /// ดีไซน์เดิมมีคันที่ 5 (รถหลอก — ขึ้นแล้วกลับมาเลือกใหม่) ถอดออกตามที่สั่ง
     /// หน้าที่ของมันคือ "ได้เลือกใหม่" ซึ่งการที่คิวรถวนกลับไปคันที่ 1 เองทำให้อยู่แล้ว
@@ -169,8 +170,11 @@ namespace RuleSystem.Rule
                  "เว้นว่าง = จะไปหาในซีนเอง")]
         [SerializeField] private Rule1 rule1;
 
-        // หมายเหตุ: กฎนี้ไม่มีช่อง Game Over Reset เหมือนกฎ 2-5 โดยตั้งใจ
-        // รถคันที่ 3 ที่พาไปตายคือบทจบ ไม่ใช่ game over ที่ rewind เวลากลับมาให้เลือกใหม่
+        // รถคันที่ 3 ที่พาไปตายคือบทจบ ไม่ใช้ค่านี้ — ค่านี้สำหรับการตายนอกเขตก่อนขึ้นรถเท่านั้น
+        [Header("Game Over Reset")]
+        [Tooltip("เวลาที่ rewind กลับไปหลังตายนอกเขต (ก่อน 24:00)")]
+        [SerializeField] private int gameOverResetHour   = 23;
+        [SerializeField] private int gameOverResetMinute = 55;
 
         #endregion
 
@@ -325,7 +329,8 @@ namespace RuleSystem.Rule
         {
             TimeManager.instance.IsPauseTime(true);
 
-            yield return new WaitUntil(PlayerIsSitting);
+            yield return WaitForMessagesAndSeat();
+            PlayerController.Instance.isBlockStanding = true;
 
             GameModeController.instance.BlinkToMode(GameMode.Tension);
             yield return null;
@@ -393,8 +398,7 @@ namespace RuleSystem.Rule
             _currentBus     = null;
             Resolution      = null;
 
-            // กฎนี้ต้องลุกได้ — ดีไซน์บังคับให้เดินไปเช็ครถถึงจะอ่านป้าย/ภายในออก
-            // (ต่างจากกฎ 3 กับ 5 ที่ล็อกให้นั่งอยู่กับที่)
+            // ปลดล็อกไว้ก่อนจนกว่าจะเช็กการตั้งค่าผ่าน — ถ้าไม่มีรถให้เล่น ผู้เล่นต้องไม่ติดอยู่ในท่านั่ง
             PlayerController.Instance.isBlockStanding = false;
             AudioManager.instance.SilenceHeartbeat();
 
@@ -408,6 +412,9 @@ namespace RuleSystem.Rule
                 Debug.LogError("[Rule6] ยังไม่ได้ใส่จุด Approach / Stop / Depart — รถไม่รู้จะวิ่งไปไหน", this);
                 return;
             }
+
+            // ยังไม่มีรถจอด = ยังลุกไม่ได้ — RunBus ปลดให้ตอนรถจอดสนิท
+            PlayerController.Instance.isBlockStanding = true;
 
             foreach (var bus in buses)
                 if (bus != null) bus.Setup(this, inputHandler);
@@ -479,6 +486,9 @@ namespace RuleSystem.Rule
         {
             _currentBus = bus;
 
+            // ลุกได้เฉพาะตอนรถจอด — ล็อกซ้ำตรงนี้ด้วยเพราะปุ่มเทสเรียกรถแทรกตอนรถคันก่อนจอดอยู่ได้
+            PlayerController.Instance.isBlockStanding = true;
+
             bus.Appear();
             bus.transform.SetPositionAndRotation(approachPoint.position, approachPoint.rotation);
             AudioManager.instance.PlayRule6BusArrive(approachPoint.position);
@@ -487,6 +497,7 @@ namespace RuleSystem.Rule
 
             // รถไม่มีประตู — จอดแล้วเดินขึ้นได้เลย ธงนี้คือสิ่งเดียวที่กันการขึ้นรถตอนมันยังวิ่ง
             bus.SetBoardable(true);
+            PlayerController.Instance.isBlockStanding = false;
 
             // แป้งชี้เฉพาะคันที่เป็นทางรอด (ปิดได้ — ดีไซน์ใหม่ไม่ให้เบาะแสนี้)
             bool pointing = paengPointsAtEscape && bus.Kind == Rule6BusKind.Escape && paeng != null;
@@ -508,6 +519,7 @@ namespace RuleSystem.Rule
             }
 
             bus.SetBoardable(false);
+            PlayerController.Instance.isBlockStanding = true;   // รถเริ่มออก — ลุกไม่ได้แล้วจนกว่าคันถัดไปจะจอด
             AudioManager.instance.PlayRule6BusDepart(bus.transform.position);
 
             yield return Drive(bus.transform, stopPoint, departPoint, driveOutSeconds, decelerate: false);
@@ -1002,7 +1014,7 @@ namespace RuleSystem.Rule
             }
 
             // ลงจากรถมายืนอยู่ — รอให้ไปนั่งที่ศาลาก่อนเหมือนคืนแรก
-            yield return new WaitUntil(Rule1.PlayerIsSeated);
+            yield return WaitForMessagesAndSeat();
 
             GameModeController.instance.BlinkToMode(GameMode.Tension);
             yield return null;
@@ -1158,6 +1170,63 @@ namespace RuleSystem.Rule
         // ════════════════════════════════════════════════════════════════
         #region Cleanup
         // ════════════════════════════════════════════════════════════════
+
+        public override bool UsesTensionZones => ruleActive && _gameplayActive && !_resolved;
+
+        /// <summary>เดินออกนอกเขตก่อนขึ้นรถ — ตายแล้วกลับมาเลือกรถใหม่ที่ศาลา</summary>
+        public override void DieOutsidePlayArea()
+        {
+            if (!_gameplayActive || _resolved) return;
+
+            _gameplayActive = false;
+
+            if (_cycle != null)
+            {
+                StopCoroutine(_cycle);
+                _cycle = null;
+            }
+
+            StartCoroutine(GameOverRoutine());
+        }
+
+        IEnumerator GameOverRoutine()
+        {
+            AudioManager.instance.StopRule6Background();
+            AudioManager.instance.PlayRule3Death();
+            if (PlayerDialogueUI.instance != null) PlayerDialogueUI.instance.Hide();
+
+            yield return StartCoroutine(PlayerController.Instance.PlayDeathFallRoutine());
+            AudioManager.instance.PlayGhostSorry();   // "ขอโทษ" — ทุกการตายตั้งแต่กฎ 3
+            yield return new WaitForSeconds(0.5f);
+
+            CleanupGameplay();
+
+            var player = PlayerController.Instance;
+            player.SetMovement(true);
+            player.isBlockStanding = false;
+            AudioManager.instance.SilenceHeartbeat();
+
+            // รอบสอง (ขึ้นรถคันที่ 4 มาแล้ว): ตายรอบเดียวจบ ไม่ย้อนเวลาให้เล่นใหม่
+            if (PermanentDeath.Claim(this)) yield break;
+
+            GameModeController.instance.DirectBlinkToMode(
+                GameMode.Relax,
+                onEyesClosed: () =>
+                {
+                    player.ResetCameraAfterDeath();
+                    player.SetMovement(true);
+                    ReturnPlayerToPavilion();
+                });
+
+            yield return new WaitUntil(PlayerEyesOpened);
+            yield return null;   // ตัด synchronous chain ก่อน SetTime → CheckRules
+
+            TimeManager.instance.SetTime(gameOverResetHour, gameOverResetMinute);
+            TimeManager.instance.IsPauseTime(false);
+
+            _isEnding = false;
+            base.EndRule();   // ruleActive = false → RuleManager เริ่มกฎนี้ใหม่ตอน 24:00
+        }
 
         void CleanupGameplay()
         {
