@@ -26520,8 +26520,6 @@ MonoBehaviour:
   jumpKey: 97
   toggleDollLinesKey: 98
   freezeClockOnStart: 0
-  jumpHour: 21
-  jumpMinute: 59
   showDollLines: 0
   showOnScreenHelp: 0
   statusDuration: 6
@@ -26560,8 +26558,6 @@ MonoBehaviour:
   toggleChingKey: 102
   teleportKey: 103
   freezeClockOnStart: 0
-  jumpHour: 22
-  jumpMinute: 59
   showDebugMarkers: 0
   showOnScreenHelp: 0
   statusDuration: 6
@@ -67108,8 +67104,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5933516618665115126, guid: 9964d170e4fc7b5459b496d3546bc5dd, type: 3}
+      propertyPath: m_Range
+      value: 20.36
+      objectReference: {fileID: 0}
+    - target: {fileID: 5933516618665115126, guid: 9964d170e4fc7b5459b496d3546bc5dd, type: 3}
       propertyPath: m_Intensity
-      value: 5
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 5933516618665115126, guid: 9964d170e4fc7b5459b496d3546bc5dd, type: 3}
+      propertyPath: m_SpotAngle
+      value: 42.77441
+      objectReference: {fileID: 0}
+    - target: {fileID: 5933516618665115126, guid: 9964d170e4fc7b5459b496d3546bc5dd, type: 3}
+      propertyPath: m_InnerSpotAngle
+      value: 19.315557
       objectReference: {fileID: 0}
     - target: {fileID: 7442074568826270405, guid: 9964d170e4fc7b5459b496d3546bc5dd, type: 3}
       propertyPath: m_Enabled
@@ -128709,7 +128717,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2116138650
 RectTransform:
   m_ObjectHideFlags: 0
