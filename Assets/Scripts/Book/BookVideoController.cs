@@ -14,7 +14,11 @@ namespace Book
     ///     ไม่ได้มีตัวละหน้า — 7 หน้า 2 ภาษาไม่ต้องมี 14 ตัวถอดรหัสวิดีโอพร้อมกัน
     ///   - เปลี่ยนหน้า: ระหว่างพลิก หยุดภาพค้างไว้ (หน้าที่กำลังพลิกยังมีหมึกติดไป)
     ///     พลิกเสร็จ Note ของหน้าเก่าหยุด/คืนเครื่องเล่น Note ของหน้าใหม่เริ่มจากต้น
+    ///   - เล่นจบแล้วเล่นครั้งเดียวพอ: เก็บเฟรมสุดท้ายไว้เป็นภาพนิ่งแล้วคืนเครื่องเล่น พลิกกลับมาหน้าเดิม
+    ///     หรือปิดแล้วเปิดสมุดใหม่ก็เห็นตัวหนังสือเต็มหน้าทันที วิดีโอเล่นเฉพาะ Note ที่ยังดูไม่จบ
+    ///     (พลิกหนีกลางคัน = ยังไม่จบ กลับมาจะเล่นใหม่จากต้น)
     ///   - เปลี่ยนภาษาตอนเปิดอยู่: สลับไปอีกไฟล์แล้วเล่นต่อจากวินาทีเดิม ไม่วูบขาว
+    ///     Note ที่จบแล้วกระโดดไปเฟรมสุดท้ายของภาษาใหม่ ไม่เล่นใหม่
     ///
     /// รู้ว่าเปิดถึงหน้าไหนได้สองทาง (ใช้ทางเดียวหรือทั้งสองทางก็ได้):
     ///   1. Follow Animator — อ่านชื่อคลิปที่ Animator กำลังเล่นเอง คลิปจาก TryNewBook.fbx ชื่อ
@@ -55,7 +59,7 @@ namespace Book
         [Range(0.25f, 1f)]
         [SerializeField] private float textureScale = 0.5f;
 
-        [Tooltip("✓ = วนเล่นซ้ำ / ✗ = เล่นจบแล้วค้างเฟรมสุดท้าย (ตัวหนังสือเขียนเสร็จแล้วอยู่บนหน้า)")]
+        [Tooltip("✓ = วนเล่นซ้ำทุกครั้งที่เปิดหน้า / ✗ = เล่นครั้งเดียว จบแล้วตัวหนังสือค้างบนหน้าถาวร")]
         [SerializeField] private bool loop;
 
         [Tooltip("เวลาที่หมึกค่อยๆ ปรากฏหลังวิดีโอได้เฟรมแรก (วินาที) — กันหน้ากระดาษกระพริบตอนเริ่ม")]
@@ -80,7 +84,26 @@ namespace Book
             public bool?           LightOnDark;  // null = ยังไม่รู้ (Auto ที่ยังไม่ได้ดูเฟรมแรก)
             public bool            Probing;
             public long            LastFrame = long.MinValue;   // เฟรมที่สร้าง mip ไปแล้ว
+            public bool            ReachedEnd;   // วิดีโอเล่นจนจบแล้ว
+            public int             EndFrame = -1;   // เฟรมเกมที่เห็นว่าจบ — ใช้รอให้เฟรมสุดท้ายลง texture ก่อนเก็บ
+            public bool            Silent;       // ยังไม่ขึ้นจอ — ภาพนิ่งภาษาเดิมค้างอยู่จนกว่าภาษาใหม่จะพร้อม
         }
+
+        /// <summary>เฟรมสุดท้ายของวิดีโอหนึ่งไฟล์ที่เก็บไว้เป็นภาพนิ่ง</summary>
+        private sealed class HeldFrame
+        {
+            public RenderTexture Texture;
+            public bool          LightOnDark;
+        }
+
+        /// <summary>เลขจำนวนเฟรมที่รอหลังวิดีโอจบก่อนเก็บภาพ — event จบยิงก่อนเฟรมสุดท้ายจะถูกเขียนลง texture</summary>
+        private const int HoldDelayFrames = 2;
+
+        // Note ที่เล่นจบแล้ว — อยู่ข้ามการวนคืนเหมือน BookPageTurner._unlocked ความจำไม่ได้หายไปกับเวลาที่ย้อน
+        private static readonly HashSet<int> _finishedNotes = new HashSet<int>();
+
+        private readonly Dictionary<VideoClip, HeldFrame> _held        = new Dictionary<VideoClip, HeldFrame>();
+        private readonly List<BookNoteSurface>            _showingHeld = new List<BookNoteSurface>();
 
         private readonly List<BookNoteSurface>  _surfaces  = new List<BookNoteSurface>();
         private readonly List<AnimatorClipInfo> _clipInfos = new List<AnimatorClipInfo>();
@@ -90,7 +113,12 @@ namespace Book
 
         // ปิด Reload Domain แล้ว static ไม่ถูกล้างเอง — export วิดีโอใหม่แล้วกด Play ต้องดูใหม่
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() => _detectedStyle.Clear();
+        private static void ResetStatics()
+        {
+            _detectedStyle.Clear();
+            _finishedNotes.Clear();
+        }
+
         private Slot[] _slots;
         private int    _spread = Closed;
 
@@ -127,31 +155,6 @@ namespace Book
         /// <summary>Note ทุกอันในหนังสือ</summary>
         public IReadOnlyList<BookNoteSurface> Surfaces => _surfaces;
 
-        /// <summary>
-        /// เล่นวิดีโอของหน้าคู่ที่เปิดอยู่ใหม่ตั้งแต่ต้น — ผู้เล่นหยิบสมุดขึ้นมาอ่าน ตัวหนังสือเขียนตัวเองใหม่อีกรอบ
-        /// ไม่ล้างหมึกก่อน: เฟรมเก่าค้างจนเฟรมแรกของรอบใหม่มาทับ (เฟรมแรกเป็นหน้าว่าง หมึกจึงหายไปเอง)
-        /// </summary>
-        public void Replay()
-        {
-            if (_slots == null) return;
-
-            foreach (var slot in _slots)
-            {
-                if (slot.Surface == null) continue;
-
-                if (slot.Player.isPrepared)
-                {
-                    slot.Player.time = 0;
-                    slot.Player.Play();
-                }
-                else
-                {
-                    slot.PendingTime = 0;
-                    slot.Player.Prepare();
-                }
-            }
-        }
-
         /// <summary>หา Note ในหนังสือใหม่ — เรียกถ้าเพิ่ม/ลบ BookNoteSurface ตอนเกมเล่นอยู่</summary>
         public void RefreshSurfaces()
         {
@@ -182,12 +185,14 @@ namespace Book
             // ซ่อนหนังสือ = ปิดหนังสือ คืนทุกอย่าง เปิดกลับมาจะเริ่มใหม่ตาม Animator
             _spread = Closed;
             ReleaseAll(destroy: true);
+            DestroyHeldFrames();
         }
 
         private void Update()
         {
             if (followAnimator) ReadSpreadFromAnimator();
             UpdateMips();
+            UpdateHolds();
             UpdateFades();
         }
 
@@ -213,6 +218,8 @@ namespace Book
                 foreach (var slot in _slots)
                     if (slot.Surface != null && slot.Surface.Spread != spread) Release(slot);
 
+            HideHeldOutside(spread);
+
             if (spread < 0) return;
 
             foreach (var surface in _surfaces)
@@ -227,6 +234,10 @@ namespace Book
                     continue;
                 }
 
+                // เล่นจบไปแล้ว — โชว์ภาพนิ่งทันที ไม่ต้องใช้เครื่องเล่นเลย
+                bool finished = _finishedNotes.Contains(surface.NoteNumber);
+                if (finished && TryShowHeld(surface)) continue;
+
                 slot = FreeSlot();
                 if (slot == null)
                 {
@@ -235,7 +246,8 @@ namespace Book
                     continue;
                 }
 
-                Assign(slot, surface);
+                // จบแล้วแต่ไม่มีภาพนิ่งของไฟล์นี้ — กระโดดไปเฟรมสุดท้าย แล้วเก็บเป็นภาพนิ่งต่อ
+                Assign(slot, surface, jumpToEnd: finished);
             }
         }
 
@@ -336,6 +348,7 @@ namespace Book
                 var slot = new Slot { Player = player };
                 player.prepareCompleted += _ => OnPrepared(slot);
                 player.started          += _ => slot.Ready = true;
+                player.loopPointReached += _ => slot.ReachedEnd = true;
                 player.errorReceived    += (_, message) =>
                     Debug.LogWarning($"[Book] วิดีโอ Note " +
                                      $"{(slot.Surface != null ? slot.Surface.NoteNumber.ToString() : "?")} " +
@@ -345,7 +358,9 @@ namespace Book
             }
         }
 
-        private void Assign(Slot slot, BookNoteSurface surface)
+        /// <param name="jumpToEnd">เริ่มที่เฟรมสุดท้ายเลย สำหรับ Note ที่เคยเล่นจบแล้ว</param>
+        /// <param name="silent">ไม่แตะภาพบนหน้ากระดาษจนกว่าจะเก็บภาพนิ่งเสร็จ</param>
+        private void Assign(Slot slot, BookNoteSurface surface, bool jumpToEnd = false, bool silent = false)
         {
             VideoClip clip = surface.ClipFor(L10n.IsThai);
             if (clip == null)
@@ -358,9 +373,12 @@ namespace Book
             slot.Surface     = surface;
             slot.Ready       = false;
             slot.Fade        = 0f;
-            slot.PendingTime = -1;
+            slot.PendingTime = jumpToEnd ? double.MaxValue : -1;   // OnPrepared ตัดให้เหลือเฟรมสุดท้ายเอง
             slot.LightOnDark = StyleOf(surface, clip);
             slot.Probing     = false;
+            slot.ReachedEnd  = false;
+            slot.EndFrame    = -1;
+            slot.Silent      = silent;
 
             EnsureTexture(slot, clip);
             ClearToPaper(slot.Texture, slot.LightOnDark ?? false);
@@ -370,7 +388,7 @@ namespace Book
             slot.Player.clip          = clip;
             slot.Player.Prepare();
 
-            surface.Show(slot.Texture, 0f, slot.LightOnDark ?? false);
+            if (!silent) surface.Show(slot.Texture, 0f, slot.LightOnDark ?? false);
 
 #if UNITY_EDITOR
             Debug.Log($"[Book] Note {surface.NoteNumber} → '{clip.name}' ({slot.Texture.width}×{slot.Texture.height})", surface);
@@ -465,6 +483,105 @@ namespace Book
             slot.Fade        = 0f;
             slot.LightOnDark = null;
             slot.Probing     = false;
+            slot.ReachedEnd  = false;
+            slot.EndFrame    = -1;
+            slot.Silent      = false;
+        }
+
+        // ─────────────────────────── ภาพนิ่งหลังเล่นจบ ───────────────────────────
+
+        /// <summary>วิดีโอไหนจบแล้ว เก็บเฟรมสุดท้ายเป็นภาพนิ่ง แล้วคืนเครื่องเล่น</summary>
+        private void UpdateHolds()
+        {
+            if (_slots == null || loop) return;
+
+            foreach (var slot in _slots)
+            {
+                if (slot.Surface == null || !slot.Ready) continue;
+
+                // เผื่อ event จบไม่ยิงตอนกระโดดไปเฟรมสุดท้าย จึงดูจากเวลาที่หยุดอยู่ด้วย
+                bool stoppedAtEnd = _spread == slot.Surface.Spread && slot.Player.isPrepared &&
+                                    !slot.Player.isPlaying && Finished(slot);
+                if (!slot.ReachedEnd && !stoppedAtEnd) continue;
+
+                if (slot.EndFrame < 0) slot.EndFrame = Time.frameCount;
+                if (Time.frameCount - slot.EndFrame < HoldDelayFrames) continue;
+
+                // ยังไม่รู้ว่าพื้นขาวหรือพื้นดำ — UpdateFades กำลังดูเฟรมอยู่ ภาพนิ่งต้องรู้ค่านี้
+                if (slot.LightOnDark == null) continue;
+
+                Hold(slot);
+            }
+        }
+
+        private void Hold(Slot slot)
+        {
+            BookNoteSurface surface = slot.Surface;
+            VideoClip       clip    = slot.Player.clip;
+
+            var held = new HeldFrame { Texture = CreateInkTexture(slot.Texture.width, slot.Texture.height,
+                                                                   $"Book Note {surface.NoteNumber} Held"),
+                                       LightOnDark = slot.LightOnDark.Value };
+
+            Graphics.Blit(slot.Texture, held.Texture);
+            held.Texture.GenerateMips();
+
+            if (_held.TryGetValue(clip, out HeldFrame old)) DestroyHeld(old);
+            _held[clip] = held;
+
+            _finishedNotes.Add(surface.NoteNumber);
+
+            Release(slot);   // ซ่อนหน้านี้ไปด้วย แต่ภาพนิ่งขึ้นแทนในเฟรมเดียวกัน จึงไม่เห็นกระพริบ
+            ShowHeld(surface, held);
+        }
+
+        /// <summary>โชว์ภาพนิ่งของภาษาปัจจุบัน — คืน false ถ้ายังไม่มี</summary>
+        private bool TryShowHeld(BookNoteSurface surface)
+        {
+            VideoClip clip = surface.ClipFor(L10n.IsThai);
+            if (clip == null || !_held.TryGetValue(clip, out HeldFrame held)) return false;
+
+            // RenderTexture หายได้ถ้าอุปกรณ์กราฟิกถูกรีเซ็ต — ให้กลับไปกระโดดเฟรมสุดท้ายแทนหน้าว่าง
+            if (!held.Texture.IsCreated()) return false;
+
+            ShowHeld(surface, held);
+            return true;
+        }
+
+        private void ShowHeld(BookNoteSurface surface, HeldFrame held)
+        {
+            surface.Show(held.Texture, 1f, held.LightOnDark);
+            if (!_showingHeld.Contains(surface)) _showingHeld.Add(surface);
+        }
+
+        private void HideHeldOutside(int spread)
+        {
+            for (int i = _showingHeld.Count - 1; i >= 0; i--)
+            {
+                BookNoteSurface surface = _showingHeld[i];
+                if (surface != null && surface.Spread == spread) continue;
+
+                if (surface != null) surface.Hide();
+                _showingHeld.RemoveAt(i);
+            }
+        }
+
+        private void DestroyHeldFrames()
+        {
+            foreach (BookNoteSurface surface in _showingHeld)
+                if (surface != null) surface.Hide();
+            _showingHeld.Clear();
+
+            foreach (HeldFrame held in _held.Values) DestroyHeld(held);
+            _held.Clear();
+        }
+
+        private static void DestroyHeld(HeldFrame held)
+        {
+            if (held.Texture == null) return;
+
+            held.Texture.Release();
+            Destroy(held.Texture);
         }
 
         private void ReleaseAll(bool destroy)
@@ -538,17 +655,23 @@ namespace Book
                 Destroy(slot.Texture);
             }
 
-            slot.Texture = new RenderTexture(w, h, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB)
+            slot.Texture   = CreateInkTexture(w, h, $"Book Ink {System.Array.IndexOf(_slots, slot) + 1}");
+            slot.LastFrame = long.MinValue;
+        }
+
+        private static RenderTexture CreateInkTexture(int width, int height, string textureName)
+        {
+            var texture = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB)
             {
-                name       = $"Book Ink {System.Array.IndexOf(_slots, slot) + 1}",
+                name             = textureName,
                 useMipMap        = true,
                 autoGenerateMips = false,
                 wrapMode         = TextureWrapMode.Clamp,
                 filterMode       = FilterMode.Trilinear,
                 anisoLevel       = 8,
             };
-            slot.Texture.Create();
-            slot.LastFrame = long.MinValue;
+            texture.Create();
+            return texture;
         }
 
         /// <summary>
@@ -601,6 +724,8 @@ namespace Book
                     continue;
                 }
 
+                if (slot.Silent) continue;
+
                 slot.Fade = fadeInSeconds > 0f ? Mathf.Min(1f, slot.Fade + dt / fadeInSeconds) : 1f;
                 slot.Surface.Show(slot.Texture, slot.Fade, slot.LightOnDark.Value);
             }
@@ -616,16 +741,33 @@ namespace Book
         /// </summary>
         private void OnLanguageChanged()
         {
-            if (_slots == null) return;
-
             bool thai = L10n.IsThai;
 
+            if (_slots != null) SwitchPlayingLanguage(thai);
+
+            // ภาพนิ่งเปลี่ยนภาษาด้วย: มีของภาษาใหม่แล้วใช้เลย ไม่มีก็ให้เครื่องเล่นกระโดดไปเฟรมสุดท้าย
+            // โดยภาพนิ่งภาษาเดิมค้างอยู่จนของใหม่พร้อม หน้ากระดาษจึงไม่วูบ
+            for (int i = _showingHeld.Count - 1; i >= 0; i--)
+            {
+                BookNoteSurface surface = _showingHeld[i];
+                if (surface == null || SlotOf(surface) != null || TryShowHeld(surface)) continue;
+
+                Slot slot = FreeSlot();
+                if (slot != null) Assign(slot, surface, jumpToEnd: true, silent: true);
+            }
+        }
+
+        private void SwitchPlayingLanguage(bool thai)
+        {
             foreach (var slot in _slots)
             {
                 if (slot.Surface == null) continue;
 
                 VideoClip clip = slot.Surface.ClipFor(thai);
                 if (clip == null || clip == slot.Player.clip) continue;
+
+                slot.ReachedEnd = false;
+                slot.EndFrame   = -1;
 
                 double time = keepTimeOnLanguageChange && slot.Player.isPrepared ? slot.Player.time : 0;
 
@@ -643,7 +785,7 @@ namespace Book
                     ClearToPaper(slot.Texture, slot.LightOnDark ?? false);
                     slot.Ready = false;
                     slot.Fade  = 0f;
-                    slot.Surface.Show(slot.Texture, 0f, slot.LightOnDark ?? false);
+                    if (!slot.Silent) slot.Surface.Show(slot.Texture, 0f, slot.LightOnDark ?? false);
                 }
 
                 slot.Player.targetTexture = slot.Texture;
