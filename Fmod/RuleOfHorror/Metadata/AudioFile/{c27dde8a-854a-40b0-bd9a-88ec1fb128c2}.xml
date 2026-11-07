@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{c27dde8a-854a-40b0-bd9a-88ec1fb128c2}">
 		<property name="assetPath">
-			<value>Rules 4/Rule 4 ambiant/Drop Doll.mp3</value>
+			<value>Rule4/Rule 4 ambiant/Drop Doll.mp3</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>48</value>

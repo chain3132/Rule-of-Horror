@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{4c7e317f-f165-42fd-9203-2822f829accc}">
 		<property name="assetPath">
-			<value>Rule 5/Background Rule 5.mp3</value>
+			<value>Rule5/Background Rule 5.mp3</value>
 		</property>
 		<property name="isStreaming">
 			<value>true</value>

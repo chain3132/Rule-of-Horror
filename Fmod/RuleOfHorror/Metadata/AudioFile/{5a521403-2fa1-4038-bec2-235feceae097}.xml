@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{5a521403-2fa1-4038-bec2-235feceae097}">
 		<property name="assetPath">
-			<value>Rules 4/Heartbeat/Heartbeat_NewSlow.mp3</value>
+			<value>Rule4/Heartbeat/Heartbeat_NewSlow.mp3</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>48</value>
