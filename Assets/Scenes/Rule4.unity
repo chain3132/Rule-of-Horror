@@ -26722,7 +26722,7 @@ MonoBehaviour:
   greenMaxZ: 35.9
   orangeMinX: -46.6
   orangeMaxX: 22.2
-  orangeMinZ: -46.5
+  orangeMinZ: -50.4
   orangeMaxZ: 38.9
   redMinX: -54.2
   redMaxX: 30.1
@@ -128709,7 +128709,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2116138650
 RectTransform:
   m_ObjectHideFlags: 0
@@ -128776,10 +128776,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 36
+  m_fontSize: 8
+  m_fontSizeBase: 8
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0

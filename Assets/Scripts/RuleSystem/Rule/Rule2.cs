@@ -90,6 +90,27 @@ namespace RuleSystem.Rule
 
         public override void DieOutsidePlayArea() => OnGameOver();
 
+        public override void DebugForceEnd()
+        {
+            StopAllCoroutines();
+            _isDying = false;
+
+            // เก็บของกลางกฎที่ทางจบปกติคืนให้ไปแล้วตอนซ่อมตู้เสร็จ
+            ClearPanelShadows();
+            if (runningGhost != null) runningGhost.SetActive(false);
+            if (saraLight != null) saraLight.enabled = true;
+            SetStreetLights(true);
+            if (flashlight != null && _flashlightFlickerCoroutine != null) flashlight.enabled = true;   // หยุดกลางกระพริบอาจค้างดับ
+            if (radioControl != null) radioControl.UnlockRadio(false);
+            if (switchLight  != null) switchLight.UnlockSwitch(false);
+
+            currentState = Rule2State.None;
+            ResetRuntime();
+
+            ReportCompleted();
+            EndRule();
+        }
+
         /// <summary>
         /// คืนใหม่จากบทจบวนลูปของกฎ 6 — ให้กฎ 2 เล่นได้อีกครั้ง
         ///

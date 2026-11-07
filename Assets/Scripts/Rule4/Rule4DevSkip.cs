@@ -13,10 +13,8 @@ namespace Rule4
     ///   2. กด Play → กด Spacebar ข้าม intro → รอให้ตัวละครนั่งลงเสร็จ
     ///   3. กด F4 → เข้า Rule 4 ทันที
     ///
-    /// ทำไมถึงไม่ชนกับกฎอื่น:
-    ///   Rule4.RuleFlow() สั่ง IsPauseTime(true) เป็นบรรทัดแรก นาฬิกาเลยหยุดเดิน
-    ///   RuleManager.CheckRules ทำงานตอน OnTimeChanged เท่านั้น → Rule 2/3 ไม่มีทาง trigger แทรก
-    ///   ส่วน Rule 1 ตั้ง startHour = 23 อยู่แล้ว (trigger จากแชทเท่านั้น) จึงไม่ยุ่งด้วย
+    /// ทำไมถึงไม่ชนกับกฎอื่น: ข้ามกฎผ่าน RuleDevTools ซึ่งจบกฎที่เล่นอยู่ให้ก่อนเสมอ
+    /// และ Rule4.RuleFlow() สั่ง IsPauseTime(true) เป็นบรรทัดแรก กฎตามเวลาข้ออื่นจึงไม่แทรก
     ///
     /// ตัว component จะหยุดนาฬิกาให้ตั้งแต่ Start ด้วย กันกรณีมัวหาปุ่มอยู่แล้ว Rule 2 ชิงเริ่มก่อน
     /// </summary>
@@ -39,10 +37,6 @@ namespace Rule4
         [Header("Clock")]
         [Tooltip("หยุดนาฬิกาทันทีที่เริ่มเกม — กัน Rule 2/3 ชิง trigger ระหว่างที่ยังไม่ได้กด F4")]
         [SerializeField] private bool freezeClockOnStart = true;
-
-        [Tooltip("เวลาที่จะตั้งให้ก่อนเริ่ม Rule 4 (ปกติ 21:59 = ก่อนหน้าต่างของ Rule 4 พอดี)")]
-        [SerializeField] private int jumpHour = 21;
-        [SerializeField] private int jumpMinute = 59;
 
         [Header("Debug")]
         [Tooltip("ชี้ตำแหน่งตุ๊กตาที่ยังไม่ถูกเก็บ + ตำแหน่งผี\n" +
@@ -89,10 +83,10 @@ namespace Rule4
 #if UNITY_EDITOR || DEVELOPMENT_BUILD || RULE4_TEST_BUILD
             if (!enableDevSkip) return;
 
-            // ย้ำหยุดนาฬิกาทุกเฟรมจนกว่าจะเข้า Rule 4
-            // สั่งครั้งเดียวใน Start() ไม่พอ เพราะ CutsceneManager และ GameModeController.BlinkRoutine
-            // สั่ง IsPauseTime(false) ทีหลังเสมอ พอเข้า Rule 4 แล้ว Rule4 เป็นคนคุมเอง
-            if (freezeClockOnStart && rule4 != null && !rule4.ruleActive && TimeManager.instance != null)
+            // ย้ำหยุดนาฬิกาทุกเฟรมจนกว่าจะกดปุ่มเทสครั้งแรก — สั่งครั้งเดียวใน Start() ไม่พอ เพราะ
+            // CutsceneManager และ GameModeController.BlinkRoutine สั่ง IsPauseTime(false) ทีหลังเสมอ
+            // เลิกหยุดหลังใช้ปุ่มเทสแล้ว ไม่งั้นจะไปหยุดนาฬิกาของกฎ 2 ที่ต้องเดินถึงจะมีไฟดับ
+            if (freezeClockOnStart && !RuleSystem.RuleDevTools.HasBeenUsed && TimeManager.instance != null)
                 TimeManager.instance.IsPauseTime(true);
 
             if (Keyboard.current == null) return;
@@ -128,28 +122,23 @@ namespace Rule4
                 return;
             }
 
-            // ตั้งเวลาให้อยู่ก่อนหน้าต่างของ Rule 4 พอดี
-            // (Rule4.EndRule จะ SetTime(22,39) ตอนจบ — ตั้งไว้แบบนี้ลำดับเวลาจะไม่เพี้ยน)
-            RuleSystem.RuleBase.DebugSkipMessageGate = true;   // ข้ามเวลามา ข้อความก่อนหน้าส่งถึงพร้อมกันหมด
-
-            if (TimeManager.instance != null)
+            if (RuleSystem.RuleDevTools.IsJumping)
             {
-                TimeManager.instance.SetTime(jumpHour, jumpMinute);
-                TimeManager.instance.IsPauseTime(true);
-            }
-
-            var pc = PlayerController.Instance;
-            if (pc == null)
-            {
-                Notify("ไม่เจอ PlayerController ใน scene", true);
+                Notify("กำลังข้ามกฎอยู่ รอสักครู่", true);
                 return;
             }
 
-            rule4.StartRule();
+            StartCoroutine(JumpRoutine());
+        }
 
-            if (!pc.IsSitting())
-                // RuleFlow มี WaitUntil(PlayerIsSitting) อยู่แล้ว — สั่งไปเลย เดี๋ยวมันรอเอง
-                Notify("สั่งเริ่ม Rule 4 แล้ว — แต่ยังไม่ได้นั่ง เดินไปที่ศาลาแล้วกด E เพื่อให้กฎเริ่มจริง");
+        private System.Collections.IEnumerator JumpRoutine()
+        {
+            Notify("กำลังข้ามไป Rule 4...");
+            yield return RuleSystem.RuleDevTools.JumpTo(rule4);
+
+            var pc = PlayerController.Instance;
+            if (pc != null && !pc.IsSitting())
+                Notify("สั่งเริ่ม Rule 4 แล้ว — เดินไปที่ศาลาแล้วกด E เพื่อให้กฎเริ่มจริง");
             else
                 Notify("เริ่ม Rule 4 แล้ว");
         }

@@ -70,7 +70,7 @@ MonoBehaviour:
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 1200, y: 0}
-  - message: "Be careful. Some of them aren't real buses. Look closely: if the sign outside doesn't match the one inside, that bus is a fake."
+  - message: "But remember, not every bus goes where you want to go. Don't trust the sign on the front alone. Check the state of the bus and the inside too. Sometimes what you see isn't what you think."
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -79,7 +79,7 @@ MonoBehaviour:
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 1500, y: 0}
-  - message: "Your bus will have bright lights, a sign with the name of your village, and exactly one empty seat waiting for you."
+  - message: "If you ask me, I'd pick the one with bright lights, passengers, and a clear destination sign. At least it looks more trustworthy than a bus that doesn't even know where it's going."
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -88,7 +88,25 @@ MonoBehaviour:
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 1800, y: 0}
-  - message: "One more piece of advice. Whichever one looks the safest, I'd like you to get on that one, and make it home safely."
+  - message: "Besides, you've been waiting all night, haven't you? If you find a bus with a seat just for you, don't hesitate too long."
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 8
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 2100, y: 0}
+  - message: "But in the end, you have to choose for yourself."
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 9
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 2400, y: 0}
+  - message: "I hope you get home safely tonight."
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -96,4 +114,4 @@ MonoBehaviour:
     nextNode: -1
     recordsRule: {fileID: 11400000, guid: 1d6971a0b3009b244918885d863b79c1, type: 2}
     recordsAsCooperative: 1
-    graphPosition: {x: 2100, y: 0}
+    graphPosition: {x: 2700, y: 0}

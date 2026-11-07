@@ -72,6 +72,14 @@ namespace System.HeartbeatSystem
         /// <summary>โซนที่ผู้เล่นอยู่ปัจจุบัน — อัปเดตทุกครั้งที่เรียก CheckPlayerInsideZone()</summary>
         public ZoneLevel CurrentZoneLevel { get; private set; } = ZoneLevel.Green;
 
+        /// <summary>กติกาเขตกำลังมีผลอยู่ไหม — ไว้โชว์บนหน้าจอของปุ่มเทส</summary>
+        public bool IsEnforcing => _appliedZone != null;
+
+        /// <summary>อยู่นอกเขตมาแล้วกี่วินาที</summary>
+        public float OutsideSeconds => _outsideSeconds;
+
+        public float OutsideDeathTime => outsideDeathTime;
+
         private RuleSystem.RuleBase[] _rules;
         private ZoneLevel?            _appliedZone;   // null = ไม่ได้ใส่ effect อยู่
         private float                 _outsideSeconds;

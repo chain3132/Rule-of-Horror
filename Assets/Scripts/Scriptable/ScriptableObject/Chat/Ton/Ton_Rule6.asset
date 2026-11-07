@@ -75,7 +75,7 @@ MonoBehaviour:
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 900, y: 130}
-  - message: Listen, let me finish what my uncle told me.
+  - message: Listen, let me finish the story.
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -83,9 +83,8 @@ MonoBehaviour:
     nextNode: 6
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 1200, y: 0}
-  - message: "That woman was named Paeng. Years ago, she was waiting for a bus at
-      this shed when she got sent a set of rules\u2014just like you did."
+    graphPosition: {x: 1500, y: 0}
+  - message: Years ago, a woman vanished at this shed.
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -93,9 +92,8 @@ MonoBehaviour:
     nextNode: 7
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 1500, y: 0}
-  - message: A stranger was there with her that night. They both followed the rules
-      together and almost made it to the end.
+    graphPosition: {x: 1800, y: 0}
+  - message: Her name was Paeng.
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -103,8 +101,8 @@ MonoBehaviour:
     nextNode: 8
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 1800, y: 0}
-  - message: But the last bus could only take one person.
+    graphPosition: {x: 2100, y: 0}
+  - message: She wasn't alone that night. Another guy was waiting for the bus too.
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -112,9 +110,8 @@ MonoBehaviour:
     nextNode: 9
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 2100, y: 0}
-  - message: By morning, the shed was empty. Paeng vanished, and while the guy made
-      it home... no one ever saw him again.
+    graphPosition: {x: 2400, y: 0}
+  - message: But after that night, no one knows for sure what happened to those two.
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -122,9 +119,8 @@ MonoBehaviour:
     nextNode: 10
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 2400, y: 0}
-  - message: My grandma said ever since then, anyone who wanders into that shed receives
-      texts from an unknown number.
+    graphPosition: {x: 2700, y: 0}
+  - message: You said someone's been texting you how to survive, right?
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -132,8 +128,8 @@ MonoBehaviour:
     nextNode: 11
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 2700, y: 0}
-  - message: Bro...
+    graphPosition: {x: 3000, y: 0}
+  - message: So how the hell do they know that?
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -141,19 +137,17 @@ MonoBehaviour:
     nextNode: 12
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 3000, y: 0}
-  - message: The person texting you... my uncle thinks it might be the guy who survived
-      that night
-    isPlayer: 0
-    scriptedLine: 0
+    graphPosition: {x: 3300, y: 0}
+  - message: What do you mean?
+    isPlayer: 1
+    scriptedLine: 1
     offersReward: 0
     replies: []
     nextNode: 13
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 3300, y: 0}
-  - message: "He\u2019s not trying to help you. He\u2019s trying to find someone
-      to take his place."
+    graphPosition: {x: 3600, y: 0}
+  - message: Have you ever wondered how they know about this shed?
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -161,8 +155,8 @@ MonoBehaviour:
     nextNode: 14
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 3600, y: 0}
-  - message: My uncle said Paeng never actually killed anyone.
+    graphPosition: {x: 3900, y: 0}
+  - message: And what if the person texting you was there before...
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -170,8 +164,8 @@ MonoBehaviour:
     nextNode: 15
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 3900, y: 0}
-  - message: Everyone who died there was consumed by their own fear.
+    graphPosition: {x: 4200, y: 0}
+  - message: Why haven't they come out of there yet?
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -179,48 +173,39 @@ MonoBehaviour:
     nextNode: 16
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 4200, y: 0}
+    graphPosition: {x: 4500, y: 0}
+  - message: Think about it carefully.
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 17
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 4800, y: 0}
+  - message: I'll be waiting right here.
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 18
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 5100, y: 0}
   - message: 
     isPlayer: 1
     scriptedLine: 0
     offersReward: 0
     replies:
     - replyText: So what am I supposed to do now?!
-      nextNode: 17
-    - replyText: "Wait... so I\u2019ve been following his orders this whole time?"
-      nextNode: 18
+      nextNode: 19
+    - replyText: So I've been following them this whole time?
+      nextNode: 20
     nextNode: 0
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 4500, y: 0}
-  - message: I don't know. My uncle only said...
-    isPlayer: 0
-    scriptedLine: 0
-    offersReward: 0
-    replies: []
-    nextNode: 19
-    recordsRule: {fileID: 0}
-    recordsAsCooperative: 1
-    graphPosition: {x: 4800, y: 0}
-  - message: "Yeah. But it\u2019s not too late. My uncle said..."
-    isPlayer: 0
-    scriptedLine: 0
-    offersReward: 0
-    replies: []
-    nextNode: 19
-    recordsRule: {fileID: 0}
-    recordsAsCooperative: 1
-    graphPosition: {x: 4800, y: 130}
-  - message: '"DO NOT get on the bus he tells you to get on."'
-    isPlayer: 0
-    scriptedLine: 0
-    offersReward: 0
-    replies: []
-    nextNode: 20
-    recordsRule: {fileID: 0}
-    recordsAsCooperative: 1
-    graphPosition: {x: 5097.706, y: 0}
-  - message: "I\u2019ll wait right here until you get out."
+    graphPosition: {x: 5400, y: 0}
+  - message: I don't know. But I want to tell you this...
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -228,8 +213,17 @@ MonoBehaviour:
     nextNode: 21
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 5400, y: 0}
-  - message: '[Ton went offline]'
+    graphPosition: {x: 5700, y: 0}
+  - message: "Yeah. But it\u2019s not too late."
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 21
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 5700, y: 130}
+  - message: '"DO NOT get on the bus they tell you to get on."'
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -237,8 +231,8 @@ MonoBehaviour:
     nextNode: 22
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 5700, y: 0}
-  - message: '[A few seconds later, a chat from an unknown sender popped up]'
+    graphPosition: {x: 6300, y: 0}
+  - message: "I\u2019ll wait right here until you get out."
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -246,8 +240,26 @@ MonoBehaviour:
     nextNode: 23
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 6000, y: 0}
-  - message: "[Unknown: Your friend talks too much.]\t"
+    graphPosition: {x: 6600, y: 0}
+  - message: '[Ton went offline]'
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 24
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 6900, y: 0}
+  - message: '[A few seconds later, a chat from an unknown sender popped up]'
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
+    nextNode: 25
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 7200, y: 0}
+  - message: 'Unknown: Your friend talks too much.'
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -255,4 +267,4 @@ MonoBehaviour:
     nextNode: -1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 6300, y: 0}
+    graphPosition: {x: 7500, y: 0}

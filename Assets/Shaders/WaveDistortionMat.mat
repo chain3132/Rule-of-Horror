@@ -26,8 +26,8 @@ Material:
     m_Ints: []
     m_Floats:
     - _WaveAmp: 0
-    - _WaveFreq: 7
-    - _WaveSpeed: 1.5
+    - _WaveFreq: 13
+    - _WaveSpeed: 4
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1

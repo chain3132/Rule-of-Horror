@@ -30,6 +30,45 @@ namespace RuleSystem
             OnRuleCompleted      = null;
             DebugSkipMessageGate = false;
             _friendList          = null;
+            _allRules            = null;
+        }
+
+        private static RuleBase[] _allRules;
+
+        /// <summary>
+        /// กฎที่กำลังทำงานอยู่ตอนนี้ (null = ไม่มี) — รวมกฎ 1 ซึ่งไม่ได้อยู่ใน RuleManager.rules
+        /// เก็บลิสต์ไว้ เรียกจาก HUD ของปุ่มเทสได้ทุกเฟรมโดยไม่ต้องสแกนซีนซ้ำ
+        /// </summary>
+        public static RuleBase ActiveRuleInScene()
+        {
+            if (_allRules == null)
+                _allRules = FindObjectsByType<RuleBase>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+            foreach (var rule in _allRules)
+            {
+                if (rule == null)
+                {
+                    _allRules = null;   // โหลดซีนใหม่ ชุดเก่าถูกทำลายแล้ว รอบหน้าหาใหม่
+                    return null;
+                }
+
+                if (rule.ruleActive) return rule;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// DEBUG: จบกฎนี้เดี๋ยวนี้ นับว่าผ่าน — ปุ่มเทสเรียกตัวนี้แทน EndRule
+        ///
+        /// EndRule ของกฎที่เล่นอยู่ปฏิเสธคำสั่งโดยตั้งใจ (กฎ 4-6 จบตามเงื่อนไขของมันเท่านั้น)
+        /// และไม่ได้เก็บของที่ยังค้างกลางกฎ แต่ละข้อจึงต้อง override ถ้ามีของต้องเก็บเพิ่ม
+        /// </summary>
+        public virtual void DebugForceEnd()
+        {
+            StopAllCoroutines();
+            ReportCompleted();
+            EndRule();
         }
 
         // ─────────────────────────── ก่อนเข้ากฎ ───────────────────────────

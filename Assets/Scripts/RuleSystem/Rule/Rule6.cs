@@ -1173,6 +1173,28 @@ namespace RuleSystem.Rule
 
         public override bool UsesTensionZones => ruleActive && _gameplayActive && !_resolved;
 
+        public override void DebugForceEnd()
+        {
+            StopAllCoroutines();
+            _cycle = _flow = _paengReveal = null;
+            EndCarry();
+
+            _isEnding       = false;
+            _resolved       = true;    // EndRule ไม่ยอมจบถ้ายังเลือกรถอยู่
+            _gameplayActive = false;
+
+            ReportCompleted();
+
+            // EndRule ของกฎนี้ไม่กะพริบกลับ Relax เอง เพราะปกติบทจบเป็นคนจัดการ
+            var mode = GameModeController.instance;
+            if (mode != null && mode.CurrentMode == GameMode.Tension) mode.DirectBlinkToMode(GameMode.Relax);
+
+            EndRule();
+
+            // กฎนี้ไม่ตั้งเวลาตอนจบเอง ถ้าปล่อยไว้ที่ 24:00 RuleManager จะเริ่มกฎนี้ใหม่นาทีถัดไป
+            TimeManager.instance.SetTime(endHour, endMinute);
+        }
+
         /// <summary>เดินออกนอกเขตก่อนขึ้นรถ — ตายแล้วกลับมาเลือกรถใหม่ที่ศาลา</summary>
         public override void DieOutsidePlayArea()
         {

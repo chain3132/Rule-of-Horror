@@ -18,9 +18,8 @@ namespace Rule5
     ///   F8  ระฆังดัง +1 ทันที                F9  เปิด/ปิดเสียงฉิ่งด้วยมือ
     ///   F10 วาร์ปไปยืนที่จุดจับสาย
     ///
-    /// ทำไมถึงไม่ชนกับกฎอื่น: เหตุผลเดียวกับ Rule4DevSkip —
-    /// Rule5.RuleFlow() สั่ง IsPauseTime(true) เป็นบรรทัดแรก นาฬิกาเลยหยุดเดิน
-    /// RuleManager.CheckRules ทำงานตอน OnTimeChanged เท่านั้น กฎอื่นจึงไม่มีทาง trigger แทรก
+    /// ทำไมถึงไม่ชนกับกฎอื่น: ข้ามกฎผ่าน RuleDevTools ซึ่งจบกฎที่เล่นอยู่ให้ก่อนเสมอ
+    /// และ Rule5.RuleFlow() สั่ง IsPauseTime(true) เป็นบรรทัดแรก กฎตามเวลาข้ออื่นจึงไม่แทรก
     /// </summary>
     public class Rule5DevSkip : MonoBehaviour
     {
@@ -41,10 +40,6 @@ namespace Rule5
         [Header("Clock")]
         [Tooltip("Freeze the clock as soon as the game starts, so another rule cannot trigger while you are still looking for the hotkey.")]
         [SerializeField] private bool freezeClockOnStart = true;
-
-        [Tooltip("Clock time set before starting Rule 5. Should sit just before the rule's own time window.")]
-        [SerializeField] private int jumpHour   = 22;
-        [SerializeField] private int jumpMinute = 59;
 
         [Header("Debug")]
         [Tooltip("Show the thread, the grab point and the ghost position.\n" +
@@ -89,9 +84,9 @@ namespace Rule5
 #if UNITY_EDITOR || DEVELOPMENT_BUILD || RULE5_TEST_BUILD
             if (!enableDevSkip) return;
 
-            // ย้ำหยุดนาฬิกาทุกเฟรมจนกว่าจะเข้า Rule 5 — CutsceneManager / BlinkRoutine
-            // สั่ง IsPauseTime(false) ทีหลังเสมอ พอเข้ากฎแล้ว Rule5 เป็นคนคุมเอง
-            if (freezeClockOnStart && rule5 != null && !rule5.ruleActive && TimeManager.instance != null)
+            // ย้ำหยุดนาฬิกาทุกเฟรมจนกว่าจะกดปุ่มเทสครั้งแรก — CutsceneManager / BlinkRoutine
+            // สั่ง IsPauseTime(false) ทีหลังเสมอ หลังจากนั้นกฎเป็นคนคุมนาฬิกาเอง
+            if (freezeClockOnStart && !RuleSystem.RuleDevTools.HasBeenUsed && TimeManager.instance != null)
                 TimeManager.instance.IsPauseTime(true);
 
             if (Keyboard.current == null) return;
@@ -130,26 +125,23 @@ namespace Rule5
                 return;
             }
 
-            RuleSystem.RuleBase.DebugSkipMessageGate = true;   // ข้ามเวลามา ข้อความก่อนหน้าส่งถึงพร้อมกันหมด
-
-            if (TimeManager.instance != null)
+            if (RuleSystem.RuleDevTools.IsJumping)
             {
-                TimeManager.instance.SetTime(jumpHour, jumpMinute);
-                TimeManager.instance.IsPauseTime(true);
-            }
-
-            var pc = PlayerController.Instance;
-            if (pc == null)
-            {
-                Notify("ไม่เจอ PlayerController ใน scene", true);
+                Notify("กำลังข้ามกฎอยู่ รอสักครู่", true);
                 return;
             }
 
-            rule5.StartRule();
+            StartCoroutine(JumpRoutine());
+        }
 
-            if (!pc.IsSitting())
-                // RuleFlow มี WaitUntil(PlayerIsSitting) อยู่แล้ว — สั่งไปเลย เดี๋ยวมันรอเอง
-                Notify("สั่งเริ่ม Rule 5 แล้ว — แต่ยังไม่ได้นั่ง เดินไปที่ศาลาแล้วกด E เพื่อให้กฎเริ่มจริง");
+        private System.Collections.IEnumerator JumpRoutine()
+        {
+            Notify("กำลังข้ามไป Rule 5...");
+            yield return RuleSystem.RuleDevTools.JumpTo(rule5);
+
+            var pc = PlayerController.Instance;
+            if (pc != null && !pc.IsSitting())
+                Notify("สั่งเริ่ม Rule 5 แล้ว — เดินไปที่ศาลาแล้วกด E เพื่อให้กฎเริ่มจริง");
             else
                 Notify("เริ่ม Rule 5 แล้ว");
         }

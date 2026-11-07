@@ -73,8 +73,38 @@ public class Rule1 : RuleBase
     /// </summary>
     public void TriggerStartRule()
     {
-        if (ruleActive || _hasCompleted) return;   // กันทั้ง active และ completed แล้ว
+        if (!CanStart)
+        {
+            Debug.Log("[Rule1] ไม่เริ่ม — เล่นจบไปแล้ว, มีกฎอื่นเล่นอยู่ หรือเลยเวลาของกฎนี้ไปแล้ว", this);
+            return;
+        }
+
         StartRule();
+    }
+
+    /// <summary>
+    /// เริ่มกฎ 1 ตอนนี้ได้ไหม — โทรศัพท์หลุดจากมือได้เฉพาะช่วงต้นคืนที่ยังไม่มีกฎอื่นเล่นอยู่
+    ///
+    /// แชทกฎ 1 เป็นตัวปลุกกฎนี้ และแชทค้างอ่านได้ทุกเมื่อ ถ้าปุ่มเทสข้ามเวลาไปกฎ 5 แล้วเผลอเปิดอ่าน
+    /// แชทนั้น โทรศัพท์จะหายกลางกฎ 5 ทั้งที่เวลาของกฎ 1 ผ่านไปแล้ว
+    /// (กติกาเขตตอน Tension ไม่เกี่ยวกับตัวนี้ มันอยู่ที่ HeartbeatSystem และใช้ทุกกฎตามปกติ)
+    /// </summary>
+    public bool CanStart =>
+        !ruleActive && !_hasCompleted && ActiveRuleInScene() == null &&
+        (TimeManager.instance == null || TimeManager.instance.CurrentTotalMinutes < endHour * 60 + endMinute);
+
+    public override void DebugForceEnd()
+    {
+        StopAllCoroutines();
+        _isDying = false;
+
+        // ทางจบปกติโทรศัพท์คืนมาแล้ว แต่ปุ่มเทสจบได้ตอนโทรศัพท์ยังหายอยู่
+        if (phoneSystem != null) phoneSystem.UnlockPhone();
+        if (phoneGroundObject != null) phoneGroundObject.SetActive(false);
+        _state = Rule1State.None;
+
+        ReportCompleted();
+        EndRule();
     }
 
     public override void StartRule()

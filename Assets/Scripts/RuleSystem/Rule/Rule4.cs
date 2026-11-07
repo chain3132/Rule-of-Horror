@@ -802,6 +802,18 @@ namespace RuleSystem.Rule
 
         public override void DieOutsidePlayArea() => OnGhostCaughtPlayer();
 
+        public override void DebugForceEnd()
+        {
+            StopAllCoroutines();
+            _ambientStingerRoutine = null;
+            _isEnding       = false;
+            _completed      = true;    // EndRule ไม่ยอมจบถ้ายังไม่ครบเงื่อนไข
+            _gameplayActive = false;
+
+            ReportCompleted();
+            EndRule();
+        }
+
         /// <summary>เรียกโดย Rule4Ghost เมื่อผีเข้าใกล้เกินระยะ — ตายทันที</summary>
         public void OnGhostCaughtPlayer()
         {

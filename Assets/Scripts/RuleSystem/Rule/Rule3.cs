@@ -132,6 +132,13 @@ public class Rule3 : RuleBase
 
     public override void DieOutsidePlayArea() => TriggerGameOver();
 
+    public override void DebugForceEnd()
+    {
+        StopAllCoroutines();
+        _isEnding = false;
+        CleanupAndEnd(isGameOver: false);   // ทางนี้เก็บผีกับกระดาษ + นับว่าผ่าน + จบกฎให้ครบ
+    }
+
     public override void EndRule()
     {
         // Guard: prevents re-entry from RuleManager.CheckRules() → EndRule() StackOverflow loop

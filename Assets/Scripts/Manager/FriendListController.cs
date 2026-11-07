@@ -235,7 +235,8 @@ public class FriendListController : MonoBehaviour
         // ข้อความของ Rule1 มาถึง → หยุดนาฬิกาเกมไว้จนกว่าผู้เล่นจะอ่านแชทกฎจบ
         // (เวลาไม่ขยับ → Rule 2 ไม่เริ่ม, ไม่มีช่วงว่างที่กฎรันเบื้องหลังแบบไม่มี visual)
         // นาฬิกาจะเดินต่อเองใน Rule1.EndRule() (IsPauseTime(false) + SetTime(19,39))
-        if (message.triggersRule1OnEnd && TimeManager.instance != null)
+        // ปุ่มเทสข้ามเวลามาทำให้ข้อความนี้ส่งถึงช้า ตอนนั้นกฎ 1 เริ่มไม่ได้แล้ว จึงไม่ต้องหยุดนาฬิการอ
+        if (message.triggersRule1OnEnd && TimeManager.instance != null && (rule1 == null || rule1.CanStart))
             TimeManager.instance.IsPauseTime(true);
     }
 
@@ -382,7 +383,8 @@ public class FriendListController : MonoBehaviour
 
         // ธง Rule1 อยู่ที่ข้อความชุดนั้น ไม่ใช่ที่ตัวคน — คนปริศนาส่งมาทั้งคืน
         // มีแค่ชุด 18:40 ชุดเดียวที่อ่านจบแล้วต้องเข้า Rule 1
-        if (message != null && message.triggersRule1OnEnd && rule1 != null)
+        // อ่านย้อนหลังตอนเลยเวลากฎ 1 ไปแล้ว (ปุ่มเทสข้ามเวลา) = อ่านเฉยๆ โทรศัพท์ต้องไม่หาย
+        if (message != null && message.triggersRule1OnEnd && rule1 != null && rule1.CanStart)
             StartCoroutine(StartRule1Sequence());
     }
 
@@ -399,6 +401,9 @@ public class FriendListController : MonoBehaviour
         // รออ่านข้อความคนอื่นให้จบและรอไปนั่งที่ศาลาก่อน เหมือนกฎ 2-6 — เดิมเริ่มทันทีที่อ่านแชทจบ
         // ผู้เล่นที่ยืนอ่านอยู่ที่อื่นจึงโดนกฎ 1 ทั้งที่ยังไม่ได้นั่ง (นาฬิกาถูกหยุดไว้ตั้งแต่ข้อความกฎ 1 ส่งถึงแล้ว)
         yield return RuleSystem.RuleBase.WaitForMessagesAndSeat();
+
+        // ระหว่างรอนั่ง ปุ่มเทสอาจข้ามไปกฎอื่นแล้ว — ต้องเช็กก่อนกะพริบเข้า Tension
+        if (!rule1.CanStart) yield break;
 
         // เปลี่ยน mode เหมือน Rule2 gameflow (BlinkToMode มี faint + blink)
         GameModeController.instance.BlinkToMode(rule1StartMode);

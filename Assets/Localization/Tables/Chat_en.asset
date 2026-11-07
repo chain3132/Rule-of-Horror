@@ -152,128 +152,127 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 658149403
-    m_Localized: You still there? I just went and asked my uncle about it.
+    m_Localized: "Sak, you still there? I remembered the story I wanted to tell you."
     m_Metadata:
       m_Items: []
   - m_Id: 658149404
-    m_Localized: '[Voice Message 0:00 - Playback Failed]'
+    m_Localized: "[Voice Message 0:00 - Playback Failed]"
     m_Metadata:
       m_Items: []
   - m_Id: 658149405
-    m_Localized: Okay, hold on. Typing it out.
+    m_Localized: "Okay, hold on. Typing it out."
     m_Metadata:
       m_Items: []
   - m_Id: 658149406
-    m_Localized: I'm not messing around. Just listen.
+    m_Localized: "I'm not messing around. Just listen."
     m_Metadata:
       m_Items: []
   - m_Id: 658149407
-    m_Localized: My uncle said years ago, a woman was waiting for the bus at that
-      shed.
+    m_Localized: "A while back, a woman went to wait for the bus at that shed."
     m_Metadata:
       m_Items: []
   - m_Id: 658149408
-    m_Localized: There was another guy with her that night.
+    m_Localized: "There was another guy with her that night."
     m_Metadata:
       m_Items: []
   - m_Id: 658149409
-    m_Localized: But by morning, all they found was...
+    m_Localized: "But by morning, all they found was..."
     m_Metadata:
       m_Items: []
   - m_Id: 658149410
-    m_Localized: '[This message was unsent]'
+    m_Localized: "[This message was unsent]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149901
+    m_Localized: "...................THEY TELL YOU!!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149902
+    m_Localized: "DON'T FOLLOW ANYTHING THEY TELL YOU!!"
     m_Metadata:
       m_Items: []
   - m_Id: 658149411
-    m_Localized: DO NOT FOLLOW ANY OF THE RULES!!
+    m_Localized: ".....FOLLOW..............ANYTHING!!"
     m_Metadata:
       m_Items: []
   - m_Id: 658149412
-    m_Localized: "I can't play it. Just text me\u2014what did your uncle say?"
+    m_Localized: "I can't play it. Just text me."
     m_Metadata:
       m_Items: []
   - m_Id: 658149413
-    m_Localized: Can you not mess around right now? Just tell me!
+    m_Localized: "Can you not mess around right now? Just tell me!"
     m_Metadata:
       m_Items: []
   - m_Id: 658149414
-    m_Localized: I'm at the shed.
+    m_Localized: "I'm at the shed."
     m_Metadata:
       m_Items: []
   - m_Id: 658149415
-    m_Localized: Where are you?
+    m_Localized: "Where are you?"
     m_Metadata:
       m_Items: []
   - m_Id: 658149416
-    m_Localized: "I\u2019m standing right in front of that bench. There\u2019s no
-      one here."
+    m_Localized: "I\u2019m standing right in front of that bench. There\u2019s no one here."
     m_Metadata:
       m_Items: []
   - m_Id: 658149417
-    m_Localized: I don't see you either. The shed is completely empty. Just a single
-      light.
+    m_Localized: "I don't see you either. The shed is completely empty. Just a single light."
     m_Metadata:
       m_Items: []
   - m_Id: 658149418
-    m_Localized: Listen, let me finish what my uncle told me.
+    m_Localized: "Listen, let me finish the story."
     m_Metadata:
       m_Items: []
   - m_Id: 658149419
-    m_Localized: "That woman was named Paeng. Years ago, she was waiting for a bus
-      at this shed when she got sent a set of rules\u2014just like you did."
+    m_Localized: "Years ago, a woman vanished at this shed."
     m_Metadata:
       m_Items: []
   - m_Id: 658149420
-    m_Localized: A stranger was there with her that night. They both followed the
-      rules together and almost made it to the end.
+    m_Localized: "Her name was Paeng."
     m_Metadata:
       m_Items: []
   - m_Id: 658149421
-    m_Localized: But the last bus could only take one person.
+    m_Localized: "She wasn't alone that night. Another guy was waiting for the bus too."
     m_Metadata:
       m_Items: []
   - m_Id: 658149422
-    m_Localized: By morning, the shed was empty. Paeng vanished, and while the guy
-      made it home... no one ever saw him again.
+    m_Localized: "But after that night, no one knows for sure what happened to those two."
     m_Metadata:
       m_Items: []
   - m_Id: 658149423
-    m_Localized: My grandma said ever since then, anyone who wanders into that shed
-      receives texts from an unknown number.
+    m_Localized: "You said someone's been texting you how to survive, right?"
     m_Metadata:
       m_Items: []
   - m_Id: 658149424
-    m_Localized: Bro...
+    m_Localized: "So how the hell do they know that?"
     m_Metadata:
       m_Items: []
   - m_Id: 658149425
-    m_Localized: The person texting you... my uncle thinks it might be the guy who
-      survived that night
+    m_Localized: "What do you mean?"
     m_Metadata:
       m_Items: []
   - m_Id: 658149426
-    m_Localized: "He\u2019s not trying to help you. He\u2019s trying to find someone
-      to take his place."
+    m_Localized: "Have you ever wondered how they know about this shed?"
     m_Metadata:
       m_Items: []
   - m_Id: 658149427
-    m_Localized: My uncle said Paeng never actually killed anyone.
+    m_Localized: "And what if the person texting you was there before..."
     m_Metadata:
       m_Items: []
   - m_Id: 658149428
-    m_Localized: Everyone who died there was consumed by their own fear.
+    m_Localized: "Why haven't they come out of there yet?"
     m_Metadata:
       m_Items: []
   - m_Id: 658149429
-    m_Localized: I don't know. My uncle only said...
+    m_Localized: "I don't know. But I want to tell you this..."
     m_Metadata:
       m_Items: []
   - m_Id: 658149430
-    m_Localized: "Yeah. But it\u2019s not too late. My uncle said..."
+    m_Localized: "Yeah. But it\u2019s not too late."
     m_Metadata:
       m_Items: []
   - m_Id: 658149431
-    m_Localized: '"DO NOT get on the bus he tells you to get on."'
+    m_Localized: "\"DO NOT get on the bus they tell you to get on.\""
     m_Metadata:
       m_Items: []
   - m_Id: 658149432
@@ -281,15 +280,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 658149433
-    m_Localized: '[Ton went offline]'
+    m_Localized: "[Ton went offline]"
     m_Metadata:
       m_Items: []
   - m_Id: 658149434
-    m_Localized: '[A few seconds later, a chat from an unknown sender popped up]'
+    m_Localized: "[A few seconds later, a chat from an unknown sender popped up]"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149903
+    m_Localized: "Think about it carefully."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 658149904
+    m_Localized: "I'll be waiting right here."
     m_Metadata:
       m_Items: []
   - m_Id: 658149435
-    m_Localized: "[Unknown: Your friend talks too much.]\t"
+    m_Localized: "Unknown: Your friend talks too much."
     m_Metadata:
       m_Items: []
   - m_Id: 658149436
@@ -297,16 +304,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 658149437
-    m_Localized: "No way. I\u2019m looking around right now, and there\u2019s no
-      one."
+    m_Localized: "No way. I\u2019m looking around right now, and there\u2019s no one."
     m_Metadata:
       m_Items: []
   - m_Id: 658149438
-    m_Localized: So what am I supposed to do now?!
+    m_Localized: "So what am I supposed to do now?!"
     m_Metadata:
       m_Items: []
   - m_Id: 658149439
-    m_Localized: "Wait... so I\u2019ve been following his orders this whole time?"
+    m_Localized: "So I've been following them this whole time?"
     m_Metadata:
       m_Items: []
   - m_Id: 658149440
@@ -621,45 +627,43 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 455480220225536
-    m_Localized: There's nothing left to choose this time. You've reached the last
-      rule.
+    m_Localized: "There's nothing left to choose this time. You've reached the last rule."
     m_Metadata:
       m_Items: []
   - m_Id: 455480262168576
-    m_Localized: 'The last rule: at midnight tonight, the buses will start coming.
-      Wait at the pavilion, then get on the bus that will take you home. You can
-      only choose one.'
+    m_Localized: "The last rule: at midnight tonight, the buses will start coming. Wait at the pavilion, then get on the bus that will take you home. You can only choose one."
     m_Metadata:
       m_Items: []
   - m_Id: 455480262168577
-    m_Localized: This is the last one, right? Tell me what I have to do.
+    m_Localized: "This is the last one, right? Tell me what I have to do."
     m_Metadata:
       m_Items: []
   - m_Id: 455480262168578
-    m_Localized: All you have to do is get on a bus that looks safe enough to take
-      you back to your village. But check carefully which one will actually get you
-      out alive. Here are the details.
+    m_Localized: "All you have to do is get on a bus that looks safe enough to take you back to your village. But check carefully which one will actually get you out alive. Here are the details."
     m_Metadata:
       m_Items: []
   - m_Id: 455480262168579
-    m_Localized: Wait at the pavilion. The buses will pass by one at a time. If you
-      want a closer look at one, get up and go to it. It will wait for you. If it's
-      not the right one, go back and sit down. The next one will come on its own.
+    m_Localized: "Wait at the pavilion. The buses will pass by one at a time. If you want a closer look at one, get up and go to it. It will wait for you. If it's not the right one, go back and sit down. The next one will come on its own."
     m_Metadata:
       m_Items: []
   - m_Id: 455480262168580
-    m_Localized: 'Be careful. Some of them aren''t real buses. Look closely: if the
-      sign outside doesn''t match the one inside, that bus is a fake.'
+    m_Localized: "But remember, not every bus goes where you want to go. Don't trust the sign on the front alone. Check the state of the bus and the inside too. Sometimes what you see isn't what you think."
     m_Metadata:
       m_Items: []
   - m_Id: 455480262168581
-    m_Localized: Your bus will have bright lights, a sign with the name of your village,
-      and exactly one empty seat waiting for you.
+    m_Localized: "If you ask me, I'd pick the one with bright lights, passengers, and a clear destination sign. At least it looks more trustworthy than a bus that doesn't even know where it's going."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 455480262168590
+    m_Localized: "But in the end, you have to choose for yourself."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 455480262168591
+    m_Localized: "I hope you get home safely tonight."
     m_Metadata:
       m_Items: []
   - m_Id: 455480262168582
-    m_Localized: One more piece of advice. Whichever one looks the safest, I'd like
-      you to get on that one, and make it home safely.
+    m_Localized: "Besides, you've been waiting all night, haven't you? If you find a bus with a seat just for you, don't hesitate too long."
     m_Metadata:
       m_Items: []
   references:

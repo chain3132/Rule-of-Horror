@@ -23,7 +23,7 @@ MonoBehaviour:
     SerializationNodes: []
   startNode: 0
   nodes:
-  - message: You still there? I just went and asked my uncle about it.
+  - message: 'Sak, you still there? I remembered the story I wanted to tell you.'
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
     scriptedLine: 0
     offersReward: 0
     replies:
-    - replyText: "I can't play it. Just text me\u2014what did your uncle say?"
+    - replyText: 'I can''t play it. Just text me.'
       nextNode: 3
     - replyText: Can you not mess around right now? Just tell me!
       nextNode: 4
@@ -72,7 +72,7 @@ MonoBehaviour:
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 900, y: 130}
-  - message: My uncle said years ago, a woman was waiting for the bus at that shed.
+  - message: A while back, a woman went to wait for the bus at that shed.
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -108,7 +108,7 @@ MonoBehaviour:
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 2100, y: 0}
-  - message: DO NOT FOLLOW ANY OF THE RULES!!
+  - message: '.....FOLLOW..............ANYTHING!!'
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -117,7 +117,7 @@ MonoBehaviour:
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 2400, y: 0}
-  - message: DO NOT FOLLOW ANY OF THE RULES!!
+  - message: '...................THEY TELL YOU!!'
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -126,7 +126,7 @@ MonoBehaviour:
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 2700, y: 0}
-  - message: DO NOT FOLLOW ANY OF THE RULES!!
+  - message: 'DON''T FOLLOW ANYTHING THEY TELL YOU!!'
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0

@@ -1,3 +1,4 @@
+using System.Collections;
 using Manager;
 using Player;
 using UnityEngine;
@@ -37,7 +38,7 @@ namespace Rule6
         [Tooltip("เก็บรถที่จอดอยู่แล้วเรียกคันถัดไป")]
         [SerializeField] private Key nextBusKey = Key.F12;
 
-        [Tooltip("สลับตัวนับคืนที่วนลูปมาแล้วระหว่าง 0 กับ 1 — เปิดแล้วตายในกฎ 1-5 จะจบเกมเลย\n" +
+        [Tooltip("สลับตัวนับคืนที่วนลูปมาแล้วระหว่าง 0 กับ 1 — เปิดแล้วตายในกฎ 1-6 จะจบเกมเลย\n" +
                  "ไว้เทสกติกาคืนรอบสองโดยไม่ต้องเล่นคืนแรกให้จบก่อน")]
         [SerializeField] private Key armPermanentDeathKey = Key.Numpad0;
 
@@ -85,33 +86,34 @@ namespace Rule6
 
         // ─────────────────────────── Enter ───────────────────────────
 
-        /// <summary>
-        /// ตั้งนาฬิกาไปต้นหน้าต่างของกฎ 6 — SetTime ยิง OnTimeChanged เสมอแม้นาฬิกาหยุดอยู่
-        /// RuleManager.CheckRules จึงเริ่มกฎให้เองเลย ต้องเช็ก ruleActive ก่อนเรียก StartRule ซ้ำ
-        /// (เรียกซ้ำ = RuleFlow เดินสองรอบพร้อมกัน RuleBase.StartRule ไม่มี guard)
-        /// </summary>
         [ContextMenu("Enter Rule 6")]
-        public void EnterRule6() => EnterRule6(forcePlay: false);
+        public void EnterRule6()
+        {
+            if (RuleSystem.RuleDevTools.IsJumping) { Notify("กำลังข้ามกฎอยู่ รอสักครู่", true); return; }
+            StartCoroutine(EnterRoutine());
+        }
 
-        private bool EnterRule6(bool forcePlay)
+        private IEnumerator EnterRoutine()
+        {
+            yield return EnterRule(forcePlay: false);
+        }
+
+        /// <summary>เข้ากฎ 6 ผ่าน RuleDevTools ซึ่งจบกฎที่เล่นอยู่ให้ก่อน ไม่งั้นได้สองกฎเล่นซ้อนกัน</summary>
+        private IEnumerator EnterRule(bool forcePlay)
         {
             Resolve();
-            if (rule6 == null) { Notify("ไม่เจอ Rule6 ในซีน", true); return false; }
-            if (TimeManager.instance == null) { Notify("ไม่เจอ TimeManager ในซีน", true); return false; }
+            if (rule6 == null) { Notify("ไม่เจอ Rule6 ในซีน", true); yield break; }
 
             if (!rule6.ruleActive)
             {
-                RuleSystem.RuleBase.DebugSkipMessageGate = true;   // ต้องตั้งก่อน SetTime — CheckRules เริ่มกฎได้ในบรรทัดนั้นเลย
-                TimeManager.instance.IsPauseTime(true);
-                TimeManager.instance.SetTime(rule6.startHour, rule6.startMinute);
-
-                if (!rule6.ruleActive) rule6.StartRule();
+                Notify("กำลังข้ามไปกฎ 6...");
+                yield return RuleSystem.RuleDevTools.JumpTo(rule6);
 
                 if (!rule6.ruleActive)
                 {
                     Notify($"ตั้งเวลา {rule6.startHour:00}:{rule6.startMinute:00} แล้วแต่กฎ 6 ไม่เริ่ม — " +
                            "เช็กว่าอยู่ใน RuleManager.rules หรือเปล่า", true);
-                    return false;
+                    yield break;
                 }
             }
 
@@ -120,18 +122,13 @@ namespace Rule6
                 Notify(rule6.IsGameplayActive
                     ? "กฎ 6 กำลังเล่นอยู่ — รอคิวรถตามปกติ"
                     : "เริ่มกฎ 6 แล้ว — ต้องนั่งที่ศาลาก่อนรถคันแรกจะมา (หรือกด Numpad 1-4 ข้ามไปเลย)");
-                return true;
+                yield break;
             }
 
             if (sitPlayerFirst) SitAtPavilion();
 
             if (!rule6.IsGameplayActive && !rule6.DebugForceStartGameplay())
-            {
                 Notify("สั่งเริ่มเล่นกฎ 6 ไม่สำเร็จ — ดู Console ว่า Rule6 ฟ้องช่องไหนว่าง", true);
-                return false;
-            }
-
-            return true;
         }
 
         /// <summary>
@@ -161,10 +158,18 @@ namespace Rule6
         /// <summary>ปุ่มเดียวจบ: เข้ากฎ → ข้ามการรอให้นั่ง → เรียกรถคันที่ต้องการมาจอด</summary>
         public void SummonBus(int index)
         {
-            if (!EnterRule6(forcePlay: true)) return;
+            if (RuleSystem.RuleDevTools.IsJumping) { Notify("กำลังข้ามกฎอยู่ รอสักครู่", true); return; }
+            StartCoroutine(SummonRoutine(index));
+        }
+
+        private IEnumerator SummonRoutine(int index)
+        {
+            yield return EnterRule(forcePlay: true);
+
+            if (rule6 == null || !rule6.IsGameplayActive) yield break;
 
             var bus = rule6.BusAt(index);
-            if (bus == null) { Notify($"ช่องรถที่ {index + 1} ว่างอยู่ — ใส่รถใน Rule6.Buses ก่อน", true); return; }
+            if (bus == null) { Notify($"ช่องรถที่ {index + 1} ว่างอยู่ — ใส่รถใน Rule6.Buses ก่อน", true); yield break; }
 
             if (rule6.DebugSummonBus(index))
                 Notify($"เรียกรถช่องที่ {index + 1} — '{bus.name}' ({bus.Kind}) มาจอด " +
@@ -204,7 +209,7 @@ namespace Rule6
         /// <summary>
         /// สลับว่า "ตอนนี้อยู่ในคืนรอบสองแล้ว" หรือยัง
         ///
-        /// เปิดแล้วไปตายในกฎข้อไหนก็ได้ 1-5 เพื่อเช็กว่าจอตายถาวรขึ้น เวลาหยุด และกฎ "ไม่"
+        /// เปิดแล้วไปตายในกฎข้อไหนก็ได้ 1-6 เพื่อเช็กว่าจอตายถาวรขึ้น เวลาหยุด และกฎ "ไม่"
         /// ย้อนเวลากลับมาให้เล่นใหม่ — ไม่ต้องเล่นคืนแรกให้จบแล้วขึ้นรถคันที่ 4 ก่อน
         /// </summary>
         [ContextMenu("Toggle Second-Loop Night")]
@@ -223,7 +228,7 @@ namespace Rule6
             }
 
             Notify(gate.IsArmed
-                ? "เปิดคืนรอบสองแล้ว — ตายในกฎ 1-5 ครั้งเดียวจบเกม ไม่ย้อนเวลา"
+                ? "เปิดคืนรอบสองแล้ว — ตายในกฎ 1-6 ครั้งเดียวจบเกม ไม่ย้อนเวลา"
                 : "ปิดคืนรอบสอง — ตายแล้วย้อนเวลากลับมาเล่นใหม่ตามปกติ");
         }
 

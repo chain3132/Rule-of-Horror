@@ -719,6 +719,17 @@ namespace RuleSystem.Rule
 
         public override void DieOutsidePlayArea() => StartHeartAttackDeath();
 
+        public override void DebugForceEnd()
+        {
+            StopAllCoroutines();
+            _isEnding       = false;
+            _completed      = true;    // EndRule ไม่ยอมจบถ้ายังไม่ครบเงื่อนไข
+            _gameplayActive = false;
+
+            ReportCompleted();
+            EndRule();
+        }
+
         /// <summary>ผีเข้าใกล้เกินระยะ (Approach / Chase)</summary>
         public void OnGhostCaughtPlayer()
         {
