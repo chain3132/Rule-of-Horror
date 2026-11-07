@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{d1336e28-398e-4224-8ae0-e77be4b6c814}">
 		<property name="assetPath">
-			<value>Rules 4/Rule 4 ambiant/ดนตรีตอนผีไล่.mp3</value>
+			<value>Rule4/Rule 4 ambiant/ดนตรีตอนผีไล่.mp3</value>
 		</property>
 		<property name="isStreaming">
 			<value>true</value>

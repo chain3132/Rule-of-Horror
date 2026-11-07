@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{c5531006-aedf-4e53-81ed-c78f85547195}">
 		<property name="assetPath">
-			<value>Rules 4/Rule 4 ambiant/Ghost Breathing.mp3</value>
+			<value>Rule4/Rule 4 ambiant/Ghost Breathing.mp3</value>
 		</property>
 		<property name="isStreaming">
 			<value>true</value>

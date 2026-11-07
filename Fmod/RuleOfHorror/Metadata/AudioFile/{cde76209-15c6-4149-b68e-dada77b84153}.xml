@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{cde76209-15c6-4149-b68e-dada77b84153}">
 		<property name="assetPath">
-			<value>Rules 4/Rule 4 ambiant/Sound Heavy Breathing.mp3</value>
+			<value>Rule4/Rule 4 ambiant/Sound Heavy Breathing.mp3</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>48</value>

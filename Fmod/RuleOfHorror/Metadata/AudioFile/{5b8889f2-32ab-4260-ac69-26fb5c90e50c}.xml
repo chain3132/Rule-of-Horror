@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{5b8889f2-32ab-4260-ac69-26fb5c90e50c}">
 		<property name="assetPath">
-			<value>Rules 4/เสียงผี/เสียงเดิน/เสียงเดินผี.mp3</value>
+			<value>Rule4/เสียงผี/เสียงเดิน/เสียงเดินผี.mp3</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>48</value>
