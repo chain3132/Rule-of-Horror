@@ -81,6 +81,7 @@ public static class LocalizationSetup
     {
         ("Language", "Language", "ภาษา",        "UI/Language menu title"),
         ("Resume",   "Resume",   "กลับเข้าเกม", "UI/Language menu button"),
+        ("Volume",   "Volume",   "ระดับเสียง",  "UI/Language menu volume bar"),
     };
 
     private class Row
@@ -981,6 +982,134 @@ public static class LocalizationSetup
 
         panel.gameObject.SetActive(false);
         report.AppendLine("  - Built the Esc language menu in " + scene.name + " (restyle it freely - only the references matter)");
+    }
+
+    /// <summary>
+    /// Adds a master volume bar (label, slider, %) to the Esc menu of the open scene, under the
+    /// TH / EN row, and moves Resume down if it is still where step 3 put it. Safe to re-run.
+    /// </summary>
+    [MenuItem("Rule of Horror/Localization/Add Volume Bar to Esc Menu", false, 10)]
+    private static void AddVolumeBar()
+    {
+        var scene = SceneManager.GetActiveScene();
+        var menu  = FindInScene<InGameLanguageMenu>(scene).FirstOrDefault();
+        if (menu == null)
+        {
+            EditorUtility.DisplayDialog("Add Volume Bar",
+                "No Esc menu (InGameLanguageMenu) in " + scene.name + ". Open the gameplay scene first.", "OK");
+            return;
+        }
+
+        var mso   = new SerializedObject(menu);
+        var panel = mso.FindProperty("panel").objectReferenceValue as GameObject;
+        if (panel == null)
+        {
+            EditorUtility.DisplayDialog("Add Volume Bar", "The Esc menu has no Panel assigned.", "OK");
+            return;
+        }
+
+        if (panel.GetComponentInChildren<VolumeSlider>(true) != null)
+        {
+            EditorUtility.DisplayDialog("Add Volume Bar", "The Esc menu already has a volume bar.", "OK");
+            return;
+        }
+
+        var report = new StringBuilder("[Localization] Volume bar").AppendLine();
+        EnsureBuiltInRow("Volume", report);
+
+        // Row: label | slider | %  - 900 wide, under the TH / EN row (which sits at the centre, 120 tall)
+        var row = MakeRect("Volume", panel.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                           new Vector2(0, -130), new Vector2(900, 90));
+        Undo.RegisterCreatedObjectUndo(row.gameObject, "Add Volume Bar");
+
+        var label = MakeLabel("Label", row, "Volume", 44, new Vector2(0.5f, 0.5f), new Vector2(240, 90));
+        label.rectTransform.anchoredPosition = new Vector2(-320, 0);
+        label.alignment = TextAlignmentOptions.Right;
+        BindIfKnown(label);
+
+        var resources = new UnityEngine.UI.DefaultControls.Resources
+        {
+            standard   = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd"),
+            background = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Background.psd"),
+            knob       = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd"),
+        };
+        var sliderGo = UnityEngine.UI.DefaultControls.CreateSlider(resources);
+        sliderGo.name = "Slider";
+        var sliderRt = (RectTransform)sliderGo.transform;
+        sliderRt.SetParent(row, false);
+        sliderRt.anchorMin = sliderRt.anchorMax = new Vector2(0.5f, 0.5f);
+        sliderRt.anchoredPosition = new Vector2(40, 0);
+        sliderRt.sizeDelta        = new Vector2(440, 28);
+
+        var slider = sliderGo.GetComponent<UnityEngine.UI.Slider>();
+        slider.minValue = 0f;
+        slider.maxValue = 1f;
+        slider.value    = MasterVolume.Default;
+
+        var light = new Color(0.85f, 0.82f, 0.78f);
+        var bg = sliderRt.Find("Background")?.GetComponent<UnityEngine.UI.Image>();
+        if (bg != null) bg.color = new Color(1f, 1f, 1f, 0.15f);
+        if (slider.fillRect   != null) slider.fillRect.GetComponent<UnityEngine.UI.Image>().color = light;
+        if (slider.handleRect != null)
+        {
+            slider.handleRect.GetComponent<UnityEngine.UI.Image>().color = light;
+            slider.handleRect.sizeDelta = new Vector2(36, 16);   // knob a bit bigger than the bar
+        }
+
+        var percent = MakeLabel("Value", row, "100%", 40, new Vector2(0.5f, 0.5f), new Vector2(140, 90));
+        percent.rectTransform.anchoredPosition = new Vector2(350, 0);
+        percent.alignment = TextAlignmentOptions.Left;
+
+        var volume = row.gameObject.AddComponent<VolumeSlider>();
+        var vso = new SerializedObject(volume);
+        vso.FindProperty("slider").objectReferenceValue    = slider;
+        vso.FindProperty("valueText").objectReferenceValue = percent;
+        vso.ApplyModifiedPropertiesWithoutUndo();
+
+        // Resume sat at 30 % height, right where the bar now ends - push it down if it is still there
+        var resume = mso.FindProperty("resumeButton").objectReferenceValue as UnityEngine.UI.Button;
+        if (resume != null)
+        {
+            var rt = (RectTransform)resume.transform;
+            if (Mathf.Approximately(rt.anchorMin.y, 0.3f) && Mathf.Approximately(rt.anchorMax.y, 0.3f))
+            {
+                Undo.RecordObject(rt, "Add Volume Bar");
+                rt.anchorMin = new Vector2(rt.anchorMin.x, 0.2f);
+                rt.anchorMax = new Vector2(rt.anchorMax.x, 0.2f);
+                report.AppendLine("  - Moved Resume down to 20 % height to make room");
+            }
+            else report.AppendLine("  - Resume was moved by hand before - left where it is, check it does not overlap the bar");
+        }
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        Selection.activeGameObject = row.gameObject;
+        report.AppendLine("  - Added Volume bar to the Esc menu in " + scene.name + " (save the scene)");
+        Debug.Log(report.ToString());
+    }
+
+    /// <summary>One BuiltInRows string into the UI table without re-running the whole of step 1.</summary>
+    private static void EnsureBuiltInRow(string source, StringBuilder report)
+    {
+        var collection = LocalizationEditorSettings.GetStringTableCollection("UI");
+        if (collection == null)
+        {
+            report.AppendLine("  ! No UI table yet - run 1. Setup Tables, then 3. Localize Scenes to translate the label");
+            return;
+        }
+
+        var row   = BuiltInRows.First(r => r.src == source);
+        var entry = FindByHash(collection.SharedData, L10n.HashOf(source));
+        if (entry == null)
+        {
+            entry = collection.SharedData.AddKey(L10n.KeyFor(source, Location(row.ctx)));
+            entry.Metadata.AddMetadata(new Comment { CommentText = row.ctx });
+            report.AppendLine($"  - Added \"{source}\" to the UI table");
+        }
+
+        Fill(collection, L10n.EnglishCode, entry.Id, row.en);
+        Fill(collection, L10n.ThaiCode,    entry.Id, row.th);
+        MarkModified(collection);
+        AssetDatabase.SaveAssets();
     }
 
     private static void BuildMainMenuSwitcher(Scene scene, StringBuilder report)

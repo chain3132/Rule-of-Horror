@@ -487,6 +487,10 @@ MonoBehaviour:
     m_Localized: Rule of Horror
     m_Metadata:
       m_Items: []
+  - m_Id: 5483501444567040
+    m_Localized: "\u0E23\u0E30\u0E14\u0E31\u0E1A\u0E40\u0E2A\u0E35\u0E22\u0E07"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

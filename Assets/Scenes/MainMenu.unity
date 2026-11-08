@@ -5342,6 +5342,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CandleLight
   candleLight: {fileID: 1932935635}
+  flame: {fileID: 0}
+  fadeInSeconds: 1.5
 --- !u!1001 &58432804
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5847,8 +5849,8 @@ MonoBehaviour:
   carFaceDirection: 1
   carRotationOffset: 90
   delayBetweenPass: 4
-  carSoundEvent: event:/carSoundEvent
-  bgmEvent: event:/MainMenuBGM
+  carSoundEvent: event:/Menu/carSoundEvent
+  bgmEvent: event:/Menu/MainMenuBGM
 --- !u!4 &139844997
 Transform:
   m_ObjectHideFlags: 0
@@ -6682,8 +6684,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '- Start -'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: cea6c2c5c4fe86b4097f0b35231fd4b1, type: 2}
-  m_sharedMaterial: {fileID: -1701957945694433538, guid: cea6c2c5c4fe86b4097f0b35231fd4b1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 67e219c4ab03a6449b6e19dcdae975fe, type: 2}
+  m_sharedMaterial: {fileID: 3505537503532432265, guid: 67e219c4ab03a6449b6e19dcdae975fe, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -18972,7 +18974,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 503
 --- !u!114 &821032454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19259,6 +19261,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CandleLight
   candleLight: {fileID: 759096679}
+  flame: {fileID: 0}
+  fadeInSeconds: 1.5
 --- !u!1 &896558143
 GameObject:
   m_ObjectHideFlags: 0
@@ -19600,8 +19604,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '- Quite -'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: cea6c2c5c4fe86b4097f0b35231fd4b1, type: 2}
-  m_sharedMaterial: {fileID: -1701957945694433538, guid: cea6c2c5c4fe86b4097f0b35231fd4b1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 67e219c4ab03a6449b6e19dcdae975fe, type: 2}
+  m_sharedMaterial: {fileID: 3505537503532432265, guid: 67e219c4ab03a6449b6e19dcdae975fe, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -21134,6 +21138,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CandleLight
   candleLight: {fileID: 1250331043}
+  flame: {fileID: 0}
+  fadeInSeconds: 1.5
 --- !u!1 &1062517442
 GameObject:
   m_ObjectHideFlags: 0
@@ -22441,6 +22447,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CandleLight
   candleLight: {fileID: 752791156}
+  flame: {fileID: 0}
+  fadeInSeconds: 1.5
 --- !u!1001 &1314497214
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22908,6 +22916,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CandleLight
   candleLight: {fileID: 977516738}
+  flame: {fileID: 0}
+  fadeInSeconds: 1.5
 --- !u!64 &1426569269
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -28852,6 +28862,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CandleLight
   candleLight: {fileID: 192899556}
+  flame: {fileID: 0}
+  fadeInSeconds: 1.5
 --- !u!1 &1567251903
 GameObject:
   m_ObjectHideFlags: 0
@@ -44994,6 +45006,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CandleLight
   candleLight: {fileID: 1616652196}
+  flame: {fileID: 0}
+  fadeInSeconds: 1.5
 --- !u!64 &1819998980
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -46783,6 +46797,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CandleLight
   candleLight: {fileID: 1144102292}
+  flame: {fileID: 0}
+  fadeInSeconds: 1.5
 --- !u!64 &2064891786
 MeshCollider:
   m_ObjectHideFlags: 0

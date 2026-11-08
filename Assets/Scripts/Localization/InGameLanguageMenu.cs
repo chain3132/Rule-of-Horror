@@ -6,7 +6,8 @@ using UnityEngine.InputSystem;
 #endif
 
 /// <summary>
-/// เมนูหยุดเกมในฉากเล่น — กด Esc เปิด/ปิด มีปุ่มเปลี่ยนภาษา (LanguageSwitcher) กับปุ่มกลับเข้าเกม
+/// เมนูหยุดเกมในฉากเล่น — กด Esc เปิด/ปิด มีปุ่มเปลี่ยนภาษา (LanguageSwitcher) แถบเสียง (VolumeSlider) กับปุ่มกลับเข้าเกม
+/// แถบเสียงใส่ด้วยเมนู Rule of Horror ▸ Localization ▸ Add Volume Bar to Esc Menu
 /// ตอนโทรศัพท์ยกอยู่ Esc เป็นปุ่มถอยกลับของโทรศัพท์ เมนูจะเปิดเมื่อกด Esc หลังโทรศัพท์ปิดแล้ว
 ///
 /// ตอนเปิด:

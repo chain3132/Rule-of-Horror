@@ -570,6 +570,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items:
       - rid: 3244670378102751340
+  - m_Id: 5483501444567040
+    m_Key: UI/Language menu volume bar - volume_74f576af
+    m_Metadata:
+      m_Items:
+      - rid: 996612915123191888
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
@@ -577,6 +582,10 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 996612915123191888
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: UI/Language menu volume bar
     - rid: 3244670351061549158
       type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
       data:
