@@ -6,7 +6,6 @@ Shader "Hidden/WaveDistortion"
         // ปรับได้จาก Material Inspector ใน Play mode เพื่อ debug
         _WaveAmp   ("Wave Amplitude",        Range(0, 0.1)) = 0.02
         _WaveFreq  ("Wave Frequency (cycles)", Range(0, 20)) = 5
-        _WaveSpeed ("Wave Speed",            Range(0, 10))  = 2
     }
     SubShader
     {
@@ -28,7 +27,8 @@ Shader "Hidden/WaveDistortion"
             // ─── Parameters (set by WaveDistortionEffect.cs) ───────────────
             float _WaveAmp;     // ความกว้างของการแกว่ง  (UV space 0–1)
             float _WaveFreq;    // จำนวนคลื่นตลอดความสูงหน้าจอ
-            float _WaveSpeed;   // ความเร็วคลื่น (rad/sec scale)
+            float _WavePhase;   // มุมคลื่นสะสม (rad) ค่า global จาก WaveDistortionEffect.cs
+                                // ไม่ใช้ _Time.y * speed เพราะเปลี่ยน speed ทีละนิดแล้วคลื่นจะกระโดด
 
             half4 Frag(Varyings input) : SV_Target
             {
@@ -39,7 +39,7 @@ Shader "Hidden/WaveDistortion"
                 // _WaveFreq = จำนวนคลื่นที่มองเห็นตลอดความสูงหน้าจอ (cycles)
                 // × 2π เพื่อแปลง cycles → radian ก่อนส่งเข้า sin
                 float TAU = 6.28318530718;
-                uv.x += sin(uv.y * _WaveFreq * TAU + _Time.y * _WaveSpeed) * _WaveAmp;
+                uv.x += sin(uv.y * _WaveFreq * TAU + _WavePhase) * _WaveAmp;
 
                 return SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
             }

@@ -43,30 +43,45 @@ public class WaveDistortionEffect : MonoBehaviour
     // ── Shader Property IDs ───────────────────────────────────────────
     private static readonly int AmpID   = Shader.PropertyToID("_WaveAmp");
     private static readonly int FreqID  = Shader.PropertyToID("_WaveFreq");
-    private static readonly int SpeedID = Shader.PropertyToID("_WaveSpeed");
+    private static readonly int PhaseID = Shader.PropertyToID("_WavePhase");
+
+    private float _speed;
+    private float _phase;
+    private bool  _warnedNoMaterial;
 
     // ── Lifecycle ─────────────────────────────────────────────────────
 
     private void Awake()  => SetOff();   // ปิดตั้งแต่แรก
     private void OnDestroy() => SetOff(); // เคลียร์ตอน unload
 
-    // ── Public API ────────────────────────────────────────────────────
-
-    /// <summary>เปิด wave แบบ Orange (แกว่งช้า นิ่มนวล)</summary>
-    public void SetOrange()
+    // สะสมมุมคลื่นเอง ความเร็วจึงเปลี่ยนได้ทีละนิดโดยคลื่นไม่กระโดด
+    // เป็นค่า global เพราะเปลี่ยนทุกเฟรม ถ้าเขียนลง material ไฟล์ asset จะเปลี่ยนตลอดตอนกด Play
+    private void Update()
     {
-        Apply(orangeAmp, orangeFreq, orangeSpeed);
+        if (_speed <= 0f) return;
+
+        _phase = Mathf.Repeat(_phase + _speed * Time.deltaTime, Mathf.PI * 2f);
+        Shader.SetGlobalFloat(PhaseID, _phase);
     }
 
-    /// <summary>เปิด wave แบบ Red (แกว่งเร็ว รุนแรง)</summary>
-    public void SetRed()
+    // ── Public API ────────────────────────────────────────────────────
+
+    /// <summary>
+    /// ตั้งความแรงแบบไล่ระดับ — level: 0 = ปิด, 1 = Orange เต็ม, 2 = Red เต็ม, ค่าระหว่างนั้นผสมกัน
+    /// fade คูณความกว้างคลื่นอีกชั้น (1 = เต็ม, 0 = นิ่ง) ไว้ค่อยๆ หยุดคลื่นโดยไม่เปลี่ยนจังหวะ
+    /// </summary>
+    public void SetLevel(float level, float fade = 1f)
     {
-        Apply(redAmp, redFreq, redSpeed);
+        float toRed = Mathf.Clamp01(level - 1f);
+        float amp   = Mathf.Lerp(orangeAmp, redAmp, toRed) * Mathf.Clamp01(level) * Mathf.Clamp01(fade);
+
+        Apply(amp, Mathf.Lerp(orangeFreq, redFreq, toRed), Mathf.Lerp(orangeSpeed, redSpeed, toRed));
     }
 
     /// <summary>ปิด wave effect (amp = 0)</summary>
     public void SetOff()
     {
+        _speed = 0f;
         if (waveMaterial == null) return;
         waveMaterial.SetFloat(AmpID, 0f);
     }
@@ -77,11 +92,13 @@ public class WaveDistortionEffect : MonoBehaviour
     {
         if (waveMaterial == null)
         {
-            Debug.LogWarning("[WaveDistortionEffect] waveMaterial ยังไม่ได้ assign!", this);
+            // ตอนนี้เรียกทุกเฟรมที่ความแรงเปลี่ยน — เตือนครั้งเดียวพอ
+            if (!_warnedNoMaterial) Debug.LogWarning("[WaveDistortionEffect] waveMaterial ยังไม่ได้ assign!", this);
+            _warnedNoMaterial = true;
             return;
         }
+        _speed = speed;
         waveMaterial.SetFloat(AmpID,   amp);
         waveMaterial.SetFloat(FreqID,  freq);
-        waveMaterial.SetFloat(SpeedID, speed);
     }
 }

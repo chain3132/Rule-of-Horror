@@ -159,17 +159,29 @@ namespace Rule6
             // ── Sound ──
 
             [ShowIf(nameof(IsSound))]
-            [Tooltip("path ของ event ใน FMOD เช่น event:/Rule6/DoorClose — เว้นว่าง = ข้ามขั้นนี้")]
+            [Tooltip("path ของ event ใน FMOD เช่น event:/Rule6/DoorClose — เว้นว่าง = ข้ามขั้นนี้\n" +
+                     "ถ้าใส่ Sound At เสียงจะเกาะวัตถุนั้นไปจนจบ")]
             public string fmodEvent;
 
             [ShowIf(nameof(IsSound))]
             [Tooltip("ดังจากตรงไหน — เว้นว่าง = ดังที่ตัวผู้ฟัง (เสียงไม่มีทิศทาง)")]
             public Transform soundAt;
 
+            [ShowIf(nameof(IsSound))]
+            [Min(0f)]
+            [Tooltip("ให้ดังนานกี่วินาที แล้วตัดเสียงทันที — 0 = เล่นจนจบไฟล์ตามปกติ\n" +
+                     "ไฟล์สั้นกว่าเวลานี้จะเล่นซ้ำจนครบ ถ้าไม่อยากให้ได้ยินรอยต่อ ตั้ง loop ใน FMOD\n" +
+                     "ปกติเอาขั้นนี้ไว้แบบไม่รอให้จบ คัทซีนจะได้เดินต่อระหว่างที่เสียงดัง")]
+            public float soundSeconds;
+
             // ── Dialogue ──
 
             [ShowIf(nameof(IsDialogue))]
             public DialogueLine[] lines;
+
+            [ShowIf(nameof(IsDialogue))]
+            [Tooltip("✗ = ผีพูด ขึ้นตัวอักษรสีแดงเลือดหมู\n✓ = ผู้เล่นพูด ขึ้นสีปกติ")]
+            public bool playerVoice;
 
             // ── Animator Trigger ──
 
@@ -525,6 +537,10 @@ namespace Rule6
             _looking      = false;
             _playing      = false;
             ApplyBars(0f);
+
+            // coroutine ของเสียงที่ตั้งเวลาไว้ถูกหยุดไปแล้ว ต้องปิดเอง ไม่งั้นดังค้างถ้า event เป็น loop
+            foreach (var sound in _heldSounds) ReleaseHeldSound(sound);
+            _heldSounds.Clear();
         }
 
         private void OnDisable() => Stop();
@@ -585,11 +601,12 @@ namespace Rule6
                         : Fade(0f, step.seconds, null);
 
                 case StepAction.Sound:
+                    if (step.soundSeconds > 0f) return HoldSound(step.fmodEvent, step.soundAt, step.soundSeconds);
                     PlaySound(step.fmodEvent, step.soundAt);
                     return null;
 
                 case StepAction.Dialogue:
-                    return ShowLines(step.lines);
+                    return ShowLines(step.lines, ghostVoice: !step.playerVoice);
 
                 case StepAction.AnimatorTrigger:
                     if (step.animator != null && !string.IsNullOrWhiteSpace(step.trigger))
@@ -1301,14 +1318,20 @@ namespace Rule6
         {
             if (string.IsNullOrWhiteSpace(path) || MissingEvents.Contains(path)) return;
 
-            Vector3 position = at != null ? at.position
-                             : _playerCamera != null ? _playerCamera.transform.position
-                             : Vector3.zero;
-
             // event ที่ยังไม่มีใน FMOD ต้องไม่ทำคัทซีนพัง — เตือนครั้งเดียวแล้วเล่นต่อแบบเงียบ
             try
             {
-                RuntimeManager.PlayOneShot(path, position);
+                // มี Sound At = เสียงเกาะวัตถุนั้นไปจนจบ ไม่ใช่จำตำแหน่งแค่ตอนเริ่ม
+                // ไม่งั้นผู้เล่นที่นั่งรถอยู่จะวิ่งหนีเสียงออกไป และรถที่พุ่งเข้ามาก็ไม่ดังขึ้นตามระยะ
+                if (at != null)
+                {
+                    RuntimeManager.PlayOneShotAttached(path, at.gameObject);
+                }
+                else
+                {
+                    Vector3 position = _playerCamera != null ? _playerCamera.transform.position : Vector3.zero;
+                    RuntimeManager.PlayOneShot(path, position);
+                }
             }
             catch (EventNotFoundException)
             {
@@ -1317,7 +1340,79 @@ namespace Rule6
             }
         }
 
-        private static IEnumerator ShowLines(DialogueLine[] lines)
+        /// <summary>กันไฟล์ที่เพิ่งสั่งเล่นถูกนับว่าจบ — สถานะของ FMOD อัปเดตช้ากว่าคำสั่ง start</summary>
+        private const float MinSecondsBeforeRestart = 0.2f;
+
+        private readonly List<FMOD.Studio.EventInstance> _heldSounds = new List<FMOD.Studio.EventInstance>();
+
+        /// <summary>
+        /// เสียงที่กำหนดเวลาเอง — ดังครบ seconds แล้วตัดทันที และเกาะ Sound At ไปตลอด
+        ///
+        /// ไฟล์สั้นกว่าเวลาที่ต้องการจะเริ่มเล่นใหม่ให้เอง ถ้าตั้ง loop ใน FMOD มันจะไม่จบ
+        /// จึงไม่เกิดรอยต่อ และตัวนี้เป็นคนหยุดให้ตอนครบเวลาอยู่ดี
+        /// </summary>
+        private IEnumerator HoldSound(string path, Transform at, float seconds)
+        {
+            if (string.IsNullOrWhiteSpace(path) || MissingEvents.Contains(path)) yield break;
+
+            FMOD.Studio.EventInstance sound;
+            try
+            {
+                sound = RuntimeManager.CreateInstance(path);
+            }
+            catch (EventNotFoundException)
+            {
+                MissingEvents.Add(path);
+                Debug.LogWarning($"[EndingCutscene] ยังไม่มี event '{path}' ใน FMOD — ขั้นนี้จะเงียบไป", this);
+                yield break;
+            }
+
+            _heldSounds.Add(sound);
+
+            sound.set3DAttributes(SoundAttributes(at));
+            sound.start();
+
+            float elapsed = 0f, sinceStart = 0f;
+            while (elapsed < seconds)
+            {
+                sound.set3DAttributes(SoundAttributes(at));
+
+                if (sinceStart >= MinSecondsBeforeRestart)
+                {
+                    sound.getPlaybackState(out FMOD.Studio.PLAYBACK_STATE state);
+                    if (state == FMOD.Studio.PLAYBACK_STATE.STOPPED)
+                    {
+                        sound.start();
+                        sinceStart = 0f;
+                    }
+                }
+
+                yield return null;
+                elapsed    += Time.deltaTime;
+                sinceStart += Time.deltaTime;
+            }
+
+            _heldSounds.Remove(sound);
+            ReleaseHeldSound(sound);
+        }
+
+        private FMOD.ATTRIBUTES_3D SoundAttributes(Transform at)
+        {
+            Vector3 position = at != null ? at.position
+                             : _playerCamera != null ? _playerCamera.transform.position
+                             : Vector3.zero;
+            return RuntimeUtils.To3DAttributes(position);
+        }
+
+        private static void ReleaseHeldSound(FMOD.Studio.EventInstance sound)
+        {
+            if (!sound.isValid()) return;
+
+            sound.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+            sound.release();
+        }
+
+        private static IEnumerator ShowLines(DialogueLine[] lines, bool ghostVoice)
         {
             if (lines == null || lines.Length == 0 || PlayerDialogueUI.instance == null) yield break;
 
@@ -1325,7 +1420,7 @@ namespace Rule6
             void Handler() => done = true;
 
             PlayerDialogueUI.instance.OnSequenceComplete += Handler;
-            PlayerDialogueUI.instance.ShowSequence(lines);
+            PlayerDialogueUI.instance.ShowSequence(lines, ghostVoice);
 
             yield return new WaitUntil(() => done);
             PlayerDialogueUI.instance.OnSequenceComplete -= Handler;

@@ -36,6 +36,10 @@ namespace Manager
         [SerializeField] private TMP_Text dayLabelText;
         [SerializeField] private string dayLabel = "คืนวันอังคาร";
 
+        [Header("นาฬิกาตอนโดนหลอน (Tension)")]
+        [Tooltip("ตัวเลขนาฬิกาสุ่มเพี้ยนใหม่ทุกกี่วินาที — ความถี่ที่เพี้ยนตาม Haunted Glitch ของ PhoneStatusController")]
+        [SerializeField] private float clockGlitchInterval = 0.12f;
+
         [Header("การ์ดแจ้งเตือน — แบบใบเดียว")]
         [Tooltip("ทั้งการ์ด จะถูกซ่อนเมื่อไม่มีอะไรค้าง")]
         [SerializeField] private GameObject notificationCard;
@@ -49,6 +53,8 @@ namespace Manager
         [SerializeField] private Transform notificationRoot;
         [Tooltip("prefab การ์ด — ต้องมี TMP_Text อย่างน้อย 3 ตัว (ชื่อ / เนื้อหา / เวลา)")]
         [SerializeField] private GameObject notificationCardPrefab;
+        [Tooltip("ชื่อลูกของ prefab ที่เป็น Image รูปโปรไฟล์ — หาจากชื่อเพราะการ์ดมี Image หลายตัว (พื้นหลัง/ไฮไลต์/จุดแดง)")]
+        [SerializeField] private string notificationCardIconName = "Profile";
 
         [Header("จุดแดงบนไอคอนแอป")]
         [Tooltip("เรียงตามลำดับปุ่มเลข 1/2/3 — ช่องไหนไม่มีก็เว้นว่าง")]
@@ -57,6 +63,9 @@ namespace Manager
         [SerializeField] private TMP_Text[] appBadgeCounts;
 
         private readonly List<GameObject> _spawned = new List<GameObject>();
+
+        private float _clockGlitchTimer;
+        private bool  _clockGlitched;
 
         // ─────────────────────────── Lifecycle ───────────────────────────
 
@@ -115,6 +124,47 @@ namespace Manager
             RefreshNotificationTimes();
         }
 
+        /// <summary>
+        /// ตอนโดนหลอน ตัวเลขนาฬิกาสุ่มเพี้ยนเป็นพักๆ เหมือนแบตกับสัญญาณที่เพี้ยนอยู่แล้ว
+        /// แค่สับเลขตอนวาด เวลาจริงใน TimeManager ไม่เปลี่ยน กลับ Relax แล้วเขียนเวลาจริงทับครั้งเดียว
+        /// </summary>
+        private void Update()
+        {
+            if (status == null || TimeManager.instance == null) return;
+
+            float glitch = status.Glitch01;
+            int   hour   = TimeManager.instance.currentHour;
+            int   minute = TimeManager.instance.currentMinute;
+
+            if (glitch <= 0f)
+            {
+                if (!_clockGlitched) return;
+                _clockGlitched = false;
+                HandleClock(hour, minute);
+                return;
+            }
+
+            _clockGlitchTimer -= Time.deltaTime;
+            if (_clockGlitchTimer > 0f) return;
+            _clockGlitchTimer = clockGlitchInterval;
+            _clockGlitched    = true;
+
+            string text = ScrambleDigits(TimeManager.Format(hour, minute), glitch);
+            if (statusClockText != null) statusClockText.text = text;
+            if (bigClockText    != null) bigClockText.text    = text;
+        }
+
+        /// <summary>สุ่มแทนเฉพาะตัวเลข — ฟอนต์ของนาฬิกามีตัวเลขครบแน่ ตัวอักษรอื่นอาจขึ้นเป็นสี่เหลี่ยม</summary>
+        private static string ScrambleDigits(string text, float chance)
+        {
+            char[] chars = text.ToCharArray();
+            for (int i = 0; i < chars.Length; i++)
+                if (char.IsDigit(chars[i]) && Random.value < chance)
+                    chars[i] = (char)('0' + Random.Range(0, 10));
+
+            return new string(chars);
+        }
+
         private void HandleBattery(int percent)
         {
             if (batteryText != null) batteryText.text = string.Format(batteryFormat, percent);
@@ -158,11 +208,30 @@ namespace Manager
                     if (texts.Length > 0) texts[0].text = items[i].DisplayTitle;
                     if (texts.Length > 1) texts[1].text = items[i].DisplayBody;
                     if (texts.Length > 2) texts[2].text = notifications.TimeLabel(items[i]);
+                    SetCardIcon(card, items[i].icon);
                     _spawned.Add(card);
                 }
             }
 
             RefreshBadges();
+        }
+
+        /// <summary>
+        /// ใส่รูปโปรไฟล์ของ contact ลงการ์ดที่เพิ่งสร้าง — contact ที่ไม่มีรูปจะคงรูปตั้งต้นของ prefab
+        /// </summary>
+        private void SetCardIcon(GameObject card, Sprite icon)
+        {
+            if (icon == null) return;
+
+            var child = card.transform.Find(notificationCardIconName);
+            var image = child != null ? child.GetComponent<Image>() : null;
+            if (image == null)
+            {
+                Debug.LogWarning($"[PhoneHomeBinder] การ์ดแจ้งเตือนไม่มี Image ชื่อ '{notificationCardIconName}' — รูปโปรไฟล์จะไม่ขึ้น", card);
+                return;
+            }
+
+            image.sprite = icon;
         }
 
         private void FillSingleCard(PhoneNotification item)

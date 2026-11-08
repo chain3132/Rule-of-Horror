@@ -64,6 +64,10 @@ namespace System.HeartbeatSystem
         [Tooltip("ChromaticAberration ของ Red zone")]
         [SerializeField] private float redChroma = 0.60f;
 
+        [Tooltip("ความเร็วที่ภาพบิดไล่ตามระยะ: กี่วินาทีต่อหนึ่งระดับ (ปกติ → Orange → Red → นอกเขต)\n" +
+                 "ค่ามาก = ค่อยๆ บิดช้าลง ถึงจะวิ่งเข้าเขตเร็วก็ตาม")]
+        [SerializeField] private float effectBlendSeconds = 1.5f;
+
         [Tooltip("ตัวคุม WaveDistortion shader — เว้นว่าง = หาในซีนให้เอง")]
         [SerializeField] private WaveDistortionEffect waveEffect;
 
@@ -73,7 +77,7 @@ namespace System.HeartbeatSystem
         public ZoneLevel CurrentZoneLevel { get; private set; } = ZoneLevel.Green;
 
         /// <summary>กติกาเขตกำลังมีผลอยู่ไหม — ไว้โชว์บนหน้าจอของปุ่มเทส</summary>
-        public bool IsEnforcing => _appliedZone != null;
+        public bool IsEnforcing => _effectsOn;
 
         /// <summary>อยู่นอกเขตมาแล้วกี่วินาที</summary>
         public float OutsideSeconds => _outsideSeconds;
@@ -81,7 +85,9 @@ namespace System.HeartbeatSystem
         public float OutsideDeathTime => outsideDeathTime;
 
         private RuleSystem.RuleBase[] _rules;
-        private ZoneLevel?            _appliedZone;   // null = ไม่ได้ใส่ effect อยู่
+        private bool                  _effectsOn;
+        private float                 _severity;      // 0 = ปกติ, 1 = Orange เต็ม, 2 = Red เต็ม, 3 = นอกเขต
+        private float                 _appliedSeverity = -1f;
         private float                 _outsideSeconds;
 
         private void Awake()
@@ -123,7 +129,7 @@ namespace System.HeartbeatSystem
             bool seated = pc != null && pc.IsSitting();
             ZoneLevel zone = seated ? ZoneLevel.Green : CurrentZoneLevel;
 
-            ApplyZoneEffects(zone, mode);
+            UpdateZoneEffects(seated ? 0f : SeverityAt(player.position, zone), mode);
 
             AudioManager.instance.SetZoneHeartbeat(HeartValueOf(zone));
             AudioManager.instance.UpdateHeartbeat();
@@ -172,46 +178,71 @@ namespace System.HeartbeatSystem
             }
         }
 
-        // เขียนเฉพาะตอนโซนเปลี่ยน ไม่เขียนทุกเฟรม — effect พวกนี้ไม่ได้ขยับเองระหว่างอยู่ในโซนเดียวกัน
-        private void ApplyZoneEffects(ZoneLevel zone, GameModeController mode)
+        /// <summary>
+        /// ความแรงตามตำแหน่งจริง ไม่ใช่แค่ว่าอยู่โซนไหน — ก้าวข้ามเส้นโซนยังแทบไม่เห็น แล้วแรงขึ้นตามระยะ
+        /// จนเต็มที่ขอบนอกของโซนนั้น เดินย้อนกลับก็ค่อยๆ เบาลงด้วยเส้นเดียวกัน
+        /// </summary>
+        private float SeverityAt(Vector3 p, ZoneLevel zone)
         {
-            if (_appliedZone == zone) return;
-            _appliedZone = zone;
+            switch (zone)
+            {
+                case ZoneLevel.Orange:
+                    return BandProgress(p, greenMinX, greenMaxX, greenMinZ, greenMaxZ,
+                                           orangeMinX, orangeMaxX, orangeMinZ, orangeMaxZ);
+                case ZoneLevel.Red:
+                    return 1f + BandProgress(p, orangeMinX, orangeMaxX, orangeMinZ, orangeMaxZ,
+                                                redMinX, redMaxX, redMinZ, redMaxZ);
+                case ZoneLevel.Outside:
+                    return 3f;
+                default:
+                    return 0f;
+            }
+        }
+
+        /// <summary>ไปได้แค่ไหนแล้วระหว่างกรอบใน (0) กับกรอบนอก (1) — ใช้ด้านที่ออกไปไกลสุด</summary>
+        private static float BandProgress(Vector3 p, float inMinX, float inMaxX, float inMinZ, float inMaxZ,
+                                                     float outMinX, float outMaxX, float outMinZ, float outMaxZ)
+        {
+            float x = Mathf.Max(Mathf.InverseLerp(inMinX, outMinX, p.x), Mathf.InverseLerp(inMaxX, outMaxX, p.x));
+            float z = Mathf.Max(Mathf.InverseLerp(inMinZ, outMinZ, p.z), Mathf.InverseLerp(inMaxZ, outMaxZ, p.z));
+            return Mathf.Max(x, z);
+        }
+
+        /// <summary>
+        /// ไล่ความแรงเข้าหาเป้าด้วยความเร็วจำกัด — วิ่งเร็ว ลุกจากที่นั่งนอกเขต หรือข้ามเข้านอกเขต
+        /// ภาพจึงไม่กระโดด เขียนลง effect เฉพาะเฟรมที่ค่าเปลี่ยน
+        /// </summary>
+        private void UpdateZoneEffects(float target, GameModeController mode)
+        {
+            _effectsOn = true;
+            _severity  = Mathf.MoveTowards(_severity, target, Time.deltaTime / Mathf.Max(0.01f, effectBlendSeconds));
+
+            if (Mathf.Approximately(_severity, _appliedSeverity)) return;
+            _appliedSeverity = _severity;
 
             if (waveEffect == null)
                 waveEffect = FindAnyObjectByType<WaveDistortionEffect>(FindObjectsInactive.Include);
 
-            switch (zone)
-            {
-                case ZoneLevel.Green:
-                    SetLensAndChroma(mode, 0f, 0f);
-                    if (waveEffect != null) waveEffect.SetOff();
-                    break;
+            float toOrange  = Mathf.Clamp01(_severity);
+            float toRed     = Mathf.Clamp01(_severity - 1f);
+            float toOutside = Mathf.Clamp01(_severity - 2f);
 
-                case ZoneLevel.Orange:
-                    SetLensAndChroma(mode, orangeLens, orangeChroma);
-                    if (waveEffect != null) waveEffect.SetOrange();
-                    break;
+            // นอกเขตคือกำลังนับถอยหลังตาย — ภาพบิดสุดแบบนิ่งๆ น่ากลัวกว่าภาพที่ยังแกว่ง
+            float lens   = Mathf.Lerp(Mathf.Lerp(orangeLens * toOrange, redLens, toRed), -1f, toOutside);
+            float chroma = Mathf.Lerp(Mathf.Lerp(orangeChroma * toOrange, redChroma, toRed), 1f, toOutside);
 
-                case ZoneLevel.Red:
-                    SetLensAndChroma(mode, redLens, redChroma);
-                    if (waveEffect != null) waveEffect.SetRed();
-                    break;
-
-                // กำลังนับถอยหลังตาย — ภาพบิดสุดแบบนิ่งๆ น่ากลัวกว่าภาพที่ยังแกว่ง
-                case ZoneLevel.Outside:
-                    SetLensAndChroma(mode, -1f, 1f);
-                    if (waveEffect != null) waveEffect.SetOff();
-                    break;
-            }
+            SetLensAndChroma(mode, lens, chroma);
+            if (waveEffect != null) waveEffect.SetLevel(Mathf.Min(_severity, 2f), 1f - toOutside);
         }
 
         private void StopZoneEffects()
         {
-            _outsideSeconds = 0f;
+            _outsideSeconds  = 0f;
+            _severity        = 0f;
+            _appliedSeverity = -1f;
 
-            if (_appliedZone == null) return;
-            _appliedZone = null;
+            if (!_effectsOn) return;
+            _effectsOn = false;
 
             if (waveEffect != null) waveEffect.SetOff();
             if (GameModeController.instance != null) SetLensAndChroma(GameModeController.instance, 0f, 0f);

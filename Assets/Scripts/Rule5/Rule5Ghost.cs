@@ -354,6 +354,19 @@ namespace Rule5
                       "ให้ไม่เกิน escortKillDistance", this);
         }
 
+        /// <summary>
+        /// ผู้เล่นนั่งจบกฎแล้ว — หยุดตรงนั้นทันทีแล้วยืนจ้อง ไม่วิ่งเข้าหาอีกระหว่างรอตาปิด
+        /// ใช้โหมด Wait เพราะมันแค่หันตามผู้เล่น ไม่มีการเดินหรือเช็กระยะฆ่า
+        /// ล้าง velocity ด้วย ไม่งั้น isStopped จะปล่อยให้ตัวไถลต่ออีกนิดตามแรงเบรกของ agent
+        /// </summary>
+        public void StopAndWatch()
+        {
+            _mode = Rule5GhostMode.Wait;
+            SetMoving(false);
+            if (AgentUsable) _agent.velocity = Vector3.zero;
+            SetAnim(walk: false, run: false);
+        }
+
         public void Deactivate()
         {
             _mode = Rule5GhostMode.Idle;

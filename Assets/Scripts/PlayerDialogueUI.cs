@@ -49,17 +49,23 @@ public class PlayerDialogueUI : MonoBehaviour
     [SerializeField] private float durationPerChar = 0.07f;
     [SerializeField] private float minHoldDuration = 1.5f;
 
+    [Header("Ghost Voice")]
+    [Tooltip("สีตัวอักษรตอนผีพูดในคัทซีน — แดงเลือดหมู")]
+    [SerializeField] private Color ghostTextColor = new Color(0.6f, 0.05f, 0.07f);
+
     /// <summary>เรียกเมื่อ sequence ทุก line จบครบ</summary>
     public event Action OnSequenceComplete;
 
     private Coroutine _currentRoutine;
     private readonly Queue<DialogueLine> _queue = new Queue<DialogueLine>();
+    private Color _normalTextColor;
 
     private void Awake()
     {
         if (instance == null) instance = this;
         else { Destroy(gameObject); return; }
 
+        _normalTextColor  = dialogueText.color;
         canvasGroup.alpha = 0f;
         dialogueText.text = string.Empty;
     }
@@ -76,12 +82,16 @@ public class PlayerDialogueUI : MonoBehaviour
                                                 alreadyTranslated = alreadyTranslated } });
     }
 
-    /// <summary>แสดงบทพูดหลายบรรทัดตามลำดับ จบแล้ว fire OnSequenceComplete</summary>
-    public void ShowSequence(DialogueLine[] lines)
+    /// <summary>
+    /// แสดงบทพูดหลายบรรทัดตามลำดับ จบแล้ว fire OnSequenceComplete
+    /// ghostVoice = true ขึ้นเป็นสีเสียงผี — บทพูดชุดถัดไปกลับเป็นสีปกติเอง
+    /// </summary>
+    public void ShowSequence(DialogueLine[] lines, bool ghostVoice = false)
     {
         if (_currentRoutine != null) StopCoroutine(_currentRoutine);
         _queue.Clear();
         foreach (var line in lines) _queue.Enqueue(line);
+        dialogueText.color = ghostVoice ? ghostTextColor : _normalTextColor;
         _currentRoutine = StartCoroutine(SequenceRoutine());
     }
 

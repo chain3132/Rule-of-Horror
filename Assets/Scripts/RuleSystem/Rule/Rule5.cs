@@ -265,11 +265,14 @@ namespace RuleSystem.Rule
             _isEnding       = true;
             _gameplayActive = false;
 
-            // ผ่านกฎ: ผียังไม่หาย — มันยังวิ่งตามมาระหว่างที่ตาค่อยๆ ปิด แล้วลืมตามาก็ไม่อยู่แล้ว
+            // ผ่านกฎ: ผียังไม่หาย — มันหยุดยืนจ้องอยู่ตรงนั้นระหว่างที่ตาค่อยๆ ปิด แล้วลืมตามาก็ไม่อยู่แล้ว
             // ปลดออกจาก _ghost ก่อน ไม่งั้น CleanupGameplay จะลบมันทิ้งต่อหน้าผู้เล่น
-            // มันฆ่าไม่ได้แล้ว เพราะ OnGhostCaughtPlayer เช็ก _gameplayActive อยู่
             Rule5Ghost lingeringGhost = _completed ? _ghost : null;
-            if (lingeringGhost != null) _ghost = null;
+            if (lingeringGhost != null)
+            {
+                lingeringGhost.StopAndWatch();
+                _ghost = null;
+            }
 
             CleanupGameplay();
 
