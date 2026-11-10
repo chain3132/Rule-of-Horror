@@ -240,7 +240,7 @@ MonoBehaviour:
     nextNode: 23
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 6600, y: 0}
+    graphPosition: {x: 6610, y: 0}
   - message: '[Ton went offline]'
     isPlayer: 0
     scriptedLine: 0
@@ -249,7 +249,7 @@ MonoBehaviour:
     nextNode: 24
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 6900, y: 2.5}
+    graphPosition: {x: 6900, y: 0}
   - message: '[ Your friend talks too much. ]'
     isPlayer: 0
     scriptedLine: 0
@@ -258,4 +258,4 @@ MonoBehaviour:
     nextNode: -1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 7197.6255, y: -2.5093384}
+    graphPosition: {x: 7212.6255, y: 4.9906616}

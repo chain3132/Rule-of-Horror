@@ -72,6 +72,9 @@ public class PlayerDialogueUI : MonoBehaviour
 
     #region Public API
 
+    /// <summary>มีบทพูด/hint ขึ้นจออยู่ (รวมช่วงกำลังจางหาย) — ระบบที่พูดแทรกเองได้ใช้เช็กก่อน จะได้ไม่ตัดบทคนอื่น</summary>
+    public bool IsShowing => canvasGroup != null && canvasGroup.alpha > 0.01f;
+
     /// <summary>
     /// แสดงบทพูดบรรทัดเดียว — ข้อความจะถูกแปลเป็นภาษาที่เลือกอยู่ให้เอง
     /// alreadyTranslated = true ถ้าผู้เรียกแปลและแทนค่า {0} ไปแล้ว (ดู DialogueLine.alreadyTranslated)

@@ -39,6 +39,10 @@ MonoBehaviour:
     m_Localized: I have to find my phone first
     m_Metadata:
       m_Items: []
+  - m_Id: 6361445218029568
+    m_Localized: Thank you.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

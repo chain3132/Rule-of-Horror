@@ -193,11 +193,14 @@ namespace RuleSystem.Rule
         bool PlayerIsSitting()  => PlayerController.Instance.IsSitting();
         bool PlayerEyesOpened() => GameModeController.instance.IsEyesOpen;
 
+        /// <summary>วางตุ๊กตาครบแล้ว เหลือแค่กลับไปนั่ง</summary>
+        public override bool WaitingForPlayerToSit => ruleActive && _gameplayActive && _allDollsPlaced && !_completed;
+
         IEnumerator RuleFlow()
         {
             TimeManager.instance.IsPauseTime(true);
 
-            yield return WaitForMessagesAndSeat();
+            yield return WaitForMessagesAndSeat(remindAs: this);
             PlayerController.Instance.isBlockStanding = true;
 
             GameModeController.instance.BlinkToMode(GameMode.Tension);

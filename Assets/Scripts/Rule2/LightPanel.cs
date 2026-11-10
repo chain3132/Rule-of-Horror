@@ -100,9 +100,23 @@ namespace Rule2
             _inputHandler.OnInteractPressed -= OnInteract;
         }
 
+        /// <summary>
+        /// ผู้เล่นตาย — ล็อกตู้ไม่ให้กด E เปิดใหม่ระหว่างฉากล้ม แล้วปิด puzzle ที่เปิดค้างอยู่
+        ///
+        /// ระหว่างฉากตายผู้เล่นยังยืนอยู่ใน trigger ของตู้ ถ้ากด E (ปุ่มเดียวกับลุก/หยิบ) puzzle จะเปิด
+        /// อีกรอบ ปลดเมาส์ออกมาและล็อกตัวผู้เล่น ทับฉากตายที่กำลังเล่นอยู่ ตื่นมาเมาส์ค้างบนจอ
+        /// </summary>
+        public void LockForDeath()
+        {
+            _isUnlocked = false;
+            Unsubscribe();
+            ShowText(null);
+            puzzleController.AbortForDeath();
+        }
+
         private void OnInteract()
         {
-            if (IsFixed) return;
+            if (IsFixed || !_isUnlocked) return;
             if (puzzleController.IsPuzzleRunning) return; // ปุ่มบนตู้จัดการ confirm/reset เอง
 
             // เปิด puzzle ครั้งแรก

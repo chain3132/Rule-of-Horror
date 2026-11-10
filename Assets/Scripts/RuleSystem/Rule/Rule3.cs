@@ -189,7 +189,7 @@ public class Rule3 : RuleBase
         TimeManager.instance.IsPauseTime(true);
 
         // 1. Wait for the player to finish their messages and sit down
-        yield return WaitForMessagesAndSeat();
+        yield return WaitForMessagesAndSeat(remindAs: this);
 
         // Player is not allowed to stand during Rule 3
         PlayerController.Instance.isBlockStanding = true;

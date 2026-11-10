@@ -222,7 +222,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1840943153
-    m_Localized: '''Rules of Horror'
+    m_Localized: Rules of Horror
     m_Metadata:
       m_Items: []
   - m_Id: 1840943154
@@ -438,7 +438,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 461274651201536
-    m_Localized: Rule of Horror
+    m_Localized: Rules of Horror
     m_Metadata:
       m_Items: []
   - m_Id: 5483501444567040
@@ -471,6 +471,10 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 5907955521851394
     m_Localized: 3D Artist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6361446115610624
+    m_Localized: I think I'd better go back and sit down.
     m_Metadata:
       m_Items: []
   references:

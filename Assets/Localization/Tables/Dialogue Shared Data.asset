@@ -40,6 +40,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items:
       - rid: 3244670351061549451
+  - m_Id: 6361445218029568
+    m_Key: GameScene/Line - th_0e552112
+    m_Metadata:
+      m_Items:
+      - rid: 996612971117412433
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
@@ -47,6 +52,10 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 996612971117412433
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: "Line/GameScene.unity (Ending Cutscene 2 Escape \xB7 Paeng)"
     - rid: 3244670351061549160
       type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
       data:

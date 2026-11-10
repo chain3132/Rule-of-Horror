@@ -21,7 +21,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: Inspector
   m_RootView: {fileID: 2}
-  m_MinSize: {x: 875, y: 498}
+  m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
   m_Maximized: 1
 --- !u!114 &2
@@ -46,7 +46,7 @@ MonoBehaviour:
     y: 0
     width: 1920
     height: 1037
-  m_MinSize: {x: 875, y: 498}
+  m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
   m_UseTopView: 1
   m_TopViewHeight: 36
@@ -301,7 +301,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 43
+    y: 0
     width: 1920
     height: 36
   m_SerializedDataModeController:
@@ -580,8 +580,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Hierarchy\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1250
-    y: 79
+    x: 1251
+    y: 24
     width: 197
     height: 955
   m_SerializedDataModeController:
@@ -666,8 +666,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1549
-    y: 79
+    x: 1550
+    y: 24
     width: 370
     height: 955
   m_SerializedDataModeController:
@@ -717,8 +717,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Project\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1449
-    y: 79
+    x: 1450
+    y: 24
     width: 98
     height: 955
   m_SerializedDataModeController:
@@ -766,23 +766,50 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 68186
-    - m_Data: 68356
-    - m_Data: 68644
-    - m_Data: 68722
-    - m_Data: 69244
-    - m_Data: 71882
-    - m_Data: 75480
-    - m_Data: 78210
-    - m_Data: 84810
+    - m_Data: 68276
+    - m_Data: 68444
+    - m_Data: 68732
+    - m_Data: 68810
+    - m_Data: 69332
+    - m_Data: 71960
+    - m_Data: 74930
+    - m_Data: 78080
+    - m_Data: 81588
+    - m_Data: 85708
+    - m_Data: 85710
+    - m_Data: 85712
+    - m_Data: 85714
+    - m_Data: 85716
+    - m_Data: 85718
+    - m_Data: 85720
+    - m_Data: 85722
+    - m_Data: 85724
+    - m_Data: 85726
+    - m_Data: 85728
+    - m_Data: 85730
+    - m_Data: 85732
+    - m_Data: 85734
+    - m_Data: 85736
+    - m_Data: 85738
+    - m_Data: 85740
+    - m_Data: 85742
+    - m_Data: 85744
+    - m_Data: 85746
+    - m_Data: 85748
+    - m_Data: 85750
+    - m_Data: 85752
     - m_Data: 85754
     - m_Data: 85756
+    - m_Data: 85758
     - m_Data: 85760
+    - m_Data: 85762
     - m_Data: 85764
     - m_Data: 85766
     - m_Data: 85768
+    - m_Data: 85770
     - m_Data: 85772
     - m_Data: 85774
+    - m_Data: 85776
     - m_Data: 85778
     - m_Data: 85780
     - m_Data: 85782
@@ -802,6 +829,7 @@ MonoBehaviour:
     - m_Data: 85810
     - m_Data: 85812
     - m_Data: 85814
+    - m_Data: 85816
     - m_Data: 85818
     - m_Data: 85820
     - m_Data: 85822
@@ -809,34 +837,6 @@ MonoBehaviour:
     - m_Data: 85826
     - m_Data: 85828
     - m_Data: 85830
-    - m_Data: 85832
-    - m_Data: 85836
-    - m_Data: 85838
-    - m_Data: 85840
-    - m_Data: 85844
-    - m_Data: 85846
-    - m_Data: 85848
-    - m_Data: 85858
-    - m_Data: 85860
-    - m_Data: 85862
-    - m_Data: 85864
-    - m_Data: 85866
-    - m_Data: 85868
-    - m_Data: 85870
-    - m_Data: 85872
-    - m_Data: 86422
-    - m_Data: 86424
-    - m_Data: 86656
-    - m_Data: 86728
-    - m_Data: 86730
-    - m_Data: 256204
-    - m_Data: 256228
-    - m_Data: 256230
-    - m_Data: 256420
-    - m_Data: 304494
-    - m_Data: 304548
-    - m_Data: 304550
-    - m_Data: 338824
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -869,23 +869,50 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 68186
-    - m_Data: 68356
-    - m_Data: 68644
-    - m_Data: 68722
-    - m_Data: 69244
-    - m_Data: 71882
-    - m_Data: 75480
-    - m_Data: 78210
-    - m_Data: 84810
+    - m_Data: 68276
+    - m_Data: 68444
+    - m_Data: 68732
+    - m_Data: 68810
+    - m_Data: 69332
+    - m_Data: 71960
+    - m_Data: 74930
+    - m_Data: 78080
+    - m_Data: 81588
+    - m_Data: 85708
+    - m_Data: 85710
+    - m_Data: 85712
+    - m_Data: 85714
+    - m_Data: 85716
+    - m_Data: 85718
+    - m_Data: 85720
+    - m_Data: 85722
+    - m_Data: 85724
+    - m_Data: 85726
+    - m_Data: 85728
+    - m_Data: 85730
+    - m_Data: 85732
+    - m_Data: 85734
+    - m_Data: 85736
+    - m_Data: 85738
+    - m_Data: 85740
+    - m_Data: 85742
+    - m_Data: 85744
+    - m_Data: 85746
+    - m_Data: 85748
+    - m_Data: 85750
+    - m_Data: 85752
     - m_Data: 85754
     - m_Data: 85756
+    - m_Data: 85758
     - m_Data: 85760
+    - m_Data: 85762
     - m_Data: 85764
     - m_Data: 85766
     - m_Data: 85768
+    - m_Data: 85770
     - m_Data: 85772
     - m_Data: 85774
+    - m_Data: 85776
     - m_Data: 85778
     - m_Data: 85780
     - m_Data: 85782
@@ -905,6 +932,7 @@ MonoBehaviour:
     - m_Data: 85810
     - m_Data: 85812
     - m_Data: 85814
+    - m_Data: 85816
     - m_Data: 85818
     - m_Data: 85820
     - m_Data: 85822
@@ -912,34 +940,6 @@ MonoBehaviour:
     - m_Data: 85826
     - m_Data: 85828
     - m_Data: 85830
-    - m_Data: 85832
-    - m_Data: 85836
-    - m_Data: 85838
-    - m_Data: 85840
-    - m_Data: 85844
-    - m_Data: 85846
-    - m_Data: 85848
-    - m_Data: 85858
-    - m_Data: 85860
-    - m_Data: 85862
-    - m_Data: 85864
-    - m_Data: 85866
-    - m_Data: 85868
-    - m_Data: 85870
-    - m_Data: 85872
-    - m_Data: 86422
-    - m_Data: 86424
-    - m_Data: 86656
-    - m_Data: 86728
-    - m_Data: 86730
-    - m_Data: 256204
-    - m_Data: 256228
-    - m_Data: 256230
-    - m_Data: 256420
-    - m_Data: 304494
-    - m_Data: 304548
-    - m_Data: 304550
-    - m_Data: 338824
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1021,7 +1021,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 527
+    y: 472
     width: 1249
     height: 507
   m_SerializedDataModeController:
@@ -1124,7 +1124,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 79
+    y: 24
     width: 1249
     height: 422
   m_SerializedDataModeController:
@@ -1803,11 +1803,11 @@ MonoBehaviour:
   m_Rotation:
     m_Target: {x: -0.17868803, y: 0.54103833, z: -0.11889204, w: -0.81315136}
     speed: 2
-    m_Value: {x: -0.17886597, y: 0.53981733, z: -0.11862373, w: -0.813961}
+    m_Value: {x: -0.17868803, y: 0.54103833, z: -0.11889204, w: -0.81315136}
   m_Size:
     m_Target: 16.478378
     speed: 2
-    m_Value: 15.768784
+    m_Value: 16.478378
   m_Ortho:
     m_Target: 0
     speed: 2

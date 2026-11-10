@@ -610,6 +610,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items:
       - rid: 996612934871285856
+  - m_Id: 6361446115610624
+    m_Key: RuleBase/sitReminderText - th_36b1d790
+    m_Metadata:
+      m_Items:
+      - rid: 996612971117412432
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
@@ -649,6 +654,10 @@ MonoBehaviour:
       type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
       data:
         m_CommentText: Field/Rule4.unity/line2
+    - rid: 996612971117412432
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/RuleBase.sitReminderText
     - rid: 3244670351061549158
       type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
       data:

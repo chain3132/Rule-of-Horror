@@ -90,6 +90,9 @@ namespace RuleSystem.Rule
 
         public override void DieOutsidePlayArea() => OnGameOver();
 
+        /// <summary>ซ่อมตู้ไฟครบแล้ว เหลือแค่กลับไปนั่ง</summary>
+        public override bool WaitingForPlayerToSit => ruleActive && !_isDying && currentState == Rule2State.ReturnToSeat;
+
         public override void DebugForceEnd()
         {
             StopAllCoroutines();
@@ -153,7 +156,7 @@ namespace RuleSystem.Rule
         IEnumerator RuleFlow()
         {
             TimeManager.instance.IsPauseTime(true);
-            yield return WaitForMessagesAndSeat();
+            yield return WaitForMessagesAndSeat(remindAs: this);
             PlayerController.Instance.isBlockStanding = true;
             GameModeController.instance.BlinkToMode(GameMode.Tension);
             yield return null;                                          // รอ 1 frame ให้ BlinkRoutine set IsEyesOpen = false ก่อน
@@ -549,6 +552,10 @@ namespace RuleSystem.Rule
             // ── หยุดทุกอย่างใน Rule2 ────────────────────────────────
             StopHelperCoroutines();
 
+            // ปิดตู้ไฟทุกตู้ก่อนเริ่มฉากตาย — puzzle ที่เปิดค้างอยู่คืนเมาส์ และกด E เปิดใหม่ระหว่างล้มไม่ได้
+            foreach (var panel in activePanels)
+                if (panel != null) panel.LockForDeath();
+
             // ตายนอกเขตเกิดได้ตอนเดินกลับศาลา ซึ่งผีวิ่งเปิดอยู่ — ต้องไม่ค้างไปถึงรอบถัดไป
             if (runningGhost != null) runningGhost.SetActive(false);
 
@@ -591,6 +598,18 @@ namespace RuleSystem.Rule
 
             yield return new WaitUntil(() => GameModeController.instance.IsEyesOpen);
             yield return null;   // รอ 1 frame ก่อน SetTime
+
+            // ── ลืมตาแล้ว: คืนการควบคุมให้ครบอีกรอบ ─────────────────
+            // ตายจากตู้ไฟ puzzle เป็นคนปลดเมาส์ออกมา (Confined + โชว์) — ถ้ามีทางไหนหลุดไม่ได้ล็อกคืน
+            // ผู้เล่นตื่นมาเห็นเมาส์ค้างกลางจอ หันไม่ได้ ดูเหมือนขยับไม่ได้ จึงบังคับคืนตรงนี้อีกที
+            // (ยกเว้นเมนู Esc เปิดอยู่ — มันคืนสภาพเมาส์เองตอนปิด)
+            if (!InGameLanguageMenu.IsOpen)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible   = false;
+            }
+            PlayerController.Instance.SetLook(true);
+            if (!PlayerController.Instance.IsSitting()) PlayerController.Instance.SetMovement(true);
 
             // ── คืนไฟ + reset state ──────────────────────────────────
             if (saraLight != null) saraLight.enabled = true;

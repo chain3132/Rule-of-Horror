@@ -329,7 +329,7 @@ namespace RuleSystem.Rule
         {
             TimeManager.instance.IsPauseTime(true);
 
-            yield return WaitForMessagesAndSeat();
+            yield return WaitForMessagesAndSeat(remindAs: this);
             PlayerController.Instance.isBlockStanding = true;
 
             GameModeController.instance.BlinkToMode(GameMode.Tension);
@@ -1016,7 +1016,7 @@ namespace RuleSystem.Rule
             // เหมือนคืนแรก: นาฬิกาเดินจาก 18:40 ไปถึงเวลาเริ่มกฎ 1 (19:00) แล้วหยุดรอ
             // จากนั้นรอให้ไปนั่งที่ศาลาก่อน
             yield return rule1.WaitForStartTime();
-            yield return WaitForMessagesAndSeat();
+            yield return WaitForMessagesAndSeat(remindAs: rule1);
 
             GameModeController.instance.BlinkToMode(GameMode.Tension);
             yield return null;

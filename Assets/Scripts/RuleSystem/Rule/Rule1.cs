@@ -128,13 +128,20 @@ public class Rule1 : RuleBase
     /// <summary>
     /// รอจนถึงเวลาเริ่มกฎ 1 — ถ้ายังไม่ถึง ปล่อยนาฬิกาเดินจากตอนนี้ (เช่น 18:4x) ไปจนถึง
     /// HoldClockAtStart หยุดให้เองที่เวลาเริ่ม ถึงแล้ว = ผ่านทันที
+    ///
+    /// เรียกหลังอ่านแชทกฎ 1 จบ (คืนแรก) / ลงจากรถ (คืนวนลูป) — ระหว่างรอ ถ้าอ่านข้อความครบแล้ว
+    /// แต่ยังไม่นั่ง ผู้เล่นจะพูดเตือนตัวเองให้กลับไปนั่ง (ตัวเดียวกับ WaitForMessagesAndSeat)
     /// </summary>
     public IEnumerator WaitForStartTime()
     {
         if (TimeManager.instance == null || IsStartTimeReached) yield break;
 
         TimeManager.instance.IsPauseTime(false);
-        yield return new WaitUntil(() => IsStartTimeReached);
+        while (!IsStartTimeReached)
+        {
+            if (!HasUnreadMessages()) MarkAwaitingSeat();
+            yield return null;
+        }
     }
 
     public override void DebugForceEnd()
@@ -188,6 +195,9 @@ public class Rule1 : RuleBase
     }
 
     public override bool UsesTensionZones => ruleActive && _state != Rule1State.None && !_isDying;
+
+    /// <summary>เก็บโทรศัพท์ได้แล้ว เหลือแค่กลับไปนั่ง</summary>
+    public override bool WaitingForPlayerToSit => ruleActive && !_isDying && _state == Rule1State.ReturnToSeat;
 
     public override void DieOutsidePlayArea()
     {

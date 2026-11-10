@@ -154,6 +154,22 @@ namespace Rule2
             RestorePlayerFromPuzzle(restoreCamera: true);
         }
 
+        /// <summary>
+        /// ผู้เล่นตายระหว่างที่ตู้นี้อาจยังเปิดอยู่ (ตายนอกเขต / ตอบผิดครบ) — ปิด puzzle ทันที
+        /// คืนเมาส์ (ล็อกกลางจอ ซ่อน) แต่ไม่แตะกล้อง เพราะฉากตายเป็นเจ้าของกล้องอยู่
+        /// เรียกซ้ำได้ ไม่มีผลถ้าไม่ได้เปิดอยู่
+        /// </summary>
+        public void AbortForDeath()
+        {
+            StopAllCoroutines();   // FailRoutine ที่ค้างอยู่จะไม่มาเปิด puzzle รอบใหม่ทับฉากตาย
+            _busy = false;
+            ReleaseGrab();
+            IsPuzzleRunning = false;
+            StopAllDrift();
+            HideAllOrderObjects();
+            RestorePlayerFromPuzzle(restoreCamera: false);
+        }
+
         public void ConfirmCurrentLever()
         {
             if (!IsPuzzleRunning || _busy || _step >= 4) return;

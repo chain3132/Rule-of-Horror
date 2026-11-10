@@ -494,7 +494,7 @@ public class FriendListController : MonoBehaviour
 
         // รออ่านข้อความคนอื่นให้จบและรอไปนั่งที่ศาลาก่อน เหมือนกฎ 2-6 — เดิมเริ่มทันทีที่อ่านแชทจบ
         // ผู้เล่นที่ยืนอ่านอยู่ที่อื่นจึงโดนกฎ 1 ทั้งที่ยังไม่ได้นั่ง (ตอนนี้นาฬิกาหยุดอยู่ที่ 19:00 แล้ว)
-        yield return RuleSystem.RuleBase.WaitForMessagesAndSeat();
+        yield return RuleSystem.RuleBase.WaitForMessagesAndSeat(remindAs: rule1);
 
         // ระหว่างรอนั่ง ปุ่มเทสอาจข้ามไปกฎอื่นแล้ว — ต้องเช็กก่อนกะพริบเข้า Tension
         if (!rule1.CanStart) yield break;

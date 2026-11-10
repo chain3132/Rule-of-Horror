@@ -22574,6 +22574,9 @@ MonoBehaviour:
   endHour: 19
   endMinute: 40
   ruleActive: 0
+  sitReminderText: "\u0E09\u0E31\u0E19\u0E27\u0E48\u0E32\u0E09\u0E31\u0E19\u0E01\u0E25\u0E31\u0E1A\u0E44\u0E1B\u0E19\u0E31\u0E48\u0E07\u0E14\u0E35\u0E01\u0E27\u0E48\u0E32"
+  sitReminderFirstDelay: 5
+  sitReminderInterval: 15
   phoneGroundObject: {fileID: 2105142480}
   playerResetPoint: {fileID: 365961811}
   phoneSystem: {fileID: 269643657}
@@ -26570,7 +26573,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &588932629
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26578,7 +26581,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 588932628}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 573bfc5ec9f8edb45b406b5b33ac2405, type: 3}
   m_Name: 
@@ -26613,13 +26616,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 588932628}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7f3f9e3cf6f76b4da850bc7cf6692c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rule5.Rule5DevSkip
   rule5: {fileID: 1070299045}
-  enableDevSkip: 1
+  enableDevSkip: 0
   jumpKey: 99
   toggleDebugKey: 100
   ringBellKey: 101
@@ -26636,7 +26639,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 588932628}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1dd8c4ef17f8a647b6bf456e0424128, type: 3}
   m_Name: 
@@ -26644,7 +26647,7 @@ MonoBehaviour:
   rule1: {fileID: 421595021}
   rule2: {fileID: 859750947}
   rule3: {fileID: 842431700}
-  enableDevSkip: 1
+  enableDevSkip: 0
   rule1Key: 94
   rule2Key: 95
   rule3Key: 96
@@ -26661,13 +26664,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 588932628}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c8ff162045c9e84f8b72cc6605f63f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Rule6.Rule6DevSkip
   rule6: {fileID: 1815186555}
-  enableDevSkip: 1
+  enableDevSkip: 0
   enterRuleKey: 104
   nextBusKey: 105
   armPermanentDeathKey: 84
@@ -34675,6 +34678,9 @@ MonoBehaviour:
   endHour: 22
   endMinute: 40
   ruleActive: 0
+  sitReminderText: "\u0E09\u0E31\u0E19\u0E27\u0E48\u0E32\u0E09\u0E31\u0E19\u0E01\u0E25\u0E31\u0E1A\u0E44\u0E1B\u0E19\u0E31\u0E48\u0E07\u0E14\u0E35\u0E01\u0E27\u0E48\u0E32"
+  sitReminderFirstDelay: 5
+  sitReminderInterval: 15
   inputHandler: {fileID: 1279262527}
   breathSystem: {fileID: 1250149978}
   stareSystem: {fileID: 348324494}
@@ -59290,6 +59296,9 @@ MonoBehaviour:
   endHour: 21
   endMinute: 40
   ruleActive: 0
+  sitReminderText: "\u0E09\u0E31\u0E19\u0E27\u0E48\u0E32\u0E09\u0E31\u0E19\u0E01\u0E25\u0E31\u0E1A\u0E44\u0E1B\u0E19\u0E31\u0E48\u0E07\u0E14\u0E35\u0E01\u0E27\u0E48\u0E32"
+  sitReminderFirstDelay: 5
+  sitReminderInterval: 15
   inputHandler: {fileID: 1279262527}
   paperSpawner: {fileID: 842431701}
   ghostPrefab: {fileID: 1415033371245421925, guid: cee7660466f251740bdd17ee47a0dfe5, type: 3}
@@ -59788,6 +59797,9 @@ MonoBehaviour:
   endHour: 20
   endMinute: 40
   ruleActive: 0
+  sitReminderText: "\u0E09\u0E31\u0E19\u0E27\u0E48\u0E32\u0E09\u0E31\u0E19\u0E01\u0E25\u0E31\u0E1A\u0E44\u0E1B\u0E19\u0E31\u0E48\u0E07\u0E14\u0E35\u0E01\u0E27\u0E48\u0E32"
+  sitReminderFirstDelay: 5
+  sitReminderInterval: 15
   hourFirstBlackout: 20
   minuteFirstBlackout: 1
   radioControl: {fileID: 1991267818}
@@ -61451,6 +61463,48 @@ MonoBehaviour:
     soundSeconds: 0
     lines: []
     playerVoice: 0
+    animator: {fileID: 0}
+    trigger: 
+    target: {fileID: 0}
+    active: 1
+    chat: {fileID: 0}
+    phone: {fileID: 0}
+    show: 1
+    mover: {fileID: 0}
+    moveTo: {fileID: 0}
+    matchRotation: 1
+    walkAnimator: {fileID: 0}
+    walkBool: 
+    parentTo: {fileID: 0}
+    shakeAmplitude: 4
+    shakeTilt: 10
+    shakeHoldAtEnd: 1
+    light: {fileID: 0}
+    lightIntensity: 20
+    turners: []
+    turnTarget: {fileID: 0}
+    stagger: 0.4
+    yawOnly: 1
+    barsOn: 1
+  - note: "SHOT 6 \xB7 subtitle: Paeng says thank you"
+    action: 6
+    waitToFinish: 0
+    seconds: 1
+    lookTarget: {fileID: 0}
+    holdUntilHidden: 0
+    maxHoldSeconds: 8
+    driveTo: {fileID: 0}
+    vcam: {fileID: 0}
+    fade: 0
+    fadeColor: {r: 0, g: 0, b: 0, a: 1}
+    fadeAlpha: 1
+    fmodEvent: 
+    soundAt: {fileID: 0}
+    soundSeconds: 0
+    lines:
+    - text: "\u0E02\u0E2D\u0E1A\u0E04\u0E38\u0E13\u0E19\u0E30"
+      holdDuration: -1
+    playerVoice: 1
     animator: {fileID: 0}
     trigger: 
     target: {fileID: 0}
@@ -68893,6 +68947,9 @@ MonoBehaviour:
   endHour: 23
   endMinute: 40
   ruleActive: 0
+  sitReminderText: "\u0E09\u0E31\u0E19\u0E27\u0E48\u0E32\u0E09\u0E31\u0E19\u0E01\u0E25\u0E31\u0E1A\u0E44\u0E1B\u0E19\u0E31\u0E48\u0E07\u0E14\u0E35\u0E01\u0E27\u0E48\u0E32"
+  sitReminderFirstDelay: 5
+  sitReminderInterval: 15
   walker: {fileID: 1070299044}
   obstacleSpawner: {fileID: 1659340251}
   ghostHandOverlay: {fileID: 0}
@@ -120312,6 +120369,9 @@ MonoBehaviour:
   endHour: 24
   endMinute: 40
   ruleActive: 0
+  sitReminderText: "\u0E09\u0E31\u0E19\u0E27\u0E48\u0E32\u0E09\u0E31\u0E19\u0E01\u0E25\u0E31\u0E1A\u0E44\u0E1B\u0E19\u0E31\u0E48\u0E07\u0E14\u0E35\u0E01\u0E27\u0E48\u0E32"
+  sitReminderFirstDelay: 5
+  sitReminderInterval: 15
   inputHandler: {fileID: 1279262527}
   paeng: {fileID: 1250172755}
   paengAtStart: 0

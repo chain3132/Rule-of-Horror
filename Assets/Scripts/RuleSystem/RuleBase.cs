@@ -15,6 +15,28 @@ namespace RuleSystem
         public bool ruleActive;
         private HorrorTextUI _horrorTextUI;
 
+        [Header("เตือนให้กลับไปนั่ง (ทำครบแล้วแต่ยังไม่นั่ง)")]
+        [Tooltip("บทพูดที่ขึ้นซ้ำๆ ตอนทำภารกิจของกฎครบแล้ว เหลือแค่กลับไปนั่งที่ศาลา (แปลผ่าน L10n)\n" +
+                 "เว้นว่าง = ไม่เตือน")]
+        [SerializeField] private string sitReminderText = "ฉันว่าฉันกลับไปนั่งดีกว่า";
+
+        [Tooltip("ทำครบแล้วรอกี่วินาทีก่อนเตือนครั้งแรก")]
+        [Min(0f)]
+        [SerializeField] private float sitReminderFirstDelay = 5f;
+
+        [Tooltip("เตือนซ้ำทุกกี่วินาที จนกว่าจะนั่ง")]
+        [Min(1f)]
+        [SerializeField] private float sitReminderInterval = 15f;
+
+        private float _sitReminderAt = -1f;
+
+        /// <summary>
+        /// ทำภารกิจของกฎข้อนี้ครบแล้ว เหลือแค่กลับไปนั่งที่ศาลา — ระหว่างนี้ผู้เล่นที่ยังไม่นั่งจะได้ยิน
+        /// ตัวเองพูด "ฉันว่าฉันกลับไปนั่งดีกว่า" เป็นระยะ (กฎที่จบด้วยการนั่งต้อง override)
+        /// ต้องเป็น false ตอนฉากตายเล่นอยู่
+        /// </summary>
+        public virtual bool WaitingForPlayerToSit => false;
+
         /// <summary>
         /// ผ่านกฎข้อนี้สำเร็จ (ไม่ใช่ตาย ไม่ใช่ถูกย้อนเวลา) — สมุดโน้ตฟังตัวนี้เพื่อปลดล็อกโน้ตของข้อนั้น
         ///
@@ -84,7 +106,7 @@ namespace RuleSystem
 
         private static FriendListController _friendList;
 
-        private static bool HasUnreadMessages()
+        protected static bool HasUnreadMessages()
         {
             if (DebugSkipMessageGate) return false;
 
@@ -102,7 +124,11 @@ namespace RuleSystem
         ///
         /// เสียงแจ้งเตือนดังอีกครั้งตอนเริ่มรอ เพราะนาฬิกาหยุดอยู่ ผู้เล่นที่นั่งรอเฉยๆ จะนึกว่าเกมค้าง
         /// </summary>
-        public static IEnumerator WaitForMessagesAndSeat()
+        /// <param name="remindAs">
+        /// กฎที่กำลังจะเริ่ม — อ่านแชทจบแล้วแต่ยังไม่นั่ง ผู้เล่นจะพูดเตือนตัวเอง "ฉันว่าฉันกลับไปนั่งดีกว่า"
+        /// เป็นระยะ ตามข้อความ/จังหวะที่ตั้งไว้ในกฎข้อนั้น (null = ไม่เตือน)
+        /// </param>
+        public static IEnumerator WaitForMessagesAndSeat(RuleBase remindAs = null)
         {
             if (HasUnreadMessages())
             {
@@ -112,9 +138,24 @@ namespace RuleSystem
                 yield return new WaitForSeconds(AfterReadingSeconds);
             }
 
-            yield return new WaitUntil(() =>
-                PlayerController.Instance != null && PlayerController.Instance.IsSitting());
+            while (PlayerController.Instance == null || !PlayerController.Instance.IsSitting())
+            {
+                if (remindAs != null) remindAs.MarkAwaitingSeat();
+                yield return null;
+            }
         }
+
+        // ── รอนั่งก่อนเริ่มกฎ ──
+        //
+        // ใช้ "เฟรมล่าสุดที่ยังรออยู่" แทนธง bool: coroutine ที่รอนั่งถูกหยุดกลางทางได้ (ตาย / ปุ่มเทส
+        // StopAllCoroutines) ถ้าเป็นธง มันจะค้าง true แล้วผู้เล่นโดนเตือนให้นั่งทั้งที่ไม่มีกฎรออยู่
+        // แบบนี้พอ coroutine เลิกมาทำเครื่องหมาย การเตือนก็หยุดเองในเฟรมถัดไป
+        private int _awaitingSeatFrame = -100;
+
+        /// <summary>กฎนี้กำลังรอผู้เล่นนั่งก่อนเริ่ม (อ่านแชทจบแล้ว) — เรียกทุกเฟรมที่ยังรออยู่</summary>
+        protected void MarkAwaitingSeat() => _awaitingSeatFrame = Time.frameCount;
+
+        private bool AwaitingSeat => Time.frameCount - _awaitingSeatFrame <= 2;
 
         /// <summary>เลขของกฎจากชื่อคลาส (Rule3 → 3) — 0 = ไม่มีเลข</summary>
         public int Number
@@ -248,9 +289,46 @@ namespace RuleSystem
 
         protected virtual void Update()
         {
-            if (!ruleActive) return;
+            if (ruleActive) UpdateRule();
 
-            UpdateRule();
+            // เตือนสองช่วง: ทำภารกิจครบแล้วรอกลับไปนั่ง (จบกฎ) และอ่านแชทจบแล้วรอนั่ง (เริ่มกฎ)
+            // ช่วงหลังกฎ 1 ยังไม่ active (รอ 19:00 / รอนั่ง) จึงต้องเช็กนอกเงื่อนไข ruleActive
+            UpdateSitReminder((ruleActive && WaitingForPlayerToSit) || AwaitingSeat);
+        }
+
+        /// <summary>
+        /// ยังไม่นั่งทั้งที่ควรไปนั่งแล้ว → พูดเตือนเป็นระยะจนกว่าจะนั่ง
+        /// มีบทพูด/hint อื่นอยู่บนจอ (เช่น hint สมุด, บทพูดของกฎ) = รอให้หายก่อน ไม่พูดทับ
+        /// </summary>
+        private void UpdateSitReminder(bool shouldSit)
+        {
+            var pc = PlayerController.Instance;
+            bool waiting = !string.IsNullOrWhiteSpace(sitReminderText) &&
+                           shouldSit && pc != null && !pc.IsSitting();
+
+            if (!waiting)
+            {
+                _sitReminderAt = -1f;
+                return;
+            }
+
+            if (_sitReminderAt < 0f)
+            {
+                _sitReminderAt = Time.time + sitReminderFirstDelay;
+                return;
+            }
+            if (Time.time < _sitReminderAt) return;
+
+            var dialogue = PlayerDialogueUI.instance;
+            var mode     = GameModeController.instance;
+            if (dialogue == null || dialogue.IsShowing || (mode != null && mode.IsBlinking))
+            {
+                _sitReminderAt = Time.time + 1f;   // จอไม่ว่าง ลองใหม่อีกวินาที
+                return;
+            }
+
+            dialogue.ShowLine(sitReminderText);
+            _sitReminderAt = Time.time + sitReminderInterval;
         }
 
         protected virtual void UpdateRule() { }
