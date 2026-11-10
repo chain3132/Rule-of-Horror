@@ -50,6 +50,14 @@ public class CutsceneManager : MonoBehaviour
     /// <summary>ฉากเปิดเริ่ม (true) / จบแล้ว (false)</summary>
     public static event Action<bool> OnPlayingChanged;
 
+    // ไม่มี domain reload + กลับเมนูหลักกลางเกมได้ (GameSession) — ค่าค้างจากรอบก่อนต้องล้าง
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    internal static void ResetStatics()
+    {
+        IsPlaying        = false;
+        OnPlayingChanged = null;
+    }
+
     private static void SetPlaying(bool value)
     {
         if (IsPlaying == value) return;

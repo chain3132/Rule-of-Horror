@@ -64,6 +64,14 @@ namespace Rule2
         [Tooltip("เวลา blend กล้องเข้า/ออก (วินาที)")]
         [SerializeField] private float     cameraBlendDuration = 0.3f;
 
+        [Header("Player Position")]
+        [Tooltip("✓ = ย้ายตัวผู้เล่นมายืนหน้าตู้ตอนเริ่มซ่อม — ไม่งั้นกล้องย้ายไปที่ตู้ แต่ตัวยังยืนที่เดิม\n" +
+                 "แล้วบังตู้ได้ (เช่นเดินเข้ามาจากด้านข้างแล้วกด E ตอนตัวอยู่ระหว่างกล้องกับตู้)")]
+        [SerializeField] private bool      movePlayerToPanel = true;
+        [Tooltip("จุดที่ตัวผู้เล่นไปยืน (ใช้ตำแหน่ง + ทิศที่หัน) — วางไว้ที่พื้นหน้าตู้\n" +
+                 "เว้นว่าง = ยืนใต้ Puzzle View Anchor หันหน้าเข้าหาตู้ (ตัวอยู่ใต้กล้องพอดี ไม่บัง)")]
+        [SerializeField] private Transform playerStandPoint;
+
         [Header("Mouse Input")]
         [Tooltip("ความไวเมาส์ต่อ pixel (แนะนำ 0.001–0.003)")]
         [SerializeField] private float mouseSensitivity = 0.002f;
@@ -89,7 +97,7 @@ namespace Rule2
 
         // ปิด Reload Domain แล้ว static ไม่ถูกล้างเอง
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() => _lockedCount = 0;
+        internal static void ResetStatics() => _lockedCount = 0;
 
         [Header("Phone")]
         [Tooltip("เว้นว่าง = หาในซีนเอง — เปิดตู้ตอนโทรศัพท์เปิดอยู่จะปิดโทรศัพท์ให้ก่อน")]
@@ -508,6 +516,8 @@ namespace Rule2
             _savedCamLocalRot = pivot.localRotation;   // == Euler(_xRotation,0,0) ตอนยืน
             _savedCamLocalPos = pivot.localPosition;   // ความสูงกล้อง (standing/sitting height)
 
+            MovePlayerInFrontOfPanel(pc, pivot);
+
             // anchor ถ้ามี = ใช้ทั้ง position + rotation ของมัน; ไม่มี = อยู่ที่เดิม หันไปกลางตู้
             Vector3    targetPos = puzzleViewAnchor != null ? puzzleViewAnchor.position : pivot.position;
             Quaternion targetRot = ResolveAnchorRotation(pivot);
@@ -592,6 +602,80 @@ namespace Rule2
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible   = false;
             if (!pc.IsSitting()) pc.SetMovement(true);
+        }
+
+        /// <summary>
+        /// ย้ายตัวผู้เล่นไปยืนหน้าตู้ หันเข้าหาตู้ — กล้องยังอยู่ท่าเดิมในโลก แล้วค่อย blend ไปที่ anchor
+        ///
+        /// ต้องย้ายตัว ไม่ใช่แค่กล้อง: กล้องถูกยกไปที่ anchor แต่ตัวละครยังยืนตรงที่กด E ถ้าตรงนั้นอยู่
+        /// ระหว่าง anchor กับตู้ ตัวเองจะบังตู้ทั้งตู้ — และตอนซ่อมเสร็จกล้องกลับเข้าหัว ผู้เล่นจะยืน
+        /// หันหน้าเข้าตู้พอดีด้วย
+        ///
+        /// กล้องถูกวางคืนที่ท่าเดิมในโลกหลังย้ายตัว ไม่งั้นภาพจะกระตุกตามตัวไปหนึ่งเฟรมก่อน blend
+        /// (ช่วงนี้ SetLook(false) แล้ว ไม่มีใครเขียน pivot ทับ)
+        /// </summary>
+        private void MovePlayerInFrontOfPanel(PlayerController pc, Transform pivot)
+        {
+            if (!movePlayerToPanel || pc.IsSitting()) return;
+            if (!TryGetStandPose(pc, out Vector3 pos, out Quaternion rot)) return;
+
+            Vector3    camPos = pivot.position;
+            Quaternion camRot = pivot.rotation;
+
+            pc.TeleportTo(pos, rot);
+
+            pivot.position = camPos;
+            pivot.rotation = camRot;
+        }
+
+        /// <summary>จุดยืนหน้าตู้ — Player Stand Point ถ้ามี ไม่งั้นใต้ Puzzle View Anchor (null ทั้งคู่ = ไม่ย้าย)</summary>
+        private bool TryGetStandPose(PlayerController pc, out Vector3 pos, out Quaternion rot)
+        {
+            pos = default;
+            rot = default;
+
+            Vector3 facing;
+            if (playerStandPoint != null)
+            {
+                pos    = playerStandPoint.position;
+                facing = playerStandPoint.forward;
+            }
+            else if (puzzleViewAnchor != null)
+            {
+                // ใต้กล้องพอดี ความสูงเท่าที่ยืนอยู่ตอนนี้ (TeleportTo เกาะพื้นให้ ±1 เมตร)
+                pos    = new Vector3(puzzleViewAnchor.position.x,
+                                     pc != null ? pc.transform.position.y : puzzleViewAnchor.position.y,
+                                     puzzleViewAnchor.position.z);
+                facing = transform.position - pos;
+            }
+            else return false;
+
+            facing.y = 0f;
+            if (facing.sqrMagnitude < 1e-4f) facing = transform.position - pos;
+            facing.y = 0f;
+
+            rot = facing.sqrMagnitude > 1e-4f ? Quaternion.LookRotation(facing.normalized, Vector3.up)
+                                              : (pc != null ? pc.transform.rotation : Quaternion.identity);
+            return true;
+        }
+
+        /// <summary>จุดที่ตัวผู้เล่นจะไปยืนตอนซ่อม — ลากจนวงกลมอยู่บนพื้นหน้าตู้ ไม่ชนตู้/กำแพง</summary>
+        private void OnDrawGizmosSelected()
+        {
+            if (!movePlayerToPanel) return;
+
+            var pc = PlayerController.Instance != null ? PlayerController.Instance
+                   : FindAnyObjectByType<PlayerController>(FindObjectsInactive.Include);
+            if (!TryGetStandPose(pc, out Vector3 pos, out Quaternion rot)) return;
+
+            float radius = 0.4f, height = 3f;
+            if (pc != null && pc.TryGetComponent(out CharacterController cc)) { radius = cc.radius; height = cc.height; }
+
+            Gizmos.color = new Color(0.45f, 1f, 0.5f, 0.9f);
+            Gizmos.DrawWireSphere(pos + Vector3.up * radius, radius);
+            Gizmos.DrawWireSphere(pos + Vector3.up * (height - radius), radius);
+            Gizmos.DrawLine(pos, pos + Vector3.up * height);
+            Gizmos.DrawRay(pos + Vector3.up * (height * 0.8f), rot * Vector3.forward * 1f);
         }
 
         private Quaternion ResolveAnchorRotation(Transform pivot)

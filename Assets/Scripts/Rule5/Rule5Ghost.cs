@@ -59,6 +59,10 @@ namespace Rule5
         [Tooltip("If the ghost drifts further than this from where it should be, it is warped back. Stops it getting stuck on a wall and lost.")]
         [SerializeField] private float escortTeleportDistance = 8f;
 
+        [Tooltip("While the player stands still the ghost stops once it is this close to its trailing distance, in metres, even if " +
+                 "it never reached its spot. Without it a spot it cannot reach kept it walking until it bumped the player from behind.")]
+        [SerializeField] private float escortStopMargin = 0.3f;
+
         [Header("Escort - closing in (walking while the ching rings)")]
         [Tooltip("Metres the ghost closes in for every second the player keeps walking while the ching rings. " +
                  "Ground given up this way is never won back: it adds up across every ching until the ghost is close enough to kill.")]
@@ -416,7 +420,10 @@ namespace Rule5
             if (!AgentUsable)
             {
                 // ไม่มี NavMesh → เดินด้วย Transform "ถึงแล้ว" วัดจากระยะตรงๆ ไม่ใช่ remainingDistance
-                bool closeEnough = Vector3.Distance(transform.position, target) <= 0.35f;
+                // ผู้เล่นยืนนิ่งแล้วผีมาถึงระยะตามหลัง = หยุด แม้ยังไม่ถึงจุดเป๊ะ (เหตุผลเดียวกับด้านล่าง)
+                bool closeEnough = Vector3.Distance(transform.position, target) <= 0.35f ||
+                                   (!playerMoving && FlatDistance(transform.position, _player.position)
+                                                     <= _escortDistance + escortStopMargin);
                 bool moved = !closeEnough && FallbackMoveTowards(target, escortSpeed);
 
                 SetAnim(walk: moved, run: false);
@@ -425,21 +432,54 @@ namespace Rule5
             }
 
             SetAgentSpeed(escortSpeed);
-            SetMoving(true);
             Repath(target);
 
             // ผู้เล่นหยุด → ผีก็หยุดตามหลัง หันมามอง
-            bool arrived = !_agent.pathPending && _agent.remainingDistance <= Mathf.Max(_agent.stoppingDistance, 0.25f);
-            if (!playerMoving && arrived)
+            //
+            // เดิมหยุดเฉพาะตอน "ถึงจุดยืน" แล้ว — ถ้าจุดนั้นไปไม่ถึง (อยู่นอก NavMesh / ราวสายบัง /
+            // ทางเลี้ยวพาเส้นทางผ่านตัวผู้เล่น) remainingDistance ไม่มีวันลด ผีจึงเดินต่อจนชนหลัง
+            // แล้ว CharacterController ของผู้เล่นถูกดันออกจากตัวผี ผู้เล่นขยับทั้งที่ยืนนิ่ง
+            // ตอนนี้หยุดด้วยถ้าเข้าใกล้ผู้เล่นเท่าระยะตามหลังแล้ว — ระยะที่ผีได้มาต้องมาจาก
+            // PressCloser (เดินตอนฉิ่งดัง) เท่านั้น ไม่ใช่จากการเดินเลยจุด
+            bool  arrived  = !_agent.pathPending && _agent.remainingDistance <= Mathf.Max(_agent.stoppingDistance, 0.25f);
+            float toPlayer = FlatDistance(transform.position, _player.position);
+            bool  atGap    = toPlayer <= _escortDistance + escortStopMargin;
+
+            // ผู้เล่นเดินอยู่แต่ผีโผล่มาอยู่ข้างหน้า/ข้างตัว (หลังทางเลี้ยว) — ห้ามเดินฝ่าตัวผู้เล่นไปหาจุดข้างหลัง
+            // รอให้ผู้เล่นเดินผ่านไปก่อน จุดยืนจะกลับไปอยู่ข้างหลังเอง
+            bool walkingIntoPlayer = toPlayer < _escortDistance - escortStopMargin && HeadingTowards(_player.position);
+
+            if ((!playerMoving && (arrived || atGap)) || walkingIntoPlayer)
             {
+                if (!_agent.isStopped) _agent.velocity = Vector3.zero;   // ไม่ไถลต่อตามแรงเบรกของ agent
                 SetMoving(false);
                 SetAnim(walk: false, run: false);
                 FaceTowards(_player.position);
             }
             else
             {
+                SetMoving(true);
                 SetAnim(walk: true, run: false);
             }
+        }
+
+        private static float FlatDistance(Vector3 a, Vector3 b)
+        {
+            a.y = 0f;
+            b.y = 0f;
+            return Vector3.Distance(a, b);
+        }
+
+        /// <summary>agent กำลังจะเดินเข้าหาจุดนี้ไหม (ทิศเส้นทางช่วงถัดไปชี้ไปทางนั้น)</summary>
+        private bool HeadingTowards(Vector3 point)
+        {
+            if (!AgentUsable || _agent.pathPending || !_agent.hasPath) return false;
+
+            Vector3 step = _agent.steeringTarget - transform.position; step.y = 0f;
+            Vector3 to   = point - transform.position;                  to.y   = 0f;
+            if (step.sqrMagnitude < 0.0001f || to.sqrMagnitude < 0.0001f) return false;
+
+            return Vector3.Dot(step.normalized, to.normalized) > 0.5f;   // ภายใน ~60° จากทิศไปหาผู้เล่น
         }
 
         /// <summary>

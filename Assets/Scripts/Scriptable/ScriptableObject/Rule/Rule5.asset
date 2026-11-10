@@ -58,7 +58,7 @@ MonoBehaviour:
     replies:
     - replyText: I've followed every single thing you ordered. What more do you want
         from me?
-      nextNode: 11
+      nextNode: 12
     - replyText: Just tell me, what do I have to do this time to survive?
       nextNode: 4
     nextNode: -1
@@ -127,16 +127,25 @@ MonoBehaviour:
     scriptedLine: 0
     offersReward: 0
     replies: []
+    nextNode: 11
+    recordsRule: {fileID: 0}
+    recordsAsCooperative: 1
+    graphPosition: {x: 3313.2065, y: 472.7949}
+  - message: And before coming back to sit at the pavilion, don't forget to chant.
+    isPlayer: 0
+    scriptedLine: 0
+    offersReward: 0
+    replies: []
     nextNode: -1
     recordsRule: {fileID: 11400000, guid: 3f2171b571379a34083090e8449b7862, type: 2}
     recordsAsCooperative: 1
-    graphPosition: {x: 3308.1057, y: 471.6359}
+    graphPosition: {x: 3610.4238, y: 472.7949}
   - message: That red thread is the only thing binding you here
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
     replies: []
-    nextNode: 12
+    nextNode: 13
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 1510.963, y: 212.35017}
@@ -145,7 +154,7 @@ MonoBehaviour:
     scriptedLine: 0
     offersReward: 0
     replies: []
-    nextNode: 13
+    nextNode: 14
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
     graphPosition: {x: 1810.963, y: 212.35017}

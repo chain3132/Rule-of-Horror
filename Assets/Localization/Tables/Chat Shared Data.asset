@@ -578,11 +578,13 @@ MonoBehaviour:
   - m_Id: 658149901
     m_Key: Ton_Rule4/#10 - they-tell-you_633b54ff
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 996612934871285845
   - m_Id: 658149902
     m_Key: Ton_Rule4/#11 - dont-follow-anything-they-tell_cc9b3628
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 996612934871285846
   - m_Id: 658149411
     m_Key: Ton_Rule4/#9 - follow-anything_25e7c0f0
     m_Metadata:
@@ -716,11 +718,13 @@ MonoBehaviour:
   - m_Id: 658149903
     m_Key: Ton_Rule6/#16 - think-about-it-carefully_78fa4e46
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 996612934871285847
   - m_Id: 658149904
     m_Key: Ton_Rule6/#17 - ill-be-waiting-right-here_ceaf2d3b
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 996612934871285848
   - m_Id: 658149435
     m_Key: Ton_Rule6/#25 - unknown-your-friend-talks-too_eee91298
     m_Metadata:
@@ -764,11 +768,13 @@ MonoBehaviour:
   - m_Id: 455480262168590
     m_Key: Rule6/#8 - but-in-the-end-you_c329c8be
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 996612934871285849
   - m_Id: 455480262168591
     m_Key: Rule6/#9 - i-hope-you-get-home_dc1324bf
     m_Metadata:
-      m_Items: []
+      m_Items:
+      - rid: 996612934871285850
   - m_Id: 455480262168582
     m_Key: Rule6/#7 - besides-youve-been-waiting-all_2274a291
     m_Metadata:
@@ -809,6 +815,16 @@ MonoBehaviour:
     m_Metadata:
       m_Items:
       - rid: 3244670378102751326
+  - m_Id: 5952509167964160
+    m_Key: Ton_Rule6/#24 - your-friend-talks-too-much_1b86f230
+    m_Metadata:
+      m_Items:
+      - rid: 996612934871286039
+  - m_Id: 5952509197324288
+    m_Key: Rule5/#11 - and-before-coming-back-to_51051e0c
+    m_Metadata:
+      m_Items:
+      - rid: 996612934871286040
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
@@ -816,6 +832,38 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 996612934871285845
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Ton_Rule4#10
+    - rid: 996612934871285846
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Ton_Rule4#11
+    - rid: 996612934871285847
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Ton_Rule6#16
+    - rid: 996612934871285848
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Ton_Rule6#17
+    - rid: 996612934871285849
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6#8
+    - rid: 996612934871285850
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule6#9
+    - rid: 996612934871286039
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Ton_Rule6/#24
+    - rid: 996612934871286040
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Chat/Rule5/#11
     - rid: 3244670351061549161
       type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
       data:

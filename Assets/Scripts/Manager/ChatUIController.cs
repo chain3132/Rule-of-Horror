@@ -245,6 +245,67 @@ namespace Manager
         }
 
 
+        // ─────────────────────────── ข้อความตัวอย่างในรายชื่อ ───────────────────────────
+
+        /// <summary>
+        /// ข้อความล่าสุดของ contact นี้ สำหรับบรรทัดรองในรายชื่อแชท (แปลภาษาแล้ว) — "" = ยังไม่มี
+        ///
+        /// มีชุดใหม่ส่งมาแต่ยังไม่เคยเปิด = ประโยคแรกของชุดนั้น (เหมือนแอปแชทที่โชว์ข้อความที่เพิ่งเข้ามา)
+        /// ไม่งั้น = ข้อความสุดท้ายที่ขึ้นในแชทแล้ว รวมคำตอบของผู้เล่นเอง
+        ///
+        /// ไม่เอาประโยคท้ายของชุดที่ยังไม่ได้อ่าน — บทของคนปริศนาเผยทีละประโยค ถ้าโชว์ท้ายชุด
+        /// ในรายชื่อ ผู้เล่นจะเห็นตอนจบก่อนได้อ่านจริง
+        /// </summary>
+        public string GetPreview(FriendListController.ContactEntry contact)
+        {
+            if (contact == null) return "";
+
+            _contactTimelines.TryGetValue(contact, out var history);
+
+            ConversationData unopened = null;
+            foreach (var message in contact.DeliveredMessages)
+            {
+                var data = message.conversation;
+                if (playedConversations.Contains(data)) continue;
+                if (history != null && history.Exists(e => e.data == data)) continue;
+                unopened = data;   // เอาชุดล่าสุดที่ส่งมา
+            }
+
+            if (unopened != null)
+            {
+                var opening = FirstIncomingLine(unopened);
+                if (opening != null) return RewardSystem.FormatText(L10n.T(opening.message));
+            }
+
+            if (history == null || history.Count == 0) return "";
+
+            var last = history[history.Count - 1];
+            if (last.data == null) return L10n.T(last.playerReplyText);
+
+            return last.nodeIndex >= 0 && last.nodeIndex < last.data.nodes.Count
+                ? RewardSystem.FormatText(L10n.T(last.data.nodes[last.nodeIndex].message))
+                : "";
+        }
+
+        /// <summary>ประโยคแรกของอีกฝ่ายในบทสนทนา — ข้ามบรรทัดของผู้เล่นที่พูดเองได้ หยุดถ้าต้องเลือกคำตอบก่อน</summary>
+        private static ChatNode FirstIncomingLine(ConversationData data)
+        {
+            if (data == null || data.nodes == null) return null;
+
+            int index = data.startNode;
+            for (int guard = 0; guard < data.nodes.Count; guard++)
+            {
+                if (index < 0 || index >= data.nodes.Count) return null;
+
+                var node = data.nodes[index];
+                if (!node.isPlayer) return node;
+                if (node.NeedsReply) return null;
+
+                index = node.nextNode;
+            }
+            return null;
+        }
+
         // ─────────────────────────── Message Display ───────────────────────────
 
         public void AddMessage(ChatNode node)

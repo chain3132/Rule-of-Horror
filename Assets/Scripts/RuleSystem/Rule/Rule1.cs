@@ -93,6 +93,50 @@ public class Rule1 : RuleBase
         !ruleActive && !_hasCompleted && ActiveRuleInScene() == null &&
         (TimeManager.instance == null || TimeManager.instance.CurrentTotalMinutes < endHour * 60 + endMinute);
 
+    // ─────────────────────────── เวลาเริ่ม (Start Hour / Start Minute) ───────────────────────────
+    //
+    // กฎ 1 เริ่มเมื่อครบสามอย่าง: ถึงเวลาเริ่ม (19:00) + อ่านแชทจบ + นั่งที่ศาลา — ตรงกับที่แชทบอก
+    //
+    // เดิมนาฬิกาหยุดตั้งแต่ข้อความกฎ 1 ส่งถึงตอน 18:40 แล้วกฎเริ่มทั้งที่นาฬิกายังโชว์ 18:40
+    // ตอนนี้นาฬิกาเดินต่อไปถึงเวลาเริ่ม แล้วถูกหยุดค้างไว้ตรงนั้นจนกว่ากฎจะเริ่ม (ยังไม่อ่าน/ยังไม่นั่ง
+    // ก็รออยู่ที่ 19:00) กฎ 2 ที่ 20:00 จึงไม่มีทางแทรก
+
+    int StartTotalMinutes => startHour * 60 + startMinute;
+
+    /// <summary>นาฬิกาถึงเวลาเริ่มกฎ 1 แล้วหรือยัง</summary>
+    public bool IsStartTimeReached =>
+        TimeManager.instance == null || TimeManager.instance.CurrentTotalMinutes >= StartTotalMinutes;
+
+    void OnEnable()
+    {
+        TimeManager.OnTimeChanged -= HoldClockAtStart;
+        TimeManager.OnTimeChanged += HoldClockAtStart;
+    }
+
+    void OnDisable() => TimeManager.OnTimeChanged -= HoldClockAtStart;
+
+    /// <summary>
+    /// นาฬิกาเดินถึงเวลาเริ่มแล้วแต่กฎ 1 ยังไม่ได้เริ่ม → หยุดนาฬิกาไว้ตรงนั้น
+    /// (ถ้ามีคนปล่อยนาฬิกาเดินระหว่างรอ เช่น blink ลืมตา นาทีถัดไปก็หยุดอีก)
+    /// </summary>
+    void HoldClockAtStart(int hour, int minute)
+    {
+        if (hour * 60 + minute < StartTotalMinutes || !CanStart) return;
+        TimeManager.instance.IsPauseTime(true);
+    }
+
+    /// <summary>
+    /// รอจนถึงเวลาเริ่มกฎ 1 — ถ้ายังไม่ถึง ปล่อยนาฬิกาเดินจากตอนนี้ (เช่น 18:4x) ไปจนถึง
+    /// HoldClockAtStart หยุดให้เองที่เวลาเริ่ม ถึงแล้ว = ผ่านทันที
+    /// </summary>
+    public IEnumerator WaitForStartTime()
+    {
+        if (TimeManager.instance == null || IsStartTimeReached) yield break;
+
+        TimeManager.instance.IsPauseTime(false);
+        yield return new WaitUntil(() => IsStartTimeReached);
+    }
+
     public override void DebugForceEnd()
     {
         StopAllCoroutines();

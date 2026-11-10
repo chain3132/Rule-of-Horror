@@ -71,6 +71,12 @@ namespace Book
         [Tooltip("✓ = วิดีโอเดินต่อแม้เกมหยุดเวลา (Time.timeScale = 0) เช่นอ่านหนังสือตอนเปิดเมนู")]
         [SerializeField] private bool useUnscaledTime;
 
+        [Tooltip("ต้องได้ดูวิดีโออย่างน้อยสัดส่วนนี้ของความยาว ถึงนับว่า 'อ่านแล้ว' แล้วค้างเป็นภาพนิ่งถาวร\n" +
+                 "ไม่ถึง = ครั้งหน้าที่เปิดหน้านี้ / หยิบสมุดขึ้นมา วิดีโอเล่นใหม่จากต้น\n\n" +
+                 "กันเคส: ผ่านกฎแล้วสมุดบนโต๊ะเปิดหน้าใหม่เล่นเองตอนผู้เล่นไม่ได้มอง → มาหยิบอ่านทีหลังเห็นแค่ภาพนิ่ง")]
+        [Range(0f, 1f)]
+        [SerializeField] private float watchedFraction = 0.5f;
+
         // ─────────────────────────── Runtime ───────────────────────────
 
         private sealed class Slot
@@ -87,6 +93,7 @@ namespace Book
             public bool            ReachedEnd;   // วิดีโอเล่นจนจบแล้ว
             public int             EndFrame = -1;   // เฟรมเกมที่เห็นว่าจบ — ใช้รอให้เฟรมสุดท้ายลง texture ก่อนเก็บ
             public bool            Silent;       // ยังไม่ขึ้นจอ — ภาพนิ่งภาษาเดิมค้างอยู่จนกว่าภาษาใหม่จะพร้อม
+            public float           WatchedTime;  // วินาทีที่ผู้เล่นได้ดูจริงระหว่างเล่น (Watching = true)
         }
 
         /// <summary>เฟรมสุดท้ายของวิดีโอหนึ่งไฟล์ที่เก็บไว้เป็นภาพนิ่ง</summary>
@@ -113,7 +120,7 @@ namespace Book
 
         // ปิด Reload Domain แล้ว static ไม่ถูกล้างเอง — export วิดีโอใหม่แล้วกด Play ต้องดูใหม่
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics()
+        internal static void ResetStatics()
         {
             _detectedStyle.Clear();
             _finishedNotes.Clear();
@@ -127,6 +134,15 @@ namespace Book
 
         /// <summary>หน้าคู่ที่เปิดอยู่ (Closed / Turning / 0, 1, 2 ...)</summary>
         public int CurrentSpread => _spread;
+
+        /// <summary>
+        /// ผู้เล่นกำลังดูสมุดอยู่ไหม — BookPageTurner ตั้งให้ทุกเฟรม (ถืออยู่ หรือยืนมองสมุดบนโต๊ะ)
+        ///
+        /// วิดีโอที่เล่นจบตอนไม่มีใครดู (สมุดบนโต๊ะเปิดหน้าใหม่เองหลังผ่านกฎ) ยังค้างภาพนิ่งไว้บนหน้า
+        /// แต่ไม่นับว่าอ่านแล้ว เปิดมาหน้านี้อีกหรือหยิบขึ้นมา (ReplayUnwatched) จะเล่นใหม่จากต้น
+        /// ไม่มีใครตั้ง (ใช้ Follow Animator อย่างเดียว) = true ตลอด แบบเดิม
+        /// </summary>
+        public bool Watching { get; set; } = true;
 
         /// <summary>
         /// อ่านหน้าจาก Animator เองไหม — BookPageTurner ปิดตัวนี้ เพราะมันเลื่อนเวลาแอนิเมชันเอง
@@ -191,6 +207,7 @@ namespace Book
         private void Update()
         {
             if (followAnimator) ReadSpreadFromAnimator();
+            UpdateWatched();
             UpdateMips();
             UpdateHolds();
             UpdateFades();
@@ -379,6 +396,7 @@ namespace Book
             slot.ReachedEnd  = false;
             slot.EndFrame    = -1;
             slot.Silent      = silent;
+            slot.WatchedTime = 0f;
 
             EnsureTexture(slot, clip);
             ClearToPaper(slot.Texture, slot.LightOnDark ?? false);
@@ -486,6 +504,7 @@ namespace Book
             slot.ReachedEnd  = false;
             slot.EndFrame    = -1;
             slot.Silent      = false;
+            slot.WatchedTime = 0f;
         }
 
         // ─────────────────────────── ภาพนิ่งหลังเล่นจบ ───────────────────────────
@@ -529,7 +548,8 @@ namespace Book
             if (_held.TryGetValue(clip, out HeldFrame old)) DestroyHeld(old);
             _held[clip] = held;
 
-            _finishedNotes.Add(surface.NoteNumber);
+            // เล่นจบตอนไม่มีใครดู → ค้างภาพนิ่งไว้บนหน้าเหมือนเดิม แต่ไม่จำว่าอ่านแล้ว
+            if (WasWatched(slot)) _finishedNotes.Add(surface.NoteNumber);
 
             Release(slot);   // ซ่อนหน้านี้ไปด้วย แต่ภาพนิ่งขึ้นแทนในเฟรมเดียวกัน จึงไม่เห็นกระพริบ
             ShowHeld(surface, held);
@@ -624,6 +644,60 @@ namespace Book
             foreach (var slot in _slots)
                 if (slot.Surface == null) return slot;
             return null;
+        }
+
+        // ─────────────────────────── ได้ดูจริงไหม ───────────────────────────
+
+        /// <summary>นับเวลาที่ผู้เล่นได้ดูวิดีโอที่กำลังเล่นอยู่ (ไม่นับช่วงค้างภาพระหว่างพลิก)</summary>
+        private void UpdateWatched()
+        {
+            if (_slots == null || !Watching) return;
+
+            float dt = useUnscaledTime ? Time.unscaledDeltaTime : Time.deltaTime;
+
+            foreach (var slot in _slots)
+            {
+                if (slot.Surface == null || !slot.Ready || slot.Silent || !slot.Player.isPlaying) continue;
+                slot.WatchedTime += dt;
+            }
+        }
+
+        private bool WasWatched(Slot slot)
+        {
+            double length = slot.Player.length;
+            if (length <= 0) return true;
+            return slot.WatchedTime >= length * watchedFraction;
+        }
+
+        /// <summary>
+        /// หยิบสมุดขึ้นมาอ่าน — Note บนหน้าคู่ที่เปิดอยู่ที่ยังไม่ได้ดูจริง เล่นใหม่จากต้น
+        ///
+        /// SetSpread เล่นใหม่ให้อยู่แล้วถ้าพลิกไปหน้าอื่น แต่ถ้าสมุดบนโต๊ะเปิดค้างอยู่ที่หน้าโน้ตใหม่
+        /// ตั้งแต่ตอนผ่านกฎ หยิบขึ้นมาก็ยังเป็นหน้าเดิม SetSpread ไม่ถูกเรียก — ต้องสั่งตรงนี้
+        ///   - ค้างภาพนิ่ง (เล่นจบตอนไม่มีใครดู) → เล่นใหม่
+        ///   - กำลังเล่นอยู่แต่ที่ผ่านมาดูไปไม่ถึง Watched Fraction → เริ่มใหม่จากต้น
+        /// </summary>
+        public void ReplayUnwatched()
+        {
+            if (_spread < 0) return;
+
+            foreach (var surface in _surfaces)
+            {
+                if (surface == null || surface.Spread != _spread) continue;
+                if (_finishedNotes.Contains(surface.NoteNumber)) continue;
+
+                Slot slot = SlotOf(surface);
+                if (slot != null)
+                {
+                    if (!slot.Player.isPrepared || slot.WatchedTime >= slot.Player.time * watchedFraction) continue;
+                    Release(slot);
+                }
+
+                _showingHeld.Remove(surface);   // Assign วางวิดีโอทับภาพนิ่งเอง
+
+                slot = FreeSlot();
+                if (slot != null) Assign(slot, surface);
+            }
         }
 
         private static bool Finished(Slot slot) =>

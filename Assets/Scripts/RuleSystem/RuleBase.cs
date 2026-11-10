@@ -25,7 +25,7 @@ namespace RuleSystem
 
         // ปิด Reload Domain แล้ว static ไม่ถูกล้างเอง — event ที่ค้างจากรอบ Play ก่อนจะชี้ไปหา object ที่ถูกทำลายไปแล้ว
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics()
+        internal static void ResetStatics()
         {
             OnRuleCompleted      = null;
             DebugSkipMessageGate = false;

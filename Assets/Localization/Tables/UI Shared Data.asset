@@ -575,6 +575,41 @@ MonoBehaviour:
     m_Metadata:
       m_Items:
       - rid: 996612915123191888
+  - m_Id: 5854784535564288
+    m_Key: UI/Back to main menu button - main-menu_6373783f
+    m_Metadata:
+      m_Items:
+      - rid: 996612934871285840
+  - m_Id: 5906336260460544
+    m_Key: BookPageTurner/hint - a-d-turn-page_15c640af
+    m_Metadata:
+      m_Items:
+      - rid: 996612934871285851
+  - m_Id: 5906336281432064
+    m_Key: BookPageTurner/pickUpHint - e-read_87b04af4
+    m_Metadata:
+      m_Items:
+      - rid: 996612934871285852
+  - m_Id: 5906336281432065
+    m_Key: BookPageTurner/readingHint - a-d-turn-page-e_18483cd4
+    m_Metadata:
+      m_Items:
+      - rid: 996612934871285853
+  - m_Id: 5907955521851392
+    m_Key: Rule4/line1 - wachirawit-junnual_e3932c25
+    m_Metadata:
+      m_Items:
+      - rid: 996612934871285854
+  - m_Id: 5907955521851393
+    m_Key: Rule4/line1 - kittana-teangnoum_b7a693d1
+    m_Metadata:
+      m_Items:
+      - rid: 996612934871285855
+  - m_Id: 5907955521851394
+    m_Key: Rule4/line2 - 3d-artist_aae32af9
+    m_Metadata:
+      m_Items:
+      - rid: 996612934871285856
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
@@ -586,6 +621,34 @@ MonoBehaviour:
       type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
       data:
         m_CommentText: UI/Language menu volume bar
+    - rid: 996612934871285840
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: UI/Back to main menu button
+    - rid: 996612934871285851
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/BookPageTurner.hint
+    - rid: 996612934871285852
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/BookPageTurner.pickUpHint
+    - rid: 996612934871285853
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Code/BookPageTurner.readingHint
+    - rid: 996612934871285854
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/line1 (same in both languages)
+    - rid: 996612934871285855
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/line1 (same in both languages)
+    - rid: 996612934871285856
+      type: {class: Comment, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_CommentText: Field/Rule4.unity/line2
     - rid: 3244670351061549158
       type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
       data:

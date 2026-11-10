@@ -217,7 +217,7 @@ namespace RuleSystem.Rule
         /// "คืนรอบสอง" ทั้งที่เพิ่งเริ่มเกม แล้วตายครั้งแรกก็จบเลยโดยไม่มีสาเหตุที่หาได้
         /// </summary>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetNightLoopCount() => NightLoopCount = 0;
+        internal static void ResetNightLoopCount() => NightLoopCount = 0;
 
         /// <summary>ยิงตอนบทจบมาถึง — ตัวเชื่อมสำหรับระบบ ending / credits ที่จะมาทีหลัง</summary>
         public event Action<Rule6BusKind> OnEnding;
@@ -1013,7 +1013,9 @@ namespace RuleSystem.Rule
                 yield break;
             }
 
-            // ลงจากรถมายืนอยู่ — รอให้ไปนั่งที่ศาลาก่อนเหมือนคืนแรก
+            // เหมือนคืนแรก: นาฬิกาเดินจาก 18:40 ไปถึงเวลาเริ่มกฎ 1 (19:00) แล้วหยุดรอ
+            // จากนั้นรอให้ไปนั่งที่ศาลาก่อน
+            yield return rule1.WaitForStartTime();
             yield return WaitForMessagesAndSeat();
 
             GameModeController.instance.BlinkToMode(GameMode.Tension);

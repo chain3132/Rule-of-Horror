@@ -82,6 +82,12 @@ namespace Book
         [Tooltip("hint ตอนถือสมุด (แปลผ่าน L10n)")]
         [SerializeField] private string readingHint = "A / D   Turn page      E   Put back";
 
+        [Header("โผล่เฉพาะโหมด Relax")]
+        [Tooltip("✓ = สมุดมองไม่เห็นและหยิบไม่ได้ตอนโหมด Tension (สลับตอนตาปิดสนิท ผู้เล่นไม่เห็นมันหายไปต่อหน้า)\n" +
+                 "ซ่อนด้วยการปิดการวาด ไม่ใช่ SetActive(false) — สมุดต้องทำงานอยู่ตลอด เพราะกฎจบ (ปลดล็อกโน้ต)\n" +
+                 "ตอนยังอยู่ใน Tension และวิดีโอที่เล่นค้าง/ภาพนิ่งที่เก็บไว้จะหายถ้าปิดทั้ง object")]
+        [SerializeField] private bool relaxOnly = true;
+
         // ─────────────────────────── Runtime ───────────────────────────
 
         private const int   Closed         = -1;
@@ -91,7 +97,7 @@ namespace Book
         private static readonly HashSet<int> _unlocked = new HashSet<int>();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics()
+        internal static void ResetStatics()
         {
             _unlocked.Clear();
             IsReading = false;
@@ -129,6 +135,11 @@ namespace Book
 
         private readonly Dictionary<string, float> _clipLengths = new Dictionary<string, float>();
 
+        private bool                 _hidden;
+        private Renderer[]           _renderers;
+        private Collider[]           _colliders;
+        private readonly List<Collider> _collidersTurnedOff = new List<Collider>();
+
         public int  CurrentPage => _page;
         public bool IsHolding   => _holding;
 
@@ -144,6 +155,9 @@ namespace Book
 
             _video = GetComponentInChildren<BookVideoController>(true);
             if (_video != null) _video.FollowAnimator = false;
+
+            _renderers = GetComponentsInChildren<Renderer>(true);
+            _colliders = GetComponentsInChildren<Collider>(true);
         }
 
         private void OnEnable()
@@ -170,6 +184,7 @@ namespace Book
             ClaimsInteract = false;
             IsReading = false;
             HideHint();
+            SetHidden(false);   // เปิดกลับมาแล้ว Update ตัดสินใหม่ตามโหมดตอนนั้น
         }
 
         private void Start()
@@ -193,6 +208,19 @@ namespace Book
 
         private void Update()
         {
+            UpdateVisibility();
+            if (_hidden)
+            {
+                _aiming = false;
+                ClaimsInteract = false;
+                if (_video != null) _video.Watching = false;
+                HideHint();
+                return;
+            }
+
+            // ถืออยู่ หรือยืนมองสมุดบนโต๊ะ = ได้ดูวิดีโอจริง (ใช้ _aiming ของเฟรมก่อน — ช้าไปเฟรมเดียวไม่เป็นไร)
+            if (_video != null) _video.Watching = _holding || _aiming;
+
             if (_holding)
             {
                 ClaimsInteract = true;
@@ -204,10 +232,75 @@ namespace Book
             }
 
             _aiming = _unlocked.Count > 0 && !_moving && PlayerLookingAtBook();
+            if (_video != null) _video.Watching = _aiming;
             ClaimsInteract = _aiming;
 
             if (_aiming) ShowHint(pickUpHint);
             else         HideHint();
+        }
+
+        // ─────────────────────────── โผล่เฉพาะ Relax ───────────────────────────
+
+        /// <summary>
+        /// โหมดเปลี่ยนตอนตาปิดสนิท (GameModeController.ApplyMode) — ดูทุกเฟรมแล้วซ่อน/โชว์ตาม
+        /// จึงสลับตอนจอดำพอดี ไม่ต้องเกาะ event (GameModeController เป็น DontDestroyOnLoad)
+        /// </summary>
+        private void UpdateVisibility()
+        {
+            var mode = GameModeController.instance;
+            bool hide = relaxOnly && mode != null && mode.CurrentMode != GameMode.Relax;
+            if (hide == _hidden) return;
+
+            SetHidden(hide);
+            if (hide && _holding) ForcePutBack();
+        }
+
+        /// <summary>
+        /// ปิดการวาดด้วย forceRenderingOff ไม่ใช่ renderer.enabled — quad ของโน้ตเปิด/ปิด enabled
+        /// ของตัวเองตอนพลิกหน้า (BookNoteSurface.Show/Hide) ถ้าใช้ enabled จะตีกันแล้วโน้ตโผล่ลอยกลางอากาศ
+        /// </summary>
+        private void SetHidden(bool hide)
+        {
+            if (hide == _hidden) return;
+            _hidden = hide;
+
+            if (_renderers != null)
+                foreach (var r in _renderers)
+                    if (r != null) r.forceRenderingOff = hide;
+
+            if (hide)
+            {
+                _collidersTurnedOff.Clear();
+                if (_colliders != null)
+                    foreach (var c in _colliders)
+                        if (c != null && c.enabled) { c.enabled = false; _collidersTurnedOff.Add(c); }
+            }
+            else
+            {
+                foreach (var c in _collidersTurnedOff)
+                    if (c != null) c.enabled = true;
+                _collidersTurnedOff.Clear();
+            }
+        }
+
+        /// <summary>
+        /// เข้า Tension ตอนยังถือสมุดอยู่ (นั่งอ่านอยู่ตอนกฎเริ่ม) — วางคืนที่เดิมทันทีตอนจอดำ
+        /// ปลดล็อกตัวผู้เล่นคืน แล้วปิดสมุดใต้ความมืด
+        /// </summary>
+        private void ForcePutBack()
+        {
+            StopAllCoroutines();
+            _turning = _moving = false;
+            _revealRoutine = null;
+
+            transform.SetPositionAndRotation(_homePosition, _homeRotation);
+            _holding  = false;
+            IsReading = false;
+            ReleasePlayer();
+            HideHint();
+
+            StartCoroutine(TurnTo(Closed, closeSpeed));
+            if (_pendingReveal != 0) _revealRoutine = StartCoroutine(RevealWhenRelaxed());
         }
 
         // ─────────────────────────── ปลดล็อก ───────────────────────────
@@ -234,7 +327,7 @@ namespace Book
                 var mode = GameModeController.instance;
                 return mode == null || (mode.CurrentMode == GameMode.Relax && mode.IsEyesOpen);
             });
-            yield return new WaitUntil(() => !_holding && !_moving);
+            yield return new WaitUntil(() => !_holding && !_moving && !_turning && !_hidden);
 
             int note = _pendingReveal;
             _pendingReveal = 0;
@@ -267,7 +360,7 @@ namespace Book
 
         private void OnInteract()
         {
-            if (_moving || _turning) return;
+            if (_hidden || _moving || _turning) return;
 
             if (_holding) StartCoroutine(PutBackRoutine());
             else if (_aiming) StartCoroutine(PickUpRoutine());
@@ -293,6 +386,9 @@ namespace Book
             // ต้องเปิดอยู่ที่หน้าที่มีโน้ตก่อนลอยขึ้นมา — ท่าถือคำนวณจากหน้ากระดาษที่กางอยู่
             int max = MaxUnlockedSpread();
             if (_page < 0 || _page > max) yield return TurnTo(max, turnSpeed * 2f);
+
+            // สมุดเปิดค้างหน้าโน้ตใหม่มาตั้งแต่ผ่านกฎ แล้ววิดีโอเล่นจบไปตอนไม่มีใครดู — เล่นให้ดูใหม่
+            if (_video != null) _video.ReplayUnwatched();
 
             BookNoteSurface page = SurfaceOn(_page) ?? SurfaceOn(max);
             if (page != null && HoldPose(page, out Vector3 pos, out Quaternion rot))

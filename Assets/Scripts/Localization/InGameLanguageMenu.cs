@@ -42,7 +42,7 @@ public class InGameLanguageMenu : MonoBehaviour
     public static bool IsOpen { get; private set; }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetStatic() => IsOpen = false;
+    internal static void ResetStatic() => IsOpen = false;
 
     private float         _savedTimeScale = 1f;
     private bool           _savedInputEnabled;

@@ -25,7 +25,7 @@ namespace RuleSystem
         public static bool HasBeenUsed { get; private set; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics()
+        internal static void ResetStatics()
         {
             IsJumping   = false;
             HasBeenUsed = false;

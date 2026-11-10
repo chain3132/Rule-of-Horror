@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using Enum;
@@ -43,6 +43,10 @@ public class FriendListController : MonoBehaviour
 
         [Tooltip("(optional) Image รูปโปรไฟล์บนปุ่ม contact — จะเซ็ตให้ = avatar ตอน Awake")]
         public Image buttonAvatarImage;
+
+        [Tooltip("(optional) Text บรรทัดรองใต้ชื่อ — โชว์ข้อความล่าสุดของแชทนี้\n" +
+                 "เว้นว่าง = หาลูกของปุ่มที่ชื่อ \"Detail\" ให้เอง")]
+        public TMP_Text buttonPreviewText;
 
         // ─── Runtime ───
         [HideInInspector] public bool isUnlocked;
@@ -112,6 +116,7 @@ public class FriendListController : MonoBehaviour
 
     private readonly List<ContactEntry> _navigable = new List<ContactEntry>();
     private int _cursor;
+    private bool _wasInList;
 
     /// <summary>contact ที่ตัวชี้อยู่ตอนนี้ (null = ยังไม่มีใครปลดล็อก)</summary>
     public ContactEntry Highlighted =>
@@ -141,6 +146,8 @@ public class FriendListController : MonoBehaviour
             if (contact.buttonAvatarImage != null && contact.avatar != null)
                 contact.buttonAvatarImage.sprite = contact.avatar;
 
+            SetupPreviewText(contact);
+
             var c = contact;
             contact.contactButton?.onClick.AddListener(() => OnContactClicked(c));
         }
@@ -160,7 +167,88 @@ public class FriendListController : MonoBehaviour
         foreach (var contact in contacts)
             if (contact.buttonNameText != null)
                 contact.buttonNameText.text = L10n.T(contact.contactName);
+
+        RefreshPreviews();
     }
+
+    // ─────────────────────────── ข้อความตัวอย่างใต้ชื่อ ───────────────────────────
+
+    /// <summary>
+    /// หา Text บรรทัดรองของแถว แล้วตั้งให้เป็นบรรทัดเดียว
+    ///
+    /// แถวเป็น Notification_Box.prefab ที่มีลูกชื่อ Detail พิมพ์คำว่า "Detail" ค้างไว้ ไม่มีใครเขียนทับ
+    /// ข้อความแชทยาวหลายบรรทัด ถ้าปล่อยตัดคำตามปกติจะล้นทับแถวถัดไป
+    /// </summary>
+    private static void SetupPreviewText(ContactEntry contact)
+    {
+        if (contact.buttonPreviewText == null && contact.contactButton != null)
+            foreach (var text in contact.contactButton.GetComponentsInChildren<TMP_Text>(true))
+                if (text.name == "Detail") { contact.buttonPreviewText = text; break; }
+
+        var preview = contact.buttonPreviewText;
+        if (preview == null) return;
+
+        preview.textWrappingMode = TextWrappingModes.NoWrap;
+        preview.overflowMode     = TextOverflowModes.Truncate;
+        preview.text             = "";
+    }
+
+    /// <summary>เขียนข้อความล่าสุดลงใต้ชื่อทุกแถว — เรียกตอนมีข้อความเข้า, กลับมาหน้ารายชื่อ, เปลี่ยนภาษา</summary>
+    private void RefreshPreviews()
+    {
+        foreach (var contact in contacts)
+        {
+            var label = contact.buttonPreviewText;
+            if (label == null) continue;
+
+            string text = chatUI != null ? chatUI.GetPreview(contact) : "";
+            text = RichTag.Replace(text, "").Replace("\r", "").Replace('\n', ' ').Trim();
+            label.text = FitOneLine(label, text);
+        }
+    }
+
+    private static readonly System.Text.RegularExpressions.Regex RichTag =
+        new System.Text.RegularExpressions.Regex("<[^>]*>");
+
+    private const string PreviewEllipsis = "...";
+
+    /// <summary>
+    /// ตัดข้อความให้พอดีกรอบ Detail แล้วต่อท้ายด้วย "..." — วัดความกว้างจริงด้วยฟอนต์ของ Text นั้น
+    ///
+    /// ทำเองแทนการตั้ง Overflow = Ellipsis ของ TMP เพราะแบบนั้นข้อความภาษาไทยยังล้นกรอบอยู่
+    /// (ฟอนต์ไทยไม่มีตัว "…" ให้ TMP ใช้ และภาษาไทยไม่มีเว้นวรรคให้ตัด) — ใช้จุดสามตัว เพราะฟอนต์มีแน่
+    ///
+    /// ไม่ตัดกลางสระบน/ล่างหรือวรรณยุกต์ (ตัวที่ซ้อนบนพยัญชนะ) ไม่งั้นพยัญชนะตัวสุดท้ายจะเสียสระไป
+    /// </summary>
+    private static string FitOneLine(TMP_Text label, string text)
+    {
+        if (string.IsNullOrEmpty(text)) return "";
+
+        var   rt    = label.rectTransform;
+        float width = rt.rect.width - label.margin.x - label.margin.z;
+        if (width <= 1f) return text;   // ยังไม่มีขนาด (layout ยังไม่คำนวณ) — ปล่อยให้ Truncate ของ TMP ช่วย
+
+        if (label.GetPreferredValues(text).x <= width) return text;
+
+        // หาจำนวนตัวอักษรมากที่สุดที่ต่อ "..." แล้วยังไม่เกินกรอบ
+        int lo = 0, hi = text.Length;
+        while (lo < hi)
+        {
+            int mid = (lo + hi + 1) / 2;
+            if (label.GetPreferredValues(text.Substring(0, mid) + PreviewEllipsis).x <= width) lo = mid;
+            else hi = mid - 1;
+        }
+
+        while (lo > 0 && lo < text.Length && IsAttachedChar(text[lo])) lo--;
+
+        return text.Substring(0, lo).TrimEnd() + PreviewEllipsis;
+    }
+
+    /// <summary>ตัวที่ต้องอยู่ติดกับตัวหน้า — สระบน/ล่าง วรรณยุกต์ ไม้หันอากาศ (ไทยเป็น NonSpacingMark) และครึ่งหลังของ emoji</summary>
+    private static bool IsAttachedChar(char c) =>
+        char.IsLowSurrogate(c) ||
+        char.GetUnicodeCategory(c) == System.Globalization.UnicodeCategory.NonSpacingMark ||
+        char.GetUnicodeCategory(c) == System.Globalization.UnicodeCategory.SpacingCombiningMark;
 
     private void OnDisable()
     {
@@ -231,13 +319,11 @@ public class FriendListController : MonoBehaviour
         }
 
         if (isFirstFromThisContact) RebuildNavigation();
+        RefreshPreviews();
 
-        // ข้อความของ Rule1 มาถึง → หยุดนาฬิกาเกมไว้จนกว่าผู้เล่นจะอ่านแชทกฎจบ
-        // (เวลาไม่ขยับ → Rule 2 ไม่เริ่ม, ไม่มีช่วงว่างที่กฎรันเบื้องหลังแบบไม่มี visual)
-        // นาฬิกาจะเดินต่อเองใน Rule1.EndRule() (IsPauseTime(false) + SetTime(19,39))
-        // ปุ่มเทสข้ามเวลามาทำให้ข้อความนี้ส่งถึงช้า ตอนนั้นกฎ 1 เริ่มไม่ได้แล้ว จึงไม่ต้องหยุดนาฬิการอ
-        if (message.triggersRule1OnEnd && TimeManager.instance != null && (rule1 == null || rule1.CanStart))
-            TimeManager.instance.IsPauseTime(true);
+        // ข้อความกฎ 1 (18:40) ไม่หยุดนาฬิกาแล้ว — เดิมหยุดตรงนี้ กฎ 1 เลยเริ่มตอนนาฬิกาโชว์ 18:40
+        // ทั้งที่แชทบอกว่ากฎเริ่ม 19:00 ตอนนี้นาฬิกาเดินต่อ แล้ว Rule1 หยุดไว้เองที่เวลาเริ่มของมัน
+        // (Rule1.HoldClockAtStart) — ยังไม่อ่าน/ยังไม่นั่งก็ค้างอยู่ที่ 19:00 กฎ 2 จึงไม่แทรก
     }
 
     /// <summary>ข้อความที่ส่งถึงแล้วแต่ผู้เล่นยังอ่านไม่จบ — ใช้เขียนบนการ์ดและจุดแดง</summary>
@@ -287,8 +373,13 @@ public class FriendListController : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        // กลับมาหน้ารายชื่อ (จากแชท/หน้าโฮม) — แชทที่เพิ่งคุยไปเปลี่ยนข้อความล่าสุดแล้ว
+        bool inList = phoneSystem != null && phoneSystem.CurrentState == PhoneState.FriendList;
+        if (inList && !_wasInList) RefreshPreviews();
+        _wasInList = inList;
+
         if (inputHandler == null || phoneSystem == null) return;
-        if (phoneSystem.CurrentState != PhoneState.FriendList) return;
+        if (!inList) return;
         if (_navigable.Count == 0) return;
 
         if (inputHandler.WasNavUpPressed())   MoveCursor(-1);
@@ -398,8 +489,11 @@ public class FriendListController : MonoBehaviour
         // หน่วงสักพักหลังอ่านจบ
         yield return new WaitForSeconds(delayBeforeModeChange);
 
+        // อ่านจบก่อน 19:00 → รอนาฬิกาเดินถึงเวลาเริ่มของกฎ 1 ก่อน (นาฬิกาหยุดค้างที่ 19:00 ให้เอง)
+        yield return rule1.WaitForStartTime();
+
         // รออ่านข้อความคนอื่นให้จบและรอไปนั่งที่ศาลาก่อน เหมือนกฎ 2-6 — เดิมเริ่มทันทีที่อ่านแชทจบ
-        // ผู้เล่นที่ยืนอ่านอยู่ที่อื่นจึงโดนกฎ 1 ทั้งที่ยังไม่ได้นั่ง (นาฬิกาถูกหยุดไว้ตั้งแต่ข้อความกฎ 1 ส่งถึงแล้ว)
+        // ผู้เล่นที่ยืนอ่านอยู่ที่อื่นจึงโดนกฎ 1 ทั้งที่ยังไม่ได้นั่ง (ตอนนี้นาฬิกาหยุดอยู่ที่ 19:00 แล้ว)
         yield return RuleSystem.RuleBase.WaitForMessagesAndSeat();
 
         // ระหว่างรอนั่ง ปุ่มเทสอาจข้ามไปกฎอื่นแล้ว — ต้องเช็กก่อนกะพริบเข้า Tension

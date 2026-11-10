@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6476b7444236ae14ea909a63bd4f6209
+guid: 0e234aba672cae3468c4f1d3a198be36
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -7,12 +7,12 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Wood
+      name: Wood.002
     second: {fileID: 2100000, guid: 2fcca11c3da1aef4ebc2fbaea527e9c6, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Zinc
+      name: Zinc.002
     second: {fileID: 2100000, guid: b1e5348335af8634eaf792be41551d75, type: 2}
   materials:
     materialImportMode: 2
@@ -40,7 +40,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 0
+    isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 1

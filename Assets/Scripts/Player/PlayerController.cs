@@ -423,6 +423,15 @@ namespace Player
         {
             if (!_canMove) return;
 
+            // นั่งอยู่ = เดินไม่ได้ เด็ดขาด ไม่ว่าใครจะสั่ง SetMovement(true) มา
+            //
+            // เดิมพึ่ง _canMove อย่างเดียว แต่มีหลายทางที่ปลดมันทั้งที่ยังนั่ง: ฉากตายของกฎ 2/4/5/6
+            // สั่ง SetMovement(true) ตอนตาปิด/ลืมตา แต่ถ้าตายตอนนั่ง (เช่นหัวใจหมดในกฎ 2 ก่อนลุกไปซ่อม
+            // ตู้) ReturnPlayerToPavilion ไม่ย้ายตัวเพราะนั่งอยู่ → ลืมตามาท่ายังนั่ง แต่เดินได้
+            // ปิดโทรศัพท์/จบ puzzle ระหว่างท่านั่ง 0.7 วิ ก็เหมือนกัน (IsSitting() เป็น false ช่วงนั้น)
+            // กันที่ปลายทางตรงนี้ทีเดียว — ทางเดียวที่จะออกจากท่านั่งคือ StandUpRoutine
+            if (_isSitting || _isTransitioning) return;
+
             // ระหว่างท่าลุก/นั่ง CharacterController ถูกปิดอยู่ — เก็บโทรศัพท์จังหวะนี้จะปลด SetMovement ได้
             if (!_characterController.enabled) return;
 

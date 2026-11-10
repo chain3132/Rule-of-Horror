@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -82,6 +82,7 @@ public static class LocalizationSetup
         ("Language", "Language", "ภาษา",        "UI/Language menu title"),
         ("Resume",   "Resume",   "กลับเข้าเกม", "UI/Language menu button"),
         ("Volume",   "Volume",   "ระดับเสียง",  "UI/Language menu volume bar"),
+        ("Main Menu", "Main Menu", "กลับเมนูหลัก", "UI/Back to main menu button"),
     };
 
     private class Row
@@ -1087,6 +1088,122 @@ public static class LocalizationSetup
         Debug.Log(report.ToString());
     }
 
+    /// <summary>
+    /// "Main Menu" buttons for the gameplay scene:
+    ///   - in the Esc menu, under Resume (same look as Resume)
+    ///   - a "Game Over Menu" canvas whose button shows up by itself after a Rule 6 ending
+    ///     (not the Loop one) and after the permanent death of the second night - GameOverMenu
+    /// Both buttons get MainMenuButton, which calls GameSession.ReturnToMainMenu. Safe to re-run.
+    /// </summary>
+    [MenuItem("Rule of Horror/Localization/Add Main Menu Buttons", false, 11)]
+    private static void AddMainMenuButtons()
+    {
+        var scene  = SceneManager.GetActiveScene();
+        var report = new StringBuilder("[Localization] Main Menu buttons").AppendLine();
+        EnsureBuiltInRow("Main Menu", report);
+
+        // ── Esc menu ──
+        var menu = FindInScene<InGameLanguageMenu>(scene).FirstOrDefault();
+        if (menu == null)
+            report.AppendLine("  ! No Esc menu (InGameLanguageMenu) in " + scene.name + " - run 3. Localize Scenes first");
+        else
+        {
+            var mso    = new SerializedObject(menu);
+            var panel  = mso.FindProperty("panel").objectReferenceValue as GameObject;
+            var resume = mso.FindProperty("resumeButton").objectReferenceValue as UnityEngine.UI.Button;
+
+            if (panel == null)
+                report.AppendLine("  ! The Esc menu has no Panel assigned - skipped");
+            else if (panel.GetComponentInChildren<MainMenuButton>(true) != null)
+                report.AppendLine("  - Esc menu already has a Main Menu button");
+            else
+            {
+                // Under Resume, same size; Resume sits at 30 % (or 20 % once the volume bar moved it)
+                var   rrt    = resume != null ? (RectTransform)resume.transform : null;
+                float y      = rrt != null ? rrt.anchorMin.y - 0.1f : 0.1f;
+                var   size   = rrt != null ? rrt.sizeDelta : new Vector2(360, 90);
+                var   parent = rrt != null ? rrt.parent : panel.transform;
+                var   button = MakeButton("Main Menu", parent, "Main Menu", rrt != null ? rrt.anchoredPosition : Vector2.zero,
+                                          new Vector2(0.5f, Mathf.Max(0.04f, y)), size);
+                CopyLook(resume, button);
+                BindIfKnown(button.GetComponentInChildren<TMP_Text>());
+                button.gameObject.AddComponent<MainMenuButton>();
+                Undo.RegisterCreatedObjectUndo(button.gameObject, "Add Main Menu Buttons");
+                report.AppendLine($"  - Added Main Menu to the Esc menu, under Resume ({y:P0} height)");
+            }
+        }
+
+        // ── Game over / ending ──
+        if (FindInScene<GameOverMenu>(scene).Length > 0)
+            report.AppendLine("  - Game Over Menu already in " + scene.name);
+        else
+        {
+            var root = new GameObject("Game Over Menu", typeof(RectTransform), typeof(Canvas),
+                                      typeof(UnityEngine.UI.CanvasScaler), typeof(UnityEngine.UI.GraphicRaycaster));
+            SceneManager.MoveGameObjectToScene(root, scene);
+            Undo.RegisterCreatedObjectUndo(root, "Add Main Menu Buttons");
+
+            var canvas = root.GetComponent<Canvas>();
+            canvas.renderMode   = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 800;   // above the ending cutscenes and death screens, under the Esc menu (900)
+
+            var scaler = root.GetComponent<UnityEngine.UI.CanvasScaler>();
+            scaler.uiScaleMode         = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            scaler.matchWidthOrHeight  = 0.5f;
+
+            // Full-screen but see-through: the ending card / death screen stays visible behind it
+            var panel = MakeRect("Panel", root.transform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            var group = panel.gameObject.AddComponent<CanvasGroup>();
+
+            var button = MakeButton("Main Menu", panel, "Main Menu", Vector2.zero, new Vector2(0.5f, 0.12f), new Vector2(420, 90));
+            var resume = menu != null ? new SerializedObject(menu).FindProperty("resumeButton").objectReferenceValue as UnityEngine.UI.Button : null;
+            CopyLook(resume, button);
+            BindIfKnown(button.GetComponentInChildren<TMP_Text>());
+            button.gameObject.AddComponent<MainMenuButton>();
+
+            var gom = root.AddComponent<GameOverMenu>();
+            var gso = new SerializedObject(gom);
+            gso.FindProperty("panel").objectReferenceValue     = panel.gameObject;
+            gso.FindProperty("fadeGroup").objectReferenceValue = group;
+            gso.FindProperty("rule6").objectReferenceValue     = FindInScene<RuleSystem.Rule.Rule6>(scene).FirstOrDefault();
+            gso.ApplyModifiedPropertiesWithoutUndo();
+
+            panel.gameObject.SetActive(false);
+            report.AppendLine("  - Built 'Game Over Menu' in " + scene.name + " (button at the bottom centre - restyle freely)");
+        }
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        report.AppendLine("  = Save the scene.");
+        Debug.Log(report.ToString());
+    }
+
+    /// <summary>Background colour/sprite and label font/size/colour of an existing button, so new ones match it.</summary>
+    private static void CopyLook(UnityEngine.UI.Button from, UnityEngine.UI.Button to)
+    {
+        if (from == null || to == null) return;
+
+        var src = from.GetComponent<UnityEngine.UI.Image>();
+        var dst = to.GetComponent<UnityEngine.UI.Image>();
+        if (src != null && dst != null)
+        {
+            dst.sprite = src.sprite;
+            dst.type   = src.type;
+            dst.color  = src.color;
+        }
+        to.colors = from.colors;
+
+        var a = from.GetComponentInChildren<TMP_Text>(true);
+        var b = to.GetComponentInChildren<TMP_Text>(true);
+        if (a != null && b != null)
+        {
+            b.font               = a.font;
+            b.fontSharedMaterial = a.fontSharedMaterial;
+            b.fontSize           = a.fontSize;
+            b.color              = a.color;
+        }
+    }
+
     /// <summary>One BuiltInRows string into the UI table without re-running the whole of step 1.</summary>
     private static void EnsureBuiltInRow(string source, StringBuilder report)
     {
@@ -1440,10 +1557,43 @@ public static class LocalizationSetup
     /// Thai line with no breaks wraps mid-word - and can split a tone mark from its consonant.
     /// The imported translations already carry the breaks; run this after editing Thai by hand.
     /// It uses the Windows Thai word segmenter (via PowerShell), so it is Windows-only.
+    ///
+    /// ThaiWordBreakAuto also runs it by itself before entering Play mode and before every player
+    /// build, on the cells that have no breaks at all, so hand edits can't ship without them.
     /// </summary>
     [MenuItem("Rule of Horror/Localization/Insert Thai Word Breaks", false, 21)]
-    private static void InsertThaiWordBreaks()
+    private static void InsertThaiWordBreaks() => SegmentThaiCells(onlyUnbroken: false, auto: false);
+
+    /// <summary>
+    /// Automatic pass (Play mode / build): only cells that look hand-edited - a long run of Thai
+    /// letters and not a single U+200B - so it costs nothing once every cell is segmented.
+    /// Returns how many cells were changed.
+    /// </summary>
+    internal static int AutoInsertThaiWordBreaks() => SegmentThaiCells(onlyUnbroken: true, auto: true);
+
+    // Cells the auto pass already sent this session. A cell that is one long word gets no break
+    // from the segmenter and would otherwise launch PowerShell on every Play.
+    private static readonly HashSet<string> _autoSegmented = new HashSet<string>();
+    private static bool _autoFailed;
+
+    /// <summary>Thai letters in a row with no break anywhere in the cell = probably edited by hand.</summary>
+    private static bool LooksUnbroken(string value)
     {
+        if (value.IndexOf('​') >= 0) return false;
+
+        int run = 0;
+        foreach (char c in value)
+        {
+            run = c >= '฀' && c <= '๿' ? run + 1 : 0;
+            if (run >= 8) return true;
+        }
+        return false;
+    }
+
+    private static int SegmentThaiCells(bool onlyUnbroken, bool auto)
+    {
+        if (auto && _autoFailed) return 0;
+
         var cells = new List<(StringTable table, StringTableEntry entry)>();
         foreach (var collection in LocalizationEditorSettings.GetStringTableCollections())
         {
@@ -1451,15 +1601,54 @@ public static class LocalizationSetup
             if (table == null) continue;
 
             foreach (var entry in table.Values)
-                if (!string.IsNullOrEmpty(entry.Value) && entry.Value.Any(c => c >= '฀' && c <= '๿'))
-                    cells.Add((table, entry));
+            {
+                string value = entry.Value;
+                if (string.IsNullOrEmpty(value) || !value.Any(c => c >= '฀' && c <= '๿')) continue;
+                if (onlyUnbroken && (!LooksUnbroken(value) || _autoSegmented.Contains(value))) continue;
+                cells.Add((table, entry));
+            }
         }
 
         if (cells.Count == 0)
         {
-            Debug.Log("[Localization] No Thai text to segment");
-            return;
+            if (!auto) Debug.Log("[Localization] No Thai text to segment");
+            return 0;
         }
+
+        try
+        {
+            int changed = RunSegmenter(cells);
+            if (auto)
+            {
+                foreach (var cell in cells) _autoSegmented.Add(cell.entry.Value);
+                if (changed > 0)
+                    Debug.Log($"[Localization] Auto: inserted Thai word breaks into {changed} hand-edited cell(s)");
+            }
+            else
+            {
+                Debug.Log($"[Localization] Thai word breaks updated in {changed} of {cells.Count} cells");
+            }
+            return changed;
+        }
+        catch (Exception e)
+        {
+            if (auto)
+            {
+                _autoFailed = true;   // don't retry (and slow down) every Play
+                Debug.LogWarning("[Localization] Auto Thai word breaks skipped - Thai lines may wrap mid-word. " +
+                                 "Run Rule of Horror ▸ Localization ▸ Insert Thai Word Breaks.\n" + e.Message);
+            }
+            else
+            {
+                Debug.LogError("[Localization] " + e.Message);
+            }
+            return 0;
+        }
+    }
+
+    /// <summary>Segments the cells' text and writes back the ones that changed. Throws on failure.</summary>
+    private static int RunSegmenter(List<(StringTable table, StringTableEntry entry)> cells)
+    {
 
         string temp   = Path.Combine(Path.GetTempPath(), "rule-of-horror-l10n");
         Directory.CreateDirectory(temp);
@@ -1483,17 +1672,11 @@ public static class LocalizationSetup
         process.WaitForExit();
 
         if (!File.Exists(output))
-        {
-            Debug.LogError("[Localization] Thai segmentation failed (needs Windows 10/11 PowerShell):\n" + errors);
-            return;
-        }
+            throw new Exception("Thai segmentation failed (needs Windows 10/11 PowerShell):\n" + errors);
 
         var results = ParseJsonArray(File.ReadAllText(output, Encoding.UTF8));
         if (results.Count != cells.Count)
-        {
-            Debug.LogError($"[Localization] Segmenter returned {results.Count} strings for {cells.Count} cells - nothing changed");
-            return;
-        }
+            throw new Exception($"Segmenter returned {results.Count} strings for {cells.Count} cells - nothing changed");
 
         int changed = 0;
         for (int i = 0; i < cells.Count; i++)
@@ -1507,8 +1690,8 @@ public static class LocalizationSetup
             changed++;
         }
 
-        AssetDatabase.SaveAssets();
-        Debug.Log($"[Localization] Thai word breaks updated in {changed} of {cells.Count} cells");
+        if (changed > 0) AssetDatabase.SaveAssets();
+        return changed;
     }
 
     private const string SegmenterScript = @"param([string]$InPath, [string]$OutPath)

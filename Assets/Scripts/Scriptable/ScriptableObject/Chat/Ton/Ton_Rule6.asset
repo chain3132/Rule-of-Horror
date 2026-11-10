@@ -204,7 +204,7 @@ MonoBehaviour:
     nextNode: 0
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 5400, y: 0}
+    graphPosition: {x: 5400, y: -2.5}
   - message: I don't know. But I want to tell you this...
     isPlayer: 0
     scriptedLine: 0
@@ -213,7 +213,7 @@ MonoBehaviour:
     nextNode: 21
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 5700, y: 0}
+    graphPosition: {x: 5690, y: -2.5}
   - message: "Yeah. But it\u2019s not too late."
     isPlayer: 0
     scriptedLine: 0
@@ -249,17 +249,8 @@ MonoBehaviour:
     nextNode: 24
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 6900, y: 0}
-  - message: '[A few seconds later, a chat from an unknown sender popped up]'
-    isPlayer: 0
-    scriptedLine: 0
-    offersReward: 0
-    replies: []
-    nextNode: 25
-    recordsRule: {fileID: 0}
-    recordsAsCooperative: 1
-    graphPosition: {x: 7200, y: 0}
-  - message: 'Unknown: Your friend talks too much.'
+    graphPosition: {x: 6900, y: 2.5}
+  - message: '[ Your friend talks too much. ]'
     isPlayer: 0
     scriptedLine: 0
     offersReward: 0
@@ -267,4 +258,4 @@ MonoBehaviour:
     nextNode: -1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 7500, y: 0}
+    graphPosition: {x: 7197.6255, y: -2.5093384}

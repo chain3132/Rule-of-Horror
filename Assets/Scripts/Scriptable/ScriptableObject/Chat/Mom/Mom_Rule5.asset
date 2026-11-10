@@ -90,7 +90,7 @@ MonoBehaviour:
     nextNode: 7
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 1500, y: 0}
+    graphPosition: {x: 1500, y: 4.328308}
   - message: Can you see the light?
     isPlayer: 0
     scriptedLine: 0
@@ -99,4 +99,4 @@ MonoBehaviour:
     nextNode: -1
     recordsRule: {fileID: 0}
     recordsAsCooperative: 1
-    graphPosition: {x: 1800, y: -1.3113403}
+    graphPosition: {x: 1795.6716, y: -1.3113403}

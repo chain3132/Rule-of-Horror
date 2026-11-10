@@ -144,6 +144,9 @@ namespace InputSystem
         /// </summary>
         public bool WasPrayPressed()
         {
+            // Space ตอนโทรศัพท์ยกอยู่ = ปุ่มเลือกรายชื่อแชท (WasConfirmPressed) ไม่ใช่สวดมนต์
+            if (PhoneSystem.PhoneSystem.HandlesEscape) return false;
+
             if (_prayAction != null) return _prayAction.triggered;
             return Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
         }
@@ -230,16 +233,15 @@ namespace InputSystem
         }
 
         /// <summary>
-        /// Enter — เปิดสิ่งที่เลือกอยู่ในโทรศัพท์
+        /// Space — เปิดสิ่งที่เลือกอยู่ในโทรศัพท์ (รายชื่อแชท)
         ///
         /// ตั้งใจไม่ใช้ E ถึงแม้จะเป็นปุ่มยืนยันที่คุ้นกว่า เพราะ E ยิง OnInteractPressed ทั่วเกม
         /// ซึ่งกฎต่างๆ ฟังอยู่ — เปิดโทรศัพท์ขณะจับสายสิญจน์แล้วกด E เลือกรายชื่อ มือจะหลุดจากสายไปด้วย
-        /// ถ้าอยากได้ E จริงๆ ต้องกันที่ต้นทางก่อน (ให้ InputHandler ไม่ยิง OnInteractPressed
-        /// ตอนโทรศัพท์เปิดอยู่) แล้วค่อยเพิ่ม _interactAction.triggered เข้ามาตรงนี้
+        ///
+        /// Space ชนกับปุ่มสวดมนต์ของกฎ 5 — WasPrayPressed จึงไม่นับ Space ตอนโทรศัพท์ยกอยู่
         /// </summary>
         public bool WasConfirmPressed()
-            => Keyboard.current != null &&
-               (Keyboard.current.enterKey.wasPressedThisFrame || Keyboard.current.numpadEnterKey.wasPressedThisFrame);
+            => Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
 
         /// <summary>ล้อเมาส์ — ใช้เลื่อนแชท (ล้อยังใช้ได้ถึงจะคลิกไม่ได้)</summary>
         public float GetScrollDelta()

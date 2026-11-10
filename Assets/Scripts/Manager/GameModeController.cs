@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using Manager;
@@ -369,19 +369,36 @@ public class GameModeController : MonoBehaviour
 
     void SetSaraModel(GameMode mode)
     {
-        if(seraModels.TryGetValue(mode,out SaraModel model))
+        if (!seraModels.TryGetValue(mode, out SaraModel model) || model == null) return;
+
+        Mesh mesh = model.saraMeshFilter;
+        if (mesh != null)
         {
-            saraMeshFilter.mesh = model.saraMeshFilter;
-            saraMeshCollider.sharedMesh = model.saraMeshFilter;
-            Material[] mats = new Material[saraMeshRenderer.materials.Length];
-
-            for (int i = 0; i < mats.Length; i++)
-            {
-                mats[i] = model.saraMeshRenderer;
-            }
-
-            saraMeshRenderer.materials = mats;
+            if (saraMeshFilter != null)   saraMeshFilter.sharedMesh   = mesh;
+            if (saraMeshCollider != null) saraMeshCollider.sharedMesh = mesh;
         }
+
+        if (saraMeshRenderer == null) return;
+
+        // วัสดุตามช่องของโมเดล: 0 = Zinc (บน), 1 = Wood (ล่าง)
+        // ใช้ sharedMaterials — .materials สร้างวัสดุก๊อปใหม่ทุกครั้งที่สลับโหมด แล้วไม่มีใครลบ
+        var current = saraMeshRenderer.sharedMaterials;
+        int slots   = mesh != null ? mesh.subMeshCount : current.Length;
+        var mats    = new Material[slots];
+
+        for (int i = 0; i < slots; i++)
+        {
+            Material m = model.materials != null && i < model.materials.Length ? model.materials[i] : null;
+            if (m == null) m = model.saraMeshRenderer;                     // ค่าเก่าแบบวัสดุเดียว
+            if (m == null && i < current.Length) m = current[i];            // ไม่มีอะไรเลย = คงของเดิม
+            mats[i] = m;
+        }
+
+        if (model.materials != null && model.materials.Length != slots && model.materials.Length > 0)
+            Debug.LogWarning($"[GameModeController] ศาลาโหมด {mode}: ใส่ Materials {model.materials.Length} อัน " +
+                             $"แต่โมเดลมี {slots} ช่อง", this);
+
+        saraMeshRenderer.sharedMaterials = mats;
     }
     void ApplyMode(GameMode mode)
     {

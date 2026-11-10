@@ -142,7 +142,7 @@ namespace RuleSystem.Rule
         void StartGameplay()
         {
             ResetRuntime();
-            SpawnRandomPanels();
+            // ไม่เกิดตู้ไฟตรงนี้แล้ว — ตู้โผล่มาตั้งแต่ต้นกฎ ผู้เล่นเดินไปเจอก่อนไฟดับ เกิดตอนเข้าเฟสซ่อม (StartFixPanel)
             TimeManager.instance.IsPauseTime(false);
             // isBlockStanding ยังคง true — จะ unlock ตอน StartFirstBlackout()
         }
@@ -272,6 +272,13 @@ namespace RuleSystem.Rule
             
         }
 
+        /// <summary>เสียงหลอดไฟดับ (event:/Rule2/LightBulbout) — ดังที่หลอดไฟศาลา</summary>
+        void PlayLightBulbOut()
+        {
+            if (AudioManager.instance == null) return;
+            AudioManager.instance.PlayRule2LightBulbOut(saraLight != null ? saraLight.transform.position : (Vector3?)null);
+        }
+
         void StopHelperCoroutines()
         {
             if (_randomSoundCoroutine      != null) StopCoroutine(_randomSoundCoroutine);
@@ -292,6 +299,7 @@ namespace RuleSystem.Rule
             PlayerController.Instance.isBlockStanding = false;
 
             if (saraLight != null)     saraLight.enabled = false;
+            PlayLightBulbOut();
             if (radioControl != null)  radioControl.UnlockRadio(true);
             if (switchLight != null)   switchLight.UnlockSwitch(true);
             TimeManager.instance.IsPauseTime(true);
@@ -391,6 +399,7 @@ namespace RuleSystem.Rule
             }
             saraLight.enabled = false;
             SetStreetLights(false); // ไฟถนนดับ – มืดสนิท
+            PlayLightBulbOut();
             AudioManager.instance.PlayRule2AmbienceBG();
             // เปิดไฟฉาย (กระพริบเป็นช่วง)
             if (flashlight != null)
@@ -455,6 +464,10 @@ namespace RuleSystem.Rule
 
         void StartFixPanel()
         {
+            // ตู้ไฟเกิดตอนถึงเฟสนี้ ไม่ใช่ตอนเริ่มกฎ — ตาย/จบกฎล้าง list ทิ้งทุกครั้ง รอบใหม่จึงสุ่มจุดใหม่เสมอ
+            // (dev skip อาจเกิดไว้ให้ก่อนแล้วผ่าน EnsurePanelsExist ก็ใช้ชุดนั้นเลย)
+            EnsurePanelsExist();
+
             foreach (var panel in activePanels)
             {
                 panel.SetActiveLight(true);
@@ -467,7 +480,7 @@ namespace RuleSystem.Rule
 
         void SpawnPanelShadows()
         {
-            if (panelGhostShadowPrefab == null) return;
+            if (panelGhostShadowPrefab == null || activePanels.Count == 0) return;
             Vector3 pos = activePanels[0].transform.position + activePanels[0].transform.right * 1.5f;
             var shadow = Instantiate(panelGhostShadowPrefab, pos, Quaternion.identity);
             spawnedShadows.Add(shadow);
@@ -784,17 +797,14 @@ namespace RuleSystem.Rule
         }
 
         /// <summary>
-        /// เกิดตู้ไฟให้ก่อนถ้ายังไม่มี
-        ///
-        /// ปกติ SpawnRandomPanels ถูกเรียกใน StartGameplay ซึ่งรอให้นั่ง+ตาเปิดก่อน
-        /// ข้ามเข้าเฟสซ่อมตู้ไฟก่อนถึงตอนนั้น activePanels จะยังว่าง แล้ว SpawnPanelShadows
-        /// อ่าน activePanels[0] ตรงๆ = IndexOutOfRange ทันที
+        /// เกิดตู้ไฟถ้ายังไม่มี — StartFixPanel เรียกทุกครั้งที่เข้าเฟสซ่อม (ตู้ไม่ได้เกิดตั้งแต่ต้นกฎแล้ว)
+        /// ต้องมีตู้ก่อน SpawnPanelShadows เพราะมันอ่าน activePanels[0] ตรงๆ
         /// </summary>
         void EnsurePanelsExist()
         {
+            activePanels.RemoveAll(p => p == null);
             if (activePanels.Count > 0) return;
 
-            Debug.Log("[Rule2] ยังไม่มีตู้ไฟ (ข้ามเฟสมาก่อน StartGameplay) — เกิดให้ก่อน (dev)", this);
             SpawnRandomPanels();
         }
 

@@ -11,6 +11,8 @@ namespace Rule4
     /// - ระหว่างจ้อง: กล้อง zoom ไปที่ผีเพื่อยืนยันว่ากำลังมอง, ตัด input การเดิน,
     ///   ผีเดินช้าลง (หยุดไม่ได้ แค่ถ่วงเวลา)
     /// - จ้องได้นานเท่าไรก็ได้ ไม่มีโทษ — ราคาที่จ่ายคือขยับตัวไม่ได้ระหว่างนั้น
+    /// - จ้องแล้วต้องค้างอย่างน้อย minStareDuration และเลิกแล้วต้องรอ restareCooldown ถึงจ้องใหม่ได้
+    ///   ไม่งั้นแตะคลิกขวารัวๆ ผีจะเบรกหยุดทุกครั้ง (แทบไม่ขยับ) แต่ผู้เล่นได้เดินระหว่างแตะ
     /// </summary>
     public class StareSystem : MonoBehaviour
     {
@@ -21,11 +23,22 @@ namespace Rule4
         [Tooltip("มุมสูงสุดระหว่างทิศที่กล้องมองกับผี ถึงจะเริ่มจ้องได้ (องศา)")]
         [SerializeField] private float aimAngle = 35f;
 
+        [Header("กันคลิกรัว")]
+        [Tooltip("จ้องแล้วต้องค้างอย่างน้อยเท่านี้ (วินาที) ถึงจะเลิกได้ — ปล่อยคลิกเร็วกว่านี้ก็ยังจ้องต่อจนครบ\n" +
+                 "กันการแตะคลิกขวารัวๆ: ทุกครั้งที่เริ่มจ้อง ผีเบรกจนหยุดทันที ถ้าแตะแล้วปล่อยได้ทันที\n" +
+                 "ผีจะแทบไม่ได้ขยับเลย ขณะที่ผู้เล่นได้เดินระหว่างแตะแต่ละครั้ง")]
+        [SerializeField] private float minStareDuration = 0.6f;
+
+        [Tooltip("เลิกจ้องแล้วต้องรอเท่านี้ (วินาที) ถึงจะจ้องใหม่ได้ — ช่วงนี้ผีเดินตามปกติ")]
+        [SerializeField] private float restareCooldown = 1.0f;
+
         // ── Runtime ──
         private Rule4Ghost _ghost;
         private Camera     _cam;
         private bool       _ruleActive;
         private bool       _staring;
+        private float      _stareStartTime;
+        private float      _nextStareTime;
 
         /// <summary>true = กำลังจ้องผีอยู่</summary>
         public bool IsStaring => _staring;
@@ -64,10 +77,12 @@ namespace Rule4
 
             if (_staring)
             {
-                // ปล่อยคลิกขวา หรือผีหายไประหว่างจ้อง (ถูกซ่อน/จบกฎ/ตาย) → เลิกจ้องทันที
-                if (!wantStare || _ghost == null || !_ghost.gameObject.activeInHierarchy) StopStaring();
+                // ผีหายไประหว่างจ้อง (ถูกซ่อน/จบกฎ/ตาย) → เลิกจ้องทันที
+                if (_ghost == null || !_ghost.gameObject.activeInHierarchy) StopStaring();
+                // ปล่อยคลิกขวา → เลิกจ้อง แต่ต้องจ้องครบเวลาขั้นต่ำก่อน (กันแตะรัวแล้วผีไม่ได้ขยับ)
+                else if (!wantStare && Time.time - _stareStartTime >= minStareDuration) StopStaring();
             }
-            else if (wantStare && CanStartStaring())
+            else if (wantStare && Time.time >= _nextStareTime && CanStartStaring())
             {
                 StartStaring();
             }
@@ -89,7 +104,8 @@ namespace Rule4
 
         private void StartStaring()
         {
-            _staring = true;
+            _staring        = true;
+            _stareStartTime = Time.time;
 
             if (PlayerController.Instance != null) PlayerController.Instance.SetMovement(false);
 
@@ -102,7 +118,8 @@ namespace Rule4
 
         private void StopStaring()
         {
-            _staring = false;
+            _staring       = false;
+            _nextStareTime = Time.time + restareCooldown;
 
             if (_ghost != null) _ghost.IsBeingStared = false;
 

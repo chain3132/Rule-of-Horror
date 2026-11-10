@@ -33,5 +33,5 @@ MonoBehaviour:
     action: Pick up / Place doll
   - key: Hold Right-Click
     action: Stare
-  - key: Hold Q
+  - key: Shift
     action: Hold breath

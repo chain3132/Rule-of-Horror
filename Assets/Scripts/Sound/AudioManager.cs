@@ -142,6 +142,7 @@ public class AudioManager : MonoBehaviour
         // event พวกนี้โค้ดเรียกด้วย PlayOneShot — ถ้าใน FMOD ทำเป็น loop ไว้จะเสียงทับกันไม่หยุด
         foreach (string oneShotPath in new[]
                  {
+                     "event:/Rule2/LightBulbout",
                      "event:/Rule4/GhostFootsteps",
                      "event:/Rule4/GhostBreathHold",
                      "event:/Rule4/GhostBreathRelease",
@@ -848,6 +849,13 @@ public class AudioManager : MonoBehaviour
     /// <summary>เสียงรถประจำทางเข้ามาใกล้ (one-shot)</summary>
     public void PlayRule2BusApproach()
         => RuntimeManager.PlayOneShot("event:/Rule2/BusApproach", ListenerPos);
+
+    /// <summary>
+    /// เสียงหลอดไฟดับ (one-shot) — event เป็น 3D (ได้ยินไม่เกิน ~20 ม.) จึงเล่นที่ตำแหน่งหลอดไฟจริง
+    /// ไม่ส่งตำแหน่งมา → เล่นที่หูผู้เล่น
+    /// </summary>
+    public void PlayRule2LightBulbOut(Vector3? position = null)
+        => SafeOneShot("event:/Rule2/LightBulbout", position ?? ListenerPos);
 
     /// <summary>เสียงคนวิ่งผ่านหลังผู้เล่น (one-shot)</summary>
     public void PlayRule2RunningFootsteps()

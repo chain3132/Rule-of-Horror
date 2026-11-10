@@ -222,11 +222,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1840943153
-    m_Localized: '''Rule of Horror'
+    m_Localized: '''Rules of Horror'
     m_Metadata:
       m_Items: []
   - m_Id: 1840943154
-    m_Localized: '- Quite -'
+    m_Localized: '- Quit -'
     m_Metadata:
       m_Items: []
   - m_Id: 1840943155
@@ -443,6 +443,34 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 5483501444567040
     m_Localized: Volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5854784535564288
+    m_Localized: Main Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5906336260460544
+    m_Localized: A / D   Turn page
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5906336281432064
+    m_Localized: E   Read
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5906336281432065
+    m_Localized: A / D   Turn page      E   Put back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5907955521851392
+    m_Localized: Wachirawit Junnual
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5907955521851393
+    m_Localized: Kittana Teangnoum
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5907955521851394
+    m_Localized: 3D Artist
     m_Metadata:
       m_Items: []
   references:
