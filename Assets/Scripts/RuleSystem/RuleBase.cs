@@ -143,6 +143,11 @@ namespace RuleSystem
                 if (remindAs != null) remindAs.MarkAwaitingSeat();
                 yield return null;
             }
+
+            // ผู้เรียกทุกตัวกะพริบเข้า Tension ต่อจากบรรทัดนี้ทันที — flashback "ก่อนเริ่มกฎ" เข้าคิวตรงนี้
+            // แล้วไปเล่นตอนตาปิดสนิทของ blink นั้น
+            if (remindAs != null)
+                Flashbacks.FlashbackPlayer.QueueFor(remindAs, Flashbacks.FlashbackTrigger.BeforeRuleStarts);
         }
 
         // ── รอนั่งก่อนเริ่มกฎ ──

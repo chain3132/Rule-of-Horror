@@ -183,7 +183,9 @@ public class GameModeController : MonoBehaviour
     /// Eyelids close → ApplyMode → eyelids open. No post-processing manipulation.
     /// </summary>
     /// <param name="onEyesClosed">Callback ที่จะยิงตอนตาปิดสนิท (ขณะหน้าจอดำ) — ใช้สำหรับ reset กล้องโดยที่ผู้เล่นมองไม่เห็น</param>
-    public void DirectBlinkToMode(GameMode targetMode = GameMode.Relax, System.Action onEyesClosed = null)
+    /// <param name="allowFlashback">✓ = เล่น flashback ที่รอคิวอยู่ในช่วงตาปิด (ปุ่มเทสเข้ากฎ 1 ใช้) — ทางตายห้ามเปิด</param>
+    public void DirectBlinkToMode(GameMode targetMode = GameMode.Relax, System.Action onEyesClosed = null,
+                                  bool allowFlashback = false)
     {
         // path นี้ไม่ได้เรียก ResetFaintEffects — ถ้าตายกลาง transition faint จะมีค่า postExposure/
         // contrast/vignette/distortion ค้างบน profile → เคลียร์ทั้งสองตอนตาปิด (มองไม่เห็น) ก่อนยิง callback เดิม
@@ -193,7 +195,7 @@ public class GameModeController : MonoBehaviour
             ResetProfileValues(relaxProfile);
             ResetProfileValues(tensionProfile);
             onEyesClosed?.Invoke();
-        }));
+        }, allowFlashback));
     }
     IEnumerator FaintThenBlinkRoutine(GameMode targetMode, System.Action onEyesClosed = null)
     {
@@ -260,7 +262,7 @@ public class GameModeController : MonoBehaviour
         {
             ResetFaintEffects();
             onEyesClosed?.Invoke();
-        }));
+        }, allowFlashback: true));
     }
 
     /// <summary>Reset ทุกค่าที่ SetFaintEffect แก้ไว้กลับเป็นค่ากลาง
@@ -321,7 +323,12 @@ public class GameModeController : MonoBehaviour
         // แต่ไม่ทำให้ภาพเทาหมดสี
     }
 
-    IEnumerator BlinkRoutine(GameMode targetMode, float openSpeed = -1f, System.Action onEyesClosed = null)
+    /// <param name="allowFlashback">
+    /// ✓ = ถ้ามี flashback รอคิวอยู่ ให้เล่นในช่วงตาปิดสนิทแทนการรอจอดำ (เฉพาะ blink เปลี่ยนโหมดปกติ
+    /// ไม่ใช่ทางตาย DirectBlinkToMode)
+    /// </param>
+    IEnumerator BlinkRoutine(GameMode targetMode, float openSpeed = -1f, System.Action onEyesClosed = null,
+                             bool allowFlashback = false)
     {
         // openSpeed < 0 → ใช้ค่า speed ปกติ (blink ทั่วไป)
         float actualOpenSpeed = openSpeed < 0f ? speed : openSpeed;
@@ -350,7 +357,11 @@ public class GameModeController : MonoBehaviour
         // ยิง callback ตอนตาปิดสนิท (หน้าจอดำ) — reset กล้องขณะที่ผู้เล่นมองไม่เห็น
         onEyesClosed?.Invoke();
 
-        yield return new WaitForSeconds(closedHoldSeconds);
+        // ช่วงจอดำ — มี flashback รอคิวอยู่ก็เล่นตรงนี้ (เริ่มและจบที่จอดำ) ไม่มีก็รอเฉยๆ
+        if (allowFlashback && Flashbacks.FlashbackPlayer.TryTakeQueued(out var flashback))
+            yield return Flashbacks.FlashbackPlayer.Instance.Play(flashback);
+        else
+            yield return new WaitForSeconds(closedHoldSeconds);
 
         IsEyesFullyClosed = false;
 

@@ -36,11 +36,20 @@ namespace RuleSystem
         {
             HasBeenUsed = true;
 
+            // flashback ที่เล่นค้างอยู่ตัดทิ้ง ไม่ให้ปุ่มเทสต้องรอมันจบ
+            Flashbacks.FlashbackPlayer.AbortPlaying();
+
             RuleBase active = RuleBase.ActiveRuleInScene();
             if (active == null) return null;
 
             RestorePlayerControl();
-            active.DebugForceEnd();
+
+            // DebugForceEnd นับว่าผ่าน → flashback "หลังผ่านกฎ" ของข้อนั้นเข้าคิว แล้วเล่นใน blink กลับ Relax
+            // เหมือนผ่านกฎจริง — เปิด DevEnding ไว้ให้มันเล่นแม้เคยดูไปแล้ว (เทสซ้ำได้)
+            Flashbacks.FlashbackPlayer.DevEnding = true;
+            try { active.DebugForceEnd(); }
+            finally { Flashbacks.FlashbackPlayer.DevEnding = false; }
+
             return active;
         }
 
@@ -55,12 +64,19 @@ namespace RuleSystem
             IsJumping   = true;
             HasBeenUsed = true;
 
+            Flashbacks.FlashbackPlayer.AbortPlaying();
             if (RuleBase.ActiveRuleInScene() != target) EndActiveRule();
 
             yield return WaitForBlink();
 
             RuleBase.DebugSkipMessageGate = true;   // ต้องตั้งก่อน SetTime — CheckRules เริ่มกฎได้ในบรรทัดนั้นเลย
             target.ResetForNewLoop();
+
+            // flashback "ก่อนเริ่มกฎ" ของกฎ 2-6 เข้าคิวเองตอนผู้เล่นนั่ง (RuleFlow → WaitForMessagesAndSeat)
+            // แล้วเล่นใน blink เข้า Tension — บอกให้รอบนี้เล่นแม้เคยดูแล้ว (Play Once) จะได้เทสซ้ำได้
+            // ตั้งก่อน SetTime เหตุผลเดียวกับข้างบน / กฎที่เล่นอยู่แล้วไม่ตั้ง (มันผ่านช่วงรอนั่งไปแล้ว)
+            if (!(target is Rule1) && !target.ruleActive)
+                Flashbacks.FlashbackPlayer.MarkDevStart(target);
 
             TimeManager clock = TimeManager.instance;
             if (clock != null)
@@ -73,10 +89,20 @@ namespace RuleSystem
             {
                 // กฎ 1 ไม่ได้เริ่มตามเวลา และไม่กะพริบเข้า Tension เอง ปกติแชทเป็นคนทำให้
                 // ถ้าเริ่มจาก Relax กติกาเขตจะไม่ทำงาน และออกนอกเขตได้แค่ถูกหันตัวกลับ
-                var mode = GameModeController.instance;
-                if (mode != null && mode.CurrentMode != GameMode.Tension)
+                //
+                // กฎ 1 ไม่ผ่าน WaitForMessagesAndSeat (ทางที่ใส่ flashback เข้าคิว) — ใส่ให้ตรงนี้ แล้วเปิดให้
+                // blink นี้เล่นได้ มี flashback แต่อยู่ Tension อยู่แล้วก็ยังกะพริบ ไม่งั้นไม่มีจังหวะให้ฉายฉาก
+                var  mode         = GameModeController.instance;
+                bool hasFlashback = Flashbacks.FlashbackPlayer.HasFlashbackFor(
+                                        rule1, Flashbacks.FlashbackTrigger.BeforeRuleStarts);
+
+                if (mode != null && (mode.CurrentMode != GameMode.Tension || hasFlashback))
                 {
-                    mode.DirectBlinkToMode(GameMode.Tension);
+                    if (hasFlashback)
+                        Flashbacks.FlashbackPlayer.QueueFor(rule1, Flashbacks.FlashbackTrigger.BeforeRuleStarts,
+                                                            ignorePlayOnce: true);
+
+                    mode.DirectBlinkToMode(GameMode.Tension, allowFlashback: hasFlashback);
                     yield return WaitForBlink();
                 }
 

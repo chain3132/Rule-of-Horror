@@ -109,6 +109,7 @@ public static class GameSession
         Rule2.LeverPuzzleController.ResetStatics();
         Book.BookPageTurner.ResetStatics();
         Book.BookVideoController.ResetStatics();
+        Flashbacks.FlashbackPlayer.ResetStatics();
     }
 
     /// <summary>

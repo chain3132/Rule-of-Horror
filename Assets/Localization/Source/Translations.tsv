@@ -318,3 +318,4 @@ E   Read	E   Read	E   อ่าน	Code/BookPageTurner.pickUpHint
 A / D   Turn page      E   Put back	A / D   Turn page      E   Put back	A / D   พลิก​หน้า      E   วาง​คืน	Code/BookPageTurner.readingHint
 ขอบคุณนะ	Thank you.	ขอบคุณ​นะ	Line/GameScene.unity (Ending Cutscene 2 Escape · Paeng)
 ฉันว่าฉันกลับไปนั่งดีกว่า	I think I'd better go back and sit down.	ฉัน​ว่า​ฉัน​กลับ​ไป​นั่ง​ดี​กว่า	Code/RuleBase.sitReminderText
+Space   Skip	Space   Skip	Space   ข้าม	Code/FlashbackPlayer.skipHint
