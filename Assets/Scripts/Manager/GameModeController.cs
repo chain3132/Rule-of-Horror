@@ -28,6 +28,15 @@ public class GameModeController : MonoBehaviour
     public float blinkSize = 500f;
     public float speed = 5f;
     [SerializeField] private float deathOpenSpeed = 1f; // ความเร็วลืมตาหลังตาย (ช้า = เหมือนค่อยๆ ตื่น)
+
+    [Tooltip("ช่วงเวียนหัวก่อนตาปิด (วินาทีจริง) — เท่ากันทุกเครื่องไม่ขึ้นกับ fps\n" +
+             "เดิมช่วงนี้ยาวตาม fps: ~1.5 วิที่ 30 fps ถึง ~7 วิที่ 240 fps")]
+    [Min(0.1f)]
+    [SerializeField] private float faintDuration = 2f;
+
+    [Tooltip("ตาปิดสนิท (จอดำ) ค้างไว้กี่วินาทีก่อนลืมตา")]
+    [Min(0f)]
+    [SerializeField] private float closedHoldSeconds = 0.8f;
     
     [SerializeField] private MeshFilter saraMeshFilter;
     [SerializeField] private MeshCollider saraMeshCollider;
@@ -188,7 +197,7 @@ public class GameModeController : MonoBehaviour
     }
     IEnumerator FaintThenBlinkRoutine(GameMode targetMode, System.Action onEyesClosed = null)
     {
-        float duration = 1f;
+        float duration = faintDuration;
         float t = 0;
         TimeManager.instance.IsPauseTime(true);
 
@@ -197,11 +206,18 @@ public class GameModeController : MonoBehaviour
             AudioManager.instance.StartRule3Intro();
 
         // : เวียนหัว
+        //
+        // นับเวลาจริงที่ผ่านไป (realtimeSinceStartup) ไม่ใช่บวก Time.deltaTime ทีละรอบ
+        // ลูปนี้รอ WaitForSecondsRealtime(0.01-0.05) ต่อรอบ (จงใจให้ภาพกระตุกเหมือนหน้ามืด)
+        // แต่ Time.deltaTime คือเวลาของ "เฟรมเดียว" ไม่ใช่เวลาที่รอไปจริง — เครื่องแรง (240 fps) เฟรมละ
+        // 0.004 วิ จึงได้ t เพิ่มนิดเดียวต่อรอบ ช่วงเวียนหัวยาวไปถึง ~7 วิ ส่วนเครื่อง 30 fps ได้ ~1.5 วิ
+        // และยังโดน Time.timeScale ที่ลดลงเหลือ 0.6 ในลูปนี้ทำให้ช้าลงไปอีก
+        float startTime = Time.realtimeSinceStartup;
         while (t < duration)
-        {   
-            t += Time.deltaTime;
+        {
+            t = Time.realtimeSinceStartup - startTime;
 
-            float normalized = t / duration;
+            float normalized = Mathf.Clamp01(t / duration);
             float curve = Mathf.Pow(normalized, 2.5f);
             Time.timeScale = Mathf.Lerp(1f, 0.6f, curve);
             float shakeX = Mathf.Sin(Time.time * 12f) * curve * 2f;
@@ -334,7 +350,7 @@ public class GameModeController : MonoBehaviour
         // ยิง callback ตอนตาปิดสนิท (หน้าจอดำ) — reset กล้องขณะที่ผู้เล่นมองไม่เห็น
         onEyesClosed?.Invoke();
 
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(closedHoldSeconds);
 
         IsEyesFullyClosed = false;
 
