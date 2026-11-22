@@ -319,3 +319,43 @@ A / D   Turn page      E   Put back	A / D   Turn page      E   Put back	A / D   
 ขอบคุณนะ	Thank you.	ขอบคุณ​นะ	Line/GameScene.unity (Ending Cutscene 2 Escape · Paeng)
 ฉันว่าฉันกลับไปนั่งดีกว่า	I think I'd better go back and sit down.	ฉัน​ว่า​ฉัน​กลับ​ไป​นั่ง​ดี​กว่า	Code/RuleBase.sitReminderText
 Space   Skip	Space   Skip	Space   ข้าม	Code/FlashbackPlayer.skipHint
+นั่ง	Sit	นั่ง	Code/SittingPoint.sitAction
+ลุก	Stand up	ลุก	Code/SittingPoint.standAction
+เปิดวิทยุ	Turn on radio	เปิด​วิทยุ	Code/RadioControl.promptAction
+เปิดไฟ	Turn on light	เปิด​ไฟ	Code/SwitchLight.promptAction
+ซ่อมตู้ไฟ	Fix light panel	ซ่อม​ตู้​ไฟ	Code/LightPanel.promptAction
+เก็บโทรศัพท์	Pick up phone	เก็บ​โทรศัพท์	Code/PhoneGroundPickup.promptAction
+เกิดอะไรขึ้น ทำไมไฟดับหมดเลย	What's happening? Why did all the lights go out?	เกิด​อะไร​ขึ้น ทำไม​ไฟ​ดับ​หมด​เลย	Code/Rule2.blackoutMonologue
+ฉันต้องลองหาทางให้ไฟกลับมาติดให้ได้ก่อน	I need to find a way to get the lights back on first.	ฉัน​ต้อง​ลอง​หา​ทาง​ให้​ไฟ​กลับ​มา​ติด​ให้​ได้​ก่อน	Code/Rule2.blackoutMonologue
+มันต้องมีแหล่งกำเนิดไฟแถว ๆ นี้สิ	There must be a power source somewhere around here.	มัน​ต้อง​มี​แหล่ง​กำเนิด​ไฟ​แถว ๆ ​นี้​สิ	Code/Rule2.fixPanelMonologue
+ตัวเลขบ้านี้มันคืออะไรกัน	What are these damn numbers?	ตัว​เลข​บ้า​นี้​มัน​คือ​อะไร​กัน	Code/Rule3.introMonologue
+ฉันต้องมองให้ละเอียดตามกฎบอกสินะ	I have to look carefully, just like the rule says.	ฉัน​ต้อง​มอง​ให้​ละเอียด​ตาม​กฎ​บอก​สินะ	Code/Rule3.introMonologue
+ที่นี่มันคือบ้าอะไรกัน ฉันอยากออกไปจากที่นี่	What the hell is this place? I want to get out of here.	ที่​นี่​มัน​คือ​บ้า​อะไร​กัน ฉัน​อยาก​ออก​ไป​จาก​ที่​นี่	Code/Rule3.completeMonologue
+เหมือนฉันจะได้ยินเสียงอะไรบางอย่าง หรือว่าจะมีอะไรอยู่แถว ๆ นี้	I think I heard something... Is there something around here?	เหมือน​ฉัน​จะ​ได้​ยิน​เสียง​อะไร​บาง​อย่าง หรือ​ว่า​จะ​มี​อะไร​อยู่​แถว ๆ ​นี้	Code/Rule4.introMonologue
+ฉันคิดว่าฉันควรจับผ้าที่ผูกอยู่กับสายสิญจน์แล้วเดินตามไป	I think I should hold the cloth tied to the sacred thread and follow it.	ฉัน​คิด​ว่า​ฉัน​ควร​จับ​ผ้า​ที่​ผูก​อยู่​กับ​สาย​สิญจน์​แล้ว​เดิน​ตาม​ไป	Code/Rule5.introMonologue
+ต้นบอกว่าอย่าเชื่อคนที่บอกกฎในโทรศัพท์ แต่ในกฎบอกให้ฉันขึ้นคันที่ดูปลอดภัยที่สุด	Ton said not to trust whoever sends the rules to my phone, but the rules tell me to take the bus that looks the safest.	ต้น​บอก​ว่า​อย่า​เชื่อ​คน​ที่​บอก​กฎ​ใน​โทรศัพท์ แต่​ใน​กฎ​บอก​ให้​ฉัน​ขึ้น​คัน​ที่​ดู​ปลอดภัย​ที่สุด	Code/Rule6.introMonologue
+ฉันควรจะขึ้นคันไหนดี	Which one should I get on?	ฉัน​ควร​จะ​ขึ้น​คัน​ไหน​ดี	Code/Rule6.introMonologue
+ฉันกับเขาลองเดินออกไปแล้ว แต่ไปได้ไม่ไกล	He and I tried to walk out of here, but we didn't get far.	ฉันกับเขาลองเดินออกไปแล้ว แต่ไปได้ไม่ไกล	Code/FlashbackRuleBuilder (After Rule 1)
+ฉันเวียนหัวมาก เหมือนหัวจะระเบิด	My head was spinning, like it was about to explode.	ฉันเวียนหัวมาก เหมือนหัวจะระเบิด	Code/FlashbackRuleBuilder (After Rule 1)
+เราเลยกลับมารอที่ศาลา แล้วข้อความแปลกๆ ก็ส่งมาอีก	So we came back to wait at the waiting shed, and then the strange messages came again.	เราเลยกลับมารอที่ศาลา แล้วข้อความแปลกๆ ก็ส่งมาอีก	Code/FlashbackRuleBuilder (After Rule 1)
+ถ้าคุณอ่านอยู่ ไม่ต้องลองนะ ที่นี่ไม่มีทางออก	If you're reading this, don't even try. There's no way out of here.	ถ้าคุณอ่านอยู่ ไม่ต้องลองนะ ที่นี่ไม่มีทางออก	Code/FlashbackRuleBuilder (After Rule 1)
+ไฟดับ เขาไปซ่อมตู้ไฟให้ แล้วบอกว่า "ไม่ต้องกลัว เรื่องง่ายๆ"	The lights went out. He went to fix the fuse box and said, "Don't be scared, it's easy."	ไฟดับ เขาไปซ่อมตู้ไฟให้ แล้วบอกว่า "ไม่ต้องกลัว เรื่องง่ายๆ"	Code/FlashbackRuleBuilder (After Rule 2)
+ฉันว่าเขาเป็นคนดีนะ	I think he's a good person.	ฉันว่าเขาเป็นคนดีนะ	Code/FlashbackRuleBuilder (After Rule 2)
+คืนนี้คงไม่แย่เท่าไหร่ ถ้ามีเพื่อนอยู่ด้วย	Tonight might not be so bad with a friend around.	คืนนี้คงไม่แย่เท่าไหร่ ถ้ามีเพื่อนอยู่ด้วย	Code/FlashbackRuleBuilder (After Rule 2)
+กฎข้อนี้เหนื่อยกว่าที่คิด เราต้องช่วยกันหาตัวเลขให้ครบ	This rule was harder than I thought. We had to find all the numbers together.	กฎข้อนี้เหนื่อยกว่าที่คิด เราต้องช่วยกันหาตัวเลขให้ครบ	Code/FlashbackRuleBuilder (After Rule 3)
+เขาเกือบหลับไปหลายครั้ง ฉันเลยต้องคอยปลุกเขาตลอด	He almost fell asleep so many times, I kept having to wake him up.	เขาเกือบหลับไปหลายครั้ง ฉันเลยต้องคอยปลุกเขาตลอด	Code/FlashbackRuleBuilder (After Rule 3)
+"อย่าหลับนะ" ฉันพูดกับเขาไม่รู้กี่ครั้ง	"Don't fall asleep." I lost count of how many times I told him.	"อย่าหลับนะ" ฉันพูดกับเขาไม่รู้กี่ครั้ง	Code/FlashbackRuleBuilder (After Rule 3)
+เขาบอกว่าถ้าไม่ได้ฉันช่วยไว้ เขาคงไม่รอด	He said he wouldn't have made it without my help.	เขาบอกว่าถ้าไม่ได้ฉันช่วยไว้ เขาคงไม่รอด	Code/FlashbackRuleBuilder (After Rule 3)
+ดีจัง อย่างน้อยฉันก็ช่วยใครสักคนได้	I'm glad. At least I could help someone.	ดีจัง อย่างน้อยฉันก็ช่วยใครสักคนได้	Code/FlashbackRuleBuilder (After Rule 3)
+วันนี้เขาดูแปลกไป	He seemed different today.	วันนี้เขาดูแปลกไป	Code/FlashbackRuleBuilder (After Rule 4)
+ระหว่างที่เราช่วยกันหาตุ๊กตา เขาบอกให้ฉันวิ่งตามหลัง แล้วเขาจะคอยดูทางให้	While we were looking for the dolls, he told me to run behind him, and he would watch the way ahead.	ระหว่างที่เราช่วยกันหาตุ๊กตา เขาบอกให้ฉันวิ่งตามหลัง แล้วเขาจะคอยดูทางให้	Code/FlashbackRuleBuilder (After Rule 4)
+แต่เขากลับวิ่งเร็วขึ้นเรื่อย ๆ	But he just kept running faster and faster.	แต่เขากลับวิ่งเร็วขึ้นเรื่อย ๆ	Code/FlashbackRuleBuilder (After Rule 4)
+ฉันพยายามเรียกเขา "รอด้วย!" แต่เขาไม่เคยหันกลับมาเลย	I called out to him, "Wait for me!" but he never looked back.	ฉันพยายามเรียกเขา "รอด้วย!" แต่เขาไม่เคยหันกลับมาเลย	Code/FlashbackRuleBuilder (After Rule 4)
+ฉันไม่รู้ว่าเขาไม่ได้ยิน หรือว่าเขาไม่อยากรอฉันกันแน่	I don't know if he didn't hear me, or if he just didn't want to wait for me.	ฉันไม่รู้ว่าเขาไม่ได้ยิน หรือว่าเขาไม่อยากรอฉันกันแน่	Code/FlashbackRuleBuilder (After Rule 4)
+หวังว่าฉันคงคิดมากไปเอง	I hope I'm just overthinking it.	หวังว่าฉันคงคิดมากไปเอง	Code/FlashbackRuleBuilder (After Rule 4)
+เขาเอาแต่ดูโทรศัพท์ตั้งแต่เราผ่านกฎข้อที่แล้ว	He's been staring at his phone ever since we passed the last rule.	เขาเอาแต่ดูโทรศัพท์ตั้งแต่เราผ่านกฎข้อที่แล้ว	Code/FlashbackRuleBuilder (After Rule 5)
+ฉันถามว่าใครส่งข้อความมา เขาก็บอกว่าไม่มีอะไร	I asked who was messaging him, and he said it was nothing.	ฉันถามว่าใครส่งข้อความมา เขาก็บอกว่าไม่มีอะไร	Code/FlashbackRuleBuilder (After Rule 5)
+ตอนนี้เขาบอกให้ฉันเดินนำ ส่วนเขาจะคอยระวังด้านหลังให้	Now he wants me to walk in front, and he'll watch our backs.	ตอนนี้เขาบอกให้ฉันเดินนำ ส่วนเขาจะคอยระวังด้านหลังให้	Code/FlashbackRuleBuilder (After Rule 5)
+เขาย้ำว่า "ไม่ว่าจะได้ยินอะไร อย่าหันไปข้างหลัง"	He kept saying, "No matter what you hear, don't look back."	เขาย้ำว่า "ไม่ว่าจะได้ยินอะไร อย่าหันไปข้างหลัง"	Code/FlashbackRuleBuilder (After Rule 5)
+ฉันไม่รู้ทำไม แต่ฉันเริ่มกลัวเขามากกว่าสิ่งที่อยู่ในศาลานี้แล้ว	I don't know why, but I'm starting to fear him more than whatever is in this waiting shed.	ฉันไม่รู้ทำไม แต่ฉันเริ่มกลัวเขามากกว่าสิ่งที่อยู่ในศาลานี้แล้ว	Code/FlashbackRuleBuilder (After Rule 5)
+อย่างน้อยฉันก็หวังว่าเขาจะไม่ทิ้งฉันไปจริง ๆ	At least I hope he won't really leave me behind.	อย่างน้อยฉันก็หวังว่าเขาจะไม่ทิ้งฉันไปจริง ๆ	Code/FlashbackRuleBuilder (After Rule 5)

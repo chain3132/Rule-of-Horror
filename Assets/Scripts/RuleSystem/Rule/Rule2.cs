@@ -69,6 +69,17 @@ namespace RuleSystem.Rule
         [SerializeField] private GameObject pavilionGhostPrefab;
         [SerializeField] private Transform  pavilionGhostPoint;    // จุดยืนผีในศาลา
 
+        // ── Monologue ───────────────────────────────────────────────────
+        [Header("บทพูดในใจ (ซับ) — ลบข้อความทิ้ง = ไม่พูดตอนนั้น")]
+        [Tooltip("ตอนไฟดับครั้งแรก — ต้องไปเปิดสวิตช์ไฟ + วิทยุ")]
+        [SerializeField] private DialogueLine[] blackoutMonologue = Lines(
+            "เกิดอะไรขึ้น ทำไมไฟดับหมดเลย",
+            "ฉันต้องลองหาทางให้ไฟกลับมาติดให้ได้ก่อน");
+
+        [Tooltip("ตอนเข้าเฟสซ่อมตู้ไฟ (ไฟดับครั้งที่ 2 มืดสนิท)")]
+        [SerializeField] private DialogueLine[] fixPanelMonologue = Lines(
+            "มันต้องมีแหล่งกำเนิดไฟแถว ๆ นี้สิ");
+
         // ── Random Sound Timing ──────────────────────────────────────────
         [Header("Fix Panel – Random Sound Interval (sec)")]
         [SerializeField] private float randomSoundMinInterval = 4f;
@@ -306,6 +317,8 @@ namespace RuleSystem.Rule
             if (radioControl != null)  radioControl.UnlockRadio(true);
             if (switchLight != null)   switchLight.UnlockSwitch(true);
             TimeManager.instance.IsPauseTime(true);
+
+            SayMonologue(blackoutMonologue);
         }
 
         void UpdateFirstBlackout()
@@ -479,6 +492,8 @@ namespace RuleSystem.Rule
 
             SpawnPanelShadows();
             _randomSoundCoroutine = StartCoroutine(RandomFixPanelSoundRoutine());
+
+            SayMonologue(fixPanelMonologue);
         }
 
         void SpawnPanelShadows()

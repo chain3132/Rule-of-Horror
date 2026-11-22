@@ -117,6 +117,10 @@ namespace RuleSystem.Rule
 
         // ── Hints ───────────────────────────────────────────────────────
         [Header("Hints")]
+        [Tooltip("บทพูดในใจตอนลืมตาเข้ากฎ 5 — ขึ้นก่อน Intro Hint (ลบข้อความทิ้ง = ไม่พูด)")]
+        [SerializeField] private DialogueLine[] introMonologue = Lines(
+            "ฉันคิดว่าฉันควรจับผ้าที่ผูกอยู่กับสายสิญจน์แล้วเดินตามไป");
+
         [TextArea(2, 4)]
         [SerializeField] private string introHint = "";
         [SerializeField] private float  introHintDuration = 6f;
@@ -344,10 +348,14 @@ namespace RuleSystem.Rule
             if (ghostHandOverlay != null) ghostHandOverlay.SetActive(true);
             AudioManager.instance.StartRule5Background();
 
-            if (PlayerDialogueUI.instance != null)
-                // แปลก่อนแทน {0} — ข้อความที่แทนเลขไปแล้วไม่ตรงกับคำไหนในตารางแปล
-                PlayerDialogueUI.instance.ShowLine(L10n.T(introHint).Replace("{0}", requiredBells.ToString()),
-                                                   introHintDuration, alreadyTranslated: true);
+            // บทพูดในใจก่อน แล้ว hint ของกฎต่อท้าย
+            // แปลก่อนแทน {0} — ข้อความที่แทนเลขไปแล้วไม่ตรงกับคำไหนในตารางแปล
+            SayMonologue(introMonologue, string.IsNullOrWhiteSpace(introHint) ? null : new DialogueLine
+            {
+                text              = L10n.T(introHint).Replace("{0}", requiredBells.ToString()),
+                holdDuration      = introHintDuration,
+                alreadyTranslated = true,
+            });
         }
 
         /// <summary>ลุกออกจากศาลาแล้วกลับมานั่ง = ตัดสินผล</summary>

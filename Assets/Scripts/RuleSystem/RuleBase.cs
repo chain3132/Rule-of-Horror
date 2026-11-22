@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Player;
 using UnityEngine;
 
@@ -334,6 +335,54 @@ namespace RuleSystem
 
             dialogue.ShowLine(sitReminderText);
             _sitReminderAt = Time.time + sitReminderInterval;
+        }
+
+        // ─────────────────────── บทพูดในใจตามขั้นตอนของกฎ ───────────────────────
+
+        /// <summary>ค่าเริ่มต้นของช่องบทพูดใน Inspector — new DialogueLine ทีละบรรทัด</summary>
+        protected static DialogueLine[] Lines(params string[] texts)
+        {
+            var lines = new DialogueLine[texts.Length];
+            for (int i = 0; i < texts.Length; i++) lines[i] = new DialogueLine { text = texts[i] };
+            return lines;
+        }
+
+        /// <summary>
+        /// ขึ้นบทพูดในใจของตัวละคร (ซับเดียวกับ "ฉันว่าฉันกลับไปนั่งดีกว่า") — แปลภาษาเองตอนขึ้น
+        /// บรรทัดว่างถูกข้าม ลบข้อความใน Inspector ทิ้ง = ไม่พูดตอนนั้น
+        /// then = บรรทัดต่อท้าย เช่น hint ของกฎที่แทน {0} แล้ว จะได้ขึ้นต่อกันไม่ทับกัน
+        /// </summary>
+        protected static void SayMonologue(DialogueLine[] lines, params DialogueLine[] then)
+        {
+            var dialogue = PlayerDialogueUI.instance;
+            if (dialogue == null) return;
+
+            var all = new List<DialogueLine>();
+            if (lines != null)
+                foreach (var line in lines)
+                    if (line != null && !string.IsNullOrWhiteSpace(line.text)) all.Add(line);
+            if (then != null)
+                foreach (var line in then)
+                    if (line != null && !string.IsNullOrWhiteSpace(line.text)) all.Add(line);
+
+            if (all.Count > 0) dialogue.ShowSequence(all.ToArray());
+        }
+
+        /// <summary>
+        /// พูดหลังกะพริบตาเปลี่ยนโหมดจบแล้ว (ลืมตาสุด) — ใช้กับบทพูดตอนจบกฎ
+        /// พูดระหว่างหลับตาจะไปทับซับของ flashback และผู้เล่นเห็นแค่จอดำ
+        /// </summary>
+        protected IEnumerator SayAfterBlinkRoutine(DialogueLine[] lines, float delay = 0.6f)
+        {
+            // รอให้ BlinkToMode ที่กฎเพิ่งสั่ง (บางกฎสั่งช้าไป 1 เฟรม) เริ่มก่อน
+            yield return null;
+            yield return null;
+
+            var mode = GameModeController.instance;
+            while (mode != null && (mode.IsBlinking || !mode.IsEyesOpen)) yield return null;
+
+            yield return new WaitForSeconds(delay);
+            SayMonologue(lines);
         }
 
         protected virtual void UpdateRule() { }

@@ -35,9 +35,16 @@ public class KeyPromptManager : MonoBehaviour
         public readonly bool      faded;      // true = วาดจางๆ
         public readonly Transform anchor;     // วัตถุที่ prompt ต้องไปเกาะ (null = กลางจอ)
 
-        public Prompt(string id, string key, string action, bool faded, Transform anchor)
+        /// <summary>
+        /// true = ปุ่มกดใช้ของ (นั่ง/วิทยุ/สวิตช์/ตู้ไฟ ฯลฯ) — วางตำแหน่งตายตัวบนจอ (ขวาล่างของกลางจอนิดๆ)
+        /// ไม่เกาะวัตถุ ผู้เล่นแค่เดินเข้าใกล้ก็เห็น ไม่ต้องก้มหรือหันไปมอง
+        /// </summary>
+        public readonly bool      interact;
+
+        public Prompt(string id, string key, string action, bool faded, Transform anchor, bool interact = false)
         {
             this.id = id; this.key = key; this.action = action; this.faded = faded; this.anchor = anchor;
+            this.interact = interact;
         }
     }
 
@@ -70,6 +77,10 @@ public class KeyPromptManager : MonoBehaviour
     [Tooltip("✓ = ซ่อน prompt ไปเลยหลังสอนครบ แทนที่จะเหลือปุ่มจางๆ\n" +
              "ดีไซน์ปัจจุบันให้เหลือปุ่มไว้ เลยปิดไว้เป็นค่าเริ่มต้น")]
     [SerializeField] private bool hideCompletely;
+
+    [Tooltip("✓ = ปุ่มกดใช้ของ (นั่ง/วิทยุ/สวิตช์/ตู้ไฟ/โทรศัพท์) โชว์คำเต็มทุกครั้ง ไม่หดเหลือแค่ปุ่มหลังสอนครบ\n" +
+             "เหมือนข้อความลอยแบบเดิมที่ขึ้นเต็มตลอด — ✗ = ใช้กติกาสอนครบแล้วหดเหมือน prompt อื่น")]
+    [SerializeField] private bool interactAlwaysFull = true;
 
     [Header("Debug")]
     [Tooltip("log ทุกครั้งที่ prompt ถูกเรียก พร้อมจำนวนครั้งที่เคยโชว์")]
@@ -109,6 +120,16 @@ public class KeyPromptManager : MonoBehaviour
     /// (เล็งค้างไว้ 5 วินาที = เห็นครั้งเดียว ไม่ใช่ 300 ครั้งตามจำนวนเฟรม)
     /// </summary>
     public void Show(string id, string key, string action, Transform anchor = null)
+        => ShowInternal(id, key, action, anchor, interact: false);
+
+    /// <summary>
+    /// ปุ่มกดใช้ของ — ขึ้นตำแหน่งตายตัวบนจอ (KeyPromptBinder ▸ Interact Screen Position) ไม่เกาะวัตถุ
+    /// ใช้ผ่าน <see cref="InteractPromptHandle"/> จะสะดวกกว่า
+    /// </summary>
+    public void ShowInteract(string id, string key, string action)
+        => ShowInternal(id, key, action, null, interact: true);
+
+    private void ShowInternal(string id, string key, string action, Transform anchor, bool interact)
     {
         if (string.IsNullOrEmpty(id)) return;
         if (_active.ContainsKey(id)) return;
@@ -116,11 +137,11 @@ public class KeyPromptManager : MonoBehaviour
         _shownCount.TryGetValue(id, out int seen);
         _shownCount[id] = seen + 1;
 
-        bool taught = seen >= fullDisplayCount;
+        bool taught = seen >= fullDisplayCount && !(interact && interactAlwaysFull);
         if (taught && hideCompletely) return;
 
         // แปลตอนสร้าง prompt — "คลิกซ้าย ค้าง" เป็นทั้งชื่อปุ่มและข้อความ จึงแปลทั้งสองช่อง
-        var prompt = new Prompt(id, L10n.T(key), taught ? string.Empty : L10n.T(action), taught, anchor);
+        var prompt = new Prompt(id, L10n.T(key), taught ? string.Empty : L10n.T(action), taught, anchor, interact);
         _active[id] = prompt;
 
         if (logPrompts)
@@ -158,4 +179,44 @@ public class KeyPromptManager : MonoBehaviour
 
     /// <summary>เคยโชว์ prompt นี้ไปกี่ครั้งแล้ว — เผื่ออยากเช็กก่อนทำอย่างอื่น</summary>
     public int TimesShown(string id) => _shownCount.TryGetValue(id, out int n) ? n : 0;
+}
+
+/// <summary>
+/// ตัวช่วยของวัตถุที่กด E ใช้ได้ — จำว่าตัวเองโชว์ปุ่มอะไรค้างอยู่ จะได้เก็บเฉพาะของตัวเอง
+///
+/// แทนข้อความ TMP ลอยในโลกแบบเดิม (ต้องหันไปมองถึงเห็น) — ปุ่มขึ้นบนจอเองตอนเข้าใกล้
+///
+/// <example>
+/// private readonly InteractPromptHandle _prompt = new InteractPromptHandle();
+/// ใกล้ + ใช้ได้:   _prompt.Set("interact.radio", "เปิดวิทยุ");
+/// ไกล / ใช้แล้ว:   _prompt.Clear();
+/// </example>
+/// </summary>
+public sealed class InteractPromptHandle
+{
+    private string _shownId;
+
+    /// <summary>โชว์ปุ่ม — เรียกซ้ำทุกเฟรมได้ ไม่นับเป็นการเห็นครั้งใหม่</summary>
+    public void Set(string id, string action, string key = "E")
+    {
+        var manager = KeyPromptManager.instance;
+        if (manager == null || string.IsNullOrEmpty(id)) return;
+
+        // HideAll (ตาย/คัตซีน) เก็บไปแล้วโดยที่เราไม่รู้ — เช็ค Active ด้วย ไม่งั้นจะไม่ขึ้นอีกเลย
+        if (_shownId == id && manager.Active.ContainsKey(id)) return;
+
+        Clear();
+        manager.ShowInteract(id, key, action);
+        _shownId = id;
+    }
+
+    /// <summary>เก็บปุ่มที่ตัวเองโชว์ไว้ (ถ้ามี)</summary>
+    public void Clear()
+    {
+        if (_shownId == null) return;
+
+        var manager = KeyPromptManager.instance;
+        if (manager != null) manager.Hide(_shownId);
+        _shownId = null;
+    }
 }

@@ -15,6 +15,10 @@ Shader "Rule of Horror/Old Film (UI)"
         [PerRendererData] _MainTex ("Flashback Image", 2D) = "black" {}
         _Color ("Tint", Color) = (1,1,1,1)
 
+        [Header(Exposure)]
+        _Exposure ("Exposure (x)", Range(0.5, 8)) = 2
+        _Lift ("Black Lift (faded blacks)", Range(0, 0.3)) = 0.07
+
         [Header(Colour)]
         _SepiaColor ("Sepia Colour", Color) = (1.0, 0.9, 0.74, 1)
         _Desaturate ("Desaturate", Range(0, 1)) = 1
@@ -111,6 +115,7 @@ Shader "Rule of Horror/Old Film (UI)"
             float4 _ClipRect;
 
             fixed4 _SepiaColor;
+            float _Exposure, _Lift;
             float _Desaturate, _Contrast, _Brightness;
             float _Grain, _Flicker, _Vignette, _Scratches, _Jitter;
             float _DustStrength, _DustWander;
@@ -153,6 +158,10 @@ Shader "Rule of Horror/Old Film (UI)"
 
                 half3 col = (tex2D(_MainTex, uv) + _TextureSampleAdd).rgb;
 
+                // ── เปิดรับแสง — กล้อง flashback ไม่มี post-processing (ไม่มี exposure/tonemapping ของเกม)
+                //    ฉากที่จัดไว้ในโลกเกมตอนกลางคืนจึงออกมามืดมาก ชดเชยตรงนี้ ──
+                col = saturate(col * _Exposure);
+
                 // ── ขาวดำ → ซีเปีย ──
                 half lum = dot(col, half3(0.299, 0.587, 0.114));
                 col = lerp(col, lum * _SepiaColor.rgb, _Desaturate);
@@ -160,6 +169,9 @@ Shader "Rule of Horror/Old Film (UI)"
                 // ── contrast / ความสว่าง / กะพริบ ──
                 col = (col - 0.5) * _Contrast + 0.5;
                 col *= _Brightness * (1.0 + (Hash11(f * 3.1 + 11.0) - 0.5) * 2.0 * _Flicker);
+
+                // ── ยกส่วนดำ: ฟิล์มเก่าดำไม่สนิท เป็นสีน้ำตาลจางๆ — และกัน contrast กดเงาจนหายหมด ──
+                col = col * (1.0 - _Lift) + _Lift * _SepiaColor.rgb;
 
                 // ── grain (เปลี่ยนเม็ดทุกเฟรมฟิล์ม) ──
                 float2 grainUV = floor(IN.texcoord * _ScreenParams.xy * 0.5);

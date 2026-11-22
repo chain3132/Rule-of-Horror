@@ -5,18 +5,29 @@ using UnityEngine;
 /// <summary>
 /// ติดไว้บน GameObject โทรศัพท์ที่วางอยู่บนพื้นในเขตสีแดง
 ///
-/// เมื่อผู้เล่นเดินเข้า trigger collider → แสดงข้อความ interaction
+/// เมื่อผู้เล่นเดินเข้า trigger collider → ปุ่ม "E เก็บโทรศัพท์" ขึ้นบนจอ
 /// กด E (OnInteractPressed) → โทรศัพท์หาย → แจ้ง Rule1.OnPhonePickedUp()
 /// </summary>
 public class PhoneGroundPickup : MonoBehaviour
 {
+    private const string PromptId = "interact.phone";
+
     [SerializeField] private Rule1 rule1;
     [SerializeField] private InputHandler inputHandler;
 
-    [Tooltip("ข้อความที่แสดงตอนผู้เล่นเข้ามาใกล้ (เช่น 'กด E เพื่อเก็บโทรศัพท์')")]
+    [Tooltip("ข้อความลอยในโลกแบบเดิม — ไม่ใช้แล้ว (ปุ่มขึ้นบนจอแทน) ใส่ไว้ก็จะถูกซ่อนตลอด")]
     [SerializeField] private TMP_Text interactionText;
 
+    [Tooltip("คำที่ขึ้นข้างปุ่ม E บนจอ")]
+    [SerializeField] private string promptAction = "เก็บโทรศัพท์";
+
     private bool _isSubscribed;
+    private readonly InteractPromptHandle _prompt = new InteractPromptHandle();
+
+    private void Awake()
+    {
+        if (interactionText != null) interactionText.gameObject.SetActive(false);
+    }
 
     // ─────────────────────────── Trigger ───────────────────────────
 
@@ -24,7 +35,7 @@ public class PhoneGroundPickup : MonoBehaviour
     {
         if (!other.CompareTag("Player") || _isSubscribed) return;
 
-        if (interactionText != null) interactionText.gameObject.SetActive(true);
+        _prompt.Set(PromptId, promptAction);
 
         if (inputHandler != null)
         {
@@ -37,7 +48,7 @@ public class PhoneGroundPickup : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
 
-        if (interactionText != null) interactionText.gameObject.SetActive(false);
+        _prompt.Clear();
         Unsubscribe();
     }
 
@@ -46,7 +57,7 @@ public class PhoneGroundPickup : MonoBehaviour
     private void Interact()
     {
         Unsubscribe();
-        if (interactionText != null) interactionText.gameObject.SetActive(false);
+        _prompt.Clear();
 
         // ซ่อน pickup object
         gameObject.SetActive(false);
@@ -70,5 +81,6 @@ public class PhoneGroundPickup : MonoBehaviour
     {
         // กันกรณี GameObject ถูกปิดก่อนที่ผู้เล่นจะออกจาก trigger
         Unsubscribe();
+        _prompt.Clear();
     }
 }

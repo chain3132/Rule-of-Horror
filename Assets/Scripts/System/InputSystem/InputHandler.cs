@@ -247,6 +247,15 @@ namespace InputSystem
         public float GetScrollDelta()
             => Mouse.current != null ? Mouse.current.scroll.ReadValue().y : 0f;
 
+        /// <summary>
+        /// คลิกซ้าย = ตกลงในโทรศัพท์ (เปิดแชทที่เลือกอยู่) — ใช้คู่กับ Space
+        ///
+        /// คลิกไม่ได้ไปโดนปุ่มในจอโทรศัพท์จริง (จออยู่ใน RenderTexture) แต่ใช้เป็น "ปุ่มตกลง" ได้
+        /// ไม่ชนกับมินิเกมปาขยะ เพราะ PaperBallThrower อ่านคลิกซ้ายเฉพาะตอนโทรศัพท์ไม่ได้ยกอยู่
+        /// </summary>
+        public bool WasPhoneClickPressed()
+            => Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+
         #endregion
         
         

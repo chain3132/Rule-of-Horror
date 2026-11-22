@@ -365,7 +365,7 @@ public class FriendListController : MonoBehaviour
     // ─────────────────────────── Keyboard Navigation ───────────────────────────
 
     /// <summary>
-    /// เลื่อนรายชื่อด้วย W/S แล้วกด E เพื่อเปิด
+    /// เลื่อนรายชื่อด้วย W/S หรือล้อเมาส์ แล้วกด Space หรือคลิกซ้ายเพื่อเปิด
     ///
     /// ต้องมีเพราะจอโทรศัพท์ถ่ายผ่าน PhoneCamera ลง RenderTexture — ตัวชี้เมาส์อยู่บนจอจริง
     /// มันไม่มีทางไปโดน Button ที่อยู่ในพื้นผิว 3D ได้เลย ปุ่มที่มีอยู่จึงกดไม่ได้จริงในเกม
@@ -382,13 +382,35 @@ public class FriendListController : MonoBehaviour
         if (!inList) return;
         if (_navigable.Count == 0) return;
 
+        // เมนู Esc เปิดอยู่ — คลิก/ล้อเป็นของเมนู ไม่ใช่ของรายชื่อข้างหลัง
+        bool menuOpen = InGameLanguageMenu.IsOpen;
+
         if (inputHandler.WasNavUpPressed())   MoveCursor(-1);
         if (inputHandler.WasNavDownPressed()) MoveCursor(1);
+        if (!menuOpen) ScrollCursor(inputHandler.GetScrollDelta());
 
-        if (!inputHandler.WasConfirmPressed()) return;
+        bool confirm = inputHandler.WasConfirmPressed() || (!menuOpen && inputHandler.WasPhoneClickPressed());
+        if (!confirm) return;
 
         var selected = Highlighted;
         if (selected != null) OnContactClicked(selected);
+    }
+
+    // ─── ล้อเมาส์ ───
+    [Header("Mouse")]
+    [Tooltip("หมุนล้อเมาส์ 1 ครั้งเลื่อนได้ 1 รายชื่อ — กันทัชแพด/ล้อลื่นที่ส่งค่ามารัวๆ ไม่ให้ข้ามทีละหลายชื่อ (วินาที)")]
+    [SerializeField] private float scrollStepCooldown = 0.08f;
+
+    private float _nextScrollStep;
+
+    /// <summary>ล้อขึ้น = รายชื่อก่อนหน้า, ล้อลง = รายชื่อถัดไป (เหมือน W/S)</summary>
+    private void ScrollCursor(float delta)
+    {
+        if (Mathf.Abs(delta) < 0.01f) return;
+        if (Time.unscaledTime < _nextScrollStep) return;
+
+        _nextScrollStep = Time.unscaledTime + scrollStepCooldown;
+        MoveCursor(delta > 0f ? -1 : 1);
     }
 
     /// <summary>เลื่อนตัวชี้ — วนหัวท้ายได้ รายชื่อสั้นมาก การชนขอบแล้วหยุดจะรู้สึกเหมือนปุ่มเสีย</summary>

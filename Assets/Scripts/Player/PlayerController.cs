@@ -72,6 +72,9 @@ namespace Player
         /// </summary>
         public bool IsSitting() => _isSitting && !_isTransitioning;
 
+        /// <summary>กำลังนั่งลง/ลุกขึ้นอยู่ — ปุ่ม "นั่ง/ลุก" บนจอซ่อนไว้ระหว่างนี้</summary>
+        public bool IsChangingPose => _isTransitioning;
+
         /// <summary>
         /// ผู้เล่นคุมตัวเองได้อยู่ไหม — ระบบที่พาตัวผู้เล่นต้องเช็คก่อนแตะ SetLook/SetMovement
         ///

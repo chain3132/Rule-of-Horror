@@ -57,6 +57,24 @@ namespace PhoneSystem
             input.OnBackPressed -= Back;
             input.OnSetTime -= appController.SetTimeApp;
         }
+        /// <summary>
+        /// ยกโทรศัพท์อยู่ = ลูกศรเมาส์ต้องไม่โผล่เด็ดขาด (ใช้แค่ล้อเลื่อน + คลิกซ้ายเป็นปุ่มตกลง)
+        ///
+        /// ล็อกครั้งเดียวตอนเปิดไม่พอ: Esc คือปุ่มถอยของโทรศัพท์ แต่ใน Editor กด Esc แล้ว Unity
+        /// ปล่อยเมาส์ออกมาเองทุกครั้ง (และ alt-tab / คลิกออกนอกหน้าต่างก็หลุดได้ใน build) ลูกศรจึงค้าง
+        /// ลอยทับจอโทรศัพท์ — ล็อกซ้ำทุกเฟรมระหว่างยกอยู่
+        ///
+        /// ยกเว้นตอนเมนู Esc เปิด (เมนูต้องใช้เมาส์) และตอนเล่น puzzle ตู้ไฟ (puzzle ใช้เมาส์จับคันโยก)
+        /// </summary>
+        private void LateUpdate()
+        {
+            if (CurrentState == PhoneState.Hidden) return;
+            if (InGameLanguageMenu.IsOpen || Rule2.LeverPuzzleController.AnyPlayerLocked) return;
+
+            if (Cursor.lockState != CursorLockMode.Locked) Cursor.lockState = CursorLockMode.Locked;
+            if (Cursor.visible) Cursor.visible = false;
+        }
+
         public void ChangeState(PhoneState newState)
         {
             RememberForBack(newState);

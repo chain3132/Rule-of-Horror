@@ -124,6 +124,11 @@ namespace RuleSystem.Rule
         [SerializeField] private Transform pavilionSeat;
 
         [Header("บทพูด")]
+        [Tooltip("บทพูดในใจตอนลืมตาเข้ากฎ 6 — ขึ้นก่อน Intro Lines (ลบข้อความทิ้ง = ไม่พูด)")]
+        [SerializeField] private DialogueLine[] introMonologue = Lines(
+            "ต้นบอกว่าอย่าเชื่อคนที่บอกกฎในโทรศัพท์ แต่ในกฎบอกให้ฉันขึ้นคันที่ดูปลอดภัยที่สุด",
+            "ฉันควรจะขึ้นคันไหนดี");
+
         [Tooltip("บทพูดตอนกฎเริ่ม")]
         [SerializeField] private DialogueLine[] introLines;
 
@@ -427,8 +432,7 @@ namespace RuleSystem.Rule
 
             AudioManager.instance.StartRule6Background();
 
-            if (introLines != null && introLines.Length > 0 && PlayerDialogueUI.instance != null)
-                PlayerDialogueUI.instance.ShowSequence(introLines);
+            SayMonologue(introMonologue, introLines);
 
             _cycle = StartCoroutine(BusCycleRoutine());
         }

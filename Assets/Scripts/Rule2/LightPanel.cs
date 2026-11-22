@@ -25,13 +25,33 @@ namespace Rule2
             // auto-fetch ถ้ายังไม่ได้ assign ใน Inspector
             if (puzzleController == null)
                 puzzleController = GetComponent<LeverPuzzleController>();
+
+            if (interactionText != null) interactionText.gameObject.SetActive(false);
         }
 
+        /// <summary>
+        /// ปุ่ม "E ซ่อมตู้ไฟ" ขึ้นเฉพาะตอนอยู่ใกล้ + ถึงเฟสซ่อม + ยังไม่ได้ซ่อม + ไม่ได้เปิด puzzle อยู่
+        /// เช็คทุกเฟรมเพราะ puzzle ปิดตัวเองได้หลายทาง (เดินออก / ตอบผิด / ตาย)
+        /// </summary>
+        private void Update()
+        {
+            if (_playerInZone && _isUnlocked && !IsFixed && !puzzleController.IsPuzzleRunning)
+                _prompt.Set(PromptId, promptAction);
+            else
+                _prompt.Clear();
+        }
+
+        private void OnDisable() => _prompt.Clear();
+
+        private const string PromptId = "interact.panel";
+
         [Header("Interaction Text")]
-        [Tooltip("Text แสดง hint เมื่อผู้เล่นอยู่ใน zone (เว้นว่างถ้าไม่ต้องการ)")]
+        [Tooltip("ข้อความลอยในโลกแบบเดิม — ไม่ใช้แล้ว (ปุ่มขึ้นบนจอแทน) ใส่ไว้ก็จะถูกซ่อนตลอด")]
         [SerializeField] private TMP_Text interactionText;
-        [Tooltip("ข้อความก่อนเริ่ม puzzle")]
-        [SerializeField] private string   textBeforePuzzle = "E  ซ่อมตู้ไฟ";
+        [Tooltip("คำที่ขึ้นข้างปุ่ม E บนจอ ตอนเข้าใกล้ตู้ก่อนเริ่ม puzzle")]
+        [SerializeField] private string   promptAction = "ซ่อมตู้ไฟ";
+
+        private readonly InteractPromptHandle _prompt = new InteractPromptHandle();
 
         // ─── Runtime ───────────────────────────────────────────────────
 
@@ -69,9 +89,6 @@ namespace Rule2
         {
             if (!other.CompareTag("Player")) return;
             _playerInZone = true;
-            // แสดง hint เฉพาะก่อนเริ่ม puzzle (ระหว่าง puzzle ปุ่มบนตู้จัดการเอง)
-            if (!puzzleController.IsPuzzleRunning)
-                ShowText(textBeforePuzzle);
             if (_isUnlocked && !IsFixed) Subscribe();
         }
 
@@ -79,7 +96,7 @@ namespace Rule2
         {
             if (!other.CompareTag("Player")) return;
             _playerInZone = false;
-            ShowText(null);
+            _prompt.Clear();
             Unsubscribe();
             puzzleController.ExitPuzzle();
         }
@@ -110,7 +127,7 @@ namespace Rule2
         {
             _isUnlocked = false;
             Unsubscribe();
-            ShowText(null);
+            _prompt.Clear();
             puzzleController.AbortForDeath();
         }
 
@@ -121,7 +138,7 @@ namespace Rule2
 
             // เปิด puzzle ครั้งแรก
             puzzleController.StartPuzzle();
-            ShowText(null); // ซ่อน hint หลังเปิด puzzle
+            _prompt.Clear(); // ซ่อนปุ่มหลังเปิด puzzle (ระหว่าง puzzle ปุ่มบนตู้จัดการเอง)
         }
 
         // ─── Panel Fixed (callback path จาก Rule2.OnPanelFixed ผ่าน LeverPuzzleController) ───
@@ -131,22 +148,8 @@ namespace Rule2
         {
             IsFixed = true;
             Unsubscribe();
-            ShowText(null);
+            _prompt.Clear();
             if (panelLight != null) panelLight.color = Color.green;
-        }
-
-        // ─── Helpers ───────────────────────────────────────────────────
-
-        private void ShowText(string msg)
-        {
-            if (interactionText == null) return;
-            if (string.IsNullOrEmpty(msg))
-                interactionText.gameObject.SetActive(false);
-            else
-            {
-                interactionText.text = L10n.T(msg);
-                interactionText.gameObject.SetActive(true);
-            }
         }
     }
 }

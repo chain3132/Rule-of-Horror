@@ -6,8 +6,20 @@ using UnityEngine;
 
 public class SittingPoint : MonoBehaviour
 {
+    private const string SitPromptId   = "interact.sit";
+    private const string StandPromptId = "interact.stand";
+
+    [Tooltip("ข้อความลอยในโลกแบบเดิม — ไม่ใช้แล้ว (ปุ่มขึ้นบนจอแทน) ใส่ไว้ก็จะถูกซ่อนตลอด")]
     [SerializeField] private TMP_Text interactionText;
     [SerializeField] private InputHandler inputHandler;
+
+    [Tooltip("คำข้างปุ่ม E ตอนยืนอยู่ใกล้ม้านั่ง")]
+    [SerializeField] private string sitAction = "นั่ง";
+
+    [Tooltip("คำข้างปุ่ม E ตอนนั่งอยู่ — ขึ้นเฉพาะตอนลุกได้จริง (กฎที่บังคับนั่งจะไม่ขึ้น)")]
+    [SerializeField] private string standAction = "ลุก";
+
+    private readonly InteractPromptHandle _prompt = new InteractPromptHandle();
 
     [Tooltip("ระยะ fallback สำหรับตรวจจับผู้เล่นเมื่อ trigger ยิงไม่ได้\n" +
              "(เช่น ผู้เล่นถูก skip intro มานั่งเลย → อยู่ layer PlayerSitting → trigger ไม่ทำงาน)")]
@@ -20,6 +32,24 @@ public class SittingPoint : MonoBehaviour
     private void Awake()
     {
         _zone = GetComponent<Collider>();
+        if (interactionText != null) interactionText.gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// ปุ่มบนจอ: ยืนใกล้ม้านั่ง = "E นั่ง" / นั่งอยู่และลุกได้ = "E ลุก"
+    /// ไม่ขึ้นตอนกำลังเปลี่ยนท่า, ตอนกฎล็อกการลุก, และตอน E เป็นของสมุดบนโต๊ะ
+    /// </summary>
+    private void RefreshPrompt(PlayerController pc)
+    {
+        if (!_isSubscribed || pc == null || pc.IsChangingPose || Book.BookPageTurner.ClaimsInteract)
+        {
+            _prompt.Clear();
+            return;
+        }
+
+        if (!pc.IsSitting())            _prompt.Set(SitPromptId, sitAction);
+        else if (!pc.isBlockStanding)   _prompt.Set(StandPromptId, standAction);
+        else                            _prompt.Clear();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -42,6 +72,7 @@ public class SittingPoint : MonoBehaviour
         if (_isSubscribed)
         {
             if (pc == null || !IsPlayerInRange(pc)) Unsubscribe();
+            RefreshPrompt(pc);
             return;
         }
 
@@ -49,6 +80,7 @@ public class SittingPoint : MonoBehaviour
 
         if (Vector3.Distance(transform.position, pc.transform.position) <= proximityRadius)
             TrySubscribe(pc);
+        RefreshPrompt(pc);
     }
 
     private void TrySubscribe(PlayerController player)
@@ -56,7 +88,6 @@ public class SittingPoint : MonoBehaviour
         if (_isSubscribed || player == null) return;
 
         _player = player;
-        if (interactionText != null) interactionText.gameObject.SetActive(true);
 
         if (inputHandler != null)
         {
@@ -82,9 +113,9 @@ public class SittingPoint : MonoBehaviour
 
     private void Unsubscribe()
     {
+        _prompt.Clear();
         if (!_isSubscribed) return;
 
-        if (interactionText != null) interactionText.gameObject.SetActive(false);
         if (inputHandler != null) inputHandler.OnInteractPressed -= Interact;
 
         _isSubscribed = false;

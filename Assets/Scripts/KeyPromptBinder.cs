@@ -48,6 +48,18 @@ public class KeyPromptBinder : MonoBehaviour
     [Tooltip("✓ = ไม่โผล่ระหว่างฉากเปิด — ผู้เล่นยังกดอะไรไม่ได้ ขึ้นไปก็บังภาพเปล่าๆ")]
     [SerializeField] private bool hideDuringCutscene = true;
 
+    [Header("ปุ่มกดใช้ของ (นั่ง / วิทยุ / สวิตช์ / ตู้ไฟ / โทรศัพท์)")]
+    [Tooltip("ตำแหน่งบนจอ (สัดส่วน 0-1) — มุมซ้ายบนของปุ่มอยู่ตรงนี้\n" +
+             "ค่าเริ่ม = ขวาล่างของกลางจอนิดๆ ไม่บังเป้ากลางจอ")]
+    [SerializeField] private Vector2 interactScreenPosition = new Vector2(0.53f, 0.45f);
+
+    [Tooltip("ระยะห่างระหว่างแถว (พิกเซลจอ) ตอนมีหลายปุ่มพร้อมกัน — เรียงลงล่าง")]
+    [SerializeField] private float interactRowGap = 8f;
+
+    [Tooltip("✓ = ซ่อนตอนผู้เล่นคุมตัวเองไม่ได้ (เปิดโทรศัพท์ / เล่น puzzle ตู้ไฟ / กะพริบตา / ฉากตาย)\n" +
+             "ตอนนั้นกด E ไม่มีผลอยู่แล้ว ขึ้นไปจะหลอกผู้เล่นเปล่าๆ")]
+    [SerializeField] private bool hideInteractWhenLocked = true;
+
     private readonly Dictionary<string, GameObject> _views = new Dictionary<string, GameObject>();
 
     // ─────────────────────────── Lifecycle ───────────────────────────
@@ -134,13 +146,50 @@ public class KeyPromptBinder : MonoBehaviour
         }
 
         var cam = worldCamera != null ? worldCamera : Camera.main;
-        if (cam == null) return;
+
+        bool  interactHidden = hideInteractWhenLocked && InteractBlocked();
+        float interactOffset = 0f;
 
         foreach (var pair in KeyPromptManager.instance.Active)
         {
             if (!_views.TryGetValue(pair.Key, out var view) || view == null) continue;
-            Place(view, pair.Value.anchor, cam);
+
+            if (pair.Value.interact) interactOffset += PlaceInteract(view, interactOffset, interactHidden);
+            else if (cam != null)    Place(view, pair.Value.anchor, cam);
         }
+    }
+
+    /// <summary>ตอนนี้ผู้เล่นกด E ใช้ของไม่ได้ — โทรศัพท์/puzzle/ฉากตายยึดกล้องไว้ หรือกำลังกะพริบตา</summary>
+    private static bool InteractBlocked()
+    {
+        var pc = Player.PlayerController.Instance;
+        if (pc != null && !pc.CanLook) return true;
+
+        var mode = GameModeController.instance;
+        return mode != null && mode.IsBlinking;
+    }
+
+    /// <summary>
+    /// วางปุ่มกดใช้ของที่ตำแหน่งตายตัวบนจอ — หลายอันพร้อมกันเรียงลงล่าง
+    /// คืนความสูงที่ใช้ไป (รวมช่องไฟ) ให้แถวถัดไปต่อท้าย
+    /// </summary>
+    private float PlaceInteract(GameObject view, float offsetY, bool hidden)
+    {
+        if (view.activeSelf == hidden) view.SetActive(!hidden);
+        if (hidden) return 0f;
+
+        var rect = view.transform as RectTransform;
+        if (rect == null) return 0f;
+
+        // จุดตั้งเป็นมุมซ้ายบนของกรอบ — แปลงตาม pivot เพราะ rect.position คือตำแหน่งของ pivot
+        Vector2 size = Vector2.Scale(rect.rect.size, rect.lossyScale);
+        var screen = new Vector3(
+            Screen.width  * interactScreenPosition.x + size.x * rect.pivot.x,
+            Screen.height * interactScreenPosition.y - offsetY - size.y * (1f - rect.pivot.y),
+            0f);
+
+        rect.position = keepOnScreen ? ClampToScreen(rect, screen) : screen;
+        return size.y + interactRowGap;
     }
 
     // ─────────────────────────── Spawn / Place ───────────────────────────
@@ -169,6 +218,13 @@ public class KeyPromptBinder : MonoBehaviour
 
         // เกิดระหว่างฉากเปิด — ซ่อนไว้ตั้งแต่แรก ไม่ให้แวบขึ้นมาหนึ่งเฟรมก่อน LateUpdate จะเก็บ
         if (hideDuringCutscene && CutsceneManager.IsPlaying) { view.SetActive(false); return; }
+
+        // ปุ่มกดใช้ของวางตายตัว — แถวที่ซ้อนกันหลายอัน LateUpdate จัดเรียงให้ใหม่ในเฟรมเดียวกัน
+        if (prompt.interact)
+        {
+            PlaceInteract(view, 0f, hideInteractWhenLocked && InteractBlocked());
+            return;
+        }
 
         var cam = worldCamera != null ? worldCamera : Camera.main;
         if (cam != null) Place(view, prompt.anchor, cam);

@@ -96,6 +96,10 @@ namespace RuleSystem.Rule
 
         // ── Hints ───────────────────────────────────────────────────────
         [Header("Hints")]
+        [Tooltip("บทพูดในใจตอนลืมตาเข้ากฎ 4 — ขึ้นก่อน Intro Hint (ลบข้อความทิ้ง = ไม่พูด)")]
+        [SerializeField] private DialogueLine[] introMonologue = Lines(
+            "เหมือนฉันจะได้ยินเสียงอะไรบางอย่าง หรือว่าจะมีอะไรอยู่แถว ๆ นี้");
+
         [TextArea(2, 4)]
         [Tooltip("ใส่ {0} ตรงที่ต้องการให้แทนด้วยจำนวนตุ๊กตา (dollCount) — จะได้ไม่ต้องแก้ข้อความเวลาเปลี่ยนจำนวน")]
         [SerializeField] private string introHint = "ศาลพระภูมิว่างเปล่า…\nหาตุ๊กตา {0} ตัวกลับมาวางให้ครบ";
@@ -403,16 +407,19 @@ namespace RuleSystem.Rule
             // เสาไฟทั่วแมพกระพริบไปตลอดจนจบกฎ — CleanupGameplay เป็นคน Stop()
             if (lampFlicker != null) lampFlicker.Play();
 
-            if (PlayerDialogueUI.instance != null)
+            // บทพูดในใจก่อน แล้ว hint ของกฎต่อท้ายในชุดเดียวกัน — ขึ้นทีละบรรทัด ไม่ทับกัน
+            //
+            // แทน {0} ด้วยจำนวนตุ๊กตาจริง — ใช้ Replace ไม่ใช่ string.Format
+            // เพราะข้อความที่พิมพ์เอง อาจมี { } หลุดมาแล้ว Format จะ throw
+            // PlayerDialogueUI fade เองเมื่อ hold ครบ — ไม่ต้องมี coroutine คอยซ่อน
+            // (ถ้ามี จะไปลบ hint ของตุ๊กตาที่เดินไปเจอภายใน introHintDuration ทิ้ง)
+            // แปลก่อนแทน {0} — ข้อความที่แทนเลขไปแล้วไม่ตรงกับคำไหนในตารางแปล
+            SayMonologue(introMonologue, string.IsNullOrWhiteSpace(introHint) ? null : new DialogueLine
             {
-                // แทน {0} ด้วยจำนวนตุ๊กตาจริง — ใช้ Replace ไม่ใช่ string.Format
-                // เพราะข้อความที่พิมพ์เอง อาจมี { } หลุดมาแล้ว Format จะ throw
-                // PlayerDialogueUI fade เองเมื่อ hold ครบ — ไม่ต้องมี coroutine คอยซ่อน
-                // (ถ้ามี จะไปลบ hint ของตุ๊กตาที่เดินไปเจอภายใน introHintDuration ทิ้ง)
-                // แปลก่อนแทน {0} — ข้อความที่แทนเลขไปแล้วไม่ตรงกับคำไหนในตารางแปล
-                PlayerDialogueUI.instance.ShowLine(L10n.T(introHint).Replace("{0}", dollCount.ToString()),
-                                                   introHintDuration, alreadyTranslated: true);
-            }
+                text              = L10n.T(introHint).Replace("{0}", dollCount.ToString()),
+                holdDuration      = introHintDuration,
+                alreadyTranslated = true,
+            });
         }
 
         /// <summary>

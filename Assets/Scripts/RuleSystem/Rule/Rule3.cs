@@ -52,6 +52,17 @@ public class Rule3 : RuleBase
     private int _ghostLookWrongCount = 0;
     private const int MaxGhostLookWrong = 3;
 
+    // ─────────────── Monologue ───────────────
+    [Header("บทพูดในใจ (ซับ) — ลบข้อความทิ้ง = ไม่พูดตอนนั้น")]
+    [Tooltip("ตอนลืมตาเข้ากฎ 3 เห็นกระดาษตัวเลข")]
+    [SerializeField] private DialogueLine[] introMonologue = Lines(
+        "ตัวเลขบ้านี้มันคืออะไรกัน",
+        "ฉันต้องมองให้ละเอียดตามกฎบอกสินะ");
+
+    [Tooltip("ตอนผ่านกฎ 3 — ขึ้นหลังลืมตากลับโหมดปกติแล้ว")]
+    [SerializeField] private DialogueLine[] completeMonologue = Lines(
+        "ที่นี่มันคือบ้าอะไรกัน ฉันอยากออกไปจากที่นี่");
+
     // ─────────────── Vignette ───────────────
     [Header("Vignette")]
     [SerializeField] private float vignetteStartIntensity      = 0.2f; // matches Tension profile default
@@ -262,6 +273,8 @@ public class Rule3 : RuleBase
 
         StartCoroutine(VignetteIncreaseRoutine());
         StartCoroutine(GhostLookEventRoutine());
+
+        SayMonologue(introMonologue);
     }
 
     /// <summary>Called every time the light flickers — plays the light-bulb sound.</summary>
@@ -584,6 +597,7 @@ public class Rule3 : RuleBase
         {
             ReportCompleted();
             EndRule();          // success path – normal progression
+            StartCoroutine(SayAfterBlinkRoutine(completeMonologue));
         }
         else
             StartCoroutine(GameOverResetRoutine()); // death path – reset & retry
